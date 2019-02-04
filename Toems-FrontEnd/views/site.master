@@ -1,0 +1,363 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" Inherits="Toems_FrontEnd.views.SiteMaster" CodeBehind="site.master.cs" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>THEOPENEM</title>
+    
+    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/jquery-3.2.1.min.js") %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/select2.min.js") %>" charset="utf-8"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/datepicker.js") %>" charset="utf-8"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/jquery.toastmessage.js") %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/jquery.watermark.min.js") %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/classie.js") %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/ace/src-noconflict/ace.js") %>" charset="utf-8"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/scrollsaver.js") %>" charset="utf-8"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/bootstrap.min.js") %>" charset="utf-8"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/tooltipster.bundle.min.js") %>" charset="utf-8"></script>
+    
+    <link href="~/content/css/splitbutton.css" rel="stylesheet" type="text/css" />
+    <link href="~/content/css/select2.min.css" rel="stylesheet" type="text/css" />
+     <link href="~/content/css/tooltipster.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="~/content/css/datepicker.css" rel="stylesheet" type="text/css" />
+    <link href="~/content/js/fineuploader/fine-uploader-gallery.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/content/js/fineuploader/fine-uploader-new.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/fineuploader/fine-uploader.min.js") %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/Chart.js") %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/moment.min.js") %>"></script>
+
+    <link href="~/content/css/base.css" rel="stylesheet" type="text/css" />
+    <link href="~/content/css/icons.css" rel="stylesheet" type="text/css" />
+    <link href="~/content/css/layout.css" rel="stylesheet" type="text/css" />
+
+    <link id="ThemeSheet" type="text/css" rel="stylesheet" runat="server"/>
+    
+
+   
+</head>
+<body>
+      <form id="form1" runat="server" class="form">
+    <div class="mobile-nav-main">
+        <div class="ham_wrapper_main">
+       <div class="ham_bar_first"></div>
+        <div class="ham_bar"></div>
+        <div class="ham_bar"></div>
+      </div>
+    </div>
+      <div id="mobile-links">
+            <ul>
+                          
+                             <li  class="li-mobile" >
+                                <a href="<%= ResolveUrl("~/views/dashboard/dash.aspx") %>"  title="Dashboard">Dashboard</a>
+                            </li>
+                            <li class="li-mobile" >
+                                <a href="<%= ResolveUrl("~/views/modules/chooser.aspx") %>"  title="Modules">Modules</a>
+                            </li>
+
+                            <li class="li-mobile" >
+                                <a href="<%= ResolveUrl("~/views/policies/search.aspx") %>"  title="Policies">Policies</a>
+                            </li>
+
+                            <li class="li-mobile" >
+                                <a href="<%= ResolveUrl("~/views/groups/search.aspx") %>"  title="Groups">Groups</a>
+                            </li>
+                            <li class="li-mobile" >
+                                <a href="<%= ResolveUrl("~/views/computers/search.aspx") %>"  title="Computers">Computers</a>
+                            </li>
+                            <li class="li-mobile" >
+                                <a href="<%= ResolveUrl("~/views/assets/chooser.aspx") %>"  title="Assets">Assets</a>
+                            </li>
+
+                            <li class="li-mobile" >
+                                <a href="<%= ResolveUrl("~/views/global/chooser.aspx") %>"  title="Global Properties">Global Properties</a>
+                            </li>
+
+                            <li class="li-mobile" >
+                                <a href="<%= ResolveUrl("~/views/reports/chooser.aspx") %>"  title="Reports">Reports</a>
+                            </li>
+                            <li class="li-mobile" >
+                                <a href="<%= ResolveUrl("~/views/users/search.aspx") %>"  title="Users">Users</a>
+                            </li>
+                            <li class="li-mobile" >
+                                <a href="<%= ResolveUrl("~/views/admin/chooser.aspx") %>"  title="Admin Settings" >Admin Settings</a>
+                            </li>
+                                <li class="li-mobile" >
+                                 <asp:LinkButton ID="LinkButton1" runat="server" OnClick="LogOut_OnClick" Text="Logout" ></asp:LinkButton>
+                            </li>
+                          
+
+                        </ul>
+        </div>
+
+  
+        <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true">
+        </asp:ScriptManager>
+        <div class="container">
+            <div class="file-menu-wrapper">
+                <div class="file-menu-left">
+                    <img src="<%= ResolveUrl("~/content/img/logowhite-small.png") %>" />
+                </div>
+
+                  <div class="file-menu-right">
+                        <div class="file-menu-breadcrumb">
+                            <ul class="breadcrumb">
+                                <asp:ContentPlaceHolder runat="server" ID="TopBreadCrumb"></asp:ContentPlaceHolder>
+                            </ul>
+                        </div>
+                      </div>
+
+                        <span class="version-right"><b>
+
+                            <asp:Label runat="server" ID="lblServerId"></asp:Label>
+                        </b></span>
+
+                   
+                </div>
+               <div id="leftnav">
+          
+                    <div class="sub-nav">
+                        <ul>
+                          
+                             <li id="nav-dash">
+                                <a href="<%= ResolveUrl("~/views/dashboard/dash.aspx") %>" class="icon-dash tooltip" title="Dashboard"></a>
+                            </li>
+                            <li id="nav-modules">
+                                <a href="<%= ResolveUrl("~/views/modules/chooser.aspx") %>" class="icon-module tooltip" title="Modules"></a>
+                            </li>
+
+                            <li id="nav-policies">
+                                <a href="<%= ResolveUrl("~/views/policies/search.aspx") %>" class="icon-policy tooltip" title="Policies"></a>
+                            </li>
+
+                            <li id="nav-groups">
+                                <a href="<%= ResolveUrl("~/views/groups/search.aspx") %>" class="icon-group tooltip" title="Groups"></a>
+                            </li>
+                            <li id="nav-hosts">
+                                <a href="<%= ResolveUrl("~/views/computers/search.aspx") %>" class="icon-computer tooltip" title="Computers"></a>
+                            </li>
+                            <li id="nav-assets">
+                                <a href="<%= ResolveUrl("~/views/assets/chooser.aspx") %>" class="icon-asset tooltip" title="Assets"></a>
+                            </li>
+
+                            <li id="nav-global">
+                                <a href="<%= ResolveUrl("~/views/global/chooser.aspx") %>" class="icon-global tooltip" title="Global Properties"></a>
+                            </li>
+
+                            <li id="nav-report">
+                                <a href="<%= ResolveUrl("~/views/reports/chooser.aspx") %>" class="icon-report tooltip" title="Reports"></a>
+                            </li>
+                            <li id="nav-users">
+                                <a href="<%= ResolveUrl("~/views/users/search.aspx") %>" class="icon-user tooltip" title="Users"></a>
+                            </li>
+                            <li id="nav-settings">
+                                <a href="<%= ResolveUrl("~/views/admin/chooser.aspx") %>" class="icon-setting tooltip" title="Admin Settings" ></a>
+                            </li>
+                            <li id="nav-logout" title="Logout - <%= CurrentUserName %>" class="tooltip">
+                                 <asp:LinkButton ID="LogOut" runat="server" OnClick="LogOut_OnClick" CssClass="icon-logout"></asp:LinkButton>
+                            </li>
+
+                        </ul>
+
+                    </div>
+                </div>
+
+          
+
+            <div class="content_container">
+                    
+                 
+
+             
+
+                <div id="secondary-nav-container">
+                    <div class="nav-title">
+                        <asp:ContentPlaceHolder runat="server" ID="SubNavTitle">
+                        </asp:ContentPlaceHolder>
+                    </div>
+                    <div class="secondary-nav">
+
+                    <asp:ContentPlaceHolder ID="SubNav" runat="server">
+                    </asp:ContentPlaceHolder>
+                        </div>
+                </div>
+
+                    <div class="content-header">
+                     <div class="actions_left">
+                         <div class="btn-group">
+                             <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                 <span>Actions &#9662;</span>
+
+                             </button>
+                             <ul class="dropdown-menu">
+                                 <asp:ContentPlaceHolder ID="DropDownActions" runat="server">
+                                 </asp:ContentPlaceHolder>
+                             </ul>
+                         </div>
+                       
+
+                     </div>
+
+
+
+                     <div class="actions_container">
+                         <div class="help_menu"></div>
+                          
+
+                     </div>
+
+                      
+                     <div class="toast-container"></div>
+                 </div>
+                <div class="content-wrapper">
+                
+ 
+
+                 
+
+                    <div id="content-main">
+
+                       
+
+                        <div class="size-fullgrid column">
+                            <div class="help-content">
+                                <br class="clear"/>
+                                <asp:ContentPlaceHolder runat="server" ID="Help"></asp:ContentPlaceHolder>
+                                </div>
+                            <asp:ContentPlaceHolder ID="Content" runat="server">
+                            </asp:ContentPlaceHolder>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </form>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+           
+            $('.rounded-search').watermark('Search', { useNative: false });
+            $('.txt-generate').watermark('Password', { useNative: false });
+            $('.password').watermark('******', { useNative: false });
+            $('.blank').watermark('*********************************************', { useNative: false });
+            $('.tooltip').tooltipster({
+                animation: 'fade',
+                delay: 200,
+                side: 'right'
+            });
+
+            $('.rounded-search').on('keyup', function (e) {
+                if (e.keyCode === 13) {
+                    $(this).closest('form').submit();
+                }
+            });
+
+      
+
+            $(".help_menu").click(function () {
+                $(".help-content").toggleClass("help-display");
+            });
+
+            $(".ham_wrapper_main").click(function () {
+                $("#mobile-links").toggleClass("mobile-links-display");
+            });
+
+            
+            $(".nav-title").click(function () {
+                $(".ul-secondary-nav").toggleClass("mobile-links-display");
+            });
+
+            $(".confirm").click(function () {
+                var menuTop = document.getElementById('confirmbox');
+                classie.toggle(menuTop, 'confirm-box-outer-open');
+            });
+
+         
+
+            var x, i, j, selElmnt, a, b, c;
+            /*look for any elements with the class "custom-select":*/
+            x = document.getElementsByClassName("custom-select");
+            for (i = 0; i < x.length; i++) {
+                selElmnt = x[i].getElementsByTagName("select")[0];
+                /*for each element, create a new DIV that will act as the selected item:*/
+                a = document.createElement("DIV");
+                a.setAttribute("class", "select-selected");
+                a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+                x[i].appendChild(a);
+                /*for each element, create a new DIV that will contain the option list:*/
+                b = document.createElement("DIV");
+                b.setAttribute("class", "select-items select-hide");
+                for (j = 1; j < selElmnt.length; j++) {
+                    /*for each option in the original select element,
+                    create a new DIV that will act as an option item:*/
+                    c = document.createElement("DIV");
+                    c.innerHTML = selElmnt.options[j].innerHTML;
+                    c.addEventListener("click", function (e) {
+                        /*when an item is clicked, update the original select box,
+                        and the selected item:*/
+                        var y, i, k, s, h;
+                        s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+                        h = this.parentNode.previousSibling;
+                        for (i = 0; i < s.length; i++) {
+                            if (s.options[i].innerHTML == this.innerHTML) {
+                                s.selectedIndex = i;
+                                h.innerHTML = this.innerHTML;
+                                y = this.parentNode.getElementsByClassName("same-as-selected");
+                                for (k = 0; k < y.length; k++) {
+                                    y[k].removeAttribute("class");
+                                }
+                                this.setAttribute("class", "same-as-selected");
+                                break;
+                            }
+                        }
+                        h.click();
+                        document.getElementById("form1").submit();
+                     
+                    });
+                    b.appendChild(c);
+                }
+                x[i].appendChild(b);
+                a.addEventListener("click", function (e) {
+                    /*when the select box is clicked, close any other select boxes,
+                    and open/close the current select box:*/
+                    e.stopPropagation();
+                    closeAllSelect(this);
+                    this.nextSibling.classList.toggle("select-hide");
+                    this.classList.toggle("select-arrow-active");
+                  
+                });
+            }
+            function closeAllSelect(elmnt) {
+                /*a function that will close all select boxes in the document,
+                except the current select box:*/
+                var x, y, i, arrNo = [];
+                x = document.getElementsByClassName("select-items");
+                y = document.getElementsByClassName("select-selected");
+                for (i = 0; i < y.length; i++) {
+                    if (elmnt == y[i]) {
+                        arrNo.push(i)
+                    } else {
+                        y[i].classList.remove("select-arrow-active");
+                    }
+                }
+                for (i = 0; i < x.length; i++) {
+                    if (arrNo.indexOf(i)) {
+                        x[i].classList.add("select-hide");
+                    }
+                }
+
+            }
+            /*if the user clicks anywhere outside the select box,
+            then close all select boxes:*/
+            document.addEventListener("click", closeAllSelect);
+
+        });
+
+        
+    </script>
+</body>
+</html>

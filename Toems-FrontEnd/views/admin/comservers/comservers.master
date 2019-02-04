@@ -1,0 +1,81 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/views/admin/admin.master" AutoEventWireup="true" CodeBehind="comservers.master.cs" Inherits="Toems_FrontEnd.views.admin.comservers.comservers" %>
+<asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub1">
+
+    <asp:ContentPlaceHolder runat="server" ID="TopBreadCrumbSub2"></asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub1">
+    <asp:ContentPlaceHolder runat="server" ID="SubNavTitle_Sub2"></asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub" Runat="Server">
+   
+    <asp:ContentPlaceHolder runat="server" ID="DropDownActionsSub2">
+    </asp:ContentPlaceHolder>
+    <li><asp:LinkButton ID="btnDelete" runat="server" Text="Delete Com Server" OnClick="btnDelete_OnClick" Visible="False"></asp:LinkButton></li>
+    <li><asp:LinkButton ID="btnDeleteCluster" runat="server" Text="Delete Cluster" OnClick="btnDeleteCluster_OnClick" Visible="False"></asp:LinkButton></li>
+</asp:Content>
+
+
+
+<asp:Content ID="Content2" ContentPlaceHolderID="Level2" Runat="Server">
+      <div id="divLevel2" runat="server">
+    <ul class="ul-secondary-nav">
+    <li id="search" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/comservers/comservers.aspx") %>?level=2">
+            <span class="sub-nav-text">Com Servers</span></a>
+    </li>
+    <li id="create" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/comservers/addcomserver.aspx") %>?level=2">
+            <span class="sub-nav-text">Add Com Server</span></a>
+    </li>
+    <li id="searchclusters" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/comservers/comservercluster.aspx") %>?level=2">
+            <span class="sub-nav-text">Com Server Clusters</span></a>
+    </li>
+    <li id="createcluster" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/comservers/addcomservercluster.aspx") %>?level=2">
+            <span class="sub-nav-text">Add Com Server Cluster</span></a>
+    </li>
+        </ul>
+          </div>
+    
+        <div id="divLevel3" runat="server">
+         <ul class="ul-secondary-nav">
+         <li id="general">
+             <div id="divComServer" runat="server">
+        <a href="<%= ResolveUrl("~/views/admin/comservers/editcomserver.aspx") %>?level=2&serverId=<%=ComServer.Id %>">
+            <span class="sub-nav-text">General</span></a>
+                 </div>
+              <div id="divCluster" runat="server">
+        <a href="<%= ResolveUrl("~/views/admin/comservers/editcomservercluster.aspx") %>?level=2&clusterId=<%=Cluster.Id %>">
+            <span class="sub-nav-text">General</span></a>
+                 </div>
+    </li>
+             </ul>
+    </div>
+
+</asp:Content>
+
+<asp:Content ID="Content3" ContentPlaceHolderID="SubContent" Runat="Server">
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#comservers').addClass("nav-current");
+        });
+    </script>
+    <asp:ContentPlaceHolder ID="SubContent2" runat="server">
+    </asp:ContentPlaceHolder>
+    <div id="confirmbox" class="confirm-box-outer">
+        <div class="confirm-box-inner">
+            <h4>
+                <asp:Label ID="lblTitle" runat="server" CssClass="modaltitle"></asp:Label>
+            </h4>
+            <div class="confirm-box-btns">
+                <asp:LinkButton ID="OkButton" OnClick="OkButton_Click" runat="server" Text="Yes" CssClass="confirm_yes"/>
+                <asp:LinkButton ID="CancelButton" runat="server" Text="No" CssClass="confirm_no"/>
+            </div>
+        </div>
+    </div>
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="subHelp">
+    <asp:ContentPlaceHolder runat="server" ID="subsubHelp"></asp:ContentPlaceHolder>
+</asp:Content>

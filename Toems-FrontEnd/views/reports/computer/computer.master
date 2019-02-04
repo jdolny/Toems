@@ -1,0 +1,46 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/views/reports/reports.master" AutoEventWireup="true" CodeBehind="computer.master.cs" Inherits="Toems_FrontEnd.views.reports.computer.computer" %>
+<asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub1">
+    <li >
+        <a href="<%= ResolveUrl("~/views/reports/computer/chooser.aspx") %>">Computer Reports</a>
+    </li>
+    <asp:ContentPlaceHolder runat="server" ID="TopBreadCrumbSub2">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub1">
+    <asp:ContentPlaceHolder runat="server" ID="SubNavTitle_Sub2"></asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub" Runat="Server">
+   
+    <asp:ContentPlaceHolder runat="server" ID="DropDownActionsSub2">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content runat="server" ID="Content4" ContentPlaceHolderID="SubNavLevel1">
+    <div id="Level1" runat="server">
+        <ul class="ul-secondary-nav"> 
+            <li id="custom">
+                <a href="<%= ResolveUrl("~/views/reports/computer/custom.aspx") %>">
+                    <span class="sub-nav-text">Custom</span></a>
+            </li>
+        </ul>
+    </div>
+    
+   
+</asp:Content>
+
+
+
+<asp:Content ID="Content3" ContentPlaceHolderID="SubContent" Runat="Server">
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#computer').addClass("nav-current");
+        });
+    </script>
+    <asp:ContentPlaceHolder ID="SubContent2" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content runat="server" ContentPlaceHolderID="subHelp">
+    <asp:ContentPlaceHolder runat="server" ID="subsubHelp"></asp:ContentPlaceHolder>
+</asp:Content>

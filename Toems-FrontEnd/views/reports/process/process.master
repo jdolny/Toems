@@ -1,0 +1,50 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/views/reports/reports.master" AutoEventWireup="true" CodeBehind="process.master.cs" Inherits="Toems_FrontEnd.views.reports.process.process" %>
+<asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub1">
+    <li >
+        <a href="<%= ResolveUrl("~/views/reports/process/chooser.aspx") %>">Process Reports</a>
+    </li>
+    <asp:ContentPlaceHolder runat="server" ID="TopBreadCrumbSub2">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub1">
+    <asp:ContentPlaceHolder runat="server" ID="SubNavTitle_Sub2"></asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub" Runat="Server">
+   
+    <asp:ContentPlaceHolder runat="server" ID="DropDownActionsSub2">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content runat="server" ID="Content4" ContentPlaceHolderID="SubNavLevel1">
+    <div id="Level1" runat="server">
+        <ul class="ul-secondary-nav"> 
+            <li id="search">
+                <a href="<%= ResolveUrl("~/views/reports/process/search.aspx") %>">
+                    <span class="sub-nav-text">Process List</span></a>
+            </li>
+            <li id="top">
+                <a href="<%= ResolveUrl("~/views/reports/process/topprocesses.aspx") %>">
+                    <span class="sub-nav-text">Top Processes</span></a>
+            </li>
+        </ul>
+
+    </div>
+    
+   
+</asp:Content>
+
+
+
+<asp:Content ID="Content3" ContentPlaceHolderID="SubContent" Runat="Server">
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#process').addClass("nav-current");
+        });
+    </script>
+    <asp:ContentPlaceHolder ID="SubContent2" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="subHelp">
+    <asp:ContentPlaceHolder runat="server" ID="subsubHelp"></asp:ContentPlaceHolder>
+</asp:Content>

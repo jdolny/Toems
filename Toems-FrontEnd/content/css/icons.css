@@ -1,0 +1,105 @@
+.sub-nav li a:before, .sub-nav-top li a:before {
+    -webkit-font-smoothing: antialiased;
+    font-family: icomoon;
+    font-size: 1em;
+    font-style: normal;
+    font-weight: normal;
+    height: 100%;
+    left: 0;
+    speak: none;
+    text-indent: 0;
+    top: 0px;
+    width: 100%;
+}
+
+
+
+.sub-nav li a.icon-dash:before {
+     content: "\e90e";
+     font-size: 2em;
+     padding-right: 10px;
+}
+
+.sub-nav li a.icon-module:before {
+     content: "\e901";
+     font-size: 2em;
+    padding-right: 10px;
+
+}
+
+.sub-nav li a.icon-policy:before {
+     content: "\e905";
+     font-size: 2em;
+     padding-right: 10px;
+}
+
+.sub-nav li a.icon-group:before {
+    content: "\e900";
+     font-size: 2em;
+     padding-right: 10px;
+}
+
+.sub-nav li a.icon-computer:before {
+    content: "\e907";
+      font-size: 2em;
+   padding-right: 10px;
+}
+
+.sub-nav li a.icon-global:before {
+    content: "\e910";
+     font-size: 2em;
+    padding-right: 10px;
+}
+
+.sub-nav li a.icon-report:before {
+    content: "\e90d";
+     font-size: 2em;
+    padding-right: 10px;
+}
+
+.sub-nav li a.icon-asset:before {
+    content: "\e91c";
+    font-size: 1.7em;
+    padding-right: 10px;
+}
+
+
+
+.sub-nav li a.icon-user:before {
+    content: "\e909";
+    font-size: 2em;
+    padding-right: 10px;
+}
+
+
+.sub-nav li a.icon-setting:before {
+    content: "\e90b";
+      font-size: 2em;
+    padding-right: 10px;
+}
+
+.sub-nav li a.icon-logout:before {
+    content: "\e915";
+      font-size: 2em;
+    padding-right: 10px;
+}
+
+.sub-nav-top li a.icon-right:before {
+    content: "\e917";
+      font-size: 2em;
+    padding-right: 10px;
+}
+
+
+.help_menu:before {
+    color: #ff8f00;
+    content: "\e001";
+    font-family: "icon2";
+    font-size: 30px;
+    line-height: 38px;
+    margin-left: 5px;
+}
+
+
+
+

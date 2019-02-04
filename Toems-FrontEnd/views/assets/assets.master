@@ -1,0 +1,70 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/views/site.master" AutoEventWireup="true" CodeBehind="assets.master.cs" Inherits="Toems_FrontEnd.views.assets.assets" %>
+<asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumb">
+     <li>
+        <a href="<%= ResolveUrl("~/views/assets/chooser.aspx") %>">Assets</a>
+    </li>
+    <asp:ContentPlaceHolder ID="TopBreadCrumbSub1" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content runat="server" ID="SubNavTitle" ContentPlaceHolderID="SubNavTitle">
+    <asp:ContentPlaceHolder runat="server" ID="SubNavTitle_Sub1"></asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content ID="SubNav" ContentPlaceHolderID="SubNav" runat="Server">
+
+    <div id="Level1" runat="server">
+        <ul class="ul-secondary-nav">
+            <li id="types">
+                <a href="<%= ResolveUrl("~/views/assets/assettypes/search.aspx?level=2") %>">
+                    <span class="sub-nav-text">Asset Types</span></a>
+            </li>
+            
+            <li id="assets">
+                <a href="<%= ResolveUrl("~/views/assets/customassets/search.aspx?level=2") %>">
+                    <span class="sub-nav-text">Custom Assets</span></a>
+            </li>
+            
+            <li id="assetgroups">
+                <a href="<%= ResolveUrl("~/views/assets/assetgroups/search.aspx?level=2") %>">
+                    <span class="sub-nav-text">Asset Groups</span></a>
+            </li>
+              <li id="attributes" runat="server" clientidmode="Static">
+             <a href="<%= ResolveUrl("~/views/assets/attributes/search.aspx?level=2") %>">
+                 <span class="nav-text">Custom Attributes</span>
+             </a>
+         </li>
+            
+            
+        </ul>
+    </div>
+
+    <asp:ContentPlaceHolder ID="Level2" runat="server"></asp:ContentPlaceHolder>
+
+</asp:Content>
+
+<asp:Content runat="server" ID="Breadcrumb" ContentPlaceHolderID="DropDownActions">
+ 
+    <asp:ContentPlaceHolder ID="DropDownActionsSub" runat="server">
+    </asp:ContentPlaceHolder>
+
+</asp:Content>
+
+
+
+
+
+<asp:Content ID="MainContent" ContentPlaceHolderID="Content" runat="Server">
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#nav-assets').addClass("nav-current");
+        });
+    </script>
+    <asp:ContentPlaceHolder ID="SubContent" runat="server">
+    </asp:ContentPlaceHolder>
+
+   
+</asp:Content>
+
+<asp:Content runat="server" ContentPlaceHolderID="Help">
+    <asp:ContentPlaceHolder runat="server" ID="subHelp"></asp:ContentPlaceHolder>
+</asp:Content>

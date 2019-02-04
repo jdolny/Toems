@@ -1,0 +1,28 @@
+﻿select::-ms-expand {
+    display: none;
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    display: block;
+    width: 100%;
+    height: 50px;
+    font-size: 16px;
+    line-height: 1.75;
+    -ms-word-break: normal;
+    word-break: normal;
+}
+
+.active_policy {
+    background: #40b341 !important;
+}
+
+.select2-results{
+    color:#000;
+}
+
+.select2-container{
+    color:#000;
+}

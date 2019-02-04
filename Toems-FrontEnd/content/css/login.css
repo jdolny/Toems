@@ -1,0 +1,185 @@
+﻿
+@font-face {
+    font-family: opensans;
+    font-style: normal;
+    font-weight: 400;
+    src: url(../fonts/OpenSans-Light.ttf) format("truetype");
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    color: #fff;
+    font-size: 14px;
+    font-family:opensans,'Courier New';
+    margin: 0;
+    text-align: center;
+    background: #2b2b2b;
+  
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover; /* Resize the background image to cover the entire container */
+}
+input, select, textarea, button {
+    font-family: inherit;
+}
+
+.left_title {
+    float: left;
+    color: #fff;
+    font-size: 22px;
+    margin-left: 10px;
+}
+
+.loginheader {
+    background: #3d6889;
+    width: 400px;
+    height: 100px;
+    padding-top: 40px;
+}
+.loginwrapper {
+    background: #555;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    height: 600px;
+    width: 400px;
+    position: absolute;
+    margin: auto;
+    top:0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+
+}
+
+.fields {
+    width: 300px;
+    margin-left: 50px;
+    margin-top: 100px;
+}
+
+.button {
+    margin-left:25px;
+}
+.uname, .password {
+    border: 1px solid #ccc;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    background: #555;
+    color: #fff;
+    font-size: 14px;
+    height: 35px;
+    margin-bottom: 25px;
+    text-align: left;
+    padding-left:10px;
+
+    width:100%
+
+}
+
+
+.logo { margin-bottom: 30px; }
+
+input[type="submit"] {
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    background: #898d98;
+    border: none;
+    border-radius: 3px;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 16px;
+    line-height: normal;
+    margin-bottom: 3px;
+    margin-top: 30px;
+    padding: 8px 10px;
+    text-decoration: none;
+    width: 350px;
+}
+
+input[type="submit"]:hover {
+    -moz-transition: background .2s ease-in-out;
+    -webkit-transition: background .2s ease-in-out;
+    background: #444;
+    border: 1px solid #47a3da;
+    color: #fff;
+    text-shadow: none;
+    transition: background .2s ease-in-out;
+}
+
+.clear {
+    clear: both;
+    display: block;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    width: 0;
+}
+
+@media only screen and (min-width: 641px) and (max-width: 820px) {
+    .loginwrapper {
+        border: none;
+
+        width: 500px;
+    }
+    .loginheader {
+        width:500px;
+    }
+        .fields {
+        width: 300px;
+        margin-left: 100px;
+        margin-top: 80px;
+    }
+
+    .uname, .password { width: 280px; }
+
+    .button { margin-left: 100px; }
+
+    input[type="submit"] { width: 200px; }
+}
+
+@media only screen and (min-width: 480px) and (max-width: 640px) {
+    .loginwrapper {
+        border: none;
+
+        width: 400px;
+    }
+    .fields {
+        width: 300px;
+        margin-left: 50px;
+        margin-top: 80px;
+    }
+
+    .uname, .password { width: 280px; }
+
+    .button { margin-left: 50px; }
+
+    input[type="submit"] { width: 200px; }
+}
+
+@media only screen and (max-width: 479px) {
+    .loginwrapper {
+        border: none;
+
+        width: 320px;
+    }
+
+    .loginheader {
+        width: 320px;
+    }
+
+    .fields {
+        width: 300px;
+        margin-left: 10px;
+        margin-top: 80px;
+    }
+
+    .uname, .password { width: 280px; }
+
+    .button { margin-left: 0; }
+
+    input[type="submit"] { width: 200px; }
+}

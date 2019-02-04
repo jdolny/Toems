@@ -1,0 +1,98 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/views/modules/modules.master" AutoEventWireup="true" CodeBehind="softwaremodule.master.cs" Inherits="Toems_FrontEnd.views.modules.softwaremodules.software" %>
+<asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub1">
+     <li>
+        <a href="<%= ResolveUrl("~/views/modules/softwaremodules/search.aspx") %>">Software Modules</a>
+    </li>
+    <asp:ContentPlaceHolder runat="server" ID="TopBreadCrumbSub2">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub1">
+  <asp:ContentPlaceHolder runat="server" ID="SubNavTitle_Sub2"></asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content runat="server" ID="Content4" ContentPlaceHolderID="SubNavLevel1">
+    
+     <div id="Level1" runat="server">
+        <ul class="ul-secondary-nav">
+
+     <li id="search">
+        <a href="<%= ResolveUrl("~/views/modules/softwaremodules/search.aspx") %>">
+            <span class="sub-nav-text">Search</span></a>
+    </li>
+    <li id="create">
+        <a href="<%= ResolveUrl("~/views/modules/softwaremodules/create.aspx") %>">
+            <span class="sub-nav-text">New</span></a>
+    </li>
+         <li id="archived">
+        <a href="<%= ResolveUrl("~/views/modules/softwaremodules/archived.aspx") %>">
+            <span class="sub-nav-text">Archived</span></a>
+    </li>
+            </ul>
+            </div>
+    
+    <div id="Level2" runat="server">
+         <ul class="ul-secondary-nav">
+              <li id="general">
+                 <a href="<%= ResolveUrl("~/views/modules/softwaremodules/general.aspx") %>?softwareModuleId=<%= SoftwareModule.Id %>">
+                    <span class="sub-nav-text">General</span></a>
+            </li>
+     <li id="upload">
+                 <a href="<%= ResolveUrl("~/views/modules/softwaremodules/uploadfiles.aspx") %>?softwareModuleId=<%= SoftwareModule.Id %>">
+                    <span class="sub-nav-text">Upload Files</span></a>
+            </li>
+    
+      <li id="usages">
+                 <a href="<%= ResolveUrl("~/views/modules/softwaremodules/usages.aspx") %>?softwareModuleId=<%= SoftwareModule.Id %>">
+                    <span class="sub-nav-text">Usages</span></a>
+            </li>
+             <li id="categories">
+                 <a href="<%= ResolveUrl("~/views/modules/softwaremodules/categories.aspx") %>?softwareModuleId=<%= SoftwareModule.Id %>">
+                     <span class="sub-nav-text">Categories</span></a>
+             </li>
+             <li id="externalfiles">
+                 <a href="<%= ResolveUrl("~/views/modules/softwaremodules/externalfiles.aspx") %>?softwareModuleId=<%= SoftwareModule.Id %>">
+                     <span class="sub-nav-text">External Files</span></a>
+             </li>
+             </ul>
+    </div>
+
+  
+</asp:Content>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub" Runat="Server">
+   
+    <asp:ContentPlaceHolder runat="server" ID="DropDownActionsSub2">
+    </asp:ContentPlaceHolder>
+      <li><asp:LinkButton ID="btnArchive" runat="server" OnClick="btnArchive_OnClick" Text="Archive Module"></asp:LinkButton></li>
+    <li><asp:LinkButton ID="btnDelete" runat="server" OnClick="btnDelete_OnClick" Text="Delete Module"></asp:LinkButton></li>
+</asp:Content>
+
+
+
+<asp:Content ID="Content3" ContentPlaceHolderID="SubContent" Runat="Server">
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#software').addClass("nav-current");
+        });
+    </script>
+    <asp:ContentPlaceHolder ID="SubContent2" runat="server">
+    </asp:ContentPlaceHolder>
+    
+      <br class="clear"/>
+    <div id="confirmbox" class="confirm-box-outer">
+        <div class="confirm-box-inner">
+            <h4>
+                <asp:Label ID="lblTitle" runat="server" CssClass="modaltitle"></asp:Label>
+            </h4>
+
+            <div class="confirm-box-btns">
+                <asp:LinkButton ID="buttonConfirm" OnClick="buttonConfirm_OnClick" runat="server" Text="Yes" CssClass="confirm_yes"/>
+                <asp:LinkButton ID="CancelButton" runat="server" Text="No" CssClass="confirm_no"/>
+            </div>
+        </div>
+    </div>
+</asp:Content>
+
+<asp:Content runat="server" ContentPlaceHolderID="SubHelp">
+    <asp:ContentPlaceHolder ID="SubSubHelp" runat="server"></asp:ContentPlaceHolder>
+</asp:Content>

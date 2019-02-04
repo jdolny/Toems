@@ -1,0 +1,42 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/views/site.master" AutoEventWireup="true" CodeBehind="global.master.cs" Inherits="Toems_FrontEnd.views.global.global" %>
+<asp:Content runat="server" ID="TopBreadCrumb" ContentPlaceHolderID="TopBreadCrumb">
+   <li><a href="<%= ResolveUrl("~/views/global/chooser.aspx") %>">Global Properties</a></li>
+    <asp:ContentPlaceHolder runat="server" ID="TopBreadCrumbSub1"></asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content runat="server" ID="SubNavTitle" ContentPlaceHolderID="SubNavTitle">
+    <asp:ContentPlaceHolder runat="server" ID="SubNavTitle_Sub1"></asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content ID="SubNav" ContentPlaceHolderID="SubNav" runat="Server">
+    
+    <asp:ContentPlaceHolder runat="server" ID="SubNavLevel1" ></asp:ContentPlaceHolder>
+ 
+
+</asp:Content>
+
+
+
+
+
+<asp:Content runat="server" ID="Breadcrumb" ContentPlaceHolderID="DropDownActions">
+
+    <asp:ContentPlaceHolder ID="DropDownActionsSub" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+
+
+
+
+<asp:Content ID="MainContent" ContentPlaceHolderID="Content" Runat="Server">
+       <script type="text/javascript">
+           $(document).ready(function () {
+               $('#nav-global').addClass("nav-current");
+           });
+    </script>
+    <asp:ContentPlaceHolder ID="SubContent" runat="server">
+    </asp:ContentPlaceHolder>
+
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="Help">
+    <asp:ContentPlaceHolder runat="server" ID="subHelp"></asp:ContentPlaceHolder>
+</asp:Content>

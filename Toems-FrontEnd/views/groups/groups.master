@@ -1,0 +1,121 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/views/site.master" AutoEventWireup="true" CodeBehind="groups.master.cs" Inherits="Toems_FrontEnd.views.groups.groups" %>
+<asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumb">
+     <li>
+        <a href="<%= ResolveUrl("~/views/groups/search.aspx") %>">Groups</a>
+    </li>
+    <asp:ContentPlaceHolder ID="TopBreadCrumbSub1" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content runat="server" ID="SubNavTitle" ContentPlaceHolderID="SubNavTitle">
+    <asp:ContentPlaceHolder runat="server" ID="SubNavTitle_Sub1"></asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content ID="SubNav" ContentPlaceHolderID="SubNav" runat="Server">
+
+    <div id="Level1" runat="server">
+        <ul class="ul-secondary-nav">
+            <li id="search">
+                <a href="<%= ResolveUrl("~/views/groups/search.aspx") %>">
+                    <span class="sub-nav-text">Search</span></a>
+            </li>
+              <li id="create">
+                <a href="<%= ResolveUrl("~/views/groups/create.aspx") %>">
+                    <span class="sub-nav-text">New</span></a>
+            </li>
+               <li id="ou">
+                <a href="<%= ResolveUrl("~/views/groups/oubrowser.aspx") %>">
+                    <span class="sub-nav-text">Active Directory OU Browser</span></a>
+            </li>
+           
+
+           
+        </ul>
+    </div>
+
+    <div id="Level2" runat="server">
+           <ul class="ul-secondary-nav">
+            <li id="general">
+                <a href="<%= ResolveUrl("~/views/groups/general.aspx") %>?groupId=<%= GroupEntity.Id %>">
+                    <span class="sub-nav-text">General</span></a>
+            </li>
+            <li id="assignedpolicies">
+                <a href="<%= ResolveUrl("~/views/groups/assignedpolicies.aspx") %>?groupId=<%= GroupEntity.Id %>">
+                    <span class="sub-nav-text">Assigned Policies</span></a>
+            </li>
+            <li id="availablepolicies">
+                <a href="<%= ResolveUrl("~/views/groups/availablepolicies.aspx") %>?groupId=<%= GroupEntity.Id %>">
+                    <span class="sub-nav-text">Available Policies</span></a>
+            </li>
+                  <li id="dynamic" runat="server" Visible="false" class="smart" ClientIDMode="Static">
+                <a href="<%= ResolveUrl("~/views/groups/dynamic.aspx") %>?groupid=<%= GroupEntity.Id %>">
+                    <span class="sub-nav-text">Dynamic Criteria</span></a>
+            </li>
+      
+               <li id="currentmembers">
+                <a href="<%= ResolveUrl("~/views/groups/currentmembers.aspx") %>?groupId=<%= GroupEntity.Id %>">
+                    <span class="sub-nav-text">Current Group Members</span></a>
+            </li>
+                <li id="addmembers" runat="server" ClientIDMode="Static">
+                <a href="<%= ResolveUrl("~/views/groups/addmembers.aspx") %>?groupId=<%= GroupEntity.Id %>">
+                    <span class="sub-nav-text">Add Group Members</span></a>
+            </li>
+               
+                  <li id="message" runat="server" ClientIDMode="Static">
+                <a href="<%= ResolveUrl("~/views/groups/message.aspx") %>?groupId=<%= GroupEntity.Id %>">
+                    <span class="sub-nav-text">Send Message</span></a>
+            </li>
+               <li id="categories" runat="server" ClientIDMode="Static">
+                   <a href="<%= ResolveUrl("~/views/groups/categories.aspx") %>?groupId=<%= GroupEntity.Id %>">
+                       <span class="sub-nav-text">Categories</span></a>
+               </li>
+               <li id="process" runat="server" ClientIDMode="Static">
+                   <a href="<%= ResolveUrl("~/views/groups/processreport.aspx") %>?groupId=<%= GroupEntity.Id %>">
+                       <span class="sub-nav-text">Process Report</span></a>
+               </li>
+               </ul>
+
+    </div>
+
+</asp:Content>
+
+<asp:Content runat="server" ID="Breadcrumb" ContentPlaceHolderID="DropDownActions">
+ 
+    <asp:ContentPlaceHolder ID="DropDownActionsSub" runat="server">
+    </asp:ContentPlaceHolder>
+
+     <li><asp:LinkButton ID="btnCheckin" runat="server" OnClick="btnCheckin_OnClick" Text="Force Checkin"></asp:LinkButton></li>
+    <li>         <asp:LinkButton ID="btnDelete" runat="server" OnClick="btnDelete_OnClick" Text="Delete Group"></asp:LinkButton></li>
+    <li>    <asp:LinkButton ID="btnReboot" runat="server" OnClick="btnReboot_OnClick" Text="Reboot"></asp:LinkButton></li>
+    <li>    <asp:LinkButton ID="btnShutdown" runat="server" OnClick="btnShutdown_OnClick" Text="Shutdown"></asp:LinkButton></li>
+    <li>      <asp:LinkButton ID="btnWakeup" runat="server" OnClick="btnWakeup_OnClick" Text="Wake Up"></asp:LinkButton></li>
+    <li>      <asp:LinkButton ID="btnInventory" runat="server" OnClick="btnInventory_OnClick" Text="Collect Inventory"></asp:LinkButton></li>
+    <li> <asp:LinkButton ID="btnPin" runat="server" OnClick="btnPin_OnClick" Text="Pin Group"></asp:LinkButton></li>
+    <li>    <asp:LinkButton ID="btnUnpin" runat="server" OnClick="btnUnpin_OnClick" Text="Unpin Group"></asp:LinkButton></li>
+
+</asp:Content>
+
+<asp:Content ID="MainContent" ContentPlaceHolderID="Content" runat="Server">
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#nav-groups').addClass("nav-current");
+        });
+    </script>
+    <asp:ContentPlaceHolder ID="SubContent" runat="server">
+    </asp:ContentPlaceHolder>
+
+    <br class="clear"/>
+    <div id="confirmbox" class="confirm-box-outer">
+        <div class="confirm-box-inner">
+            <h4>
+                <asp:Label ID="lblTitle" runat="server" CssClass="modaltitle"></asp:Label>
+            </h4>
+
+            <div class="confirm-box-btns">
+                <asp:LinkButton ID="buttonConfirm" OnClick="buttonConfirm_Click" runat="server" Text="Yes" CssClass="confirm_yes"/>
+                <asp:LinkButton ID="CancelButton" runat="server" Text="No" CssClass="confirm_no"/>
+            </div>
+        </div>
+    </div>
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="Help">
+    <asp:ContentPlaceHolder runat="server" ID="subHelp"></asp:ContentPlaceHolder>
+</asp:Content>

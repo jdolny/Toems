@@ -1,0 +1,153 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/views/site.master" AutoEventWireup="true" CodeBehind="computers.master.cs" Inherits="Toems_FrontEnd.views.computers.computers" %>
+<asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumb">
+     <li>
+        <a href="<%= ResolveUrl("~/views/computers/search.aspx") %>">Computers</a>
+    </li>
+    <asp:ContentPlaceHolder ID="TopBreadCrumbSub1" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content runat="server" ID="SubNavTitle" ContentPlaceHolderID="SubNavTitle">
+    <asp:ContentPlaceHolder runat="server" ID="SubNavTitle_Sub1"></asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content ID="SubNav" ContentPlaceHolderID="SubNav" runat="Server">
+
+    <div id="Level1" runat="server">
+        <ul class="ul-secondary-nav">
+            <li id="search">
+                <a href="<%= ResolveUrl("~/views/computers/search.aspx") %>">
+                    <span class="sub-nav-text">Search Active</span></a>
+            </li>
+              <li id="all">
+                <a href="<%= ResolveUrl("~/views/computers/all.aspx") %>">
+                    <span class="sub-nav-text">Search All</span></a>
+            </li>
+              <li id="preprovision">
+                <a href="<%= ResolveUrl("~/views/computers/addpre.aspx") %>">
+                    <span class="sub-nav-text">Create Pre-Provision</span></a>
+            </li>
+              <li id="approval">
+                <a href="<%= ResolveUrl("~/views/computers/approvalrequests.aspx") %>">
+                    <span class="sub-nav-text">Approval Requests</span></a>
+            </li>
+              <li id="reset">
+                <a href="<%= ResolveUrl("~/views/computers/resetrequests.aspx") %>">
+                    <span class="sub-nav-text">Reset Requests</span></a>
+            </li>
+            
+        </ul>
+    </div>
+
+    <div id="Level2" runat="server">
+           <ul class ="ul-secondary-nav">
+            <li id="general">
+                <a href="<%= ResolveUrl("~/views/computers/general.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                    <span class="sub-nav-text">General</span></a>
+            </li>
+                 <li id="system">
+                <a href="<%= ResolveUrl("~/views/computers/systeminfo.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                    <span class="sub-nav-text">System Info</span></a>
+            </li>
+                  <li id="software">
+                <a href="<%= ResolveUrl("~/views/computers/software.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                    <span class="sub-nav-text">Software</span></a>
+            </li>
+                   <li id="updates">
+                <a href="<%= ResolveUrl("~/views/computers/updates.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                    <span class="sub-nav-text">Windows Updates</span></a>
+            </li>
+                <li id="custominventory">
+                <a href="<%= ResolveUrl("~/views/computers/custominventory.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                    <span class="sub-nav-text">Custom Inventory</span></a>
+            </li>
+                  <li id="usages">
+                 <a href="<%= ResolveUrl("~/views/computers/usages.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                    <span class="sub-nav-text">Usages</span></a>
+            </li>
+                  <li id="effective">
+                 <a href="<%= ResolveUrl("~/views/computers/effective.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                    <span class="sub-nav-text">Effective Policy</span></a>
+            </li>
+                 <li id="policyhistory">
+                 <a href="<%= ResolveUrl("~/views/computers/policyhistory.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                    <span class="sub-nav-text">Policy History</span></a>
+            </li>
+                <li id="userhistory">
+                <a href="<%= ResolveUrl("~/views/computers/userhistory.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                    <span class="sub-nav-text">User Login History</span></a>
+            </li>
+               <li id="customattributes">
+                   <a href="<%= ResolveUrl("~/views/computers/customattributes.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                       <span class="sub-nav-text">Custom Attributes</span></a>
+               </li>
+               <li id="comments">
+                   <a href="<%= ResolveUrl("~/views/computers/comments.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                       <span class="sub-nav-text">Comments</span></a>
+               </li>
+               <li id="attachments">
+                   <a href="<%= ResolveUrl("~/views/computers/attachments.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                       <span class="sub-nav-text">Attachments</span></a>
+               </li>
+                 <li id="message">
+                <a href="<%= ResolveUrl("~/views/computers/message.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                    <span class="sub-nav-text">Send Message</span></a>
+            </li>
+               <li id="process">
+                   <a href="<%= ResolveUrl("~/views/computers/processreport.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                       <span class="sub-nav-text">Process Report</span></a>
+               </li>
+          
+               </ul>
+
+    </div>
+
+</asp:Content>
+
+<asp:Content runat="server" ID="Breadcrumb" ContentPlaceHolderID="DropDownActions">
+ 
+    <asp:ContentPlaceHolder ID="DropDownActionsSub" runat="server">
+    </asp:ContentPlaceHolder>
+
+                <li><asp:LinkButton ID="btnArchive" runat="server" OnClick="btnArchive_OnClick" Text="Archive Computer"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnDelete" runat="server" OnClick="btnDelete_OnClick" Text="Delete Computer"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnCheckin" runat="server" OnClick="btnCheckin_OnClick" Text="Force Checkin"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnUsers" runat="server" OnClick="btnUsers_OnClick" Text="Current Users"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnStatus" runat="server" OnClick="btnStatus_OnClick" Text="Status"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnReboot" runat="server" OnClick="btnReboot_OnClick" Text="Reboot"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnShutdown" runat="server" OnClick="btnShutdown_OnClick" Text="Shutdown"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnWakeup" runat="server" OnClick="btnWakeup_OnClick" Text="Wake Up"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnInventory" runat="server" OnClick="btnInventory_OnClick" Text="Collect Inventory"></asp:LinkButton></li>
+
+</asp:Content>
+
+
+
+
+
+<asp:Content ID="MainContent" ContentPlaceHolderID="Content" runat="Server">
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#nav-hosts').addClass("nav-current");
+        });
+    </script>
+    <asp:ContentPlaceHolder ID="SubContent" runat="server">
+    </asp:ContentPlaceHolder>
+
+    <br class="clear"/>
+    <div id="confirmbox" class="confirm-box-outer">
+        <div class="confirm-box-inner">
+            <h4>
+                <asp:Label ID="lblTitle" runat="server" CssClass="modaltitle"></asp:Label>
+            </h4>
+            <br class="clear"/>
+            <div class="confirm-box-btns">
+                <asp:LinkButton ID="buttonConfirm" OnClick="buttonConfirm_Click" runat="server" Text="Yes" CssClass="confirm_yes"/>
+                <asp:LinkButton ID="CancelButton" runat="server" Text="No" CssClass="confirm_no"/>
+            </div>
+        </div>
+    </div>
+</asp:Content>
+
+<asp:Content runat="server" ContentPlaceHolderID="Help">
+    <asp:ContentPlaceHolder runat="server" ID="subHelp"></asp:ContentPlaceHolder>
+</asp:Content>

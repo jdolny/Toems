@@ -1,0 +1,75 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/views/assets/assets.master" AutoEventWireup="true" CodeBehind="assetgroups.master.cs" Inherits="Toems_FrontEnd.views.assets.assetgroups.assetgroups" %>
+<asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub1">
+    <li><a href="<%= ResolveUrl("~/views/assets/assetgroups/search.aspx") %>?level=2">Asset Groups</a></li>
+    <asp:ContentPlaceHolder runat="server" ID="TopBreadCrumbSub2"></asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub1">
+    <asp:ContentPlaceHolder runat="server" ID="SubNavTitle_Sub2"></asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub" Runat="Server">
+
+    <asp:ContentPlaceHolder runat="server" ID="DropDownActionsSub2">
+    </asp:ContentPlaceHolder>
+    <li><asp:LinkButton ID="btnDelete" runat="server" OnClick="btnDelete_OnClick" Text="Delete Asset Group"></asp:LinkButton></li>
+</asp:Content>
+
+
+
+<asp:Content ID="Content2" ContentPlaceHolderID="Level2" Runat="Server">
+    <div id="divLevel2" runat="server">
+        <ul class="ul-secondary-nav">
+            <li id="search">
+                <a href="<%= ResolveUrl("~/views/assets/assetgroups/search.aspx") %>?level=2">
+                    <span class="sub-nav-text">Search</span></a>
+            </li>
+            <li id="create">
+                <a href="<%= ResolveUrl("~/views/assets/assetgroups/create.aspx") %>?level=2">
+                    <span class="sub-nav-text">New</span></a>
+            </li>
+        </ul>
+    </div>
+    
+    <div id="divLevel3" runat="server">
+        <ul class="ul-secondary-nav">
+            <li id="general">
+                <a href="<%= ResolveUrl("~/views/assets/assetgroups/edit.aspx") %>?level=2&assetGroupId=<%=AssetGroup.Id %>">
+                    <span class="sub-nav-text">General</span></a>
+            </li>
+            <li id="currentmembers">
+                <a href="<%= ResolveUrl("~/views/assets/assetgroups/currentmembers.aspx") %>?level=2&assetGroupId=<%=AssetGroup.Id %>">
+                    <span class="sub-nav-text">Current Assets</span></a>
+            </li>
+            <li id="addmembers">
+                <a href="<%= ResolveUrl("~/views/assets/assetgroups/newmembers.aspx") %>?level=2&assetGroupId=<%=AssetGroup.Id %>">
+                    <span class="sub-nav-text">Available Assets</span></a>
+            </li>
+          
+        </ul>
+    </div>
+</asp:Content>
+
+<asp:Content ID="Content3" ContentPlaceHolderID="SubContent" Runat="Server">
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#assetgroups').addClass("nav-current");
+        });
+    </script>
+    <asp:ContentPlaceHolder ID="SubContent2" runat="server">
+    </asp:ContentPlaceHolder>
+    <br class="clear"/>
+    <div id="confirmbox" class="confirm-box-outer">
+        <div class="confirm-box-inner">
+            <h4>
+                <asp:Label ID="lblTitle" runat="server" CssClass="modaltitle"></asp:Label>
+            </h4>
+            <br class="clear"/>
+            <div class="confirm-box-btns">
+                <asp:LinkButton ID="buttonConfirm" OnClick="buttonConfirm_Click" runat="server" Text="Yes" CssClass="confirm_yes"/>
+                <asp:LinkButton ID="CancelButton" runat="server" Text="No" CssClass="confirm_no"/>
+            </div>
+        </div>
+    </div>
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="subHelp">
+    <asp:ContentPlaceHolder runat="server" ID="subsubHelp"></asp:ContentPlaceHolder>
+</asp:Content>

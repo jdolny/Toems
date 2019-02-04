@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6EAD11E1-3464-40A1-B6CD-24D40AD2507A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Toems_Common</RootNamespace>
+    <AssemblyName>Toems-Common</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\x64\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AuthorizationStrings.cs" />
+    <Compile Include="Dto\DtoActionResult.cs" />
+    <Compile Include="Dto\DtoApiBoolResponse.cs" />
+    <Compile Include="Dto\DtoApiIntResponse.cs" />
+    <Compile Include="Dto\DtoApiObjectResponse.cs" />
+    <Compile Include="Dto\DtoApiStringResponse.cs" />
+    <Compile Include="Dto\DtoAppMonitor.cs" />
+    <Compile Include="Dto\client\DtoClientCommandModule.cs" />
+    <Compile Include="Dto\client\DtoClientFileCopyModule.cs" />
+    <Compile Include="Dto\client\DtoClientFileHash.cs" />
+    <Compile Include="Dto\client\DtoClientPolicy.cs" />
+    <Compile Include="Dto\client\DtoClientPrinterModule.cs" />
+    <Compile Include="Dto\DtoAdComputerObject.cs" />
+    <Compile Include="Dto\client\DtoClientFileRequest.cs" />
+    <Compile Include="Dto\client\DtoClientIdentity.cs" />
+    <Compile Include="Dto\client\DtoClientScriptModule.cs" />
+    <Compile Include="Dto\client\DtoClientWuModule.cs" />
+    <Compile Include="Dto\client\DtoClientSoftwareModule.cs" />
+    <Compile Include="Dto\DtoComputerComment.cs" />
+    <Compile Include="Dto\DtoAssetComment.cs" />
+    <Compile Include="Dto\DtoAssetSoftware.cs" />
+    <Compile Include="Dto\DtoCustomAttributeWithType.cs" />
+    <Compile Include="Dto\DtoAssetWithType.cs" />
+    <Compile Include="Dto\DtoComputerProcessCount.cs" />
+    <Compile Include="Dto\DtoComServerConnection.cs" />
+    <Compile Include="Dto\DtoCustomComputerQuery.cs" />
+    <Compile Include="Dto\DtoDownloadConnectionResult.cs" />
+    <Compile Include="Dto\DtoDownloadConRequest.cs" />
+    <Compile Include="Dto\DtoFileDownload.cs" />
+    <Compile Include="Dto\DtoImpersonationAccount.cs" />
+    <Compile Include="Dto\DtoImportResult.cs" />
+    <Compile Include="Dto\DtoModuleFile.cs" />
+    <Compile Include="Dto\DtoPinnedGroup.cs" />
+    <Compile Include="Dto\DtoProcessWithUser.cs" />
+    <Compile Include="Dto\DtoProvisionHardware.cs" />
+    <Compile Include="Dto\exports\DtoCommandModuleExport.cs" />
+    <Compile Include="Dto\exports\DtoExternalFileExport.cs" />
+    <Compile Include="Dto\exports\DtoFileCopyModuleExport.cs" />
+    <Compile Include="Dto\exports\DtoPolicyExportGeneral.cs" />
+    <Compile Include="Dto\exports\DtoPrinterModuleExport.cs" />
+    <Compile Include="Dto\exports\DtoScriptModuleExport.cs" />
+    <Compile Include="Dto\exports\DtoSoftwareModuleExport.cs" />
+    <Compile Include="Dto\exports\DtoUploadedFileExport.cs" />
+    <Compile Include="Dto\exports\DtoWuModuleExport.cs" />
+    <Compile Include="Dto\exports\DtoPolicyExport.cs" />
+    <Compile Include="Dto\DtoSearchFilter.cs" />
+    <Compile Include="Dto\DtoSearchFilterAllComputers.cs" />
+    <Compile Include="Dto\DtoSearchFilterCategories.cs" />
+    <Compile Include="Dto\DtoUserProcessCount.cs" />
+    <Compile Include="Dto\DtoUserProcessTime.cs" />
+    <Compile Include="Dto\DtoComputerProcessTime.cs" />
+    <Compile Include="Dto\DtoCustomApiCall.cs" />
+    <Compile Include="Dto\client\DtoClientStartupInfo.cs" />
+    <Compile Include="Dto\DtoComputerUpdates.cs" />
+    <Compile Include="Dto\DtoComputerPolicyHistory.cs" />
+    <Compile Include="Dto\DtoComputerUserLogins.cs" />
+    <Compile Include="Dto\DtoCustomComputerInventory.cs" />
+    <Compile Include="Dto\DtoFreeSpace.cs" />
+    <Compile Include="Dto\DtoGuidTypeMapping.cs" />
+    <Compile Include="Dto\DtoConfirmProvisionRequest.cs" />
+    <Compile Include="Dto\DtoInventoryCollection.cs" />
+    <Compile Include="Dto\client\DtoClientComServers.cs" />
+    <Compile Include="Dto\DtoIpInfo.cs" />
+    <Compile Include="Dto\DtoMessage.cs" />
+    <Compile Include="Dto\DtoPinnedPolicy.cs" />
+    <Compile Include="Dto\DtoOU.cs" />
+    <Compile Include="Dto\DtoPolicyRequest.cs" />
+    <Compile Include="Dto\DtoPolicyResults.cs" />
+    <Compile Include="Dto\DtoProcessWithCount.cs" />
+    <Compile Include="Dto\DtoProcessWithTime.cs" />
+    <Compile Include="Dto\DtoProvisionRequest.cs" />
+    <Compile Include="Dto\DtoProvisionResponse.cs" />
+    <Compile Include="Dto\DtoRawSqlQuery.cs" />
+    <Compile Include="Dto\DtoRecurringJobStatus.cs" />
+    <Compile Include="Dto\DtoRenewKeyRequest.cs" />
+    <Compile Include="Dto\DtoTriggerResponse.cs" />
+    <Compile Include="Dto\DtoFileUpload.cs" />
+    <Compile Include="Dto\DtoModule.cs" />
+    <Compile Include="Dto\DtoModuleSearchFilter.cs" />
+    <Compile Include="Dto\DtoToken.cs" />
+    <Compile Include="Dto\DtoValidationResult.cs" />
+    <Compile Include="Dto\DtoWolTask.cs" />
+    <Compile Include="Entity\EntityAntivirusInventory.cs" />
+    <Compile Include="Entity\EntityAssetGroupMember.cs" />
+    <Compile Include="Entity\EntityAssetGroup.cs" />
+    <Compile Include="Entity\EntityAssetAttachment.cs" />
+    <Compile Include="Entity\EntityAssetComment.cs" />
+    <Compile Include="Entity\EntityAssetCategory.cs" />
+    <Compile Include="Entity\EntityPinnedGroup.cs" />
+    <Compile Include="Entity\EntitySoftwareAssetSoftware.cs" />
+    <Compile Include="Entity\EntityComputerComment.cs" />
+    <Compile Include="Entity\EntityComputerAttachment.cs" />
+    <Compile Include="Entity\EntityAttachment.cs" />
+    <Compile Include="Entity\EntityComment.cs" />
+    <Compile Include="Entity\EntityAsset.cs" />
+    <Compile Include="Entity\EntityCustomAssetType.cs" />
+    <Compile Include="Entity\EntityAssetAttribute.cs" />
+    <Compile Include="Entity\EntityCustomComputerAttribute.cs" />
+    <Compile Include="Entity\EntityExternalDownload.cs" />
+    <Compile Include="Entity\EntityCategory.cs" />
+    <Compile Include="Entity\EntityComputerCategory.cs" />
+    <Compile Include="Entity\EntityModuleCategory.cs" />
+    <Compile Include="Entity\EntityGroupCategory.cs" />
+    <Compile Include="Entity\EntityCustomAttribute.cs" />
+    <Compile Include="Entity\EntityPolicyCategory.cs" />
+    <Compile Include="Entity\EntityPolicyComServer.cs" />
+    <Compile Include="Entity\EntityAuditLog.cs" />
+    <Compile Include="Entity\EntityCurrentDownload.cs" />
+    <Compile Include="Entity\EntityBitlockerInventory.cs" />
+    <Compile Include="Entity\EntityComputerProcess.cs" />
+    <Compile Include="Entity\EntityFirewallInventory.cs" />
+    <Compile Include="Entity\EntityLogicalVolumeInventory.cs" />
+    <Compile Include="Entity\EntityProcessInventory.cs" />
+    <Compile Include="Entity\EntityWuModule.cs" />
+    <Compile Include="Entity\EntityWolRelay.cs" />
+    <Compile Include="Entity\EntityCommandModule.cs" />
+    <Compile Include="Entity\EntityActiveClientPolicy.cs" />
+    <Compile Include="Entity\EntityActiveGroupPolicy.cs" />
+    <Compile Include="Entity\EntityApprovalRequest.cs" />
+    <Compile Include="Entity\EntityComputerUpdates.cs" />
+    <Compile Include="Entity\EntitySchedule.cs" />
+    <Compile Include="Entity\EntityNicInventory.cs" />
+    <Compile Include="Entity\EntityResetRequest.cs" />
+    <Compile Include="Entity\EntityBiosInventory.cs" />
+    <Compile Include="Entity\EntityComServerClusterServer.cs" />
+    <Compile Include="Entity\EntityComServerCluster.cs" />
+    <Compile Include="Entity\EntityCustomInventory.cs" />
+    <Compile Include="Entity\EntityClientComServer.cs" />
+    <Compile Include="Entity\EntityPolicyHashHistory.cs" />
+    <Compile Include="Entity\EntityPinnedPolicy.cs" />
+    <Compile Include="Entity\EntityImpersonationAccount.cs" />
+    <Compile Include="Entity\EntityPolicyHistory.cs" />
+    <Compile Include="Entity\EntitySmartGroupQuery.cs" />
+    <Compile Include="Entity\EntityCertificate.cs" />
+    <Compile Include="Entity\EntityComputer.cs" />
+    <Compile Include="Entity\EntityComputerSystemInventory.cs" />
+    <Compile Include="Entity\EntityComputerSoftware.cs" />
+    <Compile Include="Entity\EntityModule.cs" />
+    <Compile Include="Entity\EntityGroupMembership.cs" />
+    <Compile Include="Entity\EntityHardDriveInventory.cs" />
+    <Compile Include="Entity\EntityOsInventory.cs" />
+    <Compile Include="Entity\EntityPrinterInventory.cs" />
+    <Compile Include="Entity\EntityProcessorInventory.cs" />
+    <Compile Include="Entity\EntitySoftwareInventory.cs" />
+    <Compile Include="Entity\EntityUserLogin.cs" />
+    <Compile Include="Entity\EntityWindowsUpdateInventory.cs" />
+    <Compile Include="Entity\EntityFileCopyModule.cs" />
+    <Compile Include="Entity\EntityGroup.cs" />
+    <Compile Include="Entity\EntityGroupPolicy.cs" />
+    <Compile Include="Entity\EntityPolicy.cs" />
+    <Compile Include="Entity\EntityPolicyModules.cs" />
+    <Compile Include="Entity\EntityPrinterModule.cs" />
+    <Compile Include="Entity\EntityScriptModule.cs" />
+    <Compile Include="Entity\EntitySetting.cs" />
+    <Compile Include="Entity\EntitySoftwareModule.cs" />
+    <Compile Include="Entity\EntityUploadedFile.cs" />
+    <Compile Include="Entity\EntityToemsUser.cs" />
+    <Compile Include="Entity\EntityToemsUserGroup.cs" />
+    <Compile Include="Entity\EntityUserGroupRight.cs" />
+    <Compile Include="Entity\EntityUserLockout.cs" />
+    <Compile Include="Entity\EntityUserRight.cs" />
+    <Compile Include="Entity\EntityVersion.cs" />
+    <Compile Include="Enum\EnumCustomAttribute.cs" />
+    <Compile Include="Enum\EnumFileDownloader.cs" />
+    <Compile Include="Enum\EnumPolicyHistory.cs" />
+    <Compile Include="Enum\EnumProvisionStatus.cs" />
+    <Compile Include="Enum\EnumCertificate.cs" />
+    <Compile Include="Enum\EnumCalendar.cs" />
+    <Compile Include="Enum\EnumAuditEntry.cs" />
+    <Compile Include="Enum\EnumModule.cs" />
+    <Compile Include="Enum\EnumPolicy.cs" />
+    <Compile Include="Enum\EnumPrinterModule.cs" />
+    <Compile Include="Enum\EnumScriptModule.cs" />
+    <Compile Include="Enum\EnumSoftwareAsset.cs" />
+    <Compile Include="Enum\EnumSoftwareModule.cs" />
+    <Compile Include="Enum\EnumStartupDelay.cs" />
+    <Compile Include="Enum\EnumUserTracker.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SettingStrings.cs" />
+    <Compile Include="Utility.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
