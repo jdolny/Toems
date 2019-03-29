@@ -73,6 +73,7 @@
     <Compile Include="Dto\DtoDownloadConnectionResult.cs" />
     <Compile Include="Dto\DtoDownloadConRequest.cs" />
     <Compile Include="Dto\DtoFileDownload.cs" />
+    <Compile Include="Dto\DtoHubAction.cs" />
     <Compile Include="Dto\DtoImpersonationAccount.cs" />
     <Compile Include="Dto\DtoImportResult.cs" />
     <Compile Include="Dto\DtoModuleFile.cs" />

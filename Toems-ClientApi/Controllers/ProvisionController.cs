@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Web.Http;
 using log4net;
 using Toems_ClientApi.Controllers.Authorization;
+using Toems_ClientApi.Hubs;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Dto.client;
@@ -19,6 +20,12 @@ namespace Toems_ClientApi.Controllers
         private static readonly ILog Logger =
             LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        [HttpGet]
+        public string TestHub()
+        {
+            new ActionHub().SendAction();
+            return "Action Sent";
+        }
 
         public DtoApiStringResponse GetToecApiVersion()
         {
