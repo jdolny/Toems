@@ -80,6 +80,7 @@
     <Compile Include="Dto\DtoPinnedGroup.cs" />
     <Compile Include="Dto\DtoProcessWithUser.cs" />
     <Compile Include="Dto\DtoProvisionHardware.cs" />
+    <Compile Include="Dto\DtoRAServerLogin.cs" />
     <Compile Include="Dto\exports\DtoCommandModuleExport.cs" />
     <Compile Include="Dto\exports\DtoExternalFileExport.cs" />
     <Compile Include="Dto\exports\DtoFileCopyModuleExport.cs" />
@@ -219,6 +220,7 @@
     <Compile Include="Enum\EnumModule.cs" />
     <Compile Include="Enum\EnumPolicy.cs" />
     <Compile Include="Enum\EnumPrinterModule.cs" />
+    <Compile Include="Enum\EnumRemoteAccess.cs" />
     <Compile Include="Enum\EnumScriptModule.cs" />
     <Compile Include="Enum\EnumSoftwareAsset.cs" />
     <Compile Include="Enum\EnumSoftwareModule.cs" />

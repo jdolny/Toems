@@ -39,6 +39,28 @@ namespace Toems_Common
                     return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
                 }
             }
-        }    
+        }
+
+        public static string ReplaceHttp(string url)
+        {
+            if (url == null)
+                return string.Empty;
+            if (url.Length < 8)
+                return url;
+            var r = string.Empty;
+            if (url.StartsWith("https"))
+            {
+                r = url.Replace("https://", "");
+            }
+            else if (url.StartsWith("http"))
+            {
+                r = url.Replace("http://", "");
+            }
+            else
+            {
+                r = url;
+            }
+            return r;
+        }
     }
 }

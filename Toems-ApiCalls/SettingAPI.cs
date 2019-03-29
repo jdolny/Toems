@@ -128,6 +128,58 @@ namespace Toems_ApiCalls
             return string.Empty;
         }
 
-      
+        public string GetMeshAdminPass()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetMeshAdminPass/", Resource);
+            var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            if (response != null)
+            {
+                if (response.Value != null)
+                    return response.Value;
+                else
+                {
+                    return string.Empty;
+                }
+            }
+            return string.Empty;
+        }
+
+        public string GetMeshControlPass()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetMeshControlPass/", Resource);
+            var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            if (response != null)
+            {
+                if (response.Value != null)
+                    return response.Value;
+                else
+                {
+                    return string.Empty;
+                }
+            }
+            return string.Empty;
+        }
+
+        public string GetMeshViewPass()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetMeshViewPass/", Resource);
+            var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            if (response != null)
+            {
+                if (response.Value != null)
+                    return response.Value;
+                else
+                {
+                    return string.Empty;
+                }
+            }
+            return string.Empty;
+        }
+
+
+
     }
 }

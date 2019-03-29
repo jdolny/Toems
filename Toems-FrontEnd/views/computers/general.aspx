@@ -110,6 +110,13 @@
     <div class="size-lbl2 column">
         <asp:Label runat="server" ID="lblPushUrl" ></asp:Label>
     </div>
+    <br class="clear"/>
+       <div class="size-lbl column">
+        Remote Access ID:
+    </div>
+    <div class="size-lbl2 column">
+        <asp:Label runat="server" ID="lblRemoteAccessId" ></asp:Label>
+    </div>
 
     
 </asp:Content>

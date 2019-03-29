@@ -96,6 +96,16 @@
 
         public const string UserLoginHistoryAutoDelete = "User Login History Auto Delete Days";
 
+        public const string RemoteAccessServer = "Remote Access Server";
+
+        public const string RemoteAccessAdminPasswordEncrypted = "Remote Access Admin Password Encrypted";
+
+        public const string RemoteAccessControlPasswordEncrypted = "Remote Access Control Password Encrypted";
+
+        public const string RemoteAccessViewPasswordEncrypted = "Remote Access View Password Encrypted";
+
+        public const string RemoteAccessStatus = "Remote Access Status";
+
         public const string SharedLibraryVersion = "1.0.0.0";
 
     }

@@ -128,6 +128,7 @@
     <Content Include="views\admin\ldap.aspx" />
     <Content Include="views\admin\logs\application.aspx" />
     <Content Include="views\admin\logs\frontend.aspx" />
+    <Content Include="views\admin\remoteaccess.aspx" />
     <Content Include="views\admin\server.aspx" />
     <Content Include="views\admin\storage.aspx" />
     <Content Include="views\admin\taskscheduler.aspx" />
@@ -166,6 +167,7 @@
     <Content Include="views\computers\message.aspx" />
     <Content Include="views\computers\policyhistory.aspx" />
     <Content Include="views\computers\processreport.aspx" />
+    <Content Include="views\computers\remoteaccess.aspx" />
     <Content Include="views\computers\resetrequests.aspx" />
     <Content Include="views\computers\search.aspx" />
     <Content Include="views\computers\software.aspx" />
@@ -1019,6 +1021,13 @@
     <Compile Include="views\admin\logs\logs.master.designer.cs">
       <DependentUpon>logs.master</DependentUpon>
     </Compile>
+    <Compile Include="views\admin\remoteaccess.aspx.cs">
+      <DependentUpon>remoteaccess.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\remoteaccess.aspx.designer.cs">
+      <DependentUpon>remoteaccess.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\admin\security.aspx.cs">
       <DependentUpon>security.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1333,6 +1342,13 @@
     </Compile>
     <Compile Include="views\computers\processreport.aspx.designer.cs">
       <DependentUpon>processreport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\computers\remoteaccess.aspx.cs">
+      <DependentUpon>remoteaccess.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\computers\remoteaccess.aspx.designer.cs">
+      <DependentUpon>remoteaccess.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\computers\resetrequests.aspx.cs">
       <DependentUpon>resetrequests.aspx</DependentUpon>

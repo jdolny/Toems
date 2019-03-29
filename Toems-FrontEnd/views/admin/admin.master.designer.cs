@@ -67,6 +67,15 @@ namespace Toems_FrontEnd.views.admin {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl comservers;
         
         /// <summary>
+        /// remoteaccess control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl remoteaccess;
+        
+        /// <summary>
         /// ldap control.
         /// </summary>
         /// <remarks>

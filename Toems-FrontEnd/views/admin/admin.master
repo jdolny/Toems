@@ -32,6 +32,11 @@
                     <span class="nav-text">Client Com Servers</span>
                 </a>
             </li>
+              <li id="remoteaccess" runat="server" clientidmode="Static">
+                <a href="<%= ResolveUrl("~/views/admin/remoteaccess.aspx") %>">
+                    <span class="nav-text">Remote Access</span>
+                </a>
+            </li>
                <li id="ldap" runat="server" clientidmode="Static">
                 <a href="<%= ResolveUrl("~/views/admin/ldap.aspx") %>">
                     <span class="nav-text">LDAP</span>

@@ -136,5 +136,26 @@ namespace Toems_ApplicationApi.Controllers
         {
             return new DtoApiBoolResponse() { Value = new LdapSync().TestBind() };
         }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpGet]
+        public DtoApiStringResponse GetMeshAdminPass()
+        {
+            return new DtoApiStringResponse() { Value = new ServiceSetting().GetMeshUserPass("admin") };
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.RemoteAccessControl)]
+        [HttpGet]
+        public DtoApiStringResponse GetMeshControlPass()
+        {
+            return new DtoApiStringResponse() { Value = new ServiceSetting().GetMeshUserPass("control") };
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.RemoteAccessView)]
+        [HttpGet]
+        public DtoApiStringResponse GetMeshViewPass()
+        {
+            return new DtoApiStringResponse() { Value = new ServiceSetting().GetMeshUserPass("view") };
+        }
     }
 }

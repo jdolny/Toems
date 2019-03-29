@@ -38,7 +38,8 @@ namespace Toems_Service.Entity
             {
                 if (setting.Name == SettingStrings.StoragePassword || setting.Name == SettingStrings.SmtpPassword ||
                     setting.Name == SettingStrings.LdapBindPassword ||
-                    setting.Name == SettingStrings.ProvisionKeyEncrypted || setting.Name == SettingStrings.IntercomKeyEncrypted)
+                     setting.Name == SettingStrings.ProvisionKeyEncrypted || setting.Name == SettingStrings.IntercomKeyEncrypted || setting.Name == SettingStrings.RemoteAccessAdminPasswordEncrypted
+                    || setting.Name == SettingStrings.RemoteAccessControlPasswordEncrypted || setting.Name == SettingStrings.RemoteAccessViewPasswordEncrypted)
                 {
                     if (setting.Name == SettingStrings.ProvisionKeyEncrypted && string.IsNullOrEmpty(setting.Value))
                         continue;
@@ -81,6 +82,21 @@ namespace Toems_Service.Entity
 
             return "SERVER_KEY=" + provisionKey + " CA_THUMBPRINT=" + thumbprint + " COM_SERVERS=" +
                    comServers.Trim(',');
+        }
+
+        public string GetMeshUserPass(string type)
+        {
+            switch (type)
+            {
+                case "admin":
+                    return new EncryptionServices().DecryptText(GetSettingValue(SettingStrings.RemoteAccessAdminPasswordEncrypted));
+                case "control":
+                    return new EncryptionServices().DecryptText(GetSettingValue(SettingStrings.RemoteAccessControlPasswordEncrypted));
+                case "view":
+                    return new EncryptionServices().DecryptText(GetSettingValue(SettingStrings.RemoteAccessViewPasswordEncrypted));
+                default:
+                    return string.Empty;
+            }
         }
     }
 }

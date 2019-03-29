@@ -116,6 +116,12 @@
 
         public const string AssetDelete = "assetDelete";
 
+        public const string RemoteAccessControl = "remoteAccessControl";
+
+        public const string RemoteAccessView = "remoteAccessView";
+
+        public const string RemoteAccessRdp = "remoteAccessRdp";
+
 
     }
 }

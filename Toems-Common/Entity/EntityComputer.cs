@@ -61,7 +61,10 @@ namespace Toems_Common.Entity
 
         [Column("datetime_archived_local")]
         public DateTime? ArchiveDateTime { get; set; }
-        
+
+        [Column("remote_access_id")]
+        public string RemoteAccessId { get; set; }
+
     }
 
     [NotMapped]
