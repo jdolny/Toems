@@ -22,6 +22,8 @@ namespace Toems_Service.Workflows
             new ServiceComputerUpdates().AddOrUpdate(collection.WindowsUpdates, client.Id);
             new ServiceSoftwareInventory().Add(collection.Software);
             new ServiceComputerSoftware().AddOrUpdate(collection.Software, client.Id);
+            new ServiceCertificateInventory().Add(collection.Certificates);
+            new ServiceComputerCertificate().AddOrUpdate(collection.Certificates, client.Id);
             new ServiceAntivirusInventory().AddOrUpdate(collection.AntiVirus, client.Id);
             new ServiceLogicalVolumeInventory().AddOrUpdate(collection.LogicalVolume, client.Id);
             new ServiceBitlockerInventory().AddOrUpdate(collection.Bitlocker, client.Id);

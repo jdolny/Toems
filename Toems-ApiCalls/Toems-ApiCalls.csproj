@@ -76,6 +76,7 @@
     <Compile Include="CategoryAPI.cs" />
     <Compile Include="ExternalDownloadAPI.cs" />
     <Compile Include="CustomAttributeAPI.cs" />
+    <Compile Include="CertificateInventoryAPI.cs" />
     <Compile Include="SoftwareInventoryAPI.cs" />
     <Compile Include="ProcessInventoryAPI.cs" />
     <Compile Include="WuModuleAPI.cs" />

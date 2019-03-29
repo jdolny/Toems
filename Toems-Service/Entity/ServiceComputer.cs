@@ -377,6 +377,12 @@ namespace Toems_Service.Entity
           
         }
 
+        public List<EntityCertificateInventory> GetComputerCertificates(int id, string searchString = "")
+        {
+            return _uow.ComputerRepository.GetComputerCertificates(id, searchString);
+
+        }
+
         public bool SendMessage(int id, DtoMessage message)
         {
             var computer = _uow.ComputerRepository.GetById(id);

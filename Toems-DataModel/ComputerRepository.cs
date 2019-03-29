@@ -43,6 +43,15 @@ namespace Toems_DataModel
                     select z).OrderBy(x => x.Name).ToList();
         }
 
+        public List<EntityCertificateInventory> GetComputerCertificates(int computerId, string searchString)
+        {
+            return (from h in _context.Computers
+                    join g in _context.ComputerCertificates on h.Id equals g.ComputerId
+                    join z in _context.CertificateInventory on g.CertificateId equals z.Id
+                    where (h.Id == computerId && z.Subject.Contains(searchString))
+                    select z).OrderBy(x => x.Subject).ToList();
+        }
+
 
         public List<DtoComputerUpdates> GetWindowsUpdates(int computerId, string searchString)
         {

@@ -56,6 +56,10 @@
                 <a href="<%= ResolveUrl("~/views/computers/updates.aspx") %>?computerId=<%= ComputerEntity.Id %>">
                     <span class="sub-nav-text">Windows Updates</span></a>
             </li>
+                 <li id="certificates">
+                <a href="<%= ResolveUrl("~/views/computers/certificates.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                    <span class="sub-nav-text">Certificates</span></a>
+            </li>
                 <li id="custominventory">
                 <a href="<%= ResolveUrl("~/views/computers/custominventory.aspx") %>?computerId=<%= ComputerEntity.Id %>">
                     <span class="sub-nav-text">Custom Inventory</span></a>

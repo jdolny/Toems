@@ -146,6 +146,7 @@
     <Compile Include="Controllers\CategoryController.cs" />
     <Compile Include="Controllers\ExternalDownloadController.cs" />
     <Compile Include="Controllers\CustomAttributeController.cs" />
+    <Compile Include="Controllers\CertificateInventoryController.cs" />
     <Compile Include="Controllers\SoftwareInventoryController.cs" />
     <Compile Include="Controllers\ProcessInventoryController.cs" />
     <Compile Include="Controllers\WuModuleController.cs" />

@@ -97,6 +97,8 @@ namespace Toems_DataModel
         private IGenericRepository<EntityAssetGroupMember> _assetGroupMemberRepository;
         private IGenericRepository<EntityAssetCategory> _assetCategoryRepository;
         private IGenericRepository<EntityPinnedGroup> _pinnedGroupRepository;
+        private IGenericRepository<EntityCertificateInventory> _certificateInventoryRepository;
+        private IGenericRepository<EntityComputerCertificate> _computerCertificateRepository;
 
         private bool disposed;
 
@@ -104,6 +106,21 @@ namespace Toems_DataModel
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+        public IGenericRepository<EntityCertificateInventory> CertificateInventoryRepository
+        {
+            get
+            {
+                return _certificateInventoryRepository ?? (_certificateInventoryRepository = new GenericRepository<EntityCertificateInventory>(_context));
+            }
+        }
+
+        public IGenericRepository<EntityComputerCertificate> ComputerCertificateRepository
+        {
+            get
+            {
+                return _computerCertificateRepository ?? (_computerCertificateRepository = new GenericRepository<EntityComputerCertificate>(_context));
+            }
         }
 
         public IGenericRepository<EntityPinnedGroup> PinnedGroupRepository

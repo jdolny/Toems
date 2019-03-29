@@ -157,6 +157,7 @@
     <Content Include="views\computers\all.aspx" />
     <Content Include="views\computers\approvalrequests.aspx" />
     <Content Include="views\computers\attachments.aspx" />
+    <Content Include="views\computers\certificates.aspx" />
     <Content Include="views\computers\comments.aspx" />
     <Content Include="views\computers\customattributes.aspx" />
     <Content Include="views\computers\custominventory.aspx" />
@@ -256,6 +257,7 @@
     <Content Include="views\policies\usages.aspx" />
     <Content Include="views\reports\asset\chooser.aspx" />
     <Content Include="views\reports\asset\custom.aspx" />
+    <Content Include="views\reports\certificates.aspx" />
     <Content Include="views\reports\chooser.aspx" />
     <Content Include="views\reports\computer\chooser.aspx" />
     <Content Include="views\reports\computer\custom.aspx" />
@@ -1262,6 +1264,13 @@
     <Compile Include="views\computers\attachments.aspx.designer.cs">
       <DependentUpon>attachments.aspx</DependentUpon>
     </Compile>
+    <Compile Include="views\computers\certificates.aspx.cs">
+      <DependentUpon>certificates.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\computers\certificates.aspx.designer.cs">
+      <DependentUpon>certificates.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\computers\comments.aspx.cs">
       <DependentUpon>comments.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -2073,6 +2082,13 @@
     </Compile>
     <Compile Include="views\reports\asset\custom.aspx.designer.cs">
       <DependentUpon>custom.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\reports\certificates.aspx.cs">
+      <DependentUpon>certificates.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\reports\certificates.aspx.designer.cs">
+      <DependentUpon>certificates.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\reports\chooser.aspx.cs">
       <DependentUpon>chooser.aspx</DependentUpon>

@@ -54,5 +54,6 @@
         AssetGroupMemberAPI AssetGroupMemberApi { get; }
         AssetCategoryAPI AssetCategoryApi { get; }
         PinnedGroupAPI PinnedGroupApi { get; }
+        CertificateInventoryAPI CertificateInventoryApi { get; }
     }
 }

@@ -18,6 +18,7 @@ namespace Toems_Common.Dto
         public List<EntityAntivirusInventory> AntiVirus { get; set; }
         public List<EntityBitlockerInventory> Bitlocker { get; set; }
         public List<EntityLogicalVolumeInventory> LogicalVolume { get; set; }
+        public List<EntityCertificateInventory> Certificates { get; set; }
         public EntityFirewallInventory Firewall { get; set; }
         public string ClientVersion { get; set; }
         public string PushUrl { get; set; }

@@ -16,6 +16,11 @@ namespace Toems_ApiCalls
 
         }
 
+        public CertificateInventoryAPI CertificateInventoryApi
+        {
+            get { return new CertificateInventoryAPI("CertificateInventory"); }
+        }
+
         public PinnedGroupAPI PinnedGroupApi
         {
             get { return new PinnedGroupAPI("PinnedGroup");}

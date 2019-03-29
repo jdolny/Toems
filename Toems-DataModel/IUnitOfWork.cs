@@ -86,6 +86,8 @@ namespace Toems_DataModel
         IGenericRepository<EntityAssetGroupMember> AssetGroupMemberRepository { get; }
         IGenericRepository<EntityAssetCategory> AssetCategoryRepository { get; }
         IGenericRepository<EntityPinnedGroup> PinnedGroupRepository { get; }
+        IGenericRepository<EntityCertificateInventory> CertificateInventoryRepository { get; }
+        IGenericRepository<EntityComputerCertificate> ComputerCertificateRepository { get; }
         void Save();
     }
 }

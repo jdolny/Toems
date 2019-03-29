@@ -89,6 +89,8 @@ namespace Toems_DataModel
         public DbSet<EntityAssetGroupMember> AssetGroupMembers { get; set; }
         public DbSet<EntityAssetCategory> AssetCategories { get; set; }
         public DbSet<EntityPinnedGroup> PinnedGroups { get; set; }
+        public DbSet<EntityComputerCertificate> ComputerCertificates { get; set; }
+        public DbSet<EntityCertificateInventory> CertificateInventory { get; set; }
 
     }
 }

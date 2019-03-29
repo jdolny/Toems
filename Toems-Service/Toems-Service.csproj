@@ -66,6 +66,7 @@
     <Compile Include="Entity\ServiceAssetAttachment.cs" />
     <Compile Include="Entity\ServiceAssetGroupMember.cs" />
     <Compile Include="Entity\ServiceAssetCategory.cs" />
+    <Compile Include="Entity\ServiceComputerCertificate.cs" />
     <Compile Include="Entity\ServicePinnedGroup.cs" />
     <Compile Include="Entity\ServiceSoftwareAssetSoftware.cs" />
     <Compile Include="Entity\ServiceComputerAttachment.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Entity\ServiceCategory.cs" />
     <Compile Include="Entity\ServiceExternalDownload.cs" />
     <Compile Include="Entity\ServiceCustomAttribute.cs" />
+    <Compile Include="Entity\ServiceCertificateInventory.cs" />
     <Compile Include="Entity\ServiceWuModule.cs" />
     <Compile Include="Entity\ServiceWolRelay.cs" />
     <Compile Include="Entity\ServiceSchedule.cs" />

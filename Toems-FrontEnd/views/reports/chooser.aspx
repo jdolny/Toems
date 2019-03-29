@@ -25,6 +25,10 @@
                 <a href="<%= ResolveUrl("~/views/reports/software.aspx") %>">
                     <span class="sub-nav-text">Software List</span></a>
             </li>
+               <li id="certificates">
+                <a href="<%= ResolveUrl("~/views/reports/certificates.aspx") %>">
+                    <span class="sub-nav-text">Certificate List</span></a>
+            </li>
         </ul>
 
 

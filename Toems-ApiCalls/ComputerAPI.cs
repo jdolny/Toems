@@ -67,6 +67,15 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<List<EntitySoftwareInventory>>(Request);
         }
 
+        public List<EntityCertificateInventory> GetComputerCertificates(int id, string searchstring)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetCertificates", Resource);
+            Request.AddParameter("id", id);
+            Request.AddParameter("searchstring", searchstring);
+            return new ApiRequest().Execute<List<EntityCertificateInventory>>(Request);
+        }
+
         public List<DtoCustomComputerInventory> GetCustomInventory(int id)
         {
             Request.Method = Method.GET;

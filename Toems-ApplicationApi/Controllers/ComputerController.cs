@@ -355,6 +355,15 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         [HttpGet]
+        public IEnumerable<EntityCertificateInventory> GetCertificates(int id, string searchstring = "")
+        {
+            return string.IsNullOrEmpty(searchstring)
+                ? _computerServices.GetComputerCertificates(id)
+                : _computerServices.GetComputerCertificates(id, searchstring);
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        [HttpGet]
         public IEnumerable<DtoComputerUpdates> GetUpdates(int id, string searchstring = "")
         {
             return string.IsNullOrEmpty(searchstring)

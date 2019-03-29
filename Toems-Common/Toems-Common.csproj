@@ -132,6 +132,7 @@
     <Compile Include="Entity\EntityAssetAttachment.cs" />
     <Compile Include="Entity\EntityAssetComment.cs" />
     <Compile Include="Entity\EntityAssetCategory.cs" />
+    <Compile Include="Entity\EntityComputerCertificate.cs" />
     <Compile Include="Entity\EntityPinnedGroup.cs" />
     <Compile Include="Entity\EntitySoftwareAssetSoftware.cs" />
     <Compile Include="Entity\EntityComputerComment.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="Entity\EntityFirewallInventory.cs" />
     <Compile Include="Entity\EntityLogicalVolumeInventory.cs" />
     <Compile Include="Entity\EntityProcessInventory.cs" />
+    <Compile Include="Entity\EntityCertificateInventory.cs" />
     <Compile Include="Entity\EntityWuModule.cs" />
     <Compile Include="Entity\EntityWolRelay.cs" />
     <Compile Include="Entity\EntityCommandModule.cs" />
