@@ -33,6 +33,7 @@ namespace Toems_Service.Workflows
             _filter.IncludeScript = true;
             _filter.IncludeSoftware = true;
             _filter.IncludeWu = true;
+            _filter.IncludeMessage = true;
             _filter.Limit = Int32.MaxValue;
         }
 
@@ -58,6 +59,14 @@ namespace Toems_Service.Workflows
             var policyModules = _policyService.SearchAssignedPolicyModules(policyId, _filter);
             foreach (var policyModule in policyModules.OrderBy(x => x.Name))
             {
+                verifyResult = VerifyConditions(policyModule, policyModules);
+                if (verifyResult != null)
+                {
+                    _result.Success = false;
+                    _result.ErrorMessage = verifyResult;
+                    return _result;
+                }
+
                 if (policyModule.ModuleType == EnumModule.ModuleType.Command)
                 {
                     verifyResult = VerifyCommand(policyModule);
@@ -71,6 +80,16 @@ namespace Toems_Service.Workflows
                 else if (policyModule.ModuleType == EnumModule.ModuleType.FileCopy)
                 {
                     verifyResult = VerifyFileCopy(policyModule);
+                    if (verifyResult != null)
+                    {
+                        _result.Success = false;
+                        _result.ErrorMessage = verifyResult;
+                        return _result;
+                    }
+                }
+                else if (policyModule.ModuleType == EnumModule.ModuleType.Message)
+                {
+                    verifyResult = VerifyMessage(policyModule);
                     if (verifyResult != null)
                     {
                         _result.Success = false;
@@ -210,7 +229,73 @@ namespace Toems_Service.Workflows
                     if(comServer == null) return "The Policy's Selected Com Servers Are Not Valid.  A Specified Com Server Does Not Exist";
                 }
             }
-            return null;
+            if (_policy.ConditionId != -1) // -1 = disabled
+            {
+                var conditionScript = new ServiceScriptModule().GetModule(_policy.ConditionId);
+                if (conditionScript == null)
+                    return $"Condition Script For {_policy.Name} Does Not Exist";
+
+                if (!conditionScript.IsCondition)
+                    return $"The Condition Script For {_policy.Name} Is Not Currently Set As A Condition";
+
+                if (string.IsNullOrEmpty(conditionScript.Name))
+                    return $"A Condition Script For {_policy.Name} Has An Invalid Name";
+
+                if (conditionScript.Archived)
+                    return $"A Condition Script For {_policy.Name} Is Archived";
+
+                if (string.IsNullOrEmpty(conditionScript.ScriptContents))
+                    return "Condition Script: " + conditionScript.Name + " Has An Invalid Script.  It Cannot Be Empty.";
+
+                if (string.IsNullOrEmpty(conditionScript.Guid))
+                    return "Condition Script: " + conditionScript.Name + " Has An Invalid GUID";
+
+                if (conditionScript.ScriptType != EnumScriptModule.ScriptType.Batch &&
+                    conditionScript.ScriptType != EnumScriptModule.ScriptType.Powershell &&
+                    conditionScript.ScriptType != EnumScriptModule.ScriptType.VbScript)
+                    return "Condition Script: " + conditionScript.Name + " Has An Invalid Type";
+
+                if (!int.TryParse(conditionScript.Timeout.ToString(), out value))
+                    return "Condition Script: " + conditionScript.Name + " Has An Invalid Timeout";
+
+                List<string> successCodes = new List<string>();
+                foreach (var successCode in conditionScript.SuccessCodes.Split(','))
+                    successCodes.Add(successCode);
+
+                if (successCodes.Count == 0)
+                    return "Condition Script: " + conditionScript.Name + " Has An Invalid Success Code";
+
+                if (successCodes.Any(code => !int.TryParse(code, out value)))
+                {
+                    return "Condition Script: " + conditionScript.Name + " Has An Invalid Success Code";
+                }
+
+                if (!string.IsNullOrEmpty(conditionScript.WorkingDirectory))
+                {
+                    try
+                    {
+                        Path.GetFullPath(conditionScript.WorkingDirectory);
+                    }
+                    catch
+                    {
+                        return "Condition Script: " + conditionScript.Name + " Has An Invalid Working Directory";
+                    }
+                }
+
+                if (conditionScript.ImpersonationId != -1)
+                {
+                    var impAccount = new ServiceImpersonationAccount().GetAccount(conditionScript.ImpersonationId);
+                    if (impAccount == null) return "Condition Script: " + conditionScript.Name + " Has An Invalid Impersonation Account";
+                }
+
+
+                if (_policy.ConditionFailedAction != EnumCondition.FailedAction.MarkFailed
+                    && _policy.ConditionFailedAction != EnumCondition.FailedAction.MarkNotApplicable && _policy.ConditionFailedAction != EnumCondition.FailedAction.MarkSkipped
+                    && _policy.ConditionFailedAction != EnumCondition.FailedAction.MarkSuccess)
+                    return $"The Condition Failed Action For {_policy.Name} Is Not Valid";
+            }
+
+                return null;
         }
 
         private string VerifyCommand(EntityPolicyModules policyModule)
@@ -313,6 +398,91 @@ namespace Toems_Service.Workflows
             return null;
         }
 
+        private string VerifyConditions(EntityPolicyModules policyModule, List<EntityPolicyModules> policyModules)
+        {
+            if (policyModule.ConditionId != -1) // -1 = disabled
+            {
+                var conditionScript = new ServiceScriptModule().GetModule(policyModule.ConditionId);
+                if(conditionScript == null)
+                    return $"Condition Script For {policyModule.Name} Does Not Exist";
+
+                if (!conditionScript.IsCondition)
+                    return $"The Condition Script For {policyModule.Name} Is Not Currently Set As A Condition";
+
+                if (string.IsNullOrEmpty(conditionScript.Name))
+                    return $"A Condition Script For {policyModule.Name} Has An Invalid Name";
+
+                if (conditionScript.Archived)
+                    return $"A Condition Script For {policyModule.Name} Is Archived";
+
+                if (string.IsNullOrEmpty(conditionScript.ScriptContents))
+                    return "Condition Script: " + conditionScript.Name + " Has An Invalid Script.  It Cannot Be Empty.";
+
+                if (string.IsNullOrEmpty(conditionScript.Guid))
+                    return "Condition Script: " + conditionScript.Name + " Has An Invalid GUID";
+
+                if (conditionScript.ScriptType != EnumScriptModule.ScriptType.Batch &&
+                    conditionScript.ScriptType != EnumScriptModule.ScriptType.Powershell &&
+                    conditionScript.ScriptType != EnumScriptModule.ScriptType.VbScript)
+                    return "Condition Script: " + conditionScript.Name + " Has An Invalid Type";
+                int value;
+                if (!int.TryParse(conditionScript.Timeout.ToString(), out value))
+                    return "Condition Script: " + conditionScript.Name + " Has An Invalid Timeout";
+
+                List<string> successCodes = new List<string>();
+                foreach (var successCode in conditionScript.SuccessCodes.Split(','))
+                    successCodes.Add(successCode);
+
+                if (successCodes.Count == 0)
+                    return "Condition Script: " + conditionScript.Name + " Has An Invalid Success Code";
+
+                if (successCodes.Any(code => !int.TryParse(code, out value)))
+                {
+                    return "Condition Script: " + conditionScript.Name + " Has An Invalid Success Code";
+                }
+
+                if (!string.IsNullOrEmpty(conditionScript.WorkingDirectory))
+                {
+                    try
+                    {
+                        Path.GetFullPath(conditionScript.WorkingDirectory);
+                    }
+                    catch
+                    {
+                        return "Condition Script: " + conditionScript.Name + " Has An Invalid Working Directory";
+                    }
+                }
+
+                if (conditionScript.ImpersonationId != -1)
+                {
+                    var impAccount = new ServiceImpersonationAccount().GetAccount(conditionScript.ImpersonationId);
+                    if (impAccount == null) return "Condition Script: " + conditionScript.Name + " Has An Invalid Impersonation Account";
+                }
+
+
+                if (policyModule.ConditionFailedAction != EnumCondition.FailedAction.GotoModule && policyModule.ConditionFailedAction != EnumCondition.FailedAction.MarkFailed
+                    && policyModule.ConditionFailedAction != EnumCondition.FailedAction.MarkNotApplicable && policyModule.ConditionFailedAction != EnumCondition.FailedAction.MarkSkipped
+                    && policyModule.ConditionFailedAction != EnumCondition.FailedAction.MarkSuccess)
+                    return $"The Condition Failed Action For {policyModule.Name} Is Not Valid";
+
+                if (policyModule.ConditionFailedAction == EnumCondition.FailedAction.GotoModule)
+                {
+
+                    if (!int.TryParse(policyModule.ConditionNextModule.ToString(), out value))
+                        return "Module: " + policyModule.Name + " Has An Invalid Next Order Number";
+
+                    if(policyModule.ConditionNextModule <= policyModule.Order)
+                        return "Module: " + policyModule.Name + " The Goto Order Number Must Be Greater Than Itself";
+
+                    if(!policyModules.Any(x => x.Order == policyModule.ConditionNextModule))
+                        return "Module: " + policyModule.Name + " The Goto Order Number Is Not Assigned To Any Modules.";
+
+                }
+
+            }
+            return null;
+        }
+
         private string VerifyFileCopy(EntityPolicyModules policyModule)
         {
             var fileCopyModule = new ServiceFileCopyModule().GetModule(policyModule.ModuleId);
@@ -390,6 +560,37 @@ namespace Toems_Service.Workflows
                 }
             }
         
+            return null;
+        }
+
+        private string VerifyMessage(EntityPolicyModules policyModule)
+        {
+            var messageModule = new ServiceMessageModule().GetModule(policyModule.ModuleId);
+
+            if (string.IsNullOrEmpty(messageModule.Name))
+                return "A Message Module Has An Invalid Name";
+
+            if (messageModule.Archived)
+                return "Message Module: " + messageModule.Name + " Is Archived";
+
+            if (string.IsNullOrEmpty(messageModule.Guid))
+                return "Message Module: " + messageModule.Name + " Has An Invalid GUID";
+
+            if (string.IsNullOrEmpty(messageModule.Title))
+                return "Message Module: " + messageModule.Name + " Has An Invalid Title";
+
+            if (string.IsNullOrEmpty(messageModule.Message))
+                return "Message Module: " + messageModule.Name + " Has An Invalid Message";
+
+
+            int value;
+            if (!int.TryParse(policyModule.Order.ToString(), out value))
+                return "Message Module: " + messageModule.Name + " Has An Invalid Order";
+
+            int tValue;
+            if (!int.TryParse(messageModule.Timeout.ToString(), out tValue))
+                return "Message Module: " + messageModule.Name + " Has An Invalid Timeout";
+
             return null;
         }
 

@@ -51,6 +51,21 @@ namespace Toems_Service.Entity
             if (string.IsNullOrEmpty(u.Guid)) return new DtoActionResult() { ErrorMessage = "Unknown Guid", Id = 0 };
             _uow.ModuleRepository.DeleteRange(x => x.Guid == u.Guid);
             //_uow.ScriptModuleRepository.Delete(moduleId);
+
+            var modulesWithCondition = _uow.PolicyModulesRepository.Get(x => x.ConditionId == u.Id);
+            foreach(var module in modulesWithCondition)
+            {
+                module.ConditionId = -1;
+                _uow.PolicyModulesRepository.Update(module, module.Id);
+            }
+
+            var policiesWithCondition = _uow.PolicyRepository.Get(x => x.ConditionId == u.Id);
+            foreach(var policy in policiesWithCondition)
+            {
+                policy.ConditionId = -1;
+                _uow.PolicyRepository.Update(policy, policy.Id);
+            }
+
             _uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
@@ -154,6 +169,11 @@ namespace Toems_Service.Entity
             return _uow.ScriptModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && s.Archived).OrderBy(x => x.Name).Take(filter.Limit).ToList();
         }
 
+        public List<EntityScriptModule> GetConditions()
+        {
+            return _uow.ScriptModuleRepository.Get(s => s.IsCondition).ToList();
+        }
+
         public string TotalCount()
         {
             return _uow.ScriptModuleRepository.Count(x => !x.Archived);
@@ -170,6 +190,24 @@ namespace Toems_Service.Entity
             if (u == null) return new DtoActionResult {ErrorMessage = "Module Not Found", Id = 0};
             var isActiveModule = new ServiceModule().IsModuleActive(module.Id, EnumModule.ModuleType.Script);
             if (!string.IsNullOrEmpty(isActiveModule)) return new DtoActionResult() { ErrorMessage = isActiveModule, Id = 0 };
+            if(!module.IsCondition && u.IsCondition)
+            {
+                //condition has been removed, check for policies with this condition
+                var modulesWithCondition = _uow.PolicyModulesRepository.Get(x => x.ConditionId == u.Id);
+                foreach (var m in modulesWithCondition)
+                {
+                    m.ConditionId = -1;
+                    _uow.PolicyModulesRepository.Update(m, m.Id);
+                }
+
+
+                var policiesWithCondition = _uow.PolicyRepository.Get(x => x.ConditionId == u.Id);
+                foreach (var policy in policiesWithCondition)
+                {
+                    policy.ConditionId = -1;
+                    _uow.PolicyRepository.Update(policy, policy.Id);
+                }
+            }
             var validationResult = ValidateModule(module, false);
             var actionResult = new DtoActionResult();
             if (validationResult.Success)

@@ -94,7 +94,11 @@ namespace Toems_FrontEnd.views.groups
                 {
                     var name = gvRow.Cells[2].Text;
                     var groupPolicy = Call.GroupPolicyApi.Get(Convert.ToInt32(dataKey.Value));
-                    groupPolicy.PolicyOrder = Convert.ToInt32(((TextBox)gvRow.FindControl("txtOrder")).Text);
+                    int orderValue;
+                    if (!int.TryParse(((TextBox)gvRow.FindControl("txtOrder")).Text, out orderValue))
+                        groupPolicy.PolicyOrder = 0;
+                    else
+                        groupPolicy.PolicyOrder = orderValue;
                     var result = Call.GroupPolicyApi.Put(groupPolicy.Id, groupPolicy);
                     if (result.Success) EndUserMessage = "Successfully Updated " + name;
                     else EndUserMessage = result.ErrorMessage;

@@ -94,14 +94,17 @@ namespace Toems_FrontEnd.views.policies
             PopulateInventoryAction(ddlInventory);
             PopulateWuType(ddlWinUpdates);
             PopulatePolicyComCondition(ddlComCondition);
+            PopulateConditions(ddlCondition);
+            PopulateConditionFailedAction(ddlConditionFailedAction);
             FillFrequencies();
             FillSubFrequencies();
 
             txtName.Text = Policy.Name;
             txtDescription.Text = Policy.Description;
             ddlTrigger.SelectedValue = Policy.Trigger.ToString();
-          
 
+            ddlCondition.SelectedValue = Policy.ConditionId.ToString();
+            ddlConditionFailedAction.SelectedValue = Policy.ConditionFailedAction.ToString();
             ddlFrequency.SelectedValue = Policy.Frequency.ToString();
             if (Policy.Frequency == EnumPolicy.Frequency.OncePerWeek)
                 ddlWeekDay.SelectedIndex = Policy.SubFrequency;
@@ -202,6 +205,8 @@ namespace Toems_FrontEnd.views.policies
 
             Policy.WindowStartScheduleId = Convert.ToInt32(ddlScheduleStart.SelectedValue);
             Policy.WindowEndScheduleId = Convert.ToInt32(ddlScheduleEnd.SelectedValue);
+            Policy.ConditionId = Convert.ToInt32(ddlCondition.SelectedValue);
+            Policy.ConditionFailedAction = (EnumCondition.FailedAction)Enum.Parse(typeof(EnumCondition.FailedAction), ddlConditionFailedAction.SelectedValue);
 
             Policy.StartDate = string.IsNullOrEmpty(txtStartDate.Text) ? Convert.ToDateTime(DateTime.UtcNow.ToShortDateString()) : Convert.ToDateTime(txtStartDate.Text).ToUniversalTime();
             Policy.CompletedAction = (EnumPolicy.CompletedAction)Enum.Parse(typeof(EnumPolicy.CompletedAction), ddlCompletedAction.SelectedValue);

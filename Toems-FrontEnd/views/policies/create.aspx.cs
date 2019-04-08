@@ -27,6 +27,9 @@ namespace Toems_FrontEnd.views.policies
                 PopulateInventoryAction(ddlInventory);
                 PopulateWuType(ddlWinUpdates);
                 PopulatePolicyComCondition(ddlComCondition);
+                PopulateConditions(ddlCondition);
+                PopulateConditionFailedAction(ddlConditionFailedAction);
+
                 FillFrequencies();
                 FillSubFrequencies();
             }
@@ -53,6 +56,8 @@ namespace Toems_FrontEnd.views.policies
 
             policy.WindowStartScheduleId = Convert.ToInt32(ddlScheduleStart.SelectedValue);
             policy.WindowEndScheduleId = Convert.ToInt32(ddlScheduleEnd.SelectedValue);
+            policy.ConditionId = Convert.ToInt32(ddlCondition.SelectedValue);
+            policy.ConditionFailedAction = (EnumCondition.FailedAction)Enum.Parse(typeof(EnumCondition.FailedAction), ddlConditionFailedAction.SelectedValue);
             //utc is not used here because time is not used only date
             policy.StartDate = string.IsNullOrEmpty(txtStartDate.Text) ? Convert.ToDateTime(DateTime.Now.ToShortDateString()) : Convert.ToDateTime(txtStartDate.Text);
             policy.CompletedAction = (EnumPolicy.CompletedAction)Enum.Parse(typeof(EnumPolicy.CompletedAction), ddlCompletedAction.SelectedValue);

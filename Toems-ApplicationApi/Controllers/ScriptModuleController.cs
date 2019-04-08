@@ -84,7 +84,14 @@ namespace Toems_ApplicationApi.Controllers
             return _scriptModuleServices.GetArchived(filter);
         }
 
-       [CustomAuth(Permission = AuthorizationStrings.ModuleRead)]
+        [CustomAuth(Permission = AuthorizationStrings.ModuleRead)]
+        [HttpGet]
+        public IEnumerable<EntityScriptModule> GetConditions()
+        {
+            return _scriptModuleServices.GetConditions();
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ModuleRead)]
         public DtoApiStringResponse GetCount()
         {
             return new DtoApiStringResponse { Value = _scriptModuleServices.TotalCount() };

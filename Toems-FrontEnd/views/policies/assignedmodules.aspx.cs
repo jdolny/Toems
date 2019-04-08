@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
+using Toems_Common.Enum;
 
 namespace Toems_FrontEnd.views.policies
 {
@@ -20,6 +22,7 @@ namespace Toems_FrontEnd.views.policies
                 chkFile.Checked = true;
                 chkPrinter.Checked = true;
                 chkWu.Checked = true;
+                chkMessage.Checked = true;
                 PopulateGrid();
             }
         }
@@ -43,6 +46,7 @@ namespace Toems_FrontEnd.views.policies
             filter.IncludeFileCopy = chkFile.Checked;
             filter.IncludeScript = chkScript.Checked;
             filter.IncludeWu = chkWu.Checked;
+            filter.IncludeMessage = chkMessage.Checked;
             var modules = Call.PolicyApi.GetAssignedModules(Policy.Id, filter);
             gvModules.DataSource = modules;
             gvModules.DataBind();
@@ -98,9 +102,24 @@ namespace Toems_FrontEnd.views.policies
                 var dataKey = gvModules.DataKeys[gvRow.RowIndex];
                 if (dataKey != null)
                 {
-                    var name = gvRow.Cells[2].Text;
+                    var name = gvRow.Cells[0].Text;
                     var policyModule = Call.PolicyModulesApi.Get(Convert.ToInt32(dataKey.Value));
-                    policyModule.Order = Convert.ToInt32(((TextBox) gvRow.FindControl("txtOrder")).Text);
+                    int orderValue;
+                    if (!int.TryParse(((TextBox)gvRow.FindControl("txtOrder")).Text, out orderValue))
+                        policyModule.Order = 0;
+                    else
+                        policyModule.Order = orderValue;
+
+                    var ddlCondition = gvRow.FindControl("ddlCondition") as DropDownList;
+                    var ddlFailedAction = gvRow.FindControl("ddlConditionFailedAction") as DropDownList;
+                    int nextValue;
+                    if (!int.TryParse(((TextBox)gvRow.FindControl("txtNextModule")).Text, out nextValue))
+                        policyModule.ConditionNextModule = 0;
+                    else
+                        policyModule.ConditionNextModule = nextValue;
+
+                    policyModule.ConditionId = Convert.ToInt32(ddlCondition.SelectedValue);
+                    policyModule.ConditionFailedAction = (EnumCondition.FailedAction)Enum.Parse(typeof(EnumCondition.FailedAction), ddlFailedAction.SelectedValue);
                     var result = Call.PolicyModulesApi.Put(policyModule.Id, policyModule);
                     if (result.Success) EndUserMessage = "Successfully Updated " + name;
                     else EndUserMessage = result.ErrorMessage;
@@ -119,7 +138,7 @@ namespace Toems_FrontEnd.views.policies
                 var dataKey = gvModules.DataKeys[gvRow.RowIndex];
                 if (dataKey != null)
                 {
-                    var name = gvRow.Cells[2].Text;
+                    var name = gvRow.Cells[0].Text;
                     var result = Call.PolicyModulesApi.Delete(Convert.ToInt32(dataKey.Value));
                     if (result.Success) EndUserMessage = "Successfully Removed " + name;
                     else EndUserMessage = result.ErrorMessage;
@@ -132,5 +151,34 @@ namespace Toems_FrontEnd.views.policies
         {
             PopulateGrid();
         }
+
+        protected void gvModules_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            DropDownList ddlCondition= null;
+            DropDownList ddlConditionFailedAction = null;
+
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+
+                ddlCondition = e.Row.FindControl("ddlCondition") as DropDownList;
+                if (ddlCondition != null)
+                {
+                    PopulateConditions(ddlCondition);
+                    var conditionId = (e.Row.FindControl("lblCondition") as Label).Text;
+                    ddlCondition.Items.FindByValue(conditionId).Selected = true;
+                }
+
+                ddlConditionFailedAction = e.Row.FindControl("ddlConditionFailedAction") as DropDownList;
+                if (ddlConditionFailedAction != null)
+                {
+                    PopulateConditionFailedAction(ddlConditionFailedAction);
+                    var conditionFailedId = (e.Row.FindControl("lblConditionFailedAction") as Label).Text;
+                    ddlConditionFailedAction.Items.FindByValue(conditionFailedId).Selected = true;
+                }
+            }
+        }
+
+      
+
     }
 }

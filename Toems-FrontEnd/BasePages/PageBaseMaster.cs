@@ -259,6 +259,16 @@ namespace Toems_FrontEnd.BasePages
             ddlSchedule.Items.Insert(0, new ListItem("Disabled", "-1"));
         }
 
+        protected void PopulateConditions(DropDownList ddlCondition)
+        {
+            ddlCondition.DataSource =
+                Call.ScriptModuleApi.GetConditions().Select(d => new { d.Id, d.Name });
+            ddlCondition.DataValueField = "Id";
+            ddlCondition.DataTextField = "Name";
+            ddlCondition.DataBind();
+            ddlCondition.Items.Insert(0, new ListItem("Disabled", "-1"));
+        }
+
         protected void PopulateComServers(DropDownList ddlComServers)
         {
             ddlComServers.DataSource =

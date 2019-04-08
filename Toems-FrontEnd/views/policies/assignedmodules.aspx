@@ -70,28 +70,54 @@
          Windows Update
         <asp:CheckBox runat="server" ID="chkWu" Text="Command" AutoPostBack="True" OnCheckedChanged="chkFilter_OnCheckedChanged"/>
     </div>
+     <div class="size-10 column hidden-check">
+         Message
+        <asp:CheckBox runat="server" ID="chkMessage" Text="Command" AutoPostBack="True" OnCheckedChanged="chkFilter_OnCheckedChanged"/>
+    </div>
     
   
     <br class="clear"/>
-    <asp:GridView ID="gvModules" runat="server" AllowSorting="True" DataKeyNames="Id" OnSorting="gridView_Sorting" AutoGenerateColumns="False" CssClass="Gridview" AlternatingRowStyle-CssClass="alt">
+    <asp:GridView ID="gvModules" runat="server" AllowSorting="True" DataKeyNames="Id" OnSorting="gridView_Sorting" AutoGenerateColumns="False" CssClass="Gridview" AlternatingRowStyle-CssClass="alt" OnRowDataBound="gvModules_RowDataBound" O>
         <Columns>
-                       
-              <asp:TemplateField ItemStyle-CssClass="width_100" HeaderText="Order" SortExpression="Order">
+              <asp:BoundField DataField="Name" HeaderText="Name" SortExpression="Name" ItemStyle-CssClass="width_100"></asp:BoundField>
+              <asp:TemplateField ItemStyle-CssClass="width_50" HeaderText="Order" SortExpression="Order">
                 <ItemTemplate>
                     <asp:TextBox ID="txtOrder" runat="server" CssClass="textbox height_18 order" Text='<%# Eval("Order") %>' />
                 </ItemTemplate>
             </asp:TemplateField>
            
+                   <asp:TemplateField ItemStyle-CssClass="width_200" HeaderText="Condition" >
+                <ItemTemplate>
+                    <asp:Label ID="lblCondition" runat="server" Text='<%# Eval("ConditionId") %>' Visible = "false" />
+                    <asp:DropDownList ID="ddlCondition" runat="server" CssClass="ddlist order"/>
+                </ItemTemplate>
+            </asp:TemplateField>
+
+                 <asp:TemplateField ItemStyle-CssClass="width_100" HeaderText="Condition Failed Action" >
+                <ItemTemplate>
+                    <asp:Label ID="lblConditionFailedAction" runat="server" Text='<%# Eval("ConditionFailedAction") %>' Visible = "false" />
+                    <asp:DropDownList ID="ddlConditionFailedAction" runat="server" CssClass="ddlist order"/>
+                </ItemTemplate>  
+            </asp:TemplateField>
+
+              <asp:TemplateField ItemStyle-CssClass="width_100" HeaderText="Go To Order #" >
+                <ItemTemplate>
+                      <asp:TextBox ID="txtNextModule" runat="server" CssClass="textbox height_18 order" Text='<%# Eval("ConditionNextModule") %>'  />
+                  
+                </ItemTemplate>  
+            </asp:TemplateField>
+
             <asp:BoundField DataField="Id" Visible="False"/>
            
-            <asp:BoundField DataField="Name" HeaderText="Name" SortExpression="Name" ItemStyle-CssClass="width_200"></asp:BoundField>
-            <asp:BoundField DataField="ModuleType" HeaderText="Type" SortExpression="ModuleType" ItemStyle-CssClass="width_200"/>
-              <asp:BoundField DataField="Guid" HeaderText="Guid"/>
+           
+       
+            <asp:BoundField DataField="ModuleType" HeaderText="Type" SortExpression="ModuleType" ItemStyle-CssClass="width_100"/>
+             
             <asp:BoundField DataField="ModuleId" Visible="False"/> 
             <asp:HyperLinkField DataNavigateUrlFields="ModuleType,ModuleId" DataNavigateUrlFormatString="~/views/policies/moduleredirect.aspx?type={0}&id={1}" Text="View" ItemStyle-CssClass="chkboxwidth" Target="_blank"/>
              <asp:TemplateField ItemStyle-CssClass="chkboxwidth">
                 <ItemTemplate>
-                    <asp:LinkButton ID="btnUpdate" runat="server" OnClick="btnUpdate_OnClick" Text="Update Order"/>
+                    <asp:LinkButton ID="btnUpdate" runat="server" OnClick="btnUpdate_OnClick" Text="Update"/>
                 </ItemTemplate>
             </asp:TemplateField>
                         <asp:TemplateField ItemStyle-CssClass="chkboxwidth">

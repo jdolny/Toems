@@ -40,6 +40,24 @@ namespace Toems_FrontEnd.views.policies {
         protected global::System.Web.UI.WebControls.TextBox txtDescription;
         
         /// <summary>
+        /// ddlCondition control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlCondition;
+        
+        /// <summary>
+        /// ddlConditionFailedAction control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlConditionFailedAction;
+        
+        /// <summary>
         /// ddlTrigger control.
         /// </summary>
         /// <remarks>

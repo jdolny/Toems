@@ -7,6 +7,13 @@ namespace Toems_Common.Entity
     [Table("policy_modules")]
     public class EntityPolicyModules
     {
+        public EntityPolicyModules()
+        {
+            ConditionId = -1;
+            ConditionFailedAction = 0;
+            ConditionNextModule = 0;
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("policy_module_id", Order = 1)]
@@ -26,6 +33,15 @@ namespace Toems_Common.Entity
 
         [Column("module_order", Order = 6)]
         public int Order { get; set; }
+
+        [Column("condition_module_id")]
+        public int ConditionId { get; set; }
+
+        [Column("condition_failed_action")]
+        public EnumCondition.FailedAction ConditionFailedAction { get; set; }
+
+        [Column("condition_next_module")]
+        public int ConditionNextModule { get; set; }
 
         [NotMapped]
         public string Name { get; set; }

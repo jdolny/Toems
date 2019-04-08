@@ -108,6 +108,33 @@
     <Content Include="content\js\fineuploader\templates\simple-thumbnails.html" />
     <Content Include="content\js\fineuploader\trash.gif" />
     <Content Include="content\js\jquery-3.2.1.min.js" />
+    <Content Include="content\js\meshdesktop.js" />
+    <Content Include="content\js\mesh\agent-desktop-0.0.2.js" />
+    <Content Include="content\js\mesh\agent-redir-rtc-0.1.0.js" />
+    <Content Include="content\js\mesh\agent-redir-ws-0.1.0.js" />
+    <Content Include="content\js\mesh\amt-0.2.0.js" />
+    <Content Include="content\js\mesh\amt-desktop-0.0.2.js" />
+    <Content Include="content\js\mesh\amt-ider-ws-0.0.1.js" />
+    <Content Include="content\js\mesh\amt-redir-ws-0.1.0.js" />
+    <Content Include="content\js\mesh\amt-script-0.2.0.js" />
+    <Content Include="content\js\mesh\amt-setupbin-0.1.0.js" />
+    <Content Include="content\js\mesh\amt-terminal-0.0.2.js" />
+    <Content Include="content\js\mesh\amt-wsman-0.2.0.js" />
+    <Content Include="content\js\mesh\amt-wsman-ws-0.2.0.js" />
+    <Content Include="content\js\mesh\charts.js" />
+    <Content Include="content\js\mesh\common-0.0.1.js" />
+    <Content Include="content\js\mesh\filesaver.1.1.20151003.js" />
+    <Content Include="content\js\mesh\filesaver.js" />
+    <Content Include="content\js\mesh\filesaver.min.js" />
+    <Content Include="content\js\mesh\meshcentral.js" />
+    <Content Include="content\js\mesh\ol.js" />
+    <Content Include="content\js\mesh\ol3-contextmenu.js" />
+    <Content Include="content\js\mesh\qrcode.min.js" />
+    <Content Include="content\js\mesh\u2f-api.js" />
+    <Content Include="content\js\mesh\zlib-adler32.js" />
+    <Content Include="content\js\mesh\zlib-crc32.js" />
+    <Content Include="content\js\mesh\zlib-inflate.js" />
+    <Content Include="content\js\mesh\zlib.js" />
     <Content Include="content\js\moment.min.js" />
     <Content Include="content\js\select2.min.js" />
     <Content Include="content\js\tooltipster.bundle.min.js" />
@@ -215,6 +242,12 @@
     <Content Include="views\modules\filecopymodules\search.aspx" />
     <Content Include="views\modules\filecopymodules\uploadfiles.aspx" />
     <Content Include="views\modules\filecopymodules\usages.aspx" />
+    <Content Include="views\modules\messagemodules\archived.aspx" />
+    <Content Include="views\modules\messagemodules\categories.aspx" />
+    <Content Include="views\modules\messagemodules\create.aspx" />
+    <Content Include="views\modules\messagemodules\general.aspx" />
+    <Content Include="views\modules\messagemodules\search.aspx" />
+    <Content Include="views\modules\messagemodules\usages.aspx" />
     <Content Include="views\modules\printermodules\archived.aspx" />
     <Content Include="views\modules\printermodules\categories.aspx" />
     <Content Include="views\modules\printermodules\create.aspx" />
@@ -289,6 +322,9 @@
     <Content Include="content\fonts\icomoon.eot" />
     <Content Include="content\fonts\icomoon.ttf" />
     <Content Include="content\fonts\icomoon.woff" />
+    <Content Include="content\js\mesh\cira_cleanup.mescript" />
+    <Content Include="content\js\mesh\cira_setup_script_dns.mescript" />
+    <Content Include="content\js\mesh\cira_setup_script_ip.mescript" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\pcman-fe.pubxml" />
@@ -320,6 +356,7 @@
     <Content Include="views\reports\computer\computer.master" />
     <Content Include="views\reports\user\user.master" />
     <Content Include="views\reports\asset\asset.master" />
+    <Content Include="views\modules\messagemodules\messagemodule.master" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1740,6 +1777,55 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="views\modules\filecopymodules\usages.aspx.designer.cs">
+      <DependentUpon>usages.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\messagemodules\archived.aspx.cs">
+      <DependentUpon>archived.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\messagemodules\archived.aspx.designer.cs">
+      <DependentUpon>archived.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\messagemodules\categories.aspx.cs">
+      <DependentUpon>categories.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\messagemodules\categories.aspx.designer.cs">
+      <DependentUpon>categories.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\messagemodules\create.aspx.cs">
+      <DependentUpon>create.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\messagemodules\create.aspx.designer.cs">
+      <DependentUpon>create.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\messagemodules\general.aspx.cs">
+      <DependentUpon>general.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\messagemodules\general.aspx.designer.cs">
+      <DependentUpon>general.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\messagemodules\messagemodule.master.cs">
+      <DependentUpon>messagemodule.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\messagemodules\messagemodule.master.designer.cs">
+      <DependentUpon>messagemodule.master</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\messagemodules\search.aspx.cs">
+      <DependentUpon>search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\messagemodules\search.aspx.designer.cs">
+      <DependentUpon>search.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\messagemodules\usages.aspx.cs">
+      <DependentUpon>usages.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\messagemodules\usages.aspx.designer.cs">
       <DependentUpon>usages.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\modules\modules.master.cs">

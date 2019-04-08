@@ -18,6 +18,11 @@ namespace Toems_FrontEnd.BasePages
                ? Call.PolicyApi.Get(Convert.ToInt32(Request.QueryString["policyId"]))
                : null;
         }
+        protected void PopulateConditionFailedAction(DropDownList ddl)
+        {
+            ddl.DataSource = Enum.GetNames(typeof(EnumCondition.FailedAction));
+            ddl.DataBind();
+        }
 
         protected void PopulateErrorAction(DropDownList ddl)
         {

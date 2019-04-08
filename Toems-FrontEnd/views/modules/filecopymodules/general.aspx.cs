@@ -41,11 +41,11 @@ namespace Toems_FrontEnd.views.modules.filecopymodules
 
         protected void deleteModule_OnClick(object sender, EventArgs e)
         {
-            var result = Call.CommandModuleApi.Delete(CommandModule.Id);
+            var result = Call.FileCopyModuleApi.Delete(FileCopyModule.Id);
             if (result.Success)
             {
-                EndUserMessage = String.Format("Successfully Deleted Module {0}", CommandModule.Name);
-                Response.Redirect("~/views/modules/commandmodules/search.aspx");
+                EndUserMessage = String.Format("Successfully Deleted Module {0}", FileCopyModule.Name);
+                Response.Redirect("~/views/modules/filecopymodules/search.aspx");
             }
             else
                 EndUserMessage = result.ErrorMessage;

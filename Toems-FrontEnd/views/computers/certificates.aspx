@@ -46,7 +46,6 @@
             <asp:BoundField DataField="Subject" HeaderText="Subject" SortExpression="Subject" ItemStyle-CssClass="width_200"></asp:BoundField>
              <asp:BoundField DataField="NotBefore" HeaderText="Not Before" SortExpression="NotBefore" ItemStyle-CssClass="width_200"></asp:BoundField>
              <asp:BoundField DataField="NotAfter" HeaderText="Not After" SortExpression="NotAfter" ItemStyle-CssClass="width_200"></asp:BoundField>
-             <asp:BoundField DataField="Subject" HeaderText="Subject" SortExpression="Subject" ItemStyle-CssClass="width_200"></asp:BoundField>
              <asp:BoundField DataField="Issuer" HeaderText="Issuer" SortExpression="Issuer" ItemStyle-CssClass="width_200"></asp:BoundField>
              <asp:BoundField DataField="Serial" HeaderText="Serial" SortExpression="Serial" ItemStyle-CssClass="width_200"></asp:BoundField>
              <asp:BoundField DataField="Thumbprint" HeaderText="Thumbprint" SortExpression="Thumbprint" ></asp:BoundField>

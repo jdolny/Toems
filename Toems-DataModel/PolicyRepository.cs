@@ -89,12 +89,20 @@ namespace Toems_DataModel
                 join wuModule in _context.WindowsUpdateModules on policyModule.ModuleId equals wuModule.Id
                 select wuModule;
 
+            var message = from p in _context.Policies
+                          where p.Id == policyId
+                          join policyModule in _context.PolicyModules on p.Id equals policyModule.PolicyId
+                          where policyModule.ModuleType == EnumModule.ModuleType.Message
+                          join messageModule in _context.MessageModules on policyModule.ModuleId equals messageModule.Id
+                          select messageModule;
+
 
             policyDetailed.PrinterModules = printers.ToList();
             policyDetailed.CommandModules = command.ToList();
             policyDetailed.FileCopyModules = files.ToList();
             policyDetailed.ScriptModules = scripts.ToList();
             policyDetailed.SoftwareModules = software.ToList();
+            policyDetailed.MessageModules = message.ToList();
             policyDetailed.WuModules = wu.ToList();
             policyDetailed.Name = policy.Name;
             policyDetailed.CompletedAction = policy.CompletedAction;
@@ -110,6 +118,8 @@ namespace Toems_DataModel
             policyDetailed.SubFrequency = policy.SubFrequency;
             policyDetailed.StartDate = policy.StartDate;
             policyDetailed.RunLoginTracker = policy.RunLoginTracker;
+            policyDetailed.ConditionId = policy.ConditionId;
+            policyDetailed.ConditionFailedAction = policy.ConditionFailedAction;
 
             return policyDetailed;
         }

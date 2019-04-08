@@ -45,7 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorizationStrings.cs" />
+    <Compile Include="Dto\client\DtoClientMessageModule.cs" />
+    <Compile Include="Dto\client\DtoClientModuleCondition.cs" />
     <Compile Include="Dto\DtoActionResult.cs" />
+    <Compile Include="Dto\DtoSocketRequest.cs" />
     <Compile Include="Dto\DtoApiBoolResponse.cs" />
     <Compile Include="Dto\DtoApiIntResponse.cs" />
     <Compile Include="Dto\DtoApiObjectResponse.cs" />
@@ -81,12 +84,14 @@
     <Compile Include="Dto\DtoProcessWithUser.cs" />
     <Compile Include="Dto\DtoProvisionHardware.cs" />
     <Compile Include="Dto\DtoRAServerLogin.cs" />
+    <Compile Include="Dto\DtoSocketServerVerify.cs" />
     <Compile Include="Dto\exports\DtoCommandModuleExport.cs" />
     <Compile Include="Dto\exports\DtoExternalFileExport.cs" />
     <Compile Include="Dto\exports\DtoFileCopyModuleExport.cs" />
     <Compile Include="Dto\exports\DtoPolicyExportGeneral.cs" />
     <Compile Include="Dto\exports\DtoPrinterModuleExport.cs" />
     <Compile Include="Dto\exports\DtoScriptModuleExport.cs" />
+    <Compile Include="Dto\exports\DtoMessageModuleExport.cs" />
     <Compile Include="Dto\exports\DtoSoftwareModuleExport.cs" />
     <Compile Include="Dto\exports\DtoUploadedFileExport.cs" />
     <Compile Include="Dto\exports\DtoWuModuleExport.cs" />
@@ -134,6 +139,7 @@
     <Compile Include="Entity\EntityAssetAttachment.cs" />
     <Compile Include="Entity\EntityAssetComment.cs" />
     <Compile Include="Entity\EntityAssetCategory.cs" />
+    <Compile Include="Entity\EntityActiveSocket.cs" />
     <Compile Include="Entity\EntityComputerCertificate.cs" />
     <Compile Include="Entity\EntityPinnedGroup.cs" />
     <Compile Include="Entity\EntitySoftwareAssetSoftware.cs" />
@@ -161,6 +167,7 @@
     <Compile Include="Entity\EntityLogicalVolumeInventory.cs" />
     <Compile Include="Entity\EntityProcessInventory.cs" />
     <Compile Include="Entity\EntityCertificateInventory.cs" />
+    <Compile Include="Entity\EntityMessageModule.cs" />
     <Compile Include="Entity\EntityWuModule.cs" />
     <Compile Include="Entity\EntityWolRelay.cs" />
     <Compile Include="Entity\EntityCommandModule.cs" />
@@ -210,6 +217,7 @@
     <Compile Include="Entity\EntityUserLockout.cs" />
     <Compile Include="Entity\EntityUserRight.cs" />
     <Compile Include="Entity\EntityVersion.cs" />
+    <Compile Include="Enum\EnumCondition.cs" />
     <Compile Include="Enum\EnumCustomAttribute.cs" />
     <Compile Include="Enum\EnumFileDownloader.cs" />
     <Compile Include="Enum\EnumPolicyHistory.cs" />

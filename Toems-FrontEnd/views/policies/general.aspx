@@ -35,7 +35,26 @@
         <asp:TextBox ID="txtDescription" runat="server" CssClass="descbox" TextMode="MultiLine"></asp:TextBox>
     </div>
     <br class="clear"/>
-    
+     
+    <div class="size-4 column">
+        Condition:
+    </div>
+    <div class="size-5 column">
+       
+        <asp:DropDownList ID="ddlCondition" runat="server" CssClass="ddlist"></asp:DropDownList>
+  
+            </div>
+    <br class="clear"/>
+
+    <div class="size-4 column">
+        Condition Failed Action:
+    </div>
+    <div class="size-5 column">
+       
+        <asp:DropDownList ID="ddlConditionFailedAction" runat="server" CssClass="ddlist"></asp:DropDownList>
+  
+            </div>
+    <br class="clear"/>
      <div class="size-4 column">
         Trigger:
     </div>

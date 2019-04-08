@@ -36,7 +36,14 @@ namespace Toems_ApiCalls
             Request.Resource = string.Format("{0}/GetAllWithInventory", Resource);
             return new ApiRequest().Execute<List<EntityScriptModule>>(Request);
         }
-      
-       
+
+        public IEnumerable<EntityScriptModule> GetConditions()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetConditions", Resource);
+            return new ApiRequest().Execute<List<EntityScriptModule>>(Request);
+        }
+
+
     }
 }

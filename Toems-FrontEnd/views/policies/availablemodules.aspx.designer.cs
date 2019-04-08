@@ -103,6 +103,15 @@ namespace Toems_FrontEnd.views.policies {
         protected global::System.Web.UI.WebControls.CheckBox chkWu;
         
         /// <summary>
+        /// chkMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkMessage;
+        
+        /// <summary>
         /// chkUnassigned control.
         /// </summary>
         /// <remarks>
