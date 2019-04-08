@@ -216,12 +216,21 @@ namespace Toems_Service.Workflows
             var computer = _uow.ComputerRepository.GetById(computerId);
             if (computer == null) return false;
             if (computer.CertificateId == -1) return false;
-            if (string.IsNullOrEmpty(computer.PushUrl)) return false;
             var compPreventShutdownGroups = _uow.ComputerRepository.GetComputerPreventShutdownGroups(computerId);
             if (compPreventShutdownGroups.Count > 0) return true; //computer is in a prevent shutdown group continue on
-            var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
-            var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, new EncryptionServices().DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-            new APICall().ClientApi.Reboot(computer.PushUrl, deviceCert,delay);
+            var socket = _uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            if (socket != null)
+            {
+                var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, new EncryptionServices().DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+                var socketRequest = new DtoSocketRequest();
+                socketRequest.connectionIds.Add(socket.ConnectionId);
+                socketRequest.action = "Reboot";
+                socketRequest.message = delay;
+                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+            }
             return true;
         }
 
@@ -230,12 +239,21 @@ namespace Toems_Service.Workflows
             var computer = _uow.ComputerRepository.GetById(computerId);
             if (computer == null) return false;
             if (computer.CertificateId == -1) return false;
-            if (string.IsNullOrEmpty(computer.PushUrl)) return false;
             var compPreventShutdownGroups = _uow.ComputerRepository.GetComputerPreventShutdownGroups(computerId);
             if (compPreventShutdownGroups.Count > 0) return true; //computer is in a prevent shutdown group continue on
-            var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
-            var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, new EncryptionServices().DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-            new APICall().ClientApi.Shutdown(computer.PushUrl, deviceCert,delay);
+            var socket = _uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            if (socket != null)
+            {
+                var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, new EncryptionServices().DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+                var socketRequest = new DtoSocketRequest();
+                socketRequest.connectionIds.Add(socket.ConnectionId);
+                socketRequest.action = "Shutdown";
+                socketRequest.message = delay;
+                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+            }
             return true;
         }
     }

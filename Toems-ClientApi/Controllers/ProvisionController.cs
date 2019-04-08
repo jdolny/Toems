@@ -20,13 +20,6 @@ namespace Toems_ClientApi.Controllers
         private static readonly ILog Logger =
             LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        [HttpGet]
-        public string TestHub()
-        {
-            new ActionHub().SendAction();
-            return "Action Sent";
-        }
-
         public DtoApiStringResponse GetToecApiVersion()
         {
             return new DtoApiStringResponse() { Value = ToecApiStrings.ToecApiVersion };

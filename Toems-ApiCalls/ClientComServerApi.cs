@@ -15,6 +15,13 @@ namespace Toems_ApiCalls
            
         }
 
+        public void SendAction(string url, string serverName, string interComKey, DtoSocketRequest socketRequest)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = "Socket/SendAction";
+            Request.AddJsonBody(socketRequest);
+            var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
+        }
 
         public bool SyncStorage(string url, string serverName, string interComKey)
         {

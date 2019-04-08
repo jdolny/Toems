@@ -111,6 +111,7 @@
     <Compile Include="Controllers\Authorization\InterComAuth.cs" />
     <Compile Include="Controllers\Authorization\ProvisionAuth.cs" />
     <Compile Include="Controllers\InventoryController.cs" />
+    <Compile Include="Controllers\SocketController.cs" />
     <Compile Include="Controllers\WolController.cs" />
     <Compile Include="Controllers\StorageController.cs" />
     <Compile Include="Controllers\ProvisionController.cs" />
