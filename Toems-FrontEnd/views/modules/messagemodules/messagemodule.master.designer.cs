@@ -7,108 +7,117 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.policies {
+namespace Toems_FrontEnd.views.modules.messagemodules {
     
     
-    public partial class assignedmodules {
+    public partial class messagemodule {
         
         /// <summary>
-        /// lblTotal control.
+        /// TopBreadCrumbSub2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTotal;
+        protected global::System.Web.UI.WebControls.ContentPlaceHolder TopBreadCrumbSub2;
         
         /// <summary>
-        /// txtSearch control.
+        /// SubNavTitle_Sub2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSearch;
+        protected global::System.Web.UI.WebControls.ContentPlaceHolder SubNavTitle_Sub2;
         
         /// <summary>
-        /// ddlLimit control.
+        /// Level1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlLimit;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl Level1;
         
         /// <summary>
-        /// chkPrinter control.
+        /// Level2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkPrinter;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl Level2;
         
         /// <summary>
-        /// chkSoftware control.
+        /// DropDownActionsSub2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkSoftware;
+        protected global::System.Web.UI.WebControls.ContentPlaceHolder DropDownActionsSub2;
         
         /// <summary>
-        /// chkScript control.
+        /// btnArchive control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkScript;
+        protected global::System.Web.UI.WebControls.LinkButton btnArchive;
         
         /// <summary>
-        /// chkFile control.
+        /// btnDelete control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkFile;
+        protected global::System.Web.UI.WebControls.LinkButton btnDelete;
         
         /// <summary>
-        /// chkCommand control.
+        /// SubContent2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkCommand;
+        protected global::System.Web.UI.WebControls.ContentPlaceHolder SubContent2;
         
         /// <summary>
-        /// chkWu control.
+        /// lblTitle control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkWu;
+        protected global::System.Web.UI.WebControls.Label lblTitle;
         
         /// <summary>
-        /// chkMessage control.
+        /// buttonConfirm control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkMessage;
+        protected global::System.Web.UI.WebControls.LinkButton buttonConfirm;
         
         /// <summary>
-        /// gvModules control.
+        /// CancelButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvModules;
+        protected global::System.Web.UI.WebControls.LinkButton CancelButton;
+        
+        /// <summary>
+        /// subsubHelp control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ContentPlaceHolder subsubHelp;
     }
 }

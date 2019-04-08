@@ -12,6 +12,7 @@ namespace Toems_FrontEnd.BasePages
         public EntityFileCopyModule FileCopyModule { get; set; }
         public EntityScriptModule ScriptModule { get; set; }
         public EntityWuModule WuModule { get; set; }
+        public EntityMessageModule MessageModule { get; set; }
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -39,6 +40,9 @@ namespace Toems_FrontEnd.BasePages
             WuModule = !string.IsNullOrEmpty(Request["wuModuleId"])
                 ? Call.WuModuleApi.Get(Convert.ToInt32(Request.QueryString["wuModuleId"]))
                 : null;
+            MessageModule = !string.IsNullOrEmpty(Request["messageModuleId"])
+               ? Call.MessageModuleApi.Get(Convert.ToInt32(Request.QueryString["messageModuleId"]))
+               : null;
 
         }
 

@@ -10,6 +10,7 @@
         public bool IncludeFileCopy { get; set; }
         public bool IncludeScript { get; set; }
         public bool IncludeWu { get; set; }
+        public bool IncludeMessage { get; set; }
         public bool IncludeUnassigned { get; set; }
     }
 }

@@ -62,6 +62,7 @@
     <Compile Include="AssetGroupApi.cs" />
     <Compile Include="AssetGroupMemberAPI.cs" />
     <Compile Include="AssetCategoryAPI.cs" />
+    <Compile Include="MessageModuleAPI.cs" />
     <Compile Include="PinnedGroupApi.cs" />
     <Compile Include="SoftwareAssetSoftwareAPI.cs" />
     <Compile Include="AttachmentApi.cs" />

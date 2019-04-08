@@ -172,6 +172,15 @@ namespace Toems_DataModel
                     dto.Id = module.Id;
                     list.Add(dto);
                 }
+                foreach (var module in policyModule.MessageModules)
+                {
+                    var dto = new DtoModule();
+                    dto.ModuleType = EnumModule.ModuleType.Message;
+                    dto.Guid = module.Guid;
+                    dto.Name = module.Name;
+                    dto.Id = module.Id;
+                    list.Add(dto);
+                }
                 foreach (var module in policyModule.PrinterModules)
                 {
                     var dto = new DtoModule();

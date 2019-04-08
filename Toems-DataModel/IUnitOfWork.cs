@@ -88,6 +88,8 @@ namespace Toems_DataModel
         IGenericRepository<EntityPinnedGroup> PinnedGroupRepository { get; }
         IGenericRepository<EntityCertificateInventory> CertificateInventoryRepository { get; }
         IGenericRepository<EntityComputerCertificate> ComputerCertificateRepository { get; }
+        IGenericRepository<EntityMessageModule> MessageModuleRepository { get; }
+        IGenericRepository<EntityActiveSocket> ActiveSocketRepository { get; }
         void Save();
     }
 }

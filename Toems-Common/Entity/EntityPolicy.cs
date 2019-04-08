@@ -91,6 +91,12 @@ namespace Toems_Common.Entity
 
         [Column("datetime_archived_local")]
         public DateTime? ArchiveDateTime { get; set; }
+
+        [Column("policy_condition_id")]
+        public int ConditionId { get; set; }
+
+        [Column("condition_failed_action")]
+        public EnumCondition.FailedAction ConditionFailedAction { get; set; }
     }
 
     [NotMapped]
@@ -102,6 +108,7 @@ namespace Toems_Common.Entity
         public List<EntityScriptModule> ScriptModules { get; set; }
         public List<EntityCommandModule> CommandModules { get; set; }
         public List<EntityWuModule> WuModules { get; set; }
+        public List<EntityMessageModule> MessageModules { get; set; }
         public int Order { get; set; }
     }
 

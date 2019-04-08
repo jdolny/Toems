@@ -28,6 +28,10 @@
              <a href="<%= ResolveUrl("~/views/modules/wumodules/search.aspx") %>">
                  <span class="sub-nav-text">Windows Update Modules</span></a>
          </li>
+          <li id="message">
+             <a href="<%= ResolveUrl("~/views/modules/messagemodules/search.aspx") %>">
+                 <span class="sub-nav-text">Message Modules</span></a>
+         </li>
         </ul>
 </asp:Content>
 

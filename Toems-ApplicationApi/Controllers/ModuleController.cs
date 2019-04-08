@@ -71,6 +71,11 @@ namespace Toems_ApplicationApi.Controllers
                         auditLog.ObjectName = uModule.Name;
                         auditLog.ObjectJson = JsonConvert.SerializeObject(uModule);
                         break;
+                    case EnumModule.ModuleType.Message:
+                        var messageModule = new ServiceMessageModule().GetModule(moduleId);
+                        auditLog.ObjectName = messageModule.Name;
+                        auditLog.ObjectJson = JsonConvert.SerializeObject(messageModule);
+                        break;
                 }
 
 
@@ -127,6 +132,11 @@ namespace Toems_ApplicationApi.Controllers
                         var uModule = new ServiceWuModule().GetModule(moduleId);
                         auditLog.ObjectName = uModule.Name;
                         auditLog.ObjectJson = JsonConvert.SerializeObject(uModule);
+                        break;
+                    case EnumModule.ModuleType.Message:
+                        var messageModule = new ServiceMessageModule().GetModule(moduleId);
+                        auditLog.ObjectName = messageModule.Name;
+                        auditLog.ObjectJson = JsonConvert.SerializeObject(messageModule);
                         break;
                 }
 

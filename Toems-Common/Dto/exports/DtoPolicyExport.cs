@@ -14,6 +14,7 @@ namespace Toems_Common.Dto.exports
             ScriptModules = new List<DtoScriptModuleExport>();
             SoftwareModules = new List<DtoSoftwareModuleExport>();
             WuModules = new List<DtoWuModuleExport>();
+            MessageModules = new List<DtoMessageModuleExport>();
 
         }
         public string Name { get; set; }
@@ -41,6 +42,9 @@ namespace Toems_Common.Dto.exports
         public List<DtoScriptModuleExport> ScriptModules { get; set; }
         public List<DtoSoftwareModuleExport> SoftwareModules { get; set; }
         public List<DtoWuModuleExport> WuModules { get; set; }
+        public List<DtoMessageModuleExport> MessageModules { get; set; }
         public EnumPolicy.WuType WuType { get; set; }
+        public EnumCondition.FailedAction ConditionFailedAction { get; set; }
+        public DtoClientModuleCondition Condition { get; set; }
     }
 }

@@ -91,6 +91,8 @@ namespace Toems_DataModel
         public DbSet<EntityPinnedGroup> PinnedGroups { get; set; }
         public DbSet<EntityComputerCertificate> ComputerCertificates { get; set; }
         public DbSet<EntityCertificateInventory> CertificateInventory { get; set; }
+        public DbSet<EntityMessageModule> MessageModules { get; set; }
+        public DbSet<EntityActiveSocket> ActiveSockets { get; set; }
 
     }
 }

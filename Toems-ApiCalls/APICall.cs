@@ -16,6 +16,11 @@ namespace Toems_ApiCalls
 
         }
 
+        public MessageModuleAPI MessageModuleApi
+        {
+            get { return new MessageModuleAPI("MessageModule"); }
+        }
+
         public CertificateInventoryAPI CertificateInventoryApi
         {
             get { return new CertificateInventoryAPI("CertificateInventory"); }

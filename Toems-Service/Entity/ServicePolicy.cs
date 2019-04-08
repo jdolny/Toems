@@ -92,6 +92,9 @@ namespace Toems_Service.Entity
             foreach (var m in policyWithModules.WuModules)
                 if (!moduleService.ArchiveModule(m.Id, EnumModule.ModuleType.Wupdate).Success)
                     moduleArchiveError = true;
+            foreach (var m in policyWithModules.MessageModules)
+                if (!moduleService.ArchiveModule(m.Id, EnumModule.ModuleType.Message).Success)
+                    moduleArchiveError = true;
             _uow.GroupPolicyRepository.DeleteRange(x => x.PolicyId == policyId);
             _uow.Save();
             if (moduleArchiveError)
@@ -383,6 +386,18 @@ namespace Toems_Service.Entity
                 }).ToList());
             }
 
+            if (filter.IncludeMessage)
+            {
+                listModules.AddRange(new ServiceMessageModule().SearchModules(catfilter).Select(messageModule => new DtoModule
+                {
+                    Id = messageModule.Id,
+                    Name = messageModule.Name,
+                    Description = messageModule.Description,
+                    Guid = messageModule.Guid,
+                    ModuleType = EnumModule.ModuleType.Message
+                }).ToList());
+            }
+
             if (filter.IncludeScript)
             {
                 listModules.AddRange(new ServiceScriptModule().SearchModules(catfilter).Select(scriptModule => new DtoModule
@@ -433,6 +448,14 @@ namespace Toems_Service.Entity
                         modulesToRemove.AddRange(listModules.Where(module => mod.Guid == module.Guid));
                     }
                     foreach (var mod in policyDetailed.ScriptModules)
+                    {
+                        modulesToRemove.AddRange(listModules.Where(module => mod.Guid == module.Guid));
+                    }
+                    foreach (var mod in policyDetailed.MessageModules)
+                    {
+                        modulesToRemove.AddRange(listModules.Where(module => mod.Guid == module.Guid));
+                    }
+                    foreach (var mod in policyDetailed.WuModules)
                     {
                         modulesToRemove.AddRange(listModules.Where(module => mod.Guid == module.Guid));
                     }
@@ -526,12 +549,24 @@ namespace Toems_Service.Entity
                         }
                     }
                 }
+                else if (module.ModuleType == EnumModule.ModuleType.Message)
+                {
+                    if (filter.IncludeMessage)
+                    {
+                        var pModule = new ServiceMessageModule().GetModule(module.ModuleId);
+                        if (pModule != null)
+                        {
+                            module.Name = pModule.Name;
+                            list.Add(module);
+                        }
+                    }
+                }
             }
           
             if (string.IsNullOrEmpty(filter.Searchstring))
-                return list.OrderBy(x => x.Name).Take(filter.Limit).ToList();
+                return list.OrderBy(x => x.Order).ThenBy(x => x.Name).Take(filter.Limit).ToList();
             else
-                return list.Where(s => s.Name.Contains(filter.Searchstring)).OrderBy(x => x.Name).Take(filter.Limit).ToList();
+                return list.Where(s => s.Name.Contains(filter.Searchstring)).OrderBy(x=> x.Order).ThenBy(x => x.Name).Take(filter.Limit).ToList();
         }
 
         public List<EntityPolicyComServer> GetPolicyComServers(int policyId)

@@ -79,6 +79,10 @@
         <asp:CheckBox runat="server" ID="chkWu" Text="Command" AutoPostBack="True" OnCheckedChanged="chkFilter_OnCheckedChanged"/>
     </div>
       <div class="size-10 column hidden-check">
+        Message
+        <asp:CheckBox runat="server" ID="chkMessage" Text="Command" AutoPostBack="True" OnCheckedChanged="chkFilter_OnCheckedChanged"/>
+    </div>
+      <div class="size-10 column hidden-check">
           Unassigned
         <asp:CheckBox runat="server" ID="chkUnassigned" Text="Unassigned" AutoPostBack="True" OnCheckedChanged="chkFilter_OnCheckedChanged"/>
     </div>

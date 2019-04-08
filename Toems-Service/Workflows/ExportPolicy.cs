@@ -29,6 +29,7 @@ namespace Toems_Service.Workflows
             _filter.IncludeScript = true;
             _filter.IncludeSoftware = true;
             _filter.IncludeWu = true;
+            _filter.IncludeMessage = true;
             _filter.Limit = Int32.MaxValue;
         }
 
@@ -71,6 +72,10 @@ namespace Toems_Service.Workflows
                 else if (policyModule.ModuleType == EnumModule.ModuleType.Wupdate)
                 {
                     CopyWuModule(policyModule);
+                }
+                else if (policyModule.ModuleType == EnumModule.ModuleType.Message)
+                {
+                    CopyMessageModule(policyModule);
                 }
             }
 
@@ -240,6 +245,22 @@ namespace Toems_Service.Workflows
 
 
             _policyExport.ScriptModules.Add(scriptModuleExport);
+        }
+
+        private void CopyMessageModule(EntityPolicyModules policyModule)
+        {
+            var messageModuleExport = new DtoMessageModuleExport();
+            var messageModule = new ServiceMessageModule().GetModule(policyModule.ModuleId);
+
+         
+            messageModuleExport.Description = messageModule.Description;
+            messageModuleExport.DisplayName = messageModule.Name;       
+            messageModuleExport.Order = policyModule.Order;
+            messageModuleExport.Timeout = messageModule.Timeout;    
+            messageModuleExport.Guid = messageModule.Guid;
+            messageModuleExport.Title = messageModule.Title;
+            messageModuleExport.Message = messageModule.Message;
+            _policyExport.MessageModules.Add(messageModuleExport);
         }
 
         private void CopyPrinterModule(EntityPolicyModules policyModule)

@@ -87,6 +87,13 @@ namespace Toems_Service.Entity
                     moduleId = wuModule.Id,
                     moduleType = EnumModule.ModuleType.Wupdate
                 };
+            var messageModule = _uow.MessageModuleRepository.GetFirstOrDefault(x => x.Guid == moduleGuid);
+            if (messageModule != null)
+                return new DtoGuidTypeMapping()
+                {
+                    moduleId = messageModule.Id,
+                    moduleType = EnumModule.ModuleType.Message
+                };
             return null;
         }
 
@@ -209,6 +216,25 @@ namespace Toems_Service.Entity
                     }
 
                     break;
+                case EnumModule.ModuleType.Message:
+                    var messageModule = _uow.MessageModuleRepository.GetById(moduleId);
+                    if (messageModule != null)
+                    {
+                        messageModule.Archived = false;
+                        messageModule.Name = messageModule.Name.Split('#').First();
+                        messageModule.ArchiveDateTime = null;
+                        if (_uow.MessageModuleRepository.Exists(x => x.Name.Equals(messageModule.Name)))
+                            return new DtoActionResult()
+                            {
+                                ErrorMessage = "Could Not Restore Module.  A Module With Name " + messageModule.Name +
+                                               " Already Exists"
+                            };
+                        _uow.MessageModuleRepository.Update(messageModule, messageModule.Id);
+                        _uow.Save();
+                        return new DtoActionResult() { Id = messageModule.Id, Success = true };
+                    }
+
+                    break;
             }
 
             return new DtoActionResult()
@@ -270,6 +296,7 @@ namespace Toems_Service.Entity
                         scModule.Archived = true;
                         scModule.Name = scModule.Name + "#" + DateTime.Now.ToString("MM-dd-yyyy_HH:mm");
                         scModule.ArchiveDateTime = DateTime.Now;
+                       
                         _uow.ScriptModuleRepository.Update(scModule,scModule.Id);
                         _uow.Save();
                         return new DtoActionResult() {Id = moduleId, Success = true };
@@ -297,6 +324,19 @@ namespace Toems_Service.Entity
                         uModule.Name = uModule.Name + "#" + DateTime.Now.ToString("MM-dd-yyyy_HH:mm");
                         uModule.ArchiveDateTime = DateTime.Now;
                         _uow.WindowsUpdateModuleRepository.Update(uModule, uModule.Id);
+                        _uow.Save();
+                        return new DtoActionResult() { Id = moduleId, Success = true };
+                    }
+                    break;
+                case EnumModule.ModuleType.Message:
+                    var messageModule = _uow.MessageModuleRepository.GetById(moduleId);
+                    if (messageModule != null)
+                    {
+                        if (messageModule.Archived) return new DtoActionResult() { Id = moduleId, Success = true };
+                        messageModule.Archived = true;
+                        messageModule.Name = messageModule.Name + "#" + DateTime.Now.ToString("MM-dd-yyyy_HH:mm");
+                        messageModule.ArchiveDateTime = DateTime.Now;
+                        _uow.MessageModuleRepository.Update(messageModule, messageModule.Id);
                         _uow.Save();
                         return new DtoActionResult() { Id = moduleId, Success = true };
                     }

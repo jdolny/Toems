@@ -80,6 +80,13 @@ namespace Toems_Service.Workflows
                 return new DtoImportResult() {ErrorMessage = result.ErrorMessage};
             }
 
+            result = CreateMessages();
+            if (!result.Success)
+            {
+                _policyService.DeletePolicy(_policy.Id);
+                return new DtoImportResult() { ErrorMessage = result.ErrorMessage };
+            }
+
             _uow.Save();
 
             if(_export.Instructions.Contains("[skip-policy-create]"))
@@ -270,6 +277,63 @@ namespace Toems_Service.Workflows
                 policyModule.ModuleType = EnumModule.ModuleType.Printer;
                 policyModule.Name = printer.Name;
                 policyModule.Order = printerModule.Order;
+                policyModule.PolicyId = _policy.Id;
+
+                _uow.PolicyModulesRepository.Insert(policyModule);
+
+            }
+
+            return new DtoActionResult() { Success = true };
+        }
+
+        private DtoActionResult CreateMessages()
+        {
+            foreach (var messageModule in _export.MessageModules)
+            {
+                if (_export.Instructions.Contains("[generate-module-guid]"))
+                {
+                    messageModule.Guid = Guid.NewGuid().ToString();
+                }
+
+                if (_uow.MessageModuleRepository.Exists(h => h.Guid.Equals(messageModule.Guid)))
+                {
+                    return new DtoActionResult() { ErrorMessage = "A Message Module With This Guid Already Exists.  " + messageModule.Guid };
+                }
+
+                var message = new EntityMessageModule();
+                message.Name = messageModule.DisplayName;
+                message.Description = "Added Via Policy Template " + _export.Name + "  On " + DateTime.Now +
+                                     "\r\n" + messageModule.Description;
+                message.Guid = messageModule.Guid;
+                message.Title = messageModule.Title;
+                message.Message = messageModule.Message;
+                message.Timeout = messageModule.Timeout;
+
+                if (_uow.MessageModuleRepository.Exists(h => h.Name.Equals(message.Name)))
+                {
+                    for (var c = 1; c <= 100; c++)
+                    {
+                        if (c == 100)
+                            return new DtoActionResult() { ErrorMessage = "Could Not Determine A Message Name" };
+
+                        var newName = message.Name + "_" + c;
+                        if (!_uow.MessageModuleRepository.Exists(h => h.Name == newName))
+                        {
+                            message.Name = newName;
+                            break;
+                        }
+                    }
+                }
+
+                var addResult = new ServiceMessageModule().AddModule(message);
+                if (!addResult.Success) return addResult;
+
+                var policyModule = new EntityPolicyModules();
+                policyModule.Guid = message.Guid;
+                policyModule.ModuleId = addResult.Id;
+                policyModule.ModuleType = EnumModule.ModuleType.Message;
+                policyModule.Name = message.Name;
+                policyModule.Order = messageModule.Order;
                 policyModule.PolicyId = _policy.Id;
 
                 _uow.PolicyModulesRepository.Insert(policyModule);

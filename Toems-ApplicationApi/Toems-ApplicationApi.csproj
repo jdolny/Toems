@@ -132,6 +132,7 @@
     <Compile Include="Controllers\AssetGroupController.cs" />
     <Compile Include="Controllers\AssetGroupMemberController.cs" />
     <Compile Include="Controllers\AssetCategoryController.cs" />
+    <Compile Include="Controllers\MessageModuleController.cs" />
     <Compile Include="Controllers\PinnedGroupController.cs" />
     <Compile Include="Controllers\SoftwareAssetSoftwareController.cs" />
     <Compile Include="Controllers\AssetController.cs" />
