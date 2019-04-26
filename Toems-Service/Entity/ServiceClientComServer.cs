@@ -1,7 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Web.Security;
+using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
+using Toems_Common.Enum;
 using Toems_DataModel;
 
 namespace Toems_Service.Entity
@@ -130,6 +136,28 @@ namespace Toems_Service.Entity
             return validationResult;
 
 
+        }
+
+        public byte[] GenerateComCert(int comServerId)
+        {
+            var comServer = GetServer(comServerId);
+            if (comServer == null) return null;
+
+            var iCert = new ServiceCertificate().GetIntermediate();
+            var site = new Uri(comServer.Url);
+            var intermediateEntity = new ServiceCertificate().GetIntermediateEntity();
+            var pass = new EncryptionServices().DecryptText(intermediateEntity.Password);
+            var intermediateCert = new X509Certificate2(intermediateEntity.PfxBlob, pass, X509KeyStorageFlags.Exportable);
+            var certRequest = new CertificateRequest();
+            var organization = ServiceSetting.GetSettingValue(SettingStrings.CertificateOrganization);
+            certRequest.SubjectName = string.Format($"CN={site.Host}");
+            certRequest.NotBefore = DateTime.UtcNow;
+            certRequest.NotAfter = certRequest.NotBefore.AddYears(10);
+            var certificate = new ServiceGenerateCertificate(certRequest).IssueCertificate(intermediateCert, false,true);
+
+            var bytes = certificate.Export(X509ContentType.Pfx);
+
+            return bytes;
         }
 
 

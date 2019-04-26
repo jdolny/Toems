@@ -402,8 +402,8 @@ namespace Toems_Service
             var organization = ServiceSetting.GetSettingValue(SettingStrings.CertificateOrganization);
             certRequest.SubjectName = string.Format("O={0},CN={1}", organization, computer.Guid);
             certRequest.NotBefore = DateTime.UtcNow;
-            certRequest.NotAfter = certRequest.NotBefore.AddYears(5);
-            var certificate = new ServiceGenerateCertificate(certRequest).IssueCertificate(intermediateCert, false);
+            certRequest.NotAfter = certRequest.NotBefore.AddYears(10);
+            var certificate = new ServiceGenerateCertificate(certRequest).IssueCertificate(intermediateCert, false,false);
 
             var c = new EntityCertificate();
             c.NotAfter = certificate.NotAfter;

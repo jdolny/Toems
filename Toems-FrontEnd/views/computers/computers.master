@@ -64,7 +64,7 @@
                 <a href="<%= ResolveUrl("~/views/computers/custominventory.aspx") %>?computerId=<%= ComputerEntity.Id %>">
                     <span class="sub-nav-text">Custom Inventory</span></a>
             </li>
-                 <li id="remoteaccess">
+                 <li runat="server" id="remoteaccess" visible="false"><!--Not Implemented yet-->
                 <a href="<%= ResolveUrl("~/views/computers/remoteaccess.aspx") %>?computerId=<%= ComputerEntity.Id %>">
                     <span class="sub-nav-text">Remote Access</span></a>
             </li>

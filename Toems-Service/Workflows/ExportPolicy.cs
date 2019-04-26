@@ -104,6 +104,11 @@ namespace Toems_Service.Workflows
             _policyExport.SkipServerResult = _policy.SkipServerResult;
             _policyExport.IsApplicationMonitor = _policy.RunApplicationMonitor;
             _policyExport.WuType = _policy.WuType;
+            _policyExport.ConditionFailedAction = _policy.ConditionFailedAction;
+            if(_policy.ConditionId != -1)
+            {
+                _policyExport.Condition = GetCondition(_policy.ConditionId);
+            }
         }
 
         private void CopyCommandModule(EntityPolicyModules policyModule)
@@ -121,6 +126,8 @@ namespace Toems_Service.Workflows
             commandModuleExport.WorkingDirectory = commandModule.WorkingDirectory;
             commandModuleExport.SuccessCodes = commandModule.SuccessCodes;
             commandModuleExport.Guid = commandModule.Guid;
+            commandModuleExport.ConditionFailedAction = policyModule.ConditionFailedAction;
+            commandModuleExport.ConditionNextOrder = policyModule.ConditionNextModule;
 
             var uploadedFiles = new ServiceUploadedFile().GetFilesForModule(commandModule.Guid);
             foreach (var file in uploadedFiles.OrderBy(x => x.Name))
@@ -143,6 +150,12 @@ namespace Toems_Service.Workflows
                 commandModuleExport.ExternalFiles.Add(externalFile);
             }
 
+            if(policyModule.ConditionId != -1)
+            {
+                commandModuleExport.Condition = GetCondition(policyModule.ConditionId);
+            }
+
+
             _policyExport.CommandModules.Add(commandModuleExport);
         }
 
@@ -162,6 +175,8 @@ namespace Toems_Service.Workflows
             softwareModuleExport.RedirectError = softwareModule.RedirectStdError;
             softwareModuleExport.SuccessCodes = softwareModule.SuccessCodes;
             softwareModuleExport.Guid = softwareModule.Guid;
+            softwareModuleExport.ConditionFailedAction = policyModule.ConditionFailedAction;
+            softwareModuleExport.ConditionNextOrder = policyModule.ConditionNextModule;
 
 
             var uploadedFiles = new ServiceUploadedFile().GetFilesForModule(softwareModule.Guid);
@@ -185,6 +200,11 @@ namespace Toems_Service.Workflows
                 softwareModuleExport.ExternalFiles.Add(externalFile);
             }
 
+            if (policyModule.ConditionId != -1)
+            {
+                softwareModuleExport.Condition = GetCondition(policyModule.ConditionId);
+            }
+
             _policyExport.SoftwareModules.Add(softwareModuleExport);
         }
 
@@ -198,6 +218,8 @@ namespace Toems_Service.Workflows
             fileCopyModuleExport.Order = policyModule.Order;
             fileCopyModuleExport.Unzip = fileCopyModule.DecompressAfterCopy;
             fileCopyModuleExport.Guid = fileCopyModule.Guid;
+            fileCopyModuleExport.ConditionFailedAction = policyModule.ConditionFailedAction;
+            fileCopyModuleExport.ConditionNextOrder = policyModule.ConditionNextModule;
 
             var uploadedFiles = new ServiceUploadedFile().GetFilesForModule(fileCopyModule.Guid);
             foreach (var file in uploadedFiles.OrderBy(x => x.Name))
@@ -218,6 +240,11 @@ namespace Toems_Service.Workflows
                 externalFile.Url = file.Url;
                 externalFile.ModuleGuid = file.ModuleGuid;
                 fileCopyModuleExport.ExternalFiles.Add(externalFile);
+            }
+
+            if (policyModule.ConditionId != -1)
+            {
+                fileCopyModuleExport.Condition = GetCondition(policyModule.ConditionId);
             }
 
             _policyExport.FileCopyModules.Add(fileCopyModuleExport);
@@ -242,7 +269,13 @@ namespace Toems_Service.Workflows
             scriptModuleExport.IsCondition = scriptModule.IsCondition;
             scriptModuleExport.SuccessCodes = scriptModule.SuccessCodes;
             scriptModuleExport.Guid = scriptModule.Guid;
+            scriptModuleExport.ConditionFailedAction = policyModule.ConditionFailedAction;
+            scriptModuleExport.ConditionNextOrder = policyModule.ConditionNextModule;
 
+            if (policyModule.ConditionId != -1)
+            {
+                scriptModuleExport.Condition = GetCondition(policyModule.ConditionId);
+            }
 
             _policyExport.ScriptModules.Add(scriptModuleExport);
         }
@@ -260,6 +293,14 @@ namespace Toems_Service.Workflows
             messageModuleExport.Guid = messageModule.Guid;
             messageModuleExport.Title = messageModule.Title;
             messageModuleExport.Message = messageModule.Message;
+            messageModuleExport.ConditionFailedAction = policyModule.ConditionFailedAction;
+            messageModuleExport.ConditionNextOrder = policyModule.ConditionNextModule;
+
+            if (policyModule.ConditionId != -1)
+            {
+                messageModuleExport.Condition = GetCondition(policyModule.ConditionId);
+            }
+
             _policyExport.MessageModules.Add(messageModuleExport);
         }
 
@@ -276,6 +317,13 @@ namespace Toems_Service.Workflows
             printerModuleExport.PrinterAction = printerModule.Action;
             printerModuleExport.WaitForEnumeration = printerModule.WaitForEnumeration;
             printerModuleExport.Guid = printerModule.Guid;
+            printerModuleExport.ConditionFailedAction = policyModule.ConditionFailedAction;
+            printerModuleExport.ConditionNextOrder = policyModule.ConditionNextModule;
+
+            if (policyModule.ConditionId != -1)
+            {
+                printerModuleExport.Condition = GetCondition(policyModule.ConditionId);
+            }
             _policyExport.PrinterModules.Add(printerModuleExport);
         }
 
@@ -292,7 +340,8 @@ namespace Toems_Service.Workflows
             wuModuleExport.RedirectError = wuModule.RedirectStdError;
             wuModuleExport.SuccessCodes = wuModule.SuccessCodes;
             wuModuleExport.Guid = wuModule.Guid;
-
+            wuModuleExport.ConditionFailedAction = policyModule.ConditionFailedAction;
+            wuModuleExport.ConditionNextOrder = policyModule.ConditionNextModule;
 
             var uploadedFiles = new ServiceUploadedFile().GetFilesForModule(wuModule.Guid);
             foreach (var file in uploadedFiles.OrderBy(x => x.Name))
@@ -315,7 +364,36 @@ namespace Toems_Service.Workflows
                 wuModuleExport.ExternalFiles.Add(externalFile);
             }
 
+            if (policyModule.ConditionId != -1)
+            {
+                wuModuleExport.Condition = GetCondition(policyModule.ConditionId);
+            }
+
             _policyExport.WuModules.Add(wuModuleExport);
+        }
+
+        private DtoScriptModuleExport GetCondition(int conditionScriptId)
+        {
+            var condition = new ServiceScriptModule().GetModule(conditionScriptId);
+            if (condition == null) return null;
+
+            var scriptModuleExport = new DtoScriptModuleExport();
+
+            scriptModuleExport.ScriptContents = condition.ScriptContents;
+            scriptModuleExport.Description = condition.Description;
+            scriptModuleExport.DisplayName = condition.Name;
+            scriptModuleExport.Arguments = condition.Arguments;
+            scriptModuleExport.Timeout = condition.Timeout;
+            scriptModuleExport.ScriptType = condition.ScriptType;
+            scriptModuleExport.RedirectOutput = condition.RedirectStdOut;
+            scriptModuleExport.RedirectError = condition.RedirectStdError;
+            scriptModuleExport.AddToInventory = condition.AddInventoryCollection;
+            scriptModuleExport.WorkingDirectory = condition.WorkingDirectory;
+            scriptModuleExport.IsCondition = condition.IsCondition;
+            scriptModuleExport.SuccessCodes = condition.SuccessCodes;
+            scriptModuleExport.Guid = condition.Guid;
+
+            return scriptModuleExport;
         }
     }
 }

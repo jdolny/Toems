@@ -199,7 +199,7 @@ namespace Toems_Service.Entity
             intRequest.SubjectName = string.Format("O={0},CN=Toems Intermediate", organization.Value);
             intRequest.NotBefore = DateTime.UtcNow;
             intRequest.NotAfter = intRequest.NotBefore.AddYears(20);
-            var intCertificate = new ServiceGenerateCertificate(intRequest).IssueCertificate(authCertificate, true);
+            var intCertificate = new ServiceGenerateCertificate(intRequest).IssueCertificate(authCertificate, true, false);
 
             var ce = new EntityCertificate();
             ce.NotAfter = intCertificate.NotAfter;

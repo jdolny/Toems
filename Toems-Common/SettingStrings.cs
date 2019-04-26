@@ -106,7 +106,7 @@
 
         public const string RemoteAccessStatus = "Remote Access Status";
 
-        public const string SharedLibraryVersion = "1.0.0.0";
+        public const string SharedLibraryVersion = "1.1.0.0";
 
     }
 }

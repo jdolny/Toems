@@ -320,6 +320,8 @@ namespace Toems_Service.Entity
             searchFilter.IncludePrinter = true;
             searchFilter.IncludeScript = true;
             searchFilter.IncludeSoftware = true;
+            searchFilter.IncludeMessage = true;
+            searchFilter.IncludeWu = true;
 
             foreach (var module in SearchAssignedPolicyModules(policyId, searchFilter))
             {
@@ -328,6 +330,24 @@ namespace Toems_Service.Entity
             }
             _uow.Save();
 
+            var categories = GetPolicyCategories(u.Id);
+            foreach(var cat in categories)
+            {
+                cat.PolicyId = clonedPolicy.Id;
+            }
+            new ServicePolicyCategory().AddOrUpdate(categories);
+
+
+            if (u.PolicyComCondition == EnumPolicy.PolicyComCondition.Selective)
+            {
+                var comServers = GetPolicyComServers(u.Id);
+                foreach(var com in comServers)
+                {
+                    com.PolicyId = clonedPolicy.Id;
+                }
+
+                new ServicePolicyComServer().AddOrUpdate(comServers);
+            }
             return new DtoActionResult() {Id = clonedPolicy.Id, Success = true};
         }
 

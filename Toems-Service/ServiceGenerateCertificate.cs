@@ -51,7 +51,7 @@ namespace Toems_Service
             return issuerCertificate;
         }
 
-        public X509Certificate2 IssueCertificate(X509Certificate2 issuerCertificate, bool isIntermediate)
+        public X509Certificate2 IssueCertificate(X509Certificate2 issuerCertificate, bool isIntermediate, bool isWeb)
         {
             
 
@@ -63,11 +63,23 @@ namespace Toems_Service
             var serialNumber = GenerateSerialNumber(random);
             var issuerSerialNumber = new BigInteger(issuerCertificate.GetSerialNumber());
 
-
-            var certificate = GenerateCertificate(random, _subjectName, subjectKeyPair, serialNumber,
-                                                  null, issuerCertificate.Subject, issuerKeyPair,
-                                                  issuerSerialNumber, isIntermediate,
-                                                  _usages);
+            X509Certificate certificate;
+            if (isWeb)
+            {
+                string[] sans = new string[1];
+                sans[0] = _subjectName.Split('=').LastOrDefault();
+                certificate = GenerateCertificate(random, _subjectName, subjectKeyPair, serialNumber,
+                                                     sans, issuerCertificate.Subject, issuerKeyPair,
+                                                     issuerSerialNumber, isIntermediate,
+                                                     _usages);
+            }
+            else
+            {
+                certificate = GenerateCertificate(random, _subjectName, subjectKeyPair, serialNumber,
+                                                      null, issuerCertificate.Subject, issuerKeyPair,
+                                                      issuerSerialNumber, isIntermediate,
+                                                      _usages);
+            }
            
             return ConvertCertificate(certificate, subjectKeyPair, random);
         }
@@ -147,7 +159,7 @@ namespace Toems_Service
             // Note: The subject can be omitted if you specify a subject alternative name (SAN).
             var subjectDN = new X509Name(subjectName);
             certificateGenerator.SetSubjectDN(subjectDN);
-
+            
 
             certificateGenerator.SetNotBefore(_notBefore);
             certificateGenerator.SetNotAfter(_notAfter);

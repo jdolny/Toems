@@ -75,6 +75,8 @@ namespace Toems_Service.Workflows
                     return " GROUP BY o." + field;
                 else if (table == "Network Adapters")
                         return " GROUP BY p." + field;
+                else if (table == "Certificates")
+                    return " GROUP BY r." + field;
             }
 
             return "";
@@ -158,8 +160,44 @@ namespace Toems_Service.Workflows
                     }
 
                 }
+                else if (query.Table.Equals("Certificates"))
+                {
+                    sb.Append(@"select a.computer_id,a.computer_name
+                                from computers as a
+                                where a.computer_id not in 
+                                (
+                                    SELECT computers.computer_id
+                                    FROM computers
+                                    left join computer_certificates on computers.computer_id = computer_certificates.computer_id 
+                                    left join certificate_inventory on (computer_certificates.certificate_id = certificate_inventory.certificate_inventory_id)
+                                    where certificate_inventory.subject " + query.Operator + " " + "'" + query.Value + "'" +
+                              ") and a.last_inventory_time_local > '2019-01-01'");
 
-                
+                    if (queries.First().IncludeArchived && queries.First().IncludePreProvisioned)
+                    {
+                        sb.Append(" AND (a.provision_status = 8 OR a.provision_status = 11 OR a.provision_status = 6)");
+                    }
+                    else if (queries.First().IncludeArchived)
+                    {
+                        sb.Append(" AND (a.provision_status = 8 OR a.provision_status = 11)");
+                    }
+
+                    else if (queries.First().IncludePreProvisioned)
+                    {
+                        sb.Append(" AND (a.provision_status = 8 OR a.provision_status = 6)");
+                    }
+                    else
+                    {
+                        sb.Append(" AND a.provision_status = 8");
+                    }
+
+                    if (!string.IsNullOrEmpty(queries.First().GroupBy))
+                    {
+                        sb.Append($" GROUP BY {queries.First().GroupBy}");
+                    }
+                }
+
+
                 sqlQuery = new DtoRawSqlQuery();
                 sqlQuery.Sql = sb.ToString();
                 return sqlQuery;
@@ -174,51 +212,70 @@ namespace Toems_Service.Workflows
             }
 
             foreach (var query in queries.Where(x => x.Table.Equals("Bios")))
+            {
                 select += @" b." + query.Field + ",";
+            }
 
             foreach (var query in queries.Where(x => x.Table.Equals("System")))
+            {
                 select += @" c." + query.Field + ",";
-
+            }
             foreach (var query in queries.Where(x => x.Table.Equals("Hard Drive")))
+            {
                 select += @" d." + query.Field + ",";
-
+            }
             foreach (var query in queries.Where(x => x.Table.Equals("OS")))
+            {
                 select += @" e." + query.Field + ",";
-
+            }
             foreach (var query in queries.Where(x => x.Table.Equals("Printer")))
+            {
                 select += @" f." + query.Field + ",";
-
+            }
             foreach (var query in queries.Where(x => x.Table.Equals("Processor")))
+            {
                 select += @" g." + query.Field + ",";
-
+            }
             foreach (var query in queries.Where(x => x.Table.Equals("Application")))
+            {
                 select += @" i." + query.Field + ",";
-
+            }
             foreach (var query in queries.Where(x => x.Table.Equals("Windows Update") && x.Field.Equals("is_installed")))
+            {
                 select += @" j." + query.Field + ",";
-
+            }
             foreach (var query in queries.Where(x => x.Table.Equals("Windows Update") && x.Field.Equals("install_date")))
+            {
                 select += @" j." + query.Field + ",";
-
+            }
             foreach (var query in queries.Where(x => x.Table.Equals("Windows Update") && x.Field.Equals("title")))
+            {
                 select += @" k." + query.Field + ",";
-
+            }
             foreach (var query in queries.Where(x => x.Table.Equals("Firewall")))
+            {
                 select += @" l." + query.Field + ",";
-
+            }
             foreach (var query in queries.Where(x => x.Table.Equals("AntiVirus")))
+            {
                 select += @" m." + query.Field + ",";
-
+            }
             foreach (var query in queries.Where(x => x.Table.Equals("BitLocker")))
+            {
                 select += @" n." + query.Field + ",";
-
+            }
             foreach (var query in queries.Where(x => x.Table.Equals("Logical Volumes")))
+            {
                 select += @" o." + query.Field + ",";
-
+            }
             foreach (var query in queries.Where(x => x.Table.Equals("Network Adapters")))
+            {
                 select += @" p." + query.Field + ",";
-
-
+            }
+            foreach (var query in queries.Where(x => x.Table.Equals("Certificates")))
+            {
+                select += @" r." + query.Field + ",";
+            }
 
 
             foreach (var query in queries)
@@ -287,6 +344,11 @@ namespace Toems_Service.Workflows
                 sb.Append("LEFT JOIN logical_volume_inventory o on a.computer_id = o.computer_id ");
             if (queries.Any(x => x.Table == "Network Adapters"))
                 sb.Append("LEFT JOIN nic_inventory p on a.computer_id = p.computer_id ");
+            if (queries.Any(x => x.Table == "Certificates"))
+            {
+                sb.Append("LEFT JOIN computer_certificates q on a.computer_id = q.computer_id ");
+                sb.Append("LEFT JOIN certificate_inventory r on q.certificate_id = r.certificate_inventory_id ");
+            }
 
 
             var scriptModuleIds = new List<int>();
@@ -370,6 +432,8 @@ namespace Toems_Service.Workflows
                     tableAs = "o";
                 else if (query.Table == "Network Adapters")
                     tableAs = "p";
+                else if (query.Table == "Certificates")
+                    tableAs = "r";
                 else
                 {
                     if (query.Table.StartsWith("("))
@@ -416,8 +480,11 @@ namespace Toems_Service.Workflows
                 sb.Append(") AND a.provision_status = 8");
             }
 
-            sb.Append(BuildGroupBy(queries.First().GroupBy));
-
+            var gb = BuildGroupBy(queries.First().GroupBy);
+            if(!string.IsNullOrEmpty(gb))
+            {
+                sb.Append(gb);
+            }
 
             sqlQuery.Sql = sb.ToString();
             sqlQuery.Parameters = parameters;

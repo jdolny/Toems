@@ -6,7 +6,8 @@
         {
             Authority = 1,
             Intermediate = 2,
-            Device = 3
+            Device = 3,
+            Web = 4
            
         }
     }

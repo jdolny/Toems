@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Web.Http;
 using Newtonsoft.Json;
@@ -117,6 +119,21 @@ namespace Toems_ApplicationApi.Controllers
                 _auditLogService.AddAuditLog(auditLog);
 
             }
+            return result;
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpPost]
+        public HttpResponseMessage GenerateCert(int id)
+        {
+            var cert = _clientComService.GenerateComCert(id);
+            var dataStream = new MemoryStream(cert);
+            var result = new HttpResponseMessage(HttpStatusCode.OK);
+            result.Content = new StreamContent(dataStream);
+            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+            result.Content.Headers.ContentDisposition.FileName = "Certificate.pfx";
+            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            result.Content.Headers.ContentLength = dataStream.Length;
             return result;
         }
     }

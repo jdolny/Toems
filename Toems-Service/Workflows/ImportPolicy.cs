@@ -139,6 +139,13 @@ namespace Toems_Service.Workflows
             _policy.PolicyComCondition = EnumPolicy.PolicyComCondition.Any;
             _policy.WindowEndScheduleId = -1;
             _policy.WindowStartScheduleId = -1;
+            _policy.ConditionFailedAction = _export.ConditionFailedAction;
+
+            var conditionId = CreateCondition(_export.Condition);
+            if (conditionId != 0)
+                _policy.ConditionId = conditionId;
+            else
+                _policy.ConditionId = -1;
 
             if (_uow.PolicyRepository.Exists(h => h.Name.Equals(_policy.Name)))
             {
@@ -192,7 +199,7 @@ namespace Toems_Service.Workflows
                 script.Timeout = scriptModule.Timeout;
                 script.WorkingDirectory = scriptModule.WorkingDirectory;
                 script.ImpersonationId = -1;
-
+                
                 if (_uow.ScriptModuleRepository.Exists(h => h.Name.Equals(script.Name)))
                 {
                     for (var c = 1; c <= 100; c++)
@@ -219,6 +226,15 @@ namespace Toems_Service.Workflows
                 policyModule.Name = script.Name;
                 policyModule.Order = scriptModule.Order;
                 policyModule.PolicyId = _policy.Id;
+                policyModule.ConditionFailedAction = scriptModule.ConditionFailedAction;
+                policyModule.ConditionNextModule = scriptModule.ConditionNextOrder;
+
+
+                var conditionId = CreateCondition(scriptModule.Condition);
+                if (conditionId != 0)
+                    policyModule.ConditionId = conditionId;
+                else
+                    policyModule.ConditionId = -1;
 
                 _uow.PolicyModulesRepository.Insert(policyModule);
 
@@ -278,6 +294,15 @@ namespace Toems_Service.Workflows
                 policyModule.Name = printer.Name;
                 policyModule.Order = printerModule.Order;
                 policyModule.PolicyId = _policy.Id;
+                policyModule.ConditionFailedAction = printerModule.ConditionFailedAction;
+                policyModule.ConditionNextModule = printerModule.ConditionNextOrder;
+
+
+                var conditionId = CreateCondition(printerModule.Condition);
+                if (conditionId != 0)
+                    policyModule.ConditionId = conditionId;
+                else
+                    policyModule.ConditionId = -1;
 
                 _uow.PolicyModulesRepository.Insert(policyModule);
 
@@ -335,7 +360,15 @@ namespace Toems_Service.Workflows
                 policyModule.Name = message.Name;
                 policyModule.Order = messageModule.Order;
                 policyModule.PolicyId = _policy.Id;
+                policyModule.ConditionFailedAction = messageModule.ConditionFailedAction;
+                policyModule.ConditionNextModule = messageModule.ConditionNextOrder;
 
+
+                var conditionId = CreateCondition(messageModule.Condition);
+                if (conditionId != 0)
+                    policyModule.ConditionId = conditionId;
+                else
+                    policyModule.ConditionId = -1;
                 _uow.PolicyModulesRepository.Insert(policyModule);
 
             }
@@ -403,6 +436,15 @@ namespace Toems_Service.Workflows
                 policyModule.Name = command.Name;
                 policyModule.Order = commandModule.Order;
                 policyModule.PolicyId = _policy.Id;
+                policyModule.ConditionFailedAction = commandModule.ConditionFailedAction;
+                policyModule.ConditionNextModule = commandModule.ConditionNextOrder;
+
+
+                var conditionId = CreateCondition(commandModule.Condition);
+                if (conditionId != 0)
+                    policyModule.ConditionId = conditionId;
+                else
+                    policyModule.ConditionId = -1;
 
                 _uow.PolicyModulesRepository.Insert(policyModule);
 
@@ -466,7 +508,15 @@ namespace Toems_Service.Workflows
                 policyModule.Name = fileCopy.Name;
                 policyModule.Order = fileCopyModule.Order;
                 policyModule.PolicyId = _policy.Id;
+                policyModule.ConditionFailedAction = fileCopyModule.ConditionFailedAction;
+                policyModule.ConditionNextModule = fileCopyModule.ConditionNextOrder;
 
+
+                var conditionId = CreateCondition(fileCopyModule.Condition);
+                if (conditionId != 0)
+                    policyModule.ConditionId = conditionId;
+                else
+                    policyModule.ConditionId = -1;
                 _uow.PolicyModulesRepository.Insert(policyModule);
 
             }
@@ -534,7 +584,15 @@ namespace Toems_Service.Workflows
                 policyModule.Name = software.Name;
                 policyModule.Order = softwareModule.Order;
                 policyModule.PolicyId = _policy.Id;
+                policyModule.ConditionFailedAction = softwareModule.ConditionFailedAction;
+                policyModule.ConditionNextModule = softwareModule.ConditionNextOrder;
 
+
+                var conditionId = CreateCondition(softwareModule.Condition);
+                if (conditionId != 0)
+                    policyModule.ConditionId = conditionId;
+                else
+                    policyModule.ConditionId = -1;
                 _uow.PolicyModulesRepository.Insert(policyModule);
 
             }
@@ -599,7 +657,15 @@ namespace Toems_Service.Workflows
                 policyModule.Name = wu.Name;
                 policyModule.Order = wuModuleModule.Order;
                 policyModule.PolicyId = _policy.Id;
+                policyModule.ConditionFailedAction = wuModuleModule.ConditionFailedAction;
+                policyModule.ConditionNextModule = wuModuleModule.ConditionNextOrder;
 
+
+                var conditionId = CreateCondition(wuModuleModule.Condition);
+                if (conditionId != 0)
+                    policyModule.ConditionId = conditionId;
+                else
+                    policyModule.ConditionId = -1;
                 _uow.PolicyModulesRepository.Insert(policyModule);
 
             }
@@ -671,6 +737,57 @@ namespace Toems_Service.Workflows
                 t.Start();
                 
             }
+        }
+
+        private int CreateCondition(DtoScriptModuleExport condition)
+        {
+            if (condition == null) return 0;
+
+            var scriptModule = new ServiceScriptModule().GetModuleByGuid(condition.Guid);
+            if(scriptModule == null)
+            {
+                var script = new EntityScriptModule();
+                script.AddInventoryCollection = condition.AddToInventory;
+                script.Name = condition.DisplayName;
+                script.Description = "Added Via Policy Template " + _export.Name + "  On " + DateTime.Now +
+                                     "\r\n" + script.Description;
+                script.Guid = condition.Guid;
+                script.Arguments = condition.Arguments;
+                script.IsCondition = condition.IsCondition;
+                script.RedirectStdError = condition.RedirectError;
+                script.RedirectStdOut = condition.RedirectOutput;
+                script.ScriptContents = condition.ScriptContents;
+                script.ScriptType = condition.ScriptType;
+                script.SuccessCodes = condition.SuccessCodes;
+                script.Timeout = condition.Timeout;
+                script.WorkingDirectory = condition.WorkingDirectory;
+                script.ImpersonationId = -1;
+
+                if (_uow.ScriptModuleRepository.Exists(h => h.Name.Equals(script.Name)))
+                {
+                    for (var c = 1; c <= 100; c++)
+                    {
+                        if (c == 100)
+                            return 0;
+
+                        var newName = script.Name + "_" + c;
+                        if (!_uow.ScriptModuleRepository.Exists(h => h.Name == newName))
+                        {
+                            script.Name = newName;
+                            break;
+                        }
+                    }
+                }
+
+                var addResult = new ServiceScriptModule().AddModule(script);
+                if (!addResult.Success) return 0;
+                return script.Id;
+            }
+            else
+            {
+                return scriptModule.Id;
+            }
+            
         }
     }
 }

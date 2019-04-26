@@ -45,6 +45,6 @@ namespace Toems_Common.Dto.exports
         public List<DtoMessageModuleExport> MessageModules { get; set; }
         public EnumPolicy.WuType WuType { get; set; }
         public EnumCondition.FailedAction ConditionFailedAction { get; set; }
-        public DtoClientModuleCondition Condition { get; set; }
+        public DtoScriptModuleExport Condition { get; set; }
     }
 }

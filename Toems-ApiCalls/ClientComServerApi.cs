@@ -51,6 +51,13 @@ namespace Toems_ApiCalls
                 return responseData.Value;
         }
 
+        public byte[] GenerateCert(int id)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = string.Format("{0}/GenerateCert/{1}", Resource, id);
+            return new ApiRequest().ExecuteRaw(Request);
+        }
+
 
     }
 }

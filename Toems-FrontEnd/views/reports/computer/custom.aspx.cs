@@ -123,7 +123,8 @@ namespace Toems_FrontEnd.views.reports.computer
             ddl.Items.Insert(11, new ListItem("BitLocker", "BitLocker"));
             ddl.Items.Insert(12, new ListItem("Logical Volumes", "Logical Volumes"));
             ddl.Items.Insert(13, new ListItem("Network Adapters", "Network Adapters"));
-            var counter = 13;
+            ddl.Items.Insert(14, new ListItem("Certificates", "Certificates"));
+            var counter = 14;
             var customInventories = Call.ScriptModuleApi.GetAllWithInventory();
             foreach (var ci in customInventories)
             {
@@ -456,6 +457,16 @@ namespace Toems_FrontEnd.views.reports.computer
                 ddlField.Items.Insert(5, new ListItem("nic_speed", "nic_speed"));
                 ddlField.Items.Insert(6, new ListItem("nic_ips", "nic_ips"));
                 ddlField.Items.Insert(7, new ListItem("nic_gateways", "nic_gateways"));
+            }
+            else if (ddlTable.Text == "Certificates")
+            {
+                ddlField.Items.Insert(0, new ListItem("store", "store"));
+                ddlField.Items.Insert(1, new ListItem("subject", "subject"));
+                ddlField.Items.Insert(2, new ListItem("friendlyname", "friendlyname"));
+                ddlField.Items.Insert(3, new ListItem("thumbprint", "thumbprint"));
+                ddlField.Items.Insert(4, new ListItem("serial", "serial"));
+                ddlField.Items.Insert(5, new ListItem("notbefore_utc", "notbefore_utc"));
+                ddlField.Items.Insert(6, new ListItem("notafter_utc", "notafter_utc"));
             }
             else
             {

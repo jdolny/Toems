@@ -25,5 +25,8 @@ namespace Toems_Common.Dto.exports
         public List<DtoExternalFileExport> ExternalFiles { get; set; }
         public string Description { get; set; }
         public string Guid { get; set; }
+        public EnumCondition.FailedAction ConditionFailedAction { get; set; }
+        public int ConditionNextOrder { get; set; }
+        public DtoScriptModuleExport Condition { get; set; }
     }
 }

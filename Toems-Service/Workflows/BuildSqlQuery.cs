@@ -55,6 +55,22 @@ namespace Toems_Service.Workflows
                     sb.Append(" GROUP BY a.computer_name, a.computer_id");
                 }
 
+                else if (query.Table.Equals("Certificates"))
+                {
+                    sb.Append(@"select a.computer_id,a.computer_name
+                                from computers as a
+                                where a.computer_id not in 
+                                (
+                                    SELECT computers.computer_id
+                                    FROM computers
+                                    left join computer_certificates on computers.computer_id = computer_certificates.computer_id 
+                                    left join certificate_inventory on (computer_certificates.certificate_id = certificate_inventory.certificate_inventory_id)
+                                    where certificate_inventory.subject " + query.Operator + " " + "'" + query.Value + "'" +
+                               ")" +
+                               " and a.provision_status = 8 and a.last_inventory_time_local > '2019-01-01'");
+                    sb.Append(" GROUP BY a.computer_name, a.computer_id");
+                }
+
 
                 sqlQuery = new DtoRawSqlQuery();
                 sqlQuery.Sql = sb.ToString();
@@ -98,7 +114,11 @@ namespace Toems_Service.Workflows
                     sb.Append("LEFT JOIN logical_volume_inventory o on a.computer_id = o.computer_id ");
                 if (queries.Any(x => x.Table == "Network Adapters"))
                     sb.Append("LEFT JOIN nic_inventory p on a.computer_id = p.computer_id ");
-
+                if (queries.Any(x => x.Table == "Certificates"))
+                {
+                    sb.Append("LEFT JOIN computer_certificates q on a.computer_id = q.computer_id ");
+                    sb.Append("LEFT JOIN certificate_inventory r on q.certificate_id = r.certificate_inventory_id ");
+                }
                 var scriptModuleIds = new List<int>();
                 var customAttributeIds = new List<int>();
                 foreach (var query in queries)
@@ -180,6 +200,8 @@ namespace Toems_Service.Workflows
                         tableAs = "o";
                     else if (query.Table == "Network Adapters")
                         tableAs = "p";
+                    else if (query.Table == "Certificates")
+                        tableAs = "r";
                     else
                     {
                         if (query.Table.StartsWith("("))
