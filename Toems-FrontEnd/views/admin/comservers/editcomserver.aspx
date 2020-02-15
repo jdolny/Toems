@@ -35,6 +35,13 @@
         <asp:TextBox ID="txtUrl" runat="server" CssClass="textbox"></asp:TextBox>
     </div>
      <br class="clear"/>
+     <div class="size-4 column">
+       Unique ID:
+    </div>
+    <div class="size-5 column">
+        <asp:TextBox ID="txtUniqueId" runat="server" CssClass="textbox"  ReadOnly="true"></asp:TextBox>
+    </div>
+     <br class="clear"/>
       <div class="size-4 column">
         Description:
     </div>
@@ -42,13 +49,13 @@
         <asp:TextBox ID="txtDescription" runat="server" CssClass="descbox" TextMode="MultiLine"></asp:TextBox>
     </div>
      <br class="clear" />
-      <div class="size-4 column">
-        Replicate Storage:
+     <div class="size-4 column">
+       Local Storage Path:
     </div>
-    <div class="size-5 column hidden-check">
-        <asp:CheckBox ID="chkReplicateStorage" runat="server" ClientIDMode="Static" ></asp:CheckBox>
-        <label for="chkReplicateStorage"></label>
+    <div class="size-5 column">
+        <asp:TextBox ID="txtLocalStorage" runat="server" CssClass="textbox"></asp:TextBox>
     </div>
+     <br class="clear"/>
   
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subsubHelp">

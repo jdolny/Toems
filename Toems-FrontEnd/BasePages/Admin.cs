@@ -13,6 +13,7 @@ namespace Toems_FrontEnd.BasePages
         public EntityClientComServer ComServer { get; set; }
         public EntityComServerCluster ComServerCluster { get; set; }
         public EntityWolRelay WolRelay { get; set; }
+        public EntityCustomBootMenu BootEntry { get; set; }
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -32,6 +33,9 @@ namespace Toems_FrontEnd.BasePages
             WolRelay = !string.IsNullOrEmpty(Request["relayId"])
                 ? Call.WolRelayApi.Get(Convert.ToInt32(Request.QueryString["relayId"]))
                 : null;
+            BootEntry = !string.IsNullOrEmpty(Request["entryId"])
+              ? Call.CustomBootMenuApi.Get(Convert.ToInt32(Request.QueryString["entryId"]))
+              : null;
 
         }
 

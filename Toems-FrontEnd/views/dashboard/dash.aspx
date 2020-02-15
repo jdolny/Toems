@@ -29,22 +29,9 @@ Dashboard
         <br class="clear" />
 
      <div id="divLocalStorage" runat="server">
-
-        <div class="dash_item">
-            <div class="dash_item_content">
-                <span class="dash_item_category">System </span>
-                 <br class="clear" />
-                <span class="dash_item_title">Local Storage - <%= LocalPath %></span>
-                <br class="clear" />
-                <asp:Label ID="lblLocalFree" runat="server"></asp:Label>
-                <asp:Label ID="lblLocalTotal" runat="server"></asp:Label>
-                <asp:Label runat="server" ID="lblLocalPercent"></asp:Label>
-                <br class="clear" />
-                
-            </div>
-           
-        </div>
+         <asp:PlaceHolder runat="server" Id="comServerStorageHolder"></asp:PlaceHolder>
     </div>
+
     <div id="divRemoteStorage" runat="server">
     <div class="dash_item">
           <div class="dash_item_content">

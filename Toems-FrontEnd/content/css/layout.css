@@ -188,6 +188,13 @@ float:left;
     width: 120px;
 }
 
+.container .size-4-3.column {
+    color: #83cce9;
+    font-size: 24px;
+    padding-top: 20px;
+    width: 300px;
+}
+
 .container .size-lbl.column {
     color: #83cce9;
     font-size: 18px;
@@ -226,6 +233,10 @@ float:left;
     margin-bottom: 30px;
     width: 100%;
 
+}
+.container .size-5-2.column {
+    margin-top:20px;
+    width: 200px;
 }
 
 .container .size-arguments.column {

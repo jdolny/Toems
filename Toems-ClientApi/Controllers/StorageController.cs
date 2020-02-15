@@ -19,7 +19,14 @@ namespace Toems_ClientApi.Controllers
             return new DtoApiBoolResponse(){Value = new FolderSync().Sync()};
         }
 
-      
+        [InterComAuth]
+        [HttpPost]
+        public DtoFreeSpace GetFreeSpace()
+        {
+            return new Toems_Service.Workflows.ComServerFreeSpace().GetFreeSpace();
+        }
+
+
     }
 
     

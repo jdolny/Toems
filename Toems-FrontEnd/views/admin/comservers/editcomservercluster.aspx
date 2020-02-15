@@ -69,6 +69,37 @@
                 </ItemTemplate>
 
             </asp:TemplateField>
+             <asp:TemplateField ItemStyle-CssClass="width_100" HeaderText="Endpoint Mgmt Server">
+                <ItemTemplate>
+                    
+        <asp:CheckBox runat="server" id="chkEmServer"  Checked="true"/>
+     
+                    </ItemTemplate>
+               </asp:TemplateField>
+              <asp:TemplateField ItemStyle-CssClass="width_100" HeaderText="Imaging Server">
+                <ItemTemplate>
+                   
+        <asp:CheckBox runat="server" id="chkImagingServer" ClientIDMode="Static"/>
+      
+                    </ItemTemplate>
+               </asp:TemplateField>
+
+             <asp:TemplateField ItemStyle-CssClass="width_100" HeaderText="Tftp Server">
+                <ItemTemplate>
+                   
+        <asp:CheckBox runat="server" id="chkTftp" ClientIDMode="Static"/>
+       
+                    </ItemTemplate>
+               </asp:TemplateField>
+
+             <asp:TemplateField ItemStyle-CssClass="width_100" HeaderText="Multicast Server">
+                <ItemTemplate>
+                    
+        <asp:CheckBox runat="server" id="chkMulticast" ClientIDMode="Static"/>
+       
+                    </ItemTemplate>
+               </asp:TemplateField>
+
               <asp:TemplateField>
                 <ItemTemplate>
                    &nbsp;

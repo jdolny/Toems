@@ -67,11 +67,13 @@
     <Content Include="content\css\themes\dark\style.css" />
     <Content Include="content\css\themes\light\style.css" />
     <Content Include="content\css\tooltipster.bundle.css" />
+    <Content Include="content\fonts\flaticon.svg" />
     <Content Include="content\fonts\icomoon.svg" />
     <Content Include="content\fonts\icon2.eot" />
     <Content Include="content\fonts\icon2.svg" />
     <Content Include="content\fonts\icon2.ttf" />
     <Content Include="content\fonts\icon2.woff" />
+    <Content Include="content\fonts\license.txt" />
     <Content Include="content\fonts\OpenSans-Light.eot" />
     <Content Include="content\fonts\OpenSans-Light.ttf" />
     <Content Include="content\fonts\OpenSans-Regular.ttf" />
@@ -108,6 +110,8 @@
     <Content Include="content\js\fineuploader\templates\simple-thumbnails.html" />
     <Content Include="content\js\fineuploader\trash.gif" />
     <Content Include="content\js\jquery-3.2.1.min.js" />
+    <Content Include="content\js\jquery-labelauty.css" />
+    <Content Include="content\js\jquery-labelauty.js" />
     <Content Include="content\js\meshdesktop.js" />
     <Content Include="content\js\mesh\agent-desktop-0.0.2.js" />
     <Content Include="content\js\mesh\agent-redir-rtc-0.1.0.js" />
@@ -137,6 +141,7 @@
     <Content Include="content\js\mesh\zlib.js" />
     <Content Include="content\js\moment.min.js" />
     <Content Include="content\js\select2.min.js" />
+    <Content Include="content\js\sha512.js" />
     <Content Include="content\js\tooltipster.bundle.min.js" />
     <Content Include="private\logs\.gitignore" />
     <Content Include="views\admin\about.aspx" />
@@ -149,12 +154,28 @@
     <Content Include="views\admin\comservers\comservers.aspx" />
     <Content Include="views\admin\comservers\editcomserver.aspx" />
     <Content Include="views\admin\comservers\editcomservercluster.aspx" />
+    <Content Include="views\admin\comservers\emssettings.aspx" />
+    <Content Include="views\admin\comservers\imagingsettings.aspx" />
+    <Content Include="views\admin\comservers\multicastsettings.aspx" />
+    <Content Include="views\admin\comservers\replicatesettings.aspx" />
+    <Content Include="views\admin\comservers\tftpsettings.aspx" />
+    <Content Include="views\admin\dbmaintenance.aspx" />
+    <Content Include="views\admin\imageprofiletemplate.aspx" />
+    <Content Include="views\admin\imagingclient.aspx" />
     <Content Include="views\admin\impersonation\create.aspx" />
     <Content Include="views\admin\impersonation\edit.aspx" />
     <Content Include="views\admin\impersonation\search.aspx" />
+    <Content Include="views\admin\kernels\downloadkernel.aspx" />
+    <Content Include="views\admin\kernels\profileupdater.aspx" />
     <Content Include="views\admin\ldap.aspx" />
     <Content Include="views\admin\logs\application.aspx" />
     <Content Include="views\admin\logs\frontend.aspx" />
+    <Content Include="views\admin\pxeboot\createbootentry.aspx" />
+    <Content Include="views\admin\pxeboot\editbootentry.aspx" />
+    <Content Include="views\admin\pxeboot\globalbootmenu.aspx" />
+    <Content Include="views\admin\pxeboot\isogen.aspx" />
+    <Content Include="views\admin\pxeboot\pxesettings.aspx" />
+    <Content Include="views\admin\pxeboot\searchbootentry.aspx" />
     <Content Include="views\admin\remoteaccess.aspx" />
     <Content Include="views\admin\server.aspx" />
     <Content Include="views\admin\storage.aspx" />
@@ -225,6 +246,11 @@
     <Content Include="views\groups\oubrowser.aspx" />
     <Content Include="views\groups\processreport.aspx" />
     <Content Include="views\groups\search.aspx" />
+    <Content Include="views\images\create.aspx" />
+    <Content Include="views\images\general.aspx" />
+    <Content Include="views\images\profiles\search.aspx" />
+    <Content Include="views\images\search.aspx" />
+    <Content Include="views\imagingtasks\active.aspx" />
     <Content Include="views\modules\chooser.aspx" />
     <Content Include="views\modules\commandmodules\archived.aspx" />
     <Content Include="views\modules\commandmodules\categories.aspx" />
@@ -266,6 +292,11 @@
     <Content Include="views\modules\softwaremodules\general.aspx" />
     <Content Include="views\modules\softwaremodules\uploadfiles.aspx" />
     <Content Include="views\modules\softwaremodules\usages.aspx" />
+    <Content Include="views\modules\sysprepmodules\archived.aspx" />
+    <Content Include="views\modules\sysprepmodules\categories.aspx" />
+    <Content Include="views\modules\sysprepmodules\create.aspx" />
+    <Content Include="views\modules\sysprepmodules\general.aspx" />
+    <Content Include="views\modules\sysprepmodules\search.aspx" />
     <Content Include="views\modules\wumodules\archived.aspx" />
     <Content Include="views\modules\wumodules\categories.aspx" />
     <Content Include="views\modules\wumodules\create.aspx" />
@@ -325,6 +356,9 @@
     <Content Include="content\js\mesh\cira_cleanup.mescript" />
     <Content Include="content\js\mesh\cira_setup_script_dns.mescript" />
     <Content Include="content\js\mesh\cira_setup_script_ip.mescript" />
+    <Content Include="content\fonts\flaticon.eot" />
+    <Content Include="content\fonts\flaticon.ttf" />
+    <Content Include="content\fonts\flaticon.woff" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\pcman-fe.pubxml" />
@@ -357,6 +391,12 @@
     <Content Include="views\reports\user\user.master" />
     <Content Include="views\reports\asset\asset.master" />
     <Content Include="views\modules\messagemodules\messagemodule.master" />
+    <Content Include="views\images\images.master" />
+    <Content Include="views\imagingtasks\imagingtasks.master" />
+    <Content Include="views\admin\pxeboot\pxeboot.master" />
+    <Content Include="views\admin\kernels\kernels.master" />
+    <Content Include="views\modules\sysprepmodules\sysprepmodule.master" />
+    <Content Include="views\images\profiles\profiles.master" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -883,6 +923,9 @@
     <Compile Include="BasePages\Global.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="BasePages\Images.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="BasePages\Report.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -995,12 +1038,68 @@
     <Compile Include="views\admin\comservers\editcomservercluster.aspx.designer.cs">
       <DependentUpon>editcomservercluster.aspx</DependentUpon>
     </Compile>
+    <Compile Include="views\admin\comservers\emssettings.aspx.cs">
+      <DependentUpon>emssettings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\comservers\emssettings.aspx.designer.cs">
+      <DependentUpon>emssettings.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\comservers\imagingsettings.aspx.cs">
+      <DependentUpon>imagingsettings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\comservers\imagingsettings.aspx.designer.cs">
+      <DependentUpon>imagingsettings.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\comservers\multicastsettings.aspx.cs">
+      <DependentUpon>multicastsettings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\comservers\multicastsettings.aspx.designer.cs">
+      <DependentUpon>multicastsettings.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\comservers\replicatesettings.aspx.cs">
+      <DependentUpon>replicatesettings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\comservers\replicatesettings.aspx.designer.cs">
+      <DependentUpon>replicatesettings.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\comservers\tftpsettings.aspx.cs">
+      <DependentUpon>tftpsettings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\comservers\tftpsettings.aspx.designer.cs">
+      <DependentUpon>tftpsettings.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\dbmaintenance.aspx.cs">
+      <DependentUpon>dbmaintenance.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\dbmaintenance.aspx.designer.cs">
+      <DependentUpon>dbmaintenance.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\admin\email.aspx.cs">
       <DependentUpon>email.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="views\admin\email.aspx.designer.cs">
       <DependentUpon>email.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\imageprofiletemplate.aspx.cs">
+      <DependentUpon>imageprofiletemplate.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\imageprofiletemplate.aspx.designer.cs">
+      <DependentUpon>imageprofiletemplate.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\imagingclient.aspx.cs">
+      <DependentUpon>imagingclient.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\imagingclient.aspx.designer.cs">
+      <DependentUpon>imagingclient.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\admin\impersonation\create.aspx.cs">
       <DependentUpon>create.aspx</DependentUpon>
@@ -1030,6 +1129,27 @@
     <Compile Include="views\admin\impersonation\search.aspx.designer.cs">
       <DependentUpon>search.aspx</DependentUpon>
     </Compile>
+    <Compile Include="views\admin\kernels\downloadkernel.aspx.cs">
+      <DependentUpon>downloadkernel.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\kernels\downloadkernel.aspx.designer.cs">
+      <DependentUpon>downloadkernel.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\kernels\kernels.master.cs">
+      <DependentUpon>kernels.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\kernels\kernels.master.designer.cs">
+      <DependentUpon>kernels.master</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\kernels\profileupdater.aspx.cs">
+      <DependentUpon>profileupdater.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\kernels\profileupdater.aspx.designer.cs">
+      <DependentUpon>profileupdater.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\admin\ldap.aspx.cs">
       <DependentUpon>ldap.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1057,6 +1177,55 @@
     </Compile>
     <Compile Include="views\admin\logs\logs.master.designer.cs">
       <DependentUpon>logs.master</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\createbootentry.aspx.cs">
+      <DependentUpon>createbootentry.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\createbootentry.aspx.designer.cs">
+      <DependentUpon>createbootentry.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\editbootentry.aspx.cs">
+      <DependentUpon>editbootentry.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\editbootentry.aspx.designer.cs">
+      <DependentUpon>editbootentry.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\globalbootmenu.aspx.cs">
+      <DependentUpon>globalbootmenu.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\globalbootmenu.aspx.designer.cs">
+      <DependentUpon>globalbootmenu.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\isogen.aspx.cs">
+      <DependentUpon>isogen.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\isogen.aspx.designer.cs">
+      <DependentUpon>isogen.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\pxeboot.master.cs">
+      <DependentUpon>pxeboot.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\pxeboot.master.designer.cs">
+      <DependentUpon>pxeboot.master</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\pxesettings.aspx.cs">
+      <DependentUpon>pxesettings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\pxesettings.aspx.designer.cs">
+      <DependentUpon>pxesettings.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\searchbootentry.aspx.cs">
+      <DependentUpon>searchbootentry.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\searchbootentry.aspx.designer.cs">
+      <DependentUpon>searchbootentry.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\admin\remoteaccess.aspx.cs">
       <DependentUpon>remoteaccess.aspx</DependentUpon>
@@ -1646,6 +1815,62 @@
     <Compile Include="views\groups\search.aspx.designer.cs">
       <DependentUpon>search.aspx</DependentUpon>
     </Compile>
+    <Compile Include="views\images\create.aspx.cs">
+      <DependentUpon>create.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\create.aspx.designer.cs">
+      <DependentUpon>create.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\images\general.aspx.cs">
+      <DependentUpon>general.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\general.aspx.designer.cs">
+      <DependentUpon>general.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\images\images.master.cs">
+      <DependentUpon>images.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\images.master.designer.cs">
+      <DependentUpon>images.master</DependentUpon>
+    </Compile>
+    <Compile Include="views\images\profiles\profiles.master.cs">
+      <DependentUpon>profiles.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\profiles\profiles.master.designer.cs">
+      <DependentUpon>profiles.master</DependentUpon>
+    </Compile>
+    <Compile Include="views\images\profiles\search.aspx.cs">
+      <DependentUpon>search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\profiles\search.aspx.designer.cs">
+      <DependentUpon>search.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\images\search.aspx.cs">
+      <DependentUpon>search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\search.aspx.designer.cs">
+      <DependentUpon>search.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\imagingtasks\active.aspx.cs">
+      <DependentUpon>active.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\imagingtasks\active.aspx.designer.cs">
+      <DependentUpon>active.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\imagingtasks\imagingtasks.master.cs">
+      <DependentUpon>imagingtasks.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\imagingtasks\imagingtasks.master.designer.cs">
+      <DependentUpon>imagingtasks.master</DependentUpon>
+    </Compile>
     <Compile Include="views\modules\chooser.aspx.cs">
       <DependentUpon>chooser.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1974,6 +2199,48 @@
     </Compile>
     <Compile Include="views\modules\softwaremodules\usages.aspx.designer.cs">
       <DependentUpon>usages.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\sysprepmodules\archived.aspx.cs">
+      <DependentUpon>archived.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\sysprepmodules\archived.aspx.designer.cs">
+      <DependentUpon>archived.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\sysprepmodules\categories.aspx.cs">
+      <DependentUpon>categories.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\sysprepmodules\categories.aspx.designer.cs">
+      <DependentUpon>categories.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\sysprepmodules\create.aspx.cs">
+      <DependentUpon>create.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\sysprepmodules\create.aspx.designer.cs">
+      <DependentUpon>create.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\sysprepmodules\general.aspx.cs">
+      <DependentUpon>general.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\sysprepmodules\general.aspx.designer.cs">
+      <DependentUpon>general.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\sysprepmodules\search.aspx.cs">
+      <DependentUpon>search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\sysprepmodules\search.aspx.designer.cs">
+      <DependentUpon>search.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\sysprepmodules\sysprepmodule.master.cs">
+      <DependentUpon>sysprepmodule.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\sysprepmodules\sysprepmodule.master.designer.cs">
+      <DependentUpon>sysprepmodule.master</DependentUpon>
     </Compile>
     <Compile Include="views\modules\wumodules\archived.aspx.cs">
       <DependentUpon>archived.aspx</DependentUpon>

@@ -157,5 +157,36 @@ namespace Toems_ApplicationApi.Controllers
         {
             return new DtoApiStringResponse() { Value = new ServiceSetting().GetMeshUserPass("view") };
         }
+
+        [CustomAuth(Permission = AuthorizationStrings.PxeSettingsUpdate)]
+        [HttpGet]
+        public DtoApiBoolResponse CopyPxeBinaries()
+        {
+            return new DtoApiBoolResponse() { Value = new CopyPxeBinaries().RunAllServers() };
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.PxeSettingsUpdate)]
+        [HttpPost]
+        public DtoApiBoolResponse CreateDefaultBootMenu(DtoBootMenuGenOptions defaultMenuOptions)
+        {
+            return new DtoApiBoolResponse() { Value = new DefaultBootMenu().RunAllServers(defaultMenuOptions) };
+        }
+
+     
+
+        [CustomAuth(Permission = AuthorizationStrings.PxeSettingsUpdate)]
+        [HttpPost]
+        public HttpResponseMessage GenerateIso(DtoIsoGenOptions isoOptions)
+        {
+            var iso = new IsoGenerator().RunAllServers(isoOptions);
+            var dataStream = new MemoryStream(iso);
+            var result = new HttpResponseMessage(HttpStatusCode.OK);
+            result.Content = new StreamContent(dataStream);
+            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+            result.Content.Headers.ContentDisposition.FileName = "clientboot.iso";
+            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            result.Content.Headers.ContentLength = dataStream.Length;
+            return result;
+        }
     }
 }

@@ -1,0 +1,102 @@
+#!/bin/bash
+
+. /bin/lie_global_functions
+
+function check_auth()
+{
+  task_authorized=$($curlAuth --data "task=$task" "${web}CheckTaskAuth" $curlEnd)
+  if [ "$login_debug" = "1" ]; then
+    echo "$curlAuth --data "task=$task" "${web}CheckTaskAuth" $curlEnd"
+	echo "$task_authorized"
+  fi
+  if [ "$task_authorized" != "true" ]; then
+    error "Not Authorized"
+  fi
+}
+
+function main()
+{
+  local local_task=$1
+if [ "$started_from_init" != "true" ]; then
+	error "Script Cannot Be Started This Way, Exports Are Not Set."
+fi
+
+registerSettings=$($curlAuth ${web}RegistrationSettings $curlClose)
+  
+clear_and_move_down
+export mac=$(cat /sys/class/net/$net_if/address)
+serial_number=$(dmidecode -s system-serial-number)
+system_uuid=$(dmidecode -s system-uuid)
+client_id="$mac.$(remove_whitespace $serial_number).$(remove_whitespace $system_uuid)"
+	
+while true; do
+  if [ "$(parse_json "$registerSettings" .registrationEnabled)" = "No" ] && [ "$(parse_json "$registerSettings" .keepNamePrompt)" = "No" ]; then
+    break
+  fi
+  
+  if [ "$(parse_json "$registerSettings" .registrationEnabled)" = "No" ] && [ "$(parse_json "$registerSettings" .keepNamePrompt)" = "Yes" ]; then
+    name=$(dialog --backtitle "CloneDeploy" --title "Registration Disabled.  Enter A Computer Name To Rename During Imaging.  Leave Blank To Skip." --clear --inputbox "Interface  : $net_if \nMAC address: $mac \nClient Id  : $client_id" 20 130 2>&1 >/dev/tty0)
+	export computer_name="$name"
+
+	break
+  fi
+  
+  if [ -n "$(parse_json "$registerResult" .ErrorMessage)" ] && [ "$(parse_json "$registerResult" .ErrorMessage)" != "null" ]; then
+    name=$(dialog --backtitle "CloneDeploy" --title "Enter Computer Name.  Leave Blank To Skip Registration." --clear --inputbox "Interface  : $net_if \nMAC address: $mac \nClient Id  : $client_id \n\nError: $(parse_json "$registerResult" .ErrorMessage)" 20 130 2>&1 >/dev/tty0)
+  elif [ -n "$registerResult" ]; then
+    name=$(dialog --backtitle "CloneDeploy" --title "Enter Computer Name.  Leave Blank To Skip Registration." --clear --inputbox "Interface  : $net_if \nMAC address: $mac \nClient Id  : $client_id \n\nError: $registerResult" 20 130 2>&1 >/dev/tty0)
+  else
+    name=$(dialog --backtitle "CloneDeploy" --title "Enter Computer Name.  Leave Blank To Skip Registration." --clear --inputbox "Interface  : $net_if \nMAC address: $mac \nClient Id  : $client_id" 20 130 2>&1 >/dev/tty0)
+  fi
+  
+  #Cancel Button or no name entered
+  if [ "$?" = "1" ] || [ -z "$name" ]; then
+    result="Registration Skipped"
+    break
+  fi
+  
+  registerResult=$($curlAuth --data "name=$name&mac=$mac&clientIdentifier=$client_id" ${web}AddComputer $curlClose)
+  if [ "$(parse_json "$registerResult" .Success)" = "true" ]; then
+    result="Successfully Registered $name"
+	computer_id="$(parse_json "$registerResult" .Id)"
+    break
+  fi
+done
+
+  if [ "$local_task" = "register_clobber" ]; then
+    task="clobber"
+    check_auth
+	/bin/lie_deploy
+	#Shouldn't hit next line, but could happen
+	reboot -f
+  fi
+  
+  if [ "$local_task" = "register_modelmatch" ]; then
+    task="modelmatchdeploy"
+	check_auth
+	/bin/lie_deploy
+	#Shouldn't hit next line, but could happen
+	reboot -f
+  fi
+
+while true; do
+  taskType=$(dialog --backtitle "CloneDeploy" --title "Select A Task" --clear  --menu "$result" 20 60 15 1 "Shutdown" 2 "Reboot" 3 "Start On Demand Task"  2>&1 >/dev/tty0)
+  #Cancel Button
+  if [ "$?" = "1" ]; then
+    poweroff -f
+  fi
+  
+  if [ "$taskType" = "1" ]; then
+    poweroff -f
+  elif [ "$taskType" = "2" ]; then
+    reboot -f
+  else
+     task="ond"
+	 check_auth
+    /bin/lie_ond
+  fi
+done
+
+}
+
+main "$@"

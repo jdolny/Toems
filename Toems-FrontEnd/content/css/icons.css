@@ -1,6 +1,6 @@
 .sub-nav li a:before, .sub-nav-top li a:before {
     -webkit-font-smoothing: antialiased;
-    font-family: icomoon;
+    font-family: icomoon,Flaticon;
     font-size: 1em;
     font-style: normal;
     font-weight: normal;
@@ -32,6 +32,19 @@
      font-size: 2em;
      padding-right: 10px;
 }
+
+.sub-nav li a.icon-image:before {
+    content: "\e009";
+    font-size: 2.5em;
+    padding-right: 5px;
+}
+
+.sub-nav li a.icon-tasks:before {
+    content: "\e020";
+    font-size: 2.3em;
+    padding-right: 10px;
+}
+
 
 .sub-nav li a.icon-group:before {
     content: "\e900";

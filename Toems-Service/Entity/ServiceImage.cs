@@ -1,0 +1,357 @@
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Toems_Common.Dto;
+using Toems_Common.Entity;
+using Toems_Common.Enum;
+using Toems_DataModel;
+
+namespace Toems_Service.Entity
+{
+    public class ServiceImage
+    {
+        private readonly UnitOfWork _uow;
+
+        public ServiceImage()
+        {
+            _uow = new UnitOfWork();
+        }
+
+        public DtoActionResult Add(EntityImage image)
+        {
+            var actionResult = new DtoActionResult();
+
+            var validationResult = Validate(image,true);
+            if (validationResult.Success)
+            {
+                _uow.ImageRepository.Insert(image);
+                _uow.Save();
+                actionResult.Success = true;
+                actionResult.Id = image.Id;
+                var defaultProfile = SeedDefaultImageProfile(image.Id);
+                defaultProfile.ImageId = image.Id;
+                new ServiceImageProfile().Add(defaultProfile);
+            }
+            else
+            {
+                return new DtoActionResult() {ErrorMessage = validationResult.ErrorMessage};
+            }
+
+            return actionResult;
+        }
+
+        public DtoActionResult Delete(int imageId)
+        {
+            var u = GetImage(imageId);
+            if (u == null) return new DtoActionResult { ErrorMessage = "Image Not Found", Id = 0 };
+
+            if (u.Protected)
+            {
+                return new DtoActionResult { ErrorMessage = "This Image Is Protected And Cannot Be Deleted", Id = u.Id };
+            }
+
+            _uow.ImageRepository.Delete(imageId);
+            _uow.Save();
+            var actionResult = new DtoActionResult();
+            actionResult.Success = true;
+            actionResult.Id = u.Id;
+
+            //Check if image name is empty or null, return if so or something will be deleted that shouldn't be
+            if (string.IsNullOrEmpty(u.Name)) return actionResult;
+
+            var computers = _uow.ComputerRepository.Get(x => x.ImageId == imageId);
+            var computerService = new ServiceComputer();
+            foreach (var computer in computers)
+            {
+                computer.ImageId = -1;
+                computer.ImageProfileId = -1;
+                computerService.UpdateComputer(computer);
+            }
+
+            var groups = _uow.GroupRepository.Get(x => x.ImageId == imageId);
+            var groupService = new ServiceGroup();
+            foreach (var group in groups)
+            {
+                group.ImageId = -1;
+                group.ImageProfileId = -1;
+                groupService.UpdateGroup(group);
+            }
+
+            var delDirectoryResult = new FilesystemServices().DeleteImageFolders(u.Name);
+
+            return actionResult;
+        }
+
+        public List<EntityAuditLog> GetImageAuditLogs(int imageId, int limit)
+        {
+            if (limit == 0) limit = int.MaxValue;
+            return
+                _uow.AuditLogRepository.Get(x => x.ObjectType == "Image" && x.ObjectId == imageId)
+                    .OrderByDescending(x => x.Id)
+                    .Take(limit)
+                    .ToList();
+        }
+
+        public List<EntityImage> GetOnDemandImageList()
+        {
+            return _uow.ImageRepository.Get(i => i.IsVisible && i.Enabled, q => q.OrderBy(p => p.Name));
+        }
+
+        public List<DtoImageFileInfo> GetPartitionImageFileInfoForGridView(int imageId, string selectedHd,
+         string selectedPartition)
+        {
+            var image = GetImage(imageId);
+            return new FilesystemServices().GetPartitionFileSize(image.Name, selectedHd, selectedPartition);
+        }
+
+        public string ImageSizeOnServerForGridView(string imageName, string hdNumber)
+        {
+            return new FilesystemServices().GetHdFileSize(imageName, hdNumber);
+        }
+
+        public EntityImage GetImage(int imageId)
+        {
+            return _uow.ImageRepository.GetById(imageId);
+        }
+
+        public List<ImageWithDate> Search(DtoSearchFilterCategories filter)
+        {
+            if(filter.Limit == 0)
+                filter.Limit = Int32.MaxValue;
+            
+            var images = _uow.ImageRepository.Get(x => x.Name.Contains(filter.SearchText)).OrderBy(x => x.Name).ToList();
+
+            var categoryFilterIds = new List<int>();
+            foreach (var catName in filter.Categories)
+            {
+                var category = _uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
+                if (category != null)
+                    categoryFilterIds.Add(category.Id);
+            }
+
+            var toRemove = new List<EntityImage>();
+            if (filter.CategoryType.Equals("Any Category"))
+            {
+                //do nothing, keep all
+            }
+            else if (filter.CategoryType.Equals("And Category"))
+            {
+                foreach (var image in images)
+                {
+                    var gCategories = GetImageCategories(image.Id);
+                    if (gCategories == null) continue;
+
+                    if (filter.Categories.Count == 0)
+                    {
+                        if (gCategories.Count > 0)
+                        {
+                            toRemove.Add(image);
+                            continue;
+                        }
+                    }
+
+                    foreach (var id in categoryFilterIds)
+                    {
+                        if (gCategories.Any(x => x.CategoryId == id)) continue;
+                        toRemove.Add(image);
+                        break;
+                    }
+                }
+            }
+            else if (filter.CategoryType.Equals("Or Category"))
+            {
+                foreach (var image in images)
+                {
+                    var pCategories = GetImageCategories(image.Id);
+                    if (pCategories == null) continue;
+                    if (filter.Categories.Count == 0)
+                    {
+                        if (pCategories.Count > 0)
+                        {
+                            toRemove.Add(image);
+                            continue;
+                        }
+                    }
+                    var catFound = false;
+                    foreach (var id in categoryFilterIds)
+                    {
+                        if (pCategories.Any(x => x.CategoryId == id))
+                        {
+                            catFound = true;
+                            break;
+                        }
+
+                    }
+                    if (!catFound)
+                        toRemove.Add(image);
+                }
+            }
+
+            foreach (var p in toRemove)
+            {
+                images.Remove(p);
+            }
+
+
+
+
+            var listWithDate = new List<ImageWithDate>();
+            foreach (var image in images)
+            {
+                var auditLog = _uow.AuditLogRepository.Get(
+               x =>
+                   x.ObjectType == "Image" && x.ObjectId == image.Id &&
+                   (x.AuditType.ToString().ToLower().Contains("deploy") || x.AuditType.ToString().ToLower().Contains("upload") || x.AuditType.ToString().ToLower().Contains("push") || x.AuditType.ToString().ToLower().Contains("multicast")))
+               .OrderByDescending(x => x.Id)
+               .FirstOrDefault();
+
+                var imageWithDate = new ImageWithDate();
+                imageWithDate.Id = image.Id;
+                imageWithDate.Name = image.Name;
+                imageWithDate.Environment = image.Environment;
+                if(auditLog != null)
+                {
+                    if(auditLog.DateTime != null)
+                        imageWithDate.LastUsed = auditLog.DateTime;
+                }
+               
+                imageWithDate.LastUploadGuid = image.LastUploadGuid;
+                imageWithDate.Type = image.Type;
+                imageWithDate.Description = image.Description;
+                listWithDate.Add(imageWithDate);
+            }
+
+          
+
+            return listWithDate.Take(filter.Limit).ToList();
+
+
+        }
+
+        public List<EntityImageProfile> SearchProfiles(int imageId)
+        {
+            using (var uow = new UnitOfWork())
+            {
+                return uow.ImageProfileRepository.Get(p => p.ImageId == imageId, q => q.OrderBy(p => p.Name));
+            }
+        }
+
+        public List<EntityImage> GetAll()
+        {
+            return _uow.ImageRepository.Get();
+        }
+
+        public string TotalCount()
+        {
+            return _uow.ImageRepository.Count();
+        }
+
+        public DtoActionResult Update(EntityImage image)
+        {
+            var u = GetImage(image.Id);
+            if (u == null) return new DtoActionResult {ErrorMessage = "Image Not Found", Id = 0};
+
+            var actionResult = new DtoActionResult();
+
+            var updateFolderName = u.Name != image.Name;
+            var oldName = u.Name;
+            var validationResult = Validate(image,false);
+            if (validationResult.Success)
+            {
+                _uow.ImageRepository.Update(image, u.Id);
+                _uow.Save();
+
+                actionResult.Id = image.Id;
+                if (updateFolderName)
+                {
+                    actionResult.Success = new FilesystemServices().RenameImageFolder(oldName, image.Name);
+                }
+                else
+                {
+                    actionResult.Success = true;
+                }
+            }
+            else
+            {
+                return new DtoActionResult() { ErrorMessage = validationResult.ErrorMessage };
+            }
+            return actionResult;
+        }
+
+        public List<EntityImageCategory> GetImageCategories(int imageId)
+        {
+            return _uow.ImageCategoryRepository.Get(x => x.ImageId == imageId);
+        }
+
+        public DtoValidationResult Validate(EntityImage image, bool isNew)
+        {
+            var validationResult = new DtoValidationResult { Success = true };
+
+            if (string.IsNullOrEmpty(image.Name) || !image.Name.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '-' || c == ' '))
+            {
+                validationResult.Success = false;
+                validationResult.ErrorMessage = "Image Name Is Not Valid";
+                return validationResult;
+            }
+
+            if (isNew)
+            {
+                if (_uow.ImageRepository.Exists(h => h.Name == image.Name))
+                {
+                    validationResult.Success = false;
+                    validationResult.ErrorMessage = "A Image With This Name Already Exists";
+                    return validationResult;
+                }
+            }
+            else
+            {
+                var original = _uow.ImageRepository.GetById(image.Id);
+                if (original.Name != image.Name)
+                {
+                    if (_uow.ImageRepository.Exists(h => h.Name == image.Name))
+                    {
+                        validationResult.Success = false;
+                        validationResult.ErrorMessage = "A Image With This Name Already Exists";
+                        return validationResult;
+                    }
+                }
+            }
+
+            return validationResult;
+        }
+
+
+        public EntityImageProfile SeedDefaultImageProfile(int imageId)
+        {
+            var image = GetImage(imageId);
+            if (image.Environment.Equals("linux") && image.Type.Equals("Block"))
+            {
+                var template =
+                    new ServiceImageProfileTemplate().GetTemplate(EnumProfileTemplate.TemplateType.LinuxBlock);
+                var json = JsonConvert.SerializeObject(template);
+                return JsonConvert.DeserializeObject<EntityImageProfile>(json);
+
+            }
+            else if (image.Environment.Equals("linux") && image.Type.Equals("File"))
+            {
+                var template =
+                   new ServiceImageProfileTemplate().GetTemplate(EnumProfileTemplate.TemplateType.LinuxFile);
+                var json = JsonConvert.SerializeObject(template);
+                return JsonConvert.DeserializeObject<EntityImageProfile>(json);
+            }
+
+            else //winpe
+            {
+                var template =
+                   new ServiceImageProfileTemplate().GetTemplate(EnumProfileTemplate.TemplateType.WinPE);
+                var json = JsonConvert.SerializeObject(template);
+                return JsonConvert.DeserializeObject<EntityImageProfile>(json);
+            }
+
+
+        }
+
+
+    }
+}

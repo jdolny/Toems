@@ -20,6 +20,7 @@ namespace Toems_ApplicationApi.Controllers
         protected HttpContext Context;
         protected HttpResponse Response;
         protected new HttpRequest Request;
+
         private readonly string _basePath;
 
         public UploadController()
@@ -130,6 +131,7 @@ namespace Toems_ApplicationApi.Controllers
                 if (!result.Success) throw new HttpException();
             }
         }
+
 
         [HttpPost]
         [CustomAuth(Permission = AuthorizationStrings.ModuleUploadFiles)]

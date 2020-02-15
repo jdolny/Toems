@@ -49,6 +49,15 @@ namespace Toems_FrontEnd.views.admin.comservers {
         protected global::System.Web.UI.WebControls.TextBox txtUrl;
         
         /// <summary>
+        /// txtUniqueId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtUniqueId;
+        
+        /// <summary>
         /// txtDescription control.
         /// </summary>
         /// <remarks>
@@ -58,12 +67,12 @@ namespace Toems_FrontEnd.views.admin.comservers {
         protected global::System.Web.UI.WebControls.TextBox txtDescription;
         
         /// <summary>
-        /// chkReplicateStorage control.
+        /// txtLocalStorage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkReplicateStorage;
+        protected global::System.Web.UI.WebControls.TextBox txtLocalStorage;
     }
 }

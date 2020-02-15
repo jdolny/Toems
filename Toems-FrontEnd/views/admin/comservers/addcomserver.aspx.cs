@@ -18,7 +18,8 @@ namespace Toems_FrontEnd.views.admin.comservers
                 DisplayName = txtName.Text,
                 Url = txtUrl.Text,
                 Description = txtDescription.Text,
-                ReplicateStorage = true,
+                UniqueId = Guid.NewGuid().ToString(),
+                LocalStoragePath = txtLocalStorage.Text
             };
 
             var result = Call.ClientComServerApi.Post(server);

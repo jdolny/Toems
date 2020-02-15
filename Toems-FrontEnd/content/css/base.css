@@ -75,6 +75,15 @@ ul { list-style-type: none; }
 }
 
 @font-face {
+    font-family: "Flaticon";
+    font-style: normal;
+    font-weight: normal;
+    src: url("../fonts/flaticon.eot");
+    src: url("../fonts/flaticon.eot#iefix") format("embedded-opentype"),
+    url("../fonts/flaticon.ttf") format("truetype"), url("../fonts/flaticon.svg") format("svg");
+}
+
+@font-face {
     font-family: "opensans";
     font-style: normal;
     font-weight: normal;
@@ -904,6 +913,7 @@ a.keygen {
 /* Misc
 ================================================== */
 
+.sysprepcontent {width:100%;height:300px;}
 .denied_text {
     color: Red;
     font-size: 20px;

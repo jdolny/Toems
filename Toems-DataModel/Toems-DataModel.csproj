@@ -64,6 +64,7 @@
     <Compile Include="AssetRepository.cs" />
     <Compile Include="ComputerRepository.cs" />
     <Compile Include="ComServerClusterServersRepository.cs" />
+    <Compile Include="ImageProfileRepository.cs" />
     <Compile Include="PolicyHistoryRepository.cs" />
     <Compile Include="ModuleRepository.cs" />
     <Compile Include="GroupRepository.cs" />

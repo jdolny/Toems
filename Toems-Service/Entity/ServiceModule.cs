@@ -94,6 +94,13 @@ namespace Toems_Service.Entity
                     moduleId = messageModule.Id,
                     moduleType = EnumModule.ModuleType.Message
                 };
+            var sysprepModule = _uow.SysprepModuleRepository.GetFirstOrDefault(x => x.Guid == moduleGuid);
+            if (sysprepModule != null)
+                return new DtoGuidTypeMapping()
+                {
+                    moduleId = sysprepModule.Id,
+                    moduleType = EnumModule.ModuleType.Sysprep
+                };
             return null;
         }
 
@@ -235,6 +242,25 @@ namespace Toems_Service.Entity
                     }
 
                     break;
+                case EnumModule.ModuleType.Sysprep:
+                    var sysprepModule = _uow.SysprepModuleRepository.GetById(moduleId);
+                    if (sysprepModule != null)
+                    {
+                        sysprepModule.Archived = false;
+                        sysprepModule.Name = sysprepModule.Name.Split('#').First();
+                        sysprepModule.ArchiveDateTime = null;
+                        if (_uow.SysprepModuleRepository.Exists(x => x.Name.Equals(sysprepModule.Name)))
+                            return new DtoActionResult()
+                            {
+                                ErrorMessage = "Could Not Restore Module.  A Module With Name " + sysprepModule.Name +
+                                               " Already Exists"
+                            };
+                        _uow.SysprepModuleRepository.Update(sysprepModule, sysprepModule.Id);
+                        _uow.Save();
+                        return new DtoActionResult() { Id = sysprepModule.Id, Success = true };
+                    }
+
+                    break;
             }
 
             return new DtoActionResult()
@@ -337,6 +363,19 @@ namespace Toems_Service.Entity
                         messageModule.Name = messageModule.Name + "#" + DateTime.Now.ToString("MM-dd-yyyy_HH:mm");
                         messageModule.ArchiveDateTime = DateTime.Now;
                         _uow.MessageModuleRepository.Update(messageModule, messageModule.Id);
+                        _uow.Save();
+                        return new DtoActionResult() { Id = moduleId, Success = true };
+                    }
+                    break;
+                case EnumModule.ModuleType.Sysprep:
+                    var sysprepModule = _uow.SysprepModuleRepository.GetById(moduleId);
+                    if (sysprepModule != null)
+                    {
+                        if (sysprepModule.Archived) return new DtoActionResult() { Id = moduleId, Success = true };
+                        sysprepModule.Archived = true;
+                        sysprepModule.Name = sysprepModule.Name + "#" + DateTime.Now.ToString("MM-dd-yyyy_HH:mm");
+                        sysprepModule.ArchiveDateTime = DateTime.Now;
+                        _uow.SysprepModuleRepository.Update(sysprepModule, sysprepModule.Id);
                         _uow.Save();
                         return new DtoActionResult() { Id = moduleId, Success = true };
                     }

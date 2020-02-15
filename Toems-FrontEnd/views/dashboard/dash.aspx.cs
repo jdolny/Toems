@@ -51,34 +51,10 @@ namespace Toems_FrontEnd.views.dashboard
             {
                 //ignored
             }
-           
 
             try
             {
-                var local = Call.FilesystemApi.GetFreeSpace(false);
-                if (local == null)
-                {
-                    divLocalStorage.Visible = false;
-                }
-                else
-                {
-                    LocalPath = local.dPPath;
-                    lblLocalFree.Text = string.Format("Free Space:<b>{0,15:D}</b>",
-                        SizeSuffix(Convert.ToInt64(local.freespace)));
-                    lblLocalTotal.Text =
-                        string.Format("Total Space:<b>{0,15:D}</b>", SizeSuffix(Convert.ToInt64(local.total)));
-                    lblLocalPercent.Text = local.freePercent + "% Free";
-                }
-            }
-            catch
-            {
-                //ignored
-            }
-
-
-            try
-            {
-                var remote = Call.FilesystemApi.GetFreeSpace(true);
+                var remote = Call.FilesystemApi.GetSMBFreeSpace();
                 if (remote == null)
                 {
                     divRemoteStorage.Visible = false;
@@ -98,6 +74,44 @@ namespace Toems_FrontEnd.views.dashboard
             {
                 //ignored
             }
+
+
+            try
+            {
+                var coms = Call.FilesystemApi.GetComFreeSpace();
+                if (coms == null)
+                {
+                    divLocalStorage.Visible = false;
+                }
+                else
+                {
+                    foreach (var com in coms)
+                    {
+                        var divName = new HtmlGenericControl("div");
+                        divName.Attributes["class"] = "dash_item";
+                        divName.Controls.Add(new LiteralControl("<div class=\"dash_item_content\">"));
+                        divName.Controls.Add(new LiteralControl("<span class=\"dash_item_category\">System</span>"));
+                        divName.Controls.Add(new LiteralControl("<br class=\"clear\" />"));
+                        divName.Controls.Add(new LiteralControl($"<span class=\"dash_item_title\">{com.name} - {com.dPPath}</span></a>"));
+                        divName.Controls.Add(new LiteralControl("<br class=\"clear\" />"));
+                        var free = string.Format("Free Space:<b>{0,15:D}</b>", SizeSuffix(Convert.ToInt64(com.freespace)));
+                        var total = string.Format("Total Space:<b>{0,15:D}</b>", SizeSuffix(Convert.ToInt64(com.total)));
+                        var pFree = com.freePercent + "% Free";
+                        divName.Controls.Add(new LiteralControl($"{free} {total} {pFree}"));
+                        divName.Controls.Add(new LiteralControl("<br class=\"clear\" />"));
+
+                        comServerStorageHolder.Controls.Add(divName);
+
+                    }
+                }
+            }
+            catch
+            {
+                //ignored
+            }
+
+
+        
 
 
 

@@ -10,7 +10,8 @@
             Command = 3,
             FileCopy = 4,
             Wupdate = 5,
-            Message = 6
+            Message = 6,
+            Sysprep = 7
         }
     }
 }

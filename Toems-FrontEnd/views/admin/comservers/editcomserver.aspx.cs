@@ -19,7 +19,7 @@ namespace Toems_FrontEnd.views.admin.comservers
             ComServer.DisplayName = txtName.Text;
             ComServer.Url = txtUrl.Text;
             ComServer.Description = txtDescription.Text;
-            ComServer.ReplicateStorage = chkReplicateStorage.Checked;
+            ComServer.LocalStoragePath = txtLocalStorage.Text;
             var result = Call.ClientComServerApi.Put(ComServer.Id, ComServer);
             EndUserMessage = result.Success ? "Successfully Updated Server" : result.ErrorMessage;
         }
@@ -29,7 +29,8 @@ namespace Toems_FrontEnd.views.admin.comservers
             txtName.Text = ComServer.DisplayName;
             txtUrl.Text = ComServer.Url;
             txtDescription.Text = ComServer.Description;
-            chkReplicateStorage.Checked = ComServer.ReplicateStorage;
+            txtUniqueId.Text = ComServer.UniqueId;
+            txtLocalStorage.Text = ComServer.LocalStoragePath;
         }
 
         protected void btnCert_Click(object sender, EventArgs e)

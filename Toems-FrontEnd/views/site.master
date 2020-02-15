@@ -13,6 +13,7 @@
     <script type="text/javascript" src="<%= ResolveUrl("~/content/js/jquery.toastmessage.js") %>"></script>
     <script type="text/javascript" src="<%= ResolveUrl("~/content/js/jquery.watermark.min.js") %>"></script>
     <script type="text/javascript" src="<%= ResolveUrl("~/content/js/classie.js") %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/sha512.js") %>"></script>
     <script type="text/javascript" src="<%= ResolveUrl("~/content/js/ace/src-noconflict/ace.js") %>" charset="utf-8"></script>
     <script type="text/javascript" src="<%= ResolveUrl("~/content/js/scrollsaver.js") %>" charset="utf-8"></script>
     <script type="text/javascript" src="<%= ResolveUrl("~/content/js/bootstrap.min.js") %>" charset="utf-8"></script>
@@ -136,6 +137,12 @@
                             </li>
                             <li id="nav-hosts">
                                 <a href="<%= ResolveUrl("~/views/computers/search.aspx") %>" class="icon-computer tooltip" title="Computers"></a>
+                            </li>
+                             <li id="nav-images">
+                                <a href="<%= ResolveUrl("~/views/images/search.aspx") %>" class="icon-image tooltip" title="Images"></a>
+                            </li>
+                              <li id="nav-tasks">
+                                <a href="<%= ResolveUrl("~/views/imagingtasks/active.aspx") %>" class="icon-tasks tooltip" title="Imaging Tasks"></a>
                             </li>
                             <li id="nav-assets">
                                 <a href="<%= ResolveUrl("~/views/assets/chooser.aspx") %>" class="icon-asset tooltip" title="Assets"></a>
@@ -275,6 +282,7 @@
                 var menuTop = document.getElementById('confirmbox');
                 classie.toggle(menuTop, 'confirm-box-outer-open');
             });
+
 
          
 

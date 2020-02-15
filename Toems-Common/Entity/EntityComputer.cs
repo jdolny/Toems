@@ -65,6 +65,18 @@ namespace Toems_Common.Entity
         [Column("remote_access_id")]
         public string RemoteAccessId { get; set; }
 
+        [Column("imaging_mac")]
+        public string ImagingMac { get; set; }
+
+        [Column("imaging_client_id")]
+        public string ImagingClientId { get; set; }
+
+        [Column("image_id")]
+        public int ImageId { get; set; }
+
+        [Column("image_profile_id")]
+        public int ImageProfileId { get; set; }
+
     }
 
     [NotMapped]

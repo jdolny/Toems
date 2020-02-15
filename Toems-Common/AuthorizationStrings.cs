@@ -122,6 +122,8 @@
 
         public const string RemoteAccessRdp = "remoteAccessRdp";
 
+        public const string PxeSettingsUpdate = "pxeSettingsUpdate";
+
 
     }
 }

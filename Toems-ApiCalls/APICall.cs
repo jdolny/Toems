@@ -260,33 +260,16 @@ namespace Toems_ApiCalls
             get { return new HangfireTriggerAPI("HangfireTrigger"); }
         }
 
-     
+        public CustomBootMenuAPI CustomBootMenuApi
+        {
+            get { return new CustomBootMenuAPI("CustomBootMenu"); }
+        }
 
-      
+        public ImageProfileTemplateAPI ImageProfileTemplateApi
+        {
+            get { return new ImageProfileTemplateAPI("ImageProfileTemplate"); }
+        }
 
-       
-
-     
-      
-
-      
-
-     
-
-
-      
-
-      
-
-       
-
-     
-
-      
-
-      
-
-     
 
         public SettingAPI SettingApi
         {
@@ -338,6 +321,31 @@ namespace Toems_ApiCalls
             get { return new UserRightAPI("UserRight"); }
         }
 
-      
+        public OnlineKernelAPI OnlineKernelApi
+        {
+            get { return new OnlineKernelAPI("OnlineKernel"); }
+        }
+
+        public SysprepModuleAPI SysprepModuleApi
+        {
+            get { return new SysprepModuleAPI("SysprepModule"); }
+        }
+
+
+        public ImageAPI ImageApi
+        {
+            get { return new ImageAPI("Image"); }
+        }
+
+        public ImageProfileAPI ImageProfileApi
+        {
+            get { return new ImageProfileAPI("ImageProfile"); }
+        }
+
+        public ImageSchemaAPI ImageSchemaApi
+        {
+            get { return new ImageSchemaAPI("ImageSchema"); }
+        }
+
     }
 }

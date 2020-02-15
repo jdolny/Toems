@@ -6,7 +6,8 @@
         {
             Powershell = 0,
             VbScript = 1,
-            Batch = 2
+            Batch = 2,
+            ImagingClient_Bash = 3
         }
     }
 }

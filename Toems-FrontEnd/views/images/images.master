@@ -1,0 +1,88 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/views/site.master" AutoEventWireup="true" CodeBehind="images.master.cs" Inherits="Toems_FrontEnd.views.images.images" %>
+<asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumb">
+     <li>
+        <a href="<%= ResolveUrl("~/views/images/search.aspx") %>">Images</a>
+    </li>
+    <asp:ContentPlaceHolder ID="TopBreadCrumbSub1" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content runat="server" ID="SubNavTitle" ContentPlaceHolderID="SubNavTitle">
+    <asp:ContentPlaceHolder runat="server" ID="SubNavTitle_Sub1"></asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content ID="SubNav" ContentPlaceHolderID="SubNav" runat="Server">
+
+    <div id="Level1" runat="server">
+        <ul class="ul-secondary-nav">
+            <li id="search">
+                <a href="<%= ResolveUrl("~/views/images/search.aspx") %>">
+                    <span class="sub-nav-text">Search</span></a>
+            </li>
+              <li id="create">
+                <a href="<%= ResolveUrl("~/views/images/create.aspx") %>">
+                    <span class="sub-nav-text">New</span></a>
+            </li>         
+        </ul>
+    </div>
+
+    <div id="Level2" runat="server">
+           <ul class="ul-secondary-nav">
+            <li id="general">
+                <a href="<%= ResolveUrl("~/views/images/general.aspx") %>?imageId=<%= ImageEntity.Id %>">
+                    <span class="sub-nav-text">General</span></a>
+            </li>
+            <li id="profiles">
+                <a href="<%= ResolveUrl("~/views/images/profiles/search.aspx") %>?imageId=<%= ImageEntity.Id %>&sub=profiles">
+                    <span class="sub-nav-text">Image Profiles</span></a>
+            </li>
+            <li id="schema">
+                <a href="<%= ResolveUrl("~/views/images/schema.aspx") %>?imageId=<%= ImageEntity.Id %>">
+                    <span class="sub-nav-text">Image Schema</span></a>
+            </li>
+               <li id="history">
+                <a href="<%= ResolveUrl("~/views/images/history.aspx") %>?imageId=<%= ImageEntity.Id %>">
+                    <span class="sub-nav-text">Image History</span></a>
+            </li>
+
+
+               </ul>
+
+    </div>
+
+      <asp:ContentPlaceHolder ID="Level2Sub" runat="server"></asp:ContentPlaceHolder>
+
+</asp:Content>
+
+<asp:Content runat="server" ID="Breadcrumb" ContentPlaceHolderID="DropDownActions">
+ 
+    <asp:ContentPlaceHolder ID="DropDownActionsSub" runat="server">
+    </asp:ContentPlaceHolder>
+    <li>         <asp:LinkButton ID="btnDelete" runat="server" OnClick="btnDelete_OnClick" Text="Delete Image"></asp:LinkButton></li>
+
+</asp:Content>
+
+<asp:Content ID="MainContent" ContentPlaceHolderID="Content" runat="Server">
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#nav-images').addClass("nav-current");
+        });
+    </script>
+    <asp:ContentPlaceHolder ID="SubContent" runat="server">
+    </asp:ContentPlaceHolder>
+
+    <br class="clear"/>
+    <div id="confirmbox" class="confirm-box-outer">
+        <div class="confirm-box-inner">
+            <h4>
+                <asp:Label ID="lblTitle" runat="server" CssClass="modaltitle"></asp:Label>
+            </h4>
+
+            <div class="confirm-box-btns">
+                <asp:LinkButton ID="buttonConfirm" OnClick="buttonConfirm_Click" runat="server" Text="Yes" CssClass="confirm_yes"/>
+                <asp:LinkButton ID="CancelButton" runat="server" Text="No" CssClass="confirm_no"/>
+            </div>
+        </div>
+    </div>
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="Help">
+    <asp:ContentPlaceHolder runat="server" ID="subHelp"></asp:ContentPlaceHolder>
+</asp:Content>

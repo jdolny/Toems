@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -27,6 +28,30 @@ namespace Toems_Service.Entity
             if (!clientServer.Url.EndsWith("/"))
                 clientServer.Url += "/";
             clientServer.Url = clientServer.Url.ToLower();
+            if (!string.IsNullOrEmpty(clientServer.LocalStoragePath))
+            {
+                if (!clientServer.LocalStoragePath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                    clientServer.LocalStoragePath += Path.DirectorySeparatorChar.ToString();
+            }
+            if (!string.IsNullOrEmpty(clientServer.TftpPath))
+            {
+                if (!clientServer.TftpPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                    clientServer.TftpPath += Path.DirectorySeparatorChar.ToString();
+            }
+            clientServer.DecompressImageOn = "client";
+            clientServer.EmMaxBps = 0;
+            clientServer.EmMaxClients = 0;
+            clientServer.ImagingMaxBps = 0;
+            clientServer.ImagingMaxClients = 0;
+            clientServer.IsEndpointManagementServer = true;
+            clientServer.IsImagingServer = true;
+            clientServer.IsMulticastServer = true;
+            clientServer.IsTftpServer = true;
+            clientServer.MulticastEndPort = 10000;
+            clientServer.MulticastStartPort = 9000;
+            clientServer.ReplicateStorage = true;
+            clientServer.ReplicationRateIpg = 0;
+            clientServer.UniqueId = Guid.NewGuid().ToString();
             var validationResult = Validate(clientServer, true);
             if (validationResult.Success)
             {
@@ -60,6 +85,11 @@ namespace Toems_Service.Entity
             return _uow.ClientComServerRepository.GetById(clientServerId);
         }
 
+        public EntityClientComServer GetServerByGuid(string Guid)
+        {
+            return _uow.ClientComServerRepository.Get(x => x.UniqueId.Equals(Guid)).FirstOrDefault();
+        }
+
         public List<EntityClientComServer> GetAll()
         {
             return _uow.ClientComServerRepository.Get();
@@ -83,6 +113,16 @@ namespace Toems_Service.Entity
             if (!clientServer.Url.EndsWith("/"))
                 clientServer.Url += "/";
             clientServer.Url = clientServer.Url.ToLower();
+            if (!string.IsNullOrEmpty(clientServer.LocalStoragePath))
+            {
+                if (!clientServer.LocalStoragePath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                    clientServer.LocalStoragePath += Path.DirectorySeparatorChar.ToString();
+            }
+            if (!string.IsNullOrEmpty(clientServer.TftpPath))
+            {
+                if (!clientServer.TftpPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                    clientServer.TftpPath += Path.DirectorySeparatorChar.ToString();
+            }
             var validationResult = Validate(clientServer, false);
             if (validationResult.Success)
             {
@@ -132,6 +172,8 @@ namespace Toems_Service.Entity
                     }
                 }
             }
+
+            
 
             return validationResult;
 

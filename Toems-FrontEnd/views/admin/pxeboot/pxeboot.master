@@ -1,0 +1,62 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/views/admin/admin.master" AutoEventWireup="true" CodeBehind="pxeboot.master.cs" Inherits="Toems_FrontEnd.views.admin.pxeboot.pxeboot" %>
+<asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub1">
+
+    <asp:ContentPlaceHolder runat="server" ID="TopBreadCrumbSub2"></asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub1">
+    <asp:ContentPlaceHolder runat="server" ID="SubNavTitle_Sub2"></asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub" Runat="Server">
+   
+    <asp:ContentPlaceHolder runat="server" ID="DropDownActionsSub2">
+    </asp:ContentPlaceHolder>
+ 
+</asp:Content>
+
+
+
+<asp:Content ID="Content2" ContentPlaceHolderID="Level2" Runat="Server">
+      <div id="divLevel2" runat="server">
+    <ul class="ul-secondary-nav">
+    <li id="pxesettings" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/pxeboot/pxesettings.aspx") %>?level=2">
+            <span class="sub-nav-text">PXE Settings</span></a>
+    </li>
+    <li id="bootmenu" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/pxeboot/globalbootmenu.aspx") %>?level=2">
+            <span class="sub-nav-text">Global Boot Menu</span></a>
+    </li>
+    <li id="iso" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/pxeboot/isogen.aspx") %>?level=2">
+            <span class="sub-nav-text">ISO / USB Boot Generator</span></a>
+    </li>
+     <li id="createbootentry" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/pxeboot/createbootentry.aspx") %>?level=2">
+            <span class="sub-nav-text">Create Custom Boot Entry</span></a>
+    </li>
+         <li id="searchbootentry" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/pxeboot/searchbootentry.aspx") %>?level=2">
+            <span class="sub-nav-text">Search Custom Boot Entries</span></a>
+    </li>
+        </ul>
+          </div>
+    
+     
+  
+
+</asp:Content>
+
+<asp:Content ID="Content3" ContentPlaceHolderID="SubContent" Runat="Server">
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#pxe').addClass("nav-current");
+        });
+    </script>
+    <asp:ContentPlaceHolder ID="SubContent2" runat="server">
+    </asp:ContentPlaceHolder>
+   
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="subHelp">
+    <asp:ContentPlaceHolder runat="server" ID="subsubHelp"></asp:ContentPlaceHolder>
+</asp:Content>

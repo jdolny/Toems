@@ -41,16 +41,41 @@
     
         <div id="divLevel3" runat="server">
          <ul class="ul-secondary-nav">
-         <li id="general">
+       
              <div id="divComServer" runat="server">
+                   <li id="general">
         <a href="<%= ResolveUrl("~/views/admin/comservers/editcomserver.aspx") %>?level=2&serverId=<%=ComServer.Id %>">
             <span class="sub-nav-text">General</span></a>
-                 </div>
+                  </li>
+                  <li id="ems">
+          <a href="<%= ResolveUrl("~/views/admin/comservers/emssettings.aspx") %>?level=2&serverId=<%=ComServer.Id %>">
+            <span class="sub-nav-text">Endpoint Mgmt Settings</span></a>
+                      </li>
+                 <li id="replicate">
+             <a href="<%= ResolveUrl("~/views/admin/comservers/replicatesettings.aspx") %>?level=2&serverId=<%=ComServer.Id %>">
+            <span class="sub-nav-text">Replication Settings</span></a>
+                     </li>
+                    <li id="imaging">
+          <a href="<%= ResolveUrl("~/views/admin/comservers/imagingsettings.aspx") %>?level=2&serverId=<%=ComServer.Id %>">
+            <span class="sub-nav-text">Imaging Settings</span></a>
+                        </li>
+                    <li id="multicast">
+              <a href="<%= ResolveUrl("~/views/admin/comservers/multicastsettings.aspx") %>?level=2&serverId=<%=ComServer.Id %>">
+            <span class="sub-nav-text">Multicast Settings</span></a>
+                        </li>
+                    <li id="tftp">
+                   <a href="<%= ResolveUrl("~/views/admin/comservers/tftpsettings.aspx") %>?level=2&serverId=<%=ComServer.Id %>">
+            <span class="sub-nav-text">Tftp Settings</span></a>
+                        </li>
+                </div>
+
               <div id="divCluster" runat="server">
+                   <li id="general">
         <a href="<%= ResolveUrl("~/views/admin/comservers/editcomservercluster.aspx") %>?level=2&clusterId=<%=Cluster.Id %>">
             <span class="sub-nav-text">General</span></a>
+                       </li>
                  </div>
-    </li>
+   
              </ul>
     </div>
 

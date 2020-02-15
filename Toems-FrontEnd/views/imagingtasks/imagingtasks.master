@@ -1,0 +1,36 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/views/site.master" AutoEventWireup="true" CodeBehind="imagingtasks.master.cs" Inherits="Toems_FrontEnd.views.imagingtasks.imagingtasks" %>
+<asp:Content runat="server" ID="TopBreadCrumb" ContentPlaceHolderID="TopBreadCrumb">
+   <li><a href="<%= ResolveUrl("~/views/imagingtasks/active.aspx") %>">Active Imaging Tasks</a></li>
+    <asp:ContentPlaceHolder runat="server" ID="TopBreadCrumbSub1"></asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content runat="server" ID="SubNavTitle" ContentPlaceHolderID="SubNavTitle">
+    <asp:ContentPlaceHolder runat="server" ID="SubNavTitle_Sub1"></asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content ID="SubNav" ContentPlaceHolderID="SubNav" runat="Server">
+    <asp:ContentPlaceHolder runat="server" ID="SubNavLevel1" ></asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content runat="server" ID="Breadcrumb" ContentPlaceHolderID="DropDownActions">
+    <asp:ContentPlaceHolder ID="DropDownActionsSub" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+
+
+
+
+<asp:Content ID="MainContent" ContentPlaceHolderID="Content" runat="Server">
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#nav-tasks').addClass("nav-current");
+        });
+    </script>
+    <asp:ContentPlaceHolder ID="SubContent" runat="server">
+    </asp:ContentPlaceHolder>
+
+</asp:Content>
+
+<asp:Content runat="server" ContentPlaceHolderID="Help">
+    <asp:ContentPlaceHolder ID="SubHelp" runat="server"></asp:ContentPlaceHolder>
+    </asp:Content>

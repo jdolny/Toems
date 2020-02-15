@@ -13,7 +13,9 @@ namespace Toems_FrontEnd.views.modules.scriptmodules
                 ddlType.DataSource = Enum.GetNames(typeof(EnumScriptModule.ScriptType));
                 ddlType.DataBind();
                 PopulateImpersonationDdl(ddlRunAs);
+             
             }
+            ShowDivs();
         }
 
         protected void btnAdd_OnClick(object sender, EventArgs e)
@@ -52,6 +54,19 @@ namespace Toems_FrontEnd.views.modules.scriptmodules
                 EndUserMessage = "Successfully Created Script Module";
                 Response.Redirect("~/views/modules/scriptmodules/general.aspx?scriptModuleId=" + result.Id);
             }
+        }
+
+        protected void ddlType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ShowDivs();
+        }
+
+        private void ShowDivs()
+        {
+            if (ddlType.Text == "ImagingClient_Bash")
+                divNotBash.Visible = false;
+            else
+                divNotBash.Visible = true;
         }
     }
 }

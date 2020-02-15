@@ -47,10 +47,11 @@
     </div>
 
     <div class="size-5 column">
-        <asp:DropDownList ID="ddlType" runat="server" CssClass="ddlist">
+        <asp:DropDownList ID="ddlType" runat="server" CssClass="ddlist" AutoPostBack="true" OnSelectedIndexChanged="ddlType_SelectedIndexChanged">
             </asp:DropDownList>
     </div>
    <br class="clear"/>
+    <div id="divNotBash" runat="server">
      <div class="size-4 column">
         Arguments
     </div>
@@ -131,7 +132,7 @@
     <div class="size-5 column">
         <asp:DropDownList ID="ddlRunAs" runat="server" CssClass="ddlist"/>
     </div>
-
+        </div>
     <br class="clear"/>
     <div class="size-4 column">
         Script Contents

@@ -45,6 +45,15 @@ namespace Toems_Common.Entity
         [Column("prevent_shutdown")]
         public bool PreventShutdown { get; set; }
 
+        [Column("image_id")]
+        public int ImageId { get; set; }
+
+        [Column("image_profile_id")]
+        public int ImageProfileId { get; set; }
+
+        [Column("proxy_bootloader")]
+        public string ProxyBootloader { get; set; }
+
 
     }
 }

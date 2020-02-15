@@ -49,31 +49,13 @@ namespace Toems_FrontEnd.views.dashboard {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divLocalStorage;
         
         /// <summary>
-        /// lblLocalFree control.
+        /// comServerStorageHolder control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblLocalFree;
-        
-        /// <summary>
-        /// lblLocalTotal control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblLocalTotal;
-        
-        /// <summary>
-        /// lblLocalPercent control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblLocalPercent;
+        protected global::System.Web.UI.WebControls.PlaceHolder comServerStorageHolder;
         
         /// <summary>
         /// divRemoteStorage control.

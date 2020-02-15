@@ -85,6 +85,15 @@ namespace Toems_FrontEnd.views.admin {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl ldap;
         
         /// <summary>
+        /// dbmaintenance control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl dbmaintenance;
+        
+        /// <summary>
         /// certificate control.
         /// </summary>
         /// <remarks>
@@ -146,6 +155,42 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl about;
+        
+        /// <summary>
+        /// pxe control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl pxe;
+        
+        /// <summary>
+        /// imagingclient control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl imagingclient;
+        
+        /// <summary>
+        /// imageprofiletemplates control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl imageprofiletemplates;
+        
+        /// <summary>
+        /// imageprofiles control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl imageprofiles;
         
         /// <summary>
         /// Level2 control.

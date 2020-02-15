@@ -101,6 +101,14 @@ namespace Toems_DataModel
         private IGenericRepository<EntityComputerCertificate> _computerCertificateRepository;
         private IGenericRepository<EntityMessageModule> _messageModuleRepository;
         private IGenericRepository<EntityActiveSocket> _activeSocketRepository;
+        private IGenericRepository<EntityCustomBootMenu> _customBootMenuRepository;
+        private IGenericRepository<EntitySysprepModule> _sysprepModuleRepository;
+
+        private IGenericRepository<EntityImageProfileTemplate> _imageProfileTemplateRepository;
+        private IGenericRepository<EntityImage> _imageRepository;
+        private IGenericRepository<EntityImageCategory> _imageCategoryRepository;
+        private ImageProfileRepository _imageProfileRepository;
+
 
         private bool disposed;
 
@@ -108,6 +116,54 @@ namespace Toems_DataModel
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public IGenericRepository<EntityImageCategory> ImageCategoryRepository
+        {
+            get
+            {
+                return _imageCategoryRepository ?? (_imageCategoryRepository = new GenericRepository<EntityImageCategory>(_context));
+            }
+        }
+
+        public ImageProfileRepository ImageProfileRepository
+        {
+            get
+            {
+                return _imageProfileRepository ?? (_imageProfileRepository = new ImageProfileRepository(_context));
+            }
+        }
+
+        public IGenericRepository<EntityImage> ImageRepository
+        {
+            get
+            {
+                return _imageRepository ?? (_imageRepository = new GenericRepository<EntityImage>(_context));
+            }
+        }
+
+        public IGenericRepository<EntitySysprepModule> SysprepModuleRepository
+        {
+            get
+            {
+                return _sysprepModuleRepository ?? (_sysprepModuleRepository = new GenericRepository<EntitySysprepModule>(_context));
+            }
+        }
+
+        public IGenericRepository<EntityImageProfileTemplate> ImageProfileTemplateRepository
+        {
+            get
+            {
+                return _imageProfileTemplateRepository ?? (_imageProfileTemplateRepository = new GenericRepository<EntityImageProfileTemplate>(_context));
+            }
+        }
+
+        public IGenericRepository<EntityCustomBootMenu> CustomBootMenuRepository
+        {
+            get
+            {
+                return _customBootMenuRepository ?? (_customBootMenuRepository = new GenericRepository<EntityCustomBootMenu>(_context));
+            }
         }
 
         public IGenericRepository<EntityActiveSocket> ActiveSocketRepository

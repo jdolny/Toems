@@ -106,7 +106,39 @@
 
         public const string RemoteAccessStatus = "Remote Access Status";
 
-        public const string SharedLibraryVersion = "1.1.0.0";
+        public const string ProxyDhcpEnabled = "Proxy Dhcp";
+
+        public const string PxeBootloader = "PXE Bootloader";
+
+        public const string ProxyBiosBootloader = "Proxy Bios Bootloader";
+
+        public const string ProxyEfi32Bootloader = "Proxy Efi32 Bootloader";
+
+        public const string ProxyEfi64Bootloader = "Proxy Efi64 Bootloader";
+
+        public const string BiosBootMenu = "Bios Boot Menu";
+
+        public const string Efi32BootMenu = "Efi32 Boot Menu";
+
+        public const string Efi64BootMenu = "Efi64 Boot Menu";
+
+        public const string IpxeRequiresLogin = "iPXE Requires Login";
+
+        public const string DefaultInit = "initrd.xz";
+
+        public const string DefaultKernel32 = "4.20.10";
+
+        public const string DefaultKernel64 = "4.20.10x64";
+
+        public const string ImagingClientRequiresLogin = "Image Client Requires Login";
+
+        public const string IpxeSSL = "iPXE SSL";
+
+        public const string GlobalImagingArguments = "Global Imaging Arguments";
+
+        public const string IpxeHttpPort = "iPXE Http Port";
+
+        public const string SharedLibraryVersion = "1.2.0.0";
 
     }
 }

@@ -16,6 +16,7 @@
 
     <div id="Level1" runat="server">
         <ul class="ul-secondary-nav">
+
             <li id="email" runat="server" clientidmode="Static">
                 <a href="<%= ResolveUrl("~/views/admin/email.aspx") %>">
                     <span class="nav-text">E-mail</span>
@@ -40,6 +41,11 @@
                <li id="ldap" runat="server" clientidmode="Static">
                 <a href="<%= ResolveUrl("~/views/admin/ldap.aspx") %>">
                     <span class="nav-text">LDAP</span>
+                </a>
+            </li>
+               <li id="dbmaintenance" runat="server" clientidmode="Static">
+                <a href="<%= ResolveUrl("~/views/admin/dbmaintenance.aspx") %>">
+                    <span class="nav-text">DB Maintenance</span>
                 </a>
             </li>
                <li id="certificate" runat="server" clientidmode="Static">
@@ -68,7 +74,7 @@
             
               <li id="client" runat="server" clientidmode="Static">
                 <a href="<%= ResolveUrl("~/views/admin/client.aspx") %>">
-                    <span class="nav-text">Client</span>
+                    <span class="nav-text">Toec</span>
                 </a>
             </li>
 
@@ -91,6 +97,27 @@
                <li id="about" runat="server" clientidmode="Static">
                 <a href="<%= ResolveUrl("~/views/admin/about.aspx") %>">
                     <span class="nav-text">About</span>
+                </a>
+            </li>
+
+              <li id="pxe" runat="server" clientidmode="Static">
+                <a href="<%= ResolveUrl("~/views/admin/pxeboot/pxesettings.aspx?level=2") %>">
+                    <span class="nav-text">PXE / Boot Menu</span>
+                </a>
+            </li>
+              <li id="imagingclient" runat="server" clientidmode="Static">
+                <a href="<%= ResolveUrl("~/views/admin/imagingclient.aspx") %>">
+                    <span class="nav-text">Imaging Client</span>
+                </a>
+            </li>
+             <li id="imageprofiletemplates" runat="server" clientidmode="Static">
+                <a href="<%= ResolveUrl("~/views/admin/imageprofiletemplate.aspx") %>">
+                    <span class="nav-text">Image Profile Templates</span>
+                </a>
+            </li>
+               <li id="imageprofiles" runat="server" clientidmode="Static">
+                <a href="<%= ResolveUrl("~/views/admin/kernels/downloadkernel.aspx?level=2") %>">
+                    <span class="nav-text">Kernels</span>
                 </a>
             </li>
         </ul>

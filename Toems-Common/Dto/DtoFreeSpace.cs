@@ -7,5 +7,6 @@
         public ulong freespace { get; set; }
         public ulong total { get; set; }
         public int usedPercent { get; set; }
+        public string name { get; set; }
     }
 }

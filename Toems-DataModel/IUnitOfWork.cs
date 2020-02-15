@@ -90,6 +90,12 @@ namespace Toems_DataModel
         IGenericRepository<EntityComputerCertificate> ComputerCertificateRepository { get; }
         IGenericRepository<EntityMessageModule> MessageModuleRepository { get; }
         IGenericRepository<EntityActiveSocket> ActiveSocketRepository { get; }
+        IGenericRepository<EntityCustomBootMenu> CustomBootMenuRepository { get; }
+        IGenericRepository<EntityImageProfileTemplate> ImageProfileTemplateRepository { get; }
+        IGenericRepository<EntitySysprepModule> SysprepModuleRepository { get; }
+        IGenericRepository<EntityImage> ImageRepository { get; }
+        ImageProfileRepository ImageProfileRepository { get; }
+        IGenericRepository<EntityImageCategory> ImageCategoryRepository { get; }
         void Save();
     }
 }

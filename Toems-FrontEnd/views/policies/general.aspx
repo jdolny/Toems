@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/policies/policies.master" AutoEventWireup="true" CodeBehind="general.aspx.cs" Inherits="Toems_FrontEnd.views.policies.general" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/policies/policies.master" MaintainScrollPositionOnPostback="true" AutoEventWireup="true" CodeBehind="general.aspx.cs" Inherits="Toems_FrontEnd.views.policies.general" %>
 <asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub1">
     <li><%= Policy.Name %></li>
     <li>General</li>

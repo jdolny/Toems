@@ -9,10 +9,6 @@ Groups
      <li><asp:LinkButton runat="server" ID="btnDelete" Text="Delete Selected" CssClass="main-action" OnClick="btnDelete_OnClick"></asp:LinkButton></li>
 </asp:Content>
 
-
-
-
-
 <asp:Content ID="Content" ContentPlaceHolderID="SubContent" runat="Server">
     <script type="text/javascript">
         $(document).ready(function() {
@@ -33,10 +29,6 @@ Groups
         <asp:TextBox ID="txtSearch" runat="server" CssClass="rounded-search" OnTextChanged="search_Changed"></asp:TextBox>
     </div>
     
-
-  
-  
-
     <div class="size-11 column">
         <div class="custom-select">
         <asp:DropDownList runat="server" ID="ddlLimit" AutoPostBack="True" OnSelectedIndexChanged="ddl_OnSelectedIndexChanged" CssClass="ddlist">

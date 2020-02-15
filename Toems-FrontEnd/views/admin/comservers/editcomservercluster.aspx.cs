@@ -33,6 +33,10 @@ namespace Toems_FrontEnd.views.admin.comservers
             {
                 var cb = (CheckBox) row.FindControl("chkSelector");
                 var role = (DropDownList) row.FindControl("ddlRole");
+                var isImagingServer = (CheckBox)row.FindControl("chkImagingServer");
+                var isTftpServer = (CheckBox)row.FindControl("chkTftp");
+                var isMulticast = (CheckBox)row.FindControl("chkMulticast");
+                var isEms = (CheckBox)row.FindControl("chkEmServer");
                 var dataKey = gvServers.DataKeys[row.RowIndex];
                 if (dataKey == null) continue;
 
@@ -42,6 +46,39 @@ namespace Toems_FrontEnd.views.admin.comservers
                     {
                         cb.Checked = true;
                         role.Text = clusterServer.Role;
+                        isImagingServer.Checked = clusterServer.IsImagingServer;
+                        isTftpServer.Checked = clusterServer.IsTftpServer;
+                        isMulticast.Checked = clusterServer.IsMulticastServer;
+
+                        var comServer = Call.ClientComServerApi.Get(Convert.ToInt32(dataKey.Value));
+                        if (comServer == null) continue;
+                        if (!comServer.IsImagingServer)
+                        {
+                            isImagingServer.Checked = false;
+                            isImagingServer.Enabled = false;
+                            isImagingServer.Visible = false;
+                        }
+
+                        if (!comServer.IsTftpServer)
+                        {
+                            isTftpServer.Checked = false;
+                            isTftpServer.Enabled = false;
+                            isTftpServer.Visible = false;
+                        }
+
+                        if (!comServer.IsMulticastServer)
+                        {
+                            isMulticast.Checked = false;
+                            isMulticast.Enabled = false;
+                            isMulticast.Visible = false;
+                        }
+                        if (!comServer.IsEndpointManagementServer)
+                        {
+                            isEms.Checked = false;
+                            isEms.Enabled = false;
+                            isEms.Visible = false;
+                        }
+
                     }
                 }
             
@@ -65,15 +102,23 @@ namespace Toems_FrontEnd.views.admin.comservers
                     var cb = (CheckBox)row.FindControl("chkSelector");
                     if (!cb.Checked) continue;
                     var role = (DropDownList)row.FindControl("ddlRole");
+                    var isImagingServer = (CheckBox)row.FindControl("chkImagingServer");
+                    var isTftpServer = (CheckBox)row.FindControl("chkTftp");
+                    var isMulticast = (CheckBox)row.FindControl("chkMulticast");
+                    var isEms = (CheckBox)row.FindControl("chkEmServer");
                     var dataKey = gvServers.DataKeys[row.RowIndex];
                     if (dataKey == null) continue;
+
+                 
 
                     var clusterServer = new EntityComServerClusterServer();
                     clusterServer.ComServerClusterId = result.Id;
                     clusterServer.ComServerId = Convert.ToInt32(dataKey.Value);
                     clusterServer.Role = role.Text;
-
-
+                    clusterServer.IsImagingServer = isImagingServer.Checked;
+                    clusterServer.IsTftpServer = isTftpServer.Checked;
+                    clusterServer.IsMulticastServer = isMulticast.Checked;
+                    clusterServer.IsEndpointManagementServer = isEms.Checked;
                     listOfServers.Add(clusterServer);
                 }
 
@@ -82,7 +127,7 @@ namespace Toems_FrontEnd.views.admin.comservers
                     EndUserMessage = "Successfully Updated Cluster";
                 else
                 {
-                    EndUserMessage = "Could Not Update Cluster";
+                    EndUserMessage = "Could Not Update Cluster.  Ensure That At Least One Server Is Selected";
                 }
             }
             else

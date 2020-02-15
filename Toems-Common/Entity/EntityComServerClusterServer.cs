@@ -19,5 +19,17 @@ namespace Toems_Common.Entity
 
         [Column("role")]
         public string Role { get; set; }
+
+        [Column("is_imaging_server")]
+        public bool IsImagingServer { get; set; }
+
+        [Column("is_tftp_server")]
+        public bool IsTftpServer { get; set; }
+
+        [Column("is_multicast_server")]
+        public bool IsMulticastServer { get; set; }
+
+        [Column("is_em_server")]
+        public bool IsEndpointManagementServer { get; set; }
     }
 }

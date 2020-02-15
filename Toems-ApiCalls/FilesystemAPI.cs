@@ -35,9 +35,28 @@ namespace Toems_ApiCalls
             return response;
         }
 
-     
+        public List<string> GetKernels()
+        {
+            _request.Method = Method.GET;
+            _request.Resource = string.Format("{0}/GetKernels/", _resource);
+            var response = new ApiRequest().Execute<List<string>>(_request);
 
-    
+            return response;
+        }
+
+
+        public List<string> GetBootImages()
+        {
+            _request.Method = Method.GET;
+            _request.Resource = string.Format("{0}/GetBootImages/", _resource);
+            var response = new ApiRequest().Execute<List<string>>(_request);
+
+            return response;
+        }
+
+
+
+
 
         public string GetServerPaths(string type, string subType)
         {
@@ -50,12 +69,19 @@ namespace Toems_ApiCalls
             return response != null ? response.Value : string.Empty;
         }
 
-        public DtoFreeSpace GetFreeSpace(bool isRemote)
+        public DtoFreeSpace GetSMBFreeSpace()
         {
             _request.Method = Method.GET;
-            _request.AddParameter("isRemote", isRemote);
-            _request.Resource = string.Format("{0}/GetFreeSpace/", _resource);
+            _request.Resource = string.Format("{0}/GetSMBFreeSpace/", _resource);
             var response = new ApiRequest().Execute<DtoFreeSpace>(_request);
+            return response;
+        }
+
+        public List<DtoFreeSpace> GetComFreeSpace()
+        {
+            _request.Method = Method.GET;
+            _request.Resource = string.Format("{0}/GetComFreeSpace/", _resource);
+            var response = new ApiRequest().Execute<List<DtoFreeSpace>>(_request);
             return response;
         }
 

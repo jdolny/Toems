@@ -62,7 +62,15 @@
     <Compile Include="AssetGroupApi.cs" />
     <Compile Include="AssetGroupMemberAPI.cs" />
     <Compile Include="AssetCategoryAPI.cs" />
+    <Compile Include="ImageCategoryAPI.cs" />
+    <Compile Include="ImageProfileAPI.cs" />
+    <Compile Include="ImageAPI.cs" />
+    <Compile Include="ImageSchemaAPI.cs" />
+    <Compile Include="SysprepModuleAPI.cs" />
+    <Compile Include="ImageProfileTemplateApi.cs" />
+    <Compile Include="CustomBootMenuAPI.cs" />
     <Compile Include="MessageModuleAPI.cs" />
+    <Compile Include="OnlineKernelAPI.cs" />
     <Compile Include="PinnedGroupApi.cs" />
     <Compile Include="SoftwareAssetSoftwareAPI.cs" />
     <Compile Include="AttachmentApi.cs" />

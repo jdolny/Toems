@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/admin/admin.master" AutoEventWireup="true" CodeBehind="client.aspx.cs" Inherits="Toems_FrontEnd.views.admin.client" %>
 <asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub1">
-    <li>Client Settings</li>
+    <li>Toec Client Settings</li>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub1">
     Admin Settings

@@ -35,6 +35,20 @@ namespace Toems_Service.Workflows
         {
             if (!ServiceSetting.GetSettingValue(SettingStrings.StorageType).Equals("SMB")) return true;
 
+            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
+            var thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            if (thisComServer == null)
+            {
+                Logger.Error($"Com Server With Guid {guid} Not Found");
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(thisComServer.TftpPath))
+            {
+                Logger.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
+                return false;
+            }
+
             using (var unc = new UncServices())
             {
                 if (unc.NetUseWithCredentials() || unc.LastError == 1219)
@@ -45,7 +59,7 @@ namespace Toems_Service.Workflows
                     backup.OnCommandCompleted += backup_OnCommandCompleted;
                     // copy options
                     backup.CopyOptions.Source = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
-                    backup.CopyOptions.Destination = ConfigurationManager.AppSettings["LocalStoragePath"].Trim('\\');
+                    backup.CopyOptions.Destination = thisComServer.LocalStoragePath.Trim('\\');
                     backup.CopyOptions.CopySubdirectories = true;
                     backup.CopyOptions.UseUnbufferedIo = true;
                     // select options

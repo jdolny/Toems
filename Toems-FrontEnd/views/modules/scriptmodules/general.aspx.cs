@@ -30,6 +30,7 @@ namespace Toems_FrontEnd.views.modules.scriptmodules
             chkInventory.Checked = ScriptModule.AddInventoryCollection;
             chkCondition.Checked = ScriptModule.IsCondition;
             ddlRunAs.SelectedValue = ScriptModule.ImpersonationId.ToString();
+            ShowDivs();
         }
 
         protected void buttonUpdate_OnClick(object sender, EventArgs e)
@@ -78,5 +79,19 @@ namespace Toems_FrontEnd.views.modules.scriptmodules
             else
                 EndUserMessage = result.ErrorMessage;
         }
+
+        protected void ddlType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ShowDivs();
+        }
+
+        private void ShowDivs()
+        {
+            if (ddlType.Text == "ImagingClient_Bash")
+                divNotBash.Visible = false;
+            else
+                divNotBash.Visible = true;
+        }
+
     }
 }

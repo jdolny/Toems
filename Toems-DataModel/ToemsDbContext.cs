@@ -93,6 +93,13 @@ namespace Toems_DataModel
         public DbSet<EntityCertificateInventory> CertificateInventory { get; set; }
         public DbSet<EntityMessageModule> MessageModules { get; set; }
         public DbSet<EntityActiveSocket> ActiveSockets { get; set; }
+        public DbSet<EntityCustomBootMenu> CustomBootMenus { get; set; }
+        public DbSet<EntityImageProfileTemplate> ImageProfileTemplates { get; set; }
+        public DbSet<EntitySysprepModule> SysprepModules { get; set; }
+        public DbSet<EntityImage> Images { get; set; }
+        public DbSet<EntityImageProfile> ImageProfiles { get; set; }
+        public DbSet<EntityImageCategory> ImageCategories { get; set; }
+
 
     }
 }

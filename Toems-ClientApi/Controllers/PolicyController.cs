@@ -45,7 +45,17 @@ namespace Toems_ClientApi.Controllers
         {
             var result = new DtoDownloadConnectionResult();
 
-            if (!int.TryParse(ConfigurationManager.AppSettings["MaxClientConnections"], out var maxClientConnections))
+            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
+            var thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            if (thisComServer == null)
+            {
+                Logger.Error($"Com Server With Guid {guid} Not Found");
+                result.ErrorMessage = $"Com Server With Guid {guid} Not Found";
+                return result;
+            }
+
+           
+            if (!int.TryParse(thisComServer.EmMaxClients.ToString(), out var maxClientConnections))
             {
                 result.ErrorMessage = "Could Not Determine The MaxClientConnections For The Com Server: " +
                                       conRequest.ComServer;
@@ -108,11 +118,18 @@ namespace Toems_ClientApi.Controllers
         [HttpPost]
         public HttpResponseMessage GetFile(DtoClientFileRequest fileRequest)
         {
+            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
+            var thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            if(thisComServer == null)
+            {
+                Logger.Error($"Com Server With Guid {guid} Not Found");
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+            }
             var storageType = ServiceSetting.GetSettingValue(SettingStrings.StorageType);
             var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
-            var maxBitRate = Convert.ToInt32(ConfigurationManager.AppSettings["MaximumDownloadBps"]);
+            var maxBitRate = thisComServer.EmMaxBps;
             if (storageType != "Local")
-                basePath = ConfigurationManager.AppSettings["LocalStoragePath"];
+                basePath = thisComServer.LocalStoragePath;
 
             var fullPath = Path.Combine(basePath, "software_uploads", fileRequest.ModuleGuid,
                 fileRequest.FileName);
@@ -147,11 +164,18 @@ namespace Toems_ClientApi.Controllers
         [HttpPost]
         public HttpResponseMessage GetClientMsi(DtoClientFileRequest fileRequest)
         {
+            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
+            var thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            if (thisComServer == null)
+            {
+                Logger.Error($"Com Server With Guid {guid} Not Found");
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+            }
             var storageType = ServiceSetting.GetSettingValue(SettingStrings.StorageType);
             var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
-            var maxBitRate = Convert.ToInt32(ConfigurationManager.AppSettings["MaximumDownloadBps"]);
+            var maxBitRate = thisComServer.EmMaxBps;
             if (storageType != "Local")
-                basePath = ConfigurationManager.AppSettings["LocalStoragePath"];
+                basePath = thisComServer.LocalStoragePath;
 
             var fullPath = Path.Combine(basePath, "client_versions", fileRequest.FileName);
             if (File.Exists(fullPath))

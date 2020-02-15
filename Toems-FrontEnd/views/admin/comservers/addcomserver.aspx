@@ -32,6 +32,7 @@
         <asp:TextBox ID="txtUrl" runat="server" CssClass="textbox"></asp:TextBox>
     </div>
      <br class="clear"/>
+   
       <div class="size-4 column">
         Description:
     </div>
@@ -39,7 +40,14 @@
         <asp:TextBox ID="txtDescription" runat="server" CssClass="descbox" TextMode="MultiLine"></asp:TextBox>
     </div>
      <br class="clear" />
-  
+       <div class="size-4 column">
+       Local Storage Path:
+    </div>
+    <div class="size-5 column">
+        <asp:TextBox ID="txtLocalStorage" runat="server" CssClass="textbox"></asp:TextBox>
+    </div>
+     <br class="clear"/>
+    
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subsubHelp">
     <h5><span style="color: #ff9900;">Display Name:</span></h5>

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using RestSharp;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -179,6 +180,32 @@ namespace Toems_ApiCalls
             return string.Empty;
         }
 
+        public bool CopyPxeBinaries()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/CopyPxeBinaries/", Resource);
+            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
+            return response != null && response.Value;
+        }
+
+        public bool CreateDefaultBootMenu(DtoBootMenuGenOptions defaultMenuOptions)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = string.Format("{0}/CreateDefaultBootMenu/", Resource);
+            Request.AddJsonBody(defaultMenuOptions);
+            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
+            return response != null && response.Value;
+        }
+
+      
+
+        public byte[] GenerateIso(DtoIsoGenOptions isoOptions)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = string.Format("{0}/GenerateISO/", Resource);
+            Request.AddJsonBody(isoOptions);
+            return _apiRequest.ExecuteRaw(Request);
+        }
 
 
     }

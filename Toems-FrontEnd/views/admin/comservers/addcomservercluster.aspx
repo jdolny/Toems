@@ -65,9 +65,41 @@
                          <asp:ListItem>Passive</asp:ListItem>
 
                         </asp:DropDownList>
+
                 </ItemTemplate>
 
             </asp:TemplateField>
+               <asp:TemplateField ItemStyle-CssClass="width_100" HeaderText="Endpoint Mgmt Server">
+                <ItemTemplate>
+                    
+        <asp:CheckBox runat="server" id="chkEmServer"  Checked="true"/>
+     
+                    </ItemTemplate>
+               </asp:TemplateField>
+           <asp:TemplateField ItemStyle-CssClass="width_100" HeaderText="Imaging Server">
+                <ItemTemplate>
+                  
+        <asp:CheckBox runat="server" id="chkImagingServer"  Checked="true"/>
+        
+                    </ItemTemplate>
+               </asp:TemplateField>
+
+             <asp:TemplateField ItemStyle-CssClass="width_100" HeaderText="Tftp Server">
+                <ItemTemplate>
+                  
+        <asp:CheckBox runat="server" id="chkTftp"  Checked="true"/>
+      
+                    </ItemTemplate>
+               </asp:TemplateField>
+
+             <asp:TemplateField ItemStyle-CssClass="width_100" HeaderText="Multicast Server">
+                <ItemTemplate>
+                    
+        <asp:CheckBox runat="server" id="chkMulticast"  Checked="true"/>
+     
+                    </ItemTemplate>
+               </asp:TemplateField>
+
               <asp:TemplateField>
                 <ItemTemplate>
                    &nbsp;

@@ -132,7 +132,15 @@
     <Compile Include="Controllers\AssetGroupController.cs" />
     <Compile Include="Controllers\AssetGroupMemberController.cs" />
     <Compile Include="Controllers\AssetCategoryController.cs" />
+    <Compile Include="Controllers\ImageCategoryController.cs" />
+    <Compile Include="Controllers\ImageSchemaController.cs" />
+    <Compile Include="Controllers\ImageProfileController.cs" />
+    <Compile Include="Controllers\ImageController.cs" />
+    <Compile Include="Controllers\SysprepModuleController.cs" />
+    <Compile Include="Controllers\ImageProfileTemplateController.cs" />
+    <Compile Include="Controllers\CustomBootMenuController.cs" />
     <Compile Include="Controllers\MessageModuleController.cs" />
+    <Compile Include="Controllers\OnlineKernelController.cs" />
     <Compile Include="Controllers\PinnedGroupController.cs" />
     <Compile Include="Controllers\SoftwareAssetSoftwareController.cs" />
     <Compile Include="Controllers\AssetController.cs" />

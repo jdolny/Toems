@@ -24,19 +24,39 @@ namespace Toems_ApplicationApi.Controllers
             return FilesystemServices.GetLogs();
         }
 
-         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpGet]
+        [Authorize]
+        public List<string> GetKernels()
+        {
+            return new GetKernels().Run();
+        }
+
+        [HttpGet]
+        [Authorize]
+        public List<string> GetBootImages()
+        {
+            return new GetBootImages().Run();
+        }
+
+        [Authorize]
         public DtoApiStringResponse GetServerPaths(string type, string subType)
         {
             return new DtoApiStringResponse { Value = new FilesystemServices().GetServerPaths(type, subType) };
         }
 
          [Authorize]
-         public DtoFreeSpace GetFreeSpace(bool isRemote)
+         public DtoFreeSpace GetSMBFreeSpace()
          {
-             return new FilesystemServices().GetStorageFreeSpace(isRemote);
+             return new FilesystemServices().GetSMBFreeSpace();
          }
 
-         [CustomAuth(Permission = AuthorizationStrings.ModuleUpdate)]
+        [Authorize]
+        public List<DtoFreeSpace> GetComFreeSpace()
+        {
+            return new ComServerFreeSpace().RunAllServers();
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ModuleUpdate)]
         [HttpGet]
         public DtoApiBoolResponse SyncStorageServers()
         {
