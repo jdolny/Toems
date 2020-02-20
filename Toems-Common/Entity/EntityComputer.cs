@@ -84,4 +84,11 @@ namespace Toems_Common.Entity
     {
         public List<EntityComputerCategory> ComputerCategories { get; set; }
     }
+
+    [NotMapped]
+    public class ComputerWithImage : EntityComputer
+    {
+        public EntityImage Image { get; set; }
+        public EntityImageProfile ImageProfile { get; set; }
+    }
 }

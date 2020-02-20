@@ -174,6 +174,13 @@ namespace Toems_ApplicationApi.Controllers
             return _userServices.GetAllProcessForUser(dateCutoff, limit, userName);
         }
 
+        [Authorize]
+        [HttpGet]
+        public DtoApiBoolResponse IsAdmin(int id)
+        {
+            return new DtoApiBoolResponse { Value = _userServices.IsAdmin(id) };
+        }
+
 
     }
 }

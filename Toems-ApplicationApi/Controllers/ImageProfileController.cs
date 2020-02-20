@@ -125,6 +125,55 @@ namespace Toems_ApplicationApi.Controllers
             return result;
         }
 
+        [Authorize]
+        public DtoApiStringResponse GetMinimumClientSize(int id, int hdNumber)
+        {
+            return new DtoApiStringResponse
+            {
+                Value = _imageProfileService.MinimumClientSizeForGridView(id, hdNumber)
+            };
+        }
+
+
+        [Authorize]
+        public IEnumerable<EntityImageProfileScript> GetScripts(int id)
+        {
+            return _imageProfileService.GetImageProfileScripts(id);
+        }
+
+        [Authorize]
+        public IEnumerable<EntityImageProfileSysprepTag> GetSysprep(int id)
+        {
+            return _imageProfileService.GetImageProfileSysprep(id);
+        }
+
+        [Authorize]
+        public IEnumerable<EntityImageProfileFileCopy> GetFileCopy(int id)
+        {
+            return _imageProfileService.GetImageProfileFileCopy(id);
+        }
+
+        [Authorize]
+        [HttpDelete]
+        public DtoApiBoolResponse RemoveProfileFileCopy(int id)
+        {
+            return new DtoApiBoolResponse { Value = _imageProfileService.DeleteImageProfileFileCopy(id) };
+        }
+
+        [Authorize]
+        [HttpDelete]
+        public DtoApiBoolResponse RemoveProfileScripts(int id)
+        {
+            return new DtoApiBoolResponse { Value = _imageProfileService.DeleteImageProfileScripts(id) };
+        }
+
+        [Authorize]
+        [HttpDelete]
+        public DtoApiBoolResponse RemoveProfileSysprep(int id)
+        {
+            return new DtoApiBoolResponse { Value = _imageProfileService.DeleteImageProfileSysprepTags(id) };
+        }
+
 
     }
 }

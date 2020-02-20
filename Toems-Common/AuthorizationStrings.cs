@@ -124,6 +124,16 @@
 
         public const string PxeSettingsUpdate = "pxeSettingsUpdate";
 
+        public const string EmailImagingTaskCompleted = "emailImagingTaskCompleted";
+
+        public const string EmailImagingTaskFailed = "emailImagingTaskFailed";
+
+        public const string ImageDeployTask = "ImageDeployTask";
+
+        public const string ImageUploadTask = "ImageUploadTask";
+
+        public const string ImageMulticastTask = "ImageMulticastTask";
+
 
     }
 }

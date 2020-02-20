@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using Toems_Common.Enum;
 
 namespace Toems_Common.Entity
 {
@@ -20,7 +20,7 @@ namespace Toems_Common.Entity
         public int ProfileId { get; set; }
 
         [Column("run_when")]
-        public string RunWhen { get; set; }
+        public EnumProfileScript.RunWhen RunWhen { get; set; }
 
         [Column("script_module_id")]
         public int ScriptModuleId { get; set; }

@@ -154,5 +154,21 @@ namespace Toems_ApiCalls
             Request.AddParameter("groupId", groupId);
             return new ApiRequest().Execute<List<DtoProcessWithCount>>(Request);
         }
+
+        public int StartGroupUnicast(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/StartGroupUnicast/{1}", Resource, id);
+            var response = new ApiRequest().Execute<DtoApiIntResponse>(Request);
+            return response != null ? response.Value : 0;
+        }
+
+        public string StartMulticast(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/StartMulticast/{1}", Resource, id);
+            var response = new ApiRequest().Execute<DtoApiStringResponse>(Request);
+            return response != null ? response.Value : string.Empty;
+        }
     }
 }

@@ -353,6 +353,22 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<List<DtoProcessWithUser>>(Request);
         }
 
+        public string StartDeploy(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/StartDeploy/{1}", Resource, id);
+            var response = new ApiRequest().Execute<DtoApiStringResponse>(Request);
+            return response != null ? response.Value : string.Empty;
+        }
+
+        public string StartUpload(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/StartUpload/{1}", Resource, id);
+            var response = new ApiRequest().Execute<DtoApiStringResponse>(Request);
+            return response != null ? response.Value : string.Empty;
+        }
+
 
     }
 }

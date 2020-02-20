@@ -20,7 +20,13 @@
             Reboot = 14,
             Shutdown = 15,
             Wakeup = 16,
-            Restore = 17
+            Restore = 17,
+            OnDemandMulticast = 18,
+            Multicast = 19,
+            Deploy = 20,
+            Upload = 21,
+            OndUpload = 22,
+            OndDeploy = 23
         }
     }
 }

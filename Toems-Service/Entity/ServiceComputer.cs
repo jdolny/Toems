@@ -694,5 +694,61 @@ namespace Toems_Service.Entity
         {
             return new ReportRepository().GetAllProcessForComputer(dateCutoff, limit, computerId);
         }
+
+        public bool IsComputerActive(int computerId)
+        {
+            return _uow.ActiveImagingTaskRepository.Exists(a => a.ComputerId == computerId);
+        }
+
+        public EntityActiveImagingTask GetTaskForComputer(int computerId)
+        {
+            return _uow.ActiveImagingTaskRepository.GetFirstOrDefault(x => x.ComputerId == computerId);
+        }
+
+        public EntityActiveImagingTask GetTaskForComputerCheckin(int computerId)
+        {
+            return
+                _uow.ActiveImagingTaskRepository.GetFirstOrDefault(
+                    x =>
+                        x.ComputerId == computerId &&
+                        (x.Type == "upload" || x.Type == "deploy" ||
+                         x.Type == "multicast"));
+        }
+
+        public EntityComputer GetComputerFromMac(string mac)
+        {
+            return _uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingMac == mac);
+        }
+        public EntityComputer GetComputerFromClientIdentifier(string clientIdentifier)
+        {
+            //Don't know if uuid is raw or pretty.  Check for both
+            var result = _uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == clientIdentifier);
+            if (result != null) return result;
+            else
+            {
+                //Check for opposite uuid
+                try
+                {
+                    var uuid = clientIdentifier.Substring(clientIdentifier.LastIndexOf('.') + 1);
+                    var clientIdFirst = clientIdentifier.Replace(uuid, string.Empty);
+                    var uuidGuid = new Guid(uuid);
+                    var uuidBytes = uuidGuid.ToByteArray();
+                    var strReverseUuid = "";
+                    foreach (var b in uuidBytes)
+                    {
+                        strReverseUuid += b.ToString("X2");
+                    }
+                    var reverseUuid = new Guid(strReverseUuid);
+                    var newClientId = clientIdFirst + reverseUuid;
+                    return _uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == newClientId.ToUpper());
+                }
+                catch (Exception ex)
+                {
+                    return null;
+
+                }
+
+            }
+        }
     }
 }

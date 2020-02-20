@@ -605,5 +605,90 @@ namespace Toems_Service
 
             return size;
         }
+
+        public string GetFileNameWithFullPath(string imageName, string schemaHdNumber, string partitionNumber,
+            string extension)
+        {
+          
+            var filePath = "";
+
+            var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
+
+            using (var unc = new UncServices())
+            {
+
+                if (
+                    unc.NetUseWithCredentials() || unc.LastError == 1219)
+                {
+                    var imagePath = basePath + "images" +
+                                Path.DirectorySeparatorChar + imageName + Path.DirectorySeparatorChar + "hd" +
+                                schemaHdNumber;
+                    try
+                    {
+                        filePath =
+                            Directory.GetFiles(
+                                imagePath + Path.DirectorySeparatorChar, "part" + partitionNumber + "." + extension + ".*")
+                                .FirstOrDefault();
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error(ex.Message);
+                    }
+                }
+                else
+                {
+                    log.Error("Failed to connect to " + basePath + "\r\nLastError = " + unc.LastError);
+                    return "N/A";
+                }
+            }
+           
+
+            return filePath;
+        }
+
+        public string GetLVMFileNameWithFullPath(string imageName, string schemaHdNumber, string vgName, string lvName,
+            string extension)
+        {
+
+
+            var filePath = "";
+
+            var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
+
+            using (var unc = new UncServices())
+            {
+
+                if (
+                    unc.NetUseWithCredentials() || unc.LastError == 1219)
+                {
+                    var imagePath = basePath + "images" +
+                                Path.DirectorySeparatorChar + imageName + Path.DirectorySeparatorChar + "hd" +
+                                schemaHdNumber;
+                    try
+                    {
+                        filePath =
+                            Directory.GetFiles(
+                                imagePath + Path.DirectorySeparatorChar,
+                                vgName + "-" + lvName + "." + extension + ".*")
+                                .FirstOrDefault();
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error(ex.Message);
+                    }
+                }
+                else
+                {
+                    log.Error("Failed to connect to " + basePath + "\r\nLastError = " + unc.LastError);
+                    return "N/A";
+                }
+            }
+
+
+            return filePath;
+
+
+           
+        }
     }
 }

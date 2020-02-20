@@ -124,6 +124,10 @@
 
         public const string IpxeRequiresLogin = "iPXE Requires Login";
 
+        public const string WebTasksRequireLogin = "Web Tasks Require Login";
+
+        public const string ConsoleTasksRequireLogin = "Console Tasks Require Login";
+
         public const string DefaultInit = "initrd.xz";
 
         public const string DefaultKernel32 = "4.20.10";
@@ -137,6 +141,8 @@
         public const string GlobalImagingArguments = "Global Imaging Arguments";
 
         public const string IpxeHttpPort = "iPXE Http Port";
+
+        public const string TaskTimeout = "Task Timeout";
 
         public const string SharedLibraryVersion = "1.2.0.0";
 

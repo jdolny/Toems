@@ -51,12 +51,18 @@ namespace Toems_Service
             return escapedString;
         }
 
-      
+        public static string MacToPxeMac(string mac)
+        {
+            var pxeMac = "01-" + mac.ToLower().Replace(':', '-');
+            return pxeMac;
+        }
 
-      
 
-      
 
-     
+
+
+
+
+
     }
 }

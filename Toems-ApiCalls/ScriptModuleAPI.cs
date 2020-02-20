@@ -30,6 +30,15 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<List<EntityScriptModule>>(Request);
 
         }
+
+        public List<EntityScriptModule> GetImagingScripts()
+        {
+            Request.Method = Method.POST;
+            Request.Resource = string.Format("{0}/GetImagingScripts", Resource);
+            return new ApiRequest().Execute<List<EntityScriptModule>>(Request);
+
+        }
+
         public IEnumerable<EntityScriptModule> GetAllWithInventory()
         {
             Request.Method = Method.GET;

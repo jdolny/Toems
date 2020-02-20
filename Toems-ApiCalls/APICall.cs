@@ -347,5 +347,35 @@ namespace Toems_ApiCalls
             get { return new ImageSchemaAPI("ImageSchema"); }
         }
 
+        public ImageCategoryAPI ImageCategoryApi
+        {
+            get { return new ImageCategoryAPI("ImageCategory"); }
+        }
+
+        public ImageProfileScriptAPI ImageProfileScriptApi
+        {
+            get { return new ImageProfileScriptAPI("ImageProfileScript"); }
+        }
+
+        public ImageProfileSysprepAPI ImageProfileSysprepApi
+        {
+            get { return new ImageProfileSysprepAPI("ImageProfileSysprep"); }
+        }
+
+        public ImageProfileFileCopyAPI ImageProfileFileCopyApi
+        {
+            get { return new ImageProfileFileCopyAPI("ImageProfileFileCopy"); }
+        }
+
+        public ActiveImagingTaskAPI ActiveImagingTaskApi
+        {
+            get { return new ActiveImagingTaskAPI("ActiveImagingTask"); }
+        }
+
+        public ActiveMulticastSessionAPI ActiveMulticastSessionApi
+        {
+            get { return new ActiveMulticastSessionAPI("ActiveMulticastSession"); }
+        }
+
     }
 }

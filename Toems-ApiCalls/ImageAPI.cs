@@ -61,5 +61,24 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<List<ImageWithDate>>(Request);
         }
 
+        public IEnumerable<EntityImageCategory> GetImageCategories(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetImageCategories/{1}", Resource, id);
+            return new ApiRequest().Execute<List<EntityImageCategory>>(Request);
+        }
+
+        public IEnumerable<EntityAuditLog> GetImageAuditLogs(int id, int limit)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetImageAuditLogs/{1}", Resource, id);
+            Request.AddParameter("limit", limit);
+            var result = new ApiRequest().Execute<List<EntityAuditLog>>(Request);
+            if (result == null)
+                return new List<EntityAuditLog>();
+            else
+                return result;
+        }
+
     }
 }

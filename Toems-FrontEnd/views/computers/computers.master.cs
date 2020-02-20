@@ -27,6 +27,8 @@ namespace Toems_FrontEnd.views.computers
                 btnShutdown.Visible = false;
                 btnWakeup.Visible = false;
                 btnInventory.Visible = false;
+                btnDeploy.Visible = false;
+                btnUpload.Visible = false;
 
             }
             else
@@ -41,6 +43,8 @@ namespace Toems_FrontEnd.views.computers
                 btnShutdown.Visible = true;
                 btnWakeup.Visible = true;
                 btnInventory.Visible = true;
+                btnDeploy.Visible = true;
+                btnUpload.Visible = true;
 
             }
         }
@@ -80,8 +84,16 @@ namespace Toems_FrontEnd.views.computers
                     actionLabel = "Sent Wakeup Packet To";
                     result = new DtoActionResult() { Success = true };
                     break;
+                case "deploy":
+                    PageBaseMaster.EndUserMessage = ComputerBasePage.Call.ComputerApi.StartDeploy(ComputerEntity.Id);
+                    break;
+                case "upload":
+                    PageBaseMaster.EndUserMessage = ComputerBasePage.Call.ComputerApi.StartUpload(ComputerEntity.Id);
+                    break;
             }
-          
+
+            if (action.Equals("deploy") || action.Equals("upload"))
+                return;
 
             if (result.Success)
             {
@@ -153,8 +165,16 @@ namespace Toems_FrontEnd.views.computers
 
         protected void btnWakeup_OnClick(object sender, EventArgs e)
         {
-            lblTitle.Text = "Wake Up " + ComputerEntity.Name + "?";
-            Session["action"] = "wakeup";
+            lblTitle.Text = "Upload Image From " + ComputerEntity.Name + "?";
+            Session["action"] = "upload";
+            DisplayConfirm();
+
+        }
+
+        protected void btnDeploy_OnClick(object sender, EventArgs e)
+        {
+            lblTitle.Text = "Deploy Image To " + ComputerEntity.Name + "?";
+            Session["action"] = "deploy";
             DisplayConfirm();
 
         }

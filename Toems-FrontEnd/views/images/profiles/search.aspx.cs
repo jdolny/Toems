@@ -48,8 +48,8 @@ namespace Toems_FrontEnd.views.images.profiles
                 {
                     var dataKey = gvProfiles.DataKeys[row.RowIndex];
                     if (dataKey == null) continue;
-                    //lblClient.Text = Call.ImageProfileApi.GetMinimumClientSize(Convert.ToInt32(dataKey.Value),
-                      //  selectedHd);
+                    lblClient.Text = Call.ImageProfileApi.GetMinimumClientSize(Convert.ToInt32(dataKey.Value),
+                        selectedHd);
                 }
             }
         }
@@ -114,7 +114,7 @@ namespace Toems_FrontEnd.views.images.profiles
                 {
                     var dataKey = gvProfiles.DataKeys[row.RowIndex];
                     if (dataKey == null) continue;
-                    //lblClient.Text = Call.ImageProfileApi.GetMinimumClientSize(Convert.ToInt32(dataKey.Value), 0);
+                    lblClient.Text = Call.ImageProfileApi.GetMinimumClientSize(Convert.ToInt32(dataKey.Value), 0);
                 }
             }
         }

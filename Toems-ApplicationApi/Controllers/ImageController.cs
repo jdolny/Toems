@@ -140,5 +140,17 @@ namespace Toems_ApplicationApi.Controllers
         {
             return _imageService.SeedDefaultImageProfile(id);
         }
+
+        [Authorize]
+        public IEnumerable<EntityImageCategory> GetImageCategories(int id)
+        {
+            return _imageService.GetImageCategories(id);
+        }
+
+        [Authorize]
+        public IEnumerable<EntityAuditLog> GetImageAuditLogs(int id, int limit)
+        {
+            return _imageService.GetImageAuditLogs(id, limit);
+        }
     }
 }

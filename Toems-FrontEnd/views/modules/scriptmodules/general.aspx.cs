@@ -87,7 +87,7 @@ namespace Toems_FrontEnd.views.modules.scriptmodules
 
         private void ShowDivs()
         {
-            if (ddlType.Text == "ImagingClient_Bash")
+            if (ddlType.Text == "ImagingClient_Bash" || ddlType.Text == "ImagingClient_PowerShell")
                 divNotBash.Visible = false;
             else
                 divNotBash.Visible = true;

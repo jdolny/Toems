@@ -1,4 +1,9 @@
-﻿using Toems_Common;
+﻿using log4net;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
@@ -15,7 +20,7 @@ namespace Toems_Service
         private readonly ServiceUserLockout _userLockoutServices;
 
         private readonly ServiceUser _userServices;
-
+        private readonly ILog log = LogManager.GetLogger(typeof(AuthenticationServices));
         public AuthenticationServices()
         {
             _userServices = new ServiceUser();
@@ -23,7 +28,31 @@ namespace Toems_Service
             _userLockoutServices = new ServiceUserLockout();
         }
 
-       
+        public string ConsoleLogin(string username, string password, string task, string ip)
+        {
+            log.Info("Console Login Request Received: " + username + " " + password + " " + task + " " + ip);
+            var result = new Dictionary<string, string>();
+
+            var validationResult = GlobalLogin(username, password, "Console");
+
+            if (!validationResult.Success)
+            {
+                log.Info("Console Login Request Failed");
+                result.Add("valid", "false");
+                result.Add("user_id", "");
+                result.Add("user_token", "");
+            }
+            else
+            {
+                log.Info("Console Login Request Succeeded");
+                var ToemsUser = _userServices.GetUser(username);
+                result.Add("valid", "true");
+                result.Add("user_id", ToemsUser.Id.ToString());
+                result.Add("user_token", ToemsUser.ImagingToken);
+            }
+
+            return JsonConvert.SerializeObject(result);
+        }
 
         public DtoValidationResult GlobalLogin(string userName, string password, string loginType)
         {
@@ -170,6 +199,54 @@ namespace Toems_Service
             auditLogService.AddAuditLog(auditLog);
             _userLockoutServices.ProcessBadLogin(user.Id);
             return validationResult;
+        }
+
+        public string IpxeLogin(string username, string password, string kernel, string bootImage, string task)
+        {
+            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
+            var thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            if (thisComServer == null)
+            {
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(thisComServer.TftpPath))
+            {
+                return null;
+
+            }
+
+            var webPath = thisComServer.Url + "/clientimaging/,";
+            var globalComputerArgs = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingArguments);
+
+
+            var iPxePath = webPath;
+            if (iPxePath.Contains("https://")) //just use the first imaging server for the ipxe kernel transfer
+            {
+                if (ServiceSetting.GetSettingValue(SettingStrings.IpxeSSL).Equals("False"))
+                {
+                    iPxePath = iPxePath.ToLower().Replace("https://", "http://");
+                    var currentPort = iPxePath.Split(':').Last();
+                    iPxePath = iPxePath.Replace(currentPort, ServiceSetting.GetSettingValue(SettingStrings.IpxeHttpPort)) + "/clientimaging/";
+                }
+            }
+
+            var newLineChar = "\n";
+
+            var validationResult = GlobalLogin(username, password, "iPXE");
+            if (!validationResult.Success) return "goto Menu";
+            var lines = "#!ipxe" + newLineChar;
+            lines += "kernel " + iPxePath + "IpxeBoot?filename=" + kernel +
+                     "&type=kernel" +
+                     " initrd=" + bootImage + " root=/dev/ram0 rw ramdisk_size=156000 " + " web=" +
+                     webPath +  " consoleblank=0 " +
+                     globalComputerArgs + newLineChar;
+            lines += "imgfetch --name " + bootImage + " " + iPxePath +
+                     "IpxeBoot?filename=" +
+                     bootImage + "&type=bootimage" + newLineChar;
+            lines += "boot";
+
+            return lines;
         }
 
     }

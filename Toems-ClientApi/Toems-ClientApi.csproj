@@ -108,8 +108,10 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\Authorization\CertificateAuth.cs" />
+    <Compile Include="Controllers\Authorization\ClientImagingAuth.cs" />
     <Compile Include="Controllers\Authorization\InterComAuth.cs" />
     <Compile Include="Controllers\Authorization\ProvisionAuth.cs" />
+    <Compile Include="Controllers\ClientImagingController.cs" />
     <Compile Include="Controllers\InventoryController.cs" />
     <Compile Include="Controllers\SocketController.cs" />
     <Compile Include="Controllers\ImagingController.cs" />

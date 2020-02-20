@@ -96,6 +96,12 @@ namespace Toems_DataModel
         IGenericRepository<EntityImage> ImageRepository { get; }
         ImageProfileRepository ImageProfileRepository { get; }
         IGenericRepository<EntityImageCategory> ImageCategoryRepository { get; }
+        IGenericRepository<EntityImageProfileScript> ImageProfileScriptRepository { get; }
+        IGenericRepository<EntityImageProfileSysprepTag> ImageProfileSysprepRepository { get; }
+        IGenericRepository<EntityImageProfileFileCopy> ImageProfileFileCopyRepository { get; }
+        ActiveImagingTaskRepository ActiveImagingTaskRepository { get; }
+        IGenericRepository<EntityActiveMulticastSession> ActiveMulticastSessionRepository { get; }
+        IGenericRepository<EntityMulticastPort> MulticastPortRepository { get; }
         void Save();
     }
 }

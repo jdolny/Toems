@@ -49,7 +49,7 @@ Search
                     </div>
                 </ItemTemplate>
             </asp:TemplateField>
-            <asp:HyperLinkField DataNavigateUrlFields="Id,ImageId" DataNavigateUrlFormatString="~/views/images/profiles/general.aspx?imageid={1}&profileid={0}&cat=profiles" Text="View" ItemStyle-CssClass="chkboxwidth"/>
+            <asp:HyperLinkField DataNavigateUrlFields="Id,ImageId" DataNavigateUrlFormatString="~/views/images/profiles/general.aspx?imageid={1}&profileid={0}&sub=profiles" Text="View" ItemStyle-CssClass="chkboxwidth"/>
             <asp:TemplateField ShowHeader="False">
                 <ItemStyle CssClass="chkboxwidth"></ItemStyle>
                 <ItemTemplate>

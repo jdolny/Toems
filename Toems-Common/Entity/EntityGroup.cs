@@ -6,7 +6,6 @@ namespace Toems_Common.Entity
     [Table("groups")]
     public class EntityGroup
     {
-
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("group_id", Order = 1)]
@@ -54,6 +53,11 @@ namespace Toems_Common.Entity
         [Column("proxy_bootloader")]
         public string ProxyBootloader { get; set; }
 
+        [Column("imaging_priority")]
+        public int ImagingPriority { get; set; }
+
+        [Column ("em_priority")]
+        public int EmPriority { get; set; }
 
     }
 }

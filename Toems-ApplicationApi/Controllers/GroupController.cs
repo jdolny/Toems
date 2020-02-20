@@ -12,6 +12,7 @@ using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_Service.Entity;
+using Toems_Service.Workflows;
 
 namespace Toems_ApplicationApi.Controllers
 {
@@ -286,6 +287,26 @@ namespace Toems_ApplicationApi.Controllers
         public List<DtoProcessWithCount> GroupProcessCounts(DateTime dateCutoff, int limit, int groupId)
         {
             return _groupServices.GetGroupProcessCounts(dateCutoff, limit,groupId);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public DtoApiIntResponse StartGroupUnicast(int id)
+        {
+            return new DtoApiIntResponse
+            {
+                Value = _groupServices.StartGroupUnicast(id, Convert.ToInt32(_userId))
+            };
+        }
+
+        [Authorize]
+        [HttpGet]
+        public DtoApiStringResponse StartMulticast(int id)
+        {
+            return new DtoApiStringResponse
+            {
+                Value = new Multicast(id, Convert.ToInt32(_userId)).Create()
+            };
         }
 
 

@@ -128,10 +128,15 @@
     <Compile Include="ApplicationStrings.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\ActiveImagingTaskController.cs" />
+    <Compile Include="Controllers\ActiveMulticastSessionController.cs" />
     <Compile Include="Controllers\ApprovalRequestController.cs" />
     <Compile Include="Controllers\AssetGroupController.cs" />
     <Compile Include="Controllers\AssetGroupMemberController.cs" />
     <Compile Include="Controllers\AssetCategoryController.cs" />
+    <Compile Include="Controllers\ImageProfileFileCopyController.cs" />
+    <Compile Include="Controllers\ImageProfileSysprepController.cs" />
+    <Compile Include="Controllers\ImageProfileScriptController.cs" />
     <Compile Include="Controllers\ImageCategoryController.cs" />
     <Compile Include="Controllers\ImageSchemaController.cs" />
     <Compile Include="Controllers\ImageProfileController.cs" />

@@ -85,6 +85,13 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ModuleRead)]
+        [HttpPost]
+        public IEnumerable<EntityScriptModule> GetImagingScripts()
+        {
+            return _scriptModuleServices.GetImagingScripts();
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ModuleRead)]
         [HttpGet]
         public IEnumerable<EntityScriptModule> GetConditions()
         {

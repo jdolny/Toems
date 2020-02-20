@@ -7,6 +7,7 @@ using System.Web.Http;
 using log4net;
 using Toems_ClientApi.Controllers.Authorization;
 using Toems_Common.Dto;
+using Toems_Common.Entity;
 using Toems_Service.Workflows;
 
 namespace Toems_ClientApi.Controllers
@@ -22,6 +23,43 @@ namespace Toems_ClientApi.Controllers
         public DtoApiBoolResponse CopyPxeBinaries()
         {
             return new DtoApiBoolResponse(){Value = new CopyPxeBinaries().Copy()};
+        }
+
+        [InterComAuth]
+        [HttpPost]
+        public DtoApiBoolResponse CancelAllImagingTasks()
+        {
+            return new DtoApiBoolResponse() { Value = new CancelAllImagingTasks().Execute() };
+        }
+
+        [InterComAuth]
+        [HttpPost]
+        public DtoApiBoolResponse CleanTaskBootFiles(EntityComputer computer)
+        {
+            return new DtoApiBoolResponse() { Value = new CleanTaskBootFiles().Execute(computer) };
+        }
+
+        [InterComAuth]
+        [HttpPost]
+        public DtoApiIntResponse StartUdpSender(DtoMulticastArgs mArgs)
+        {
+            return new DtoApiIntResponse() { Value = new MulticastArguments().GenerateProcessArguments(mArgs) };
+        }
+
+        [InterComAuth]
+        [HttpPost]
+        public DtoApiBoolResponse CreateTaskBootFiles(DtoTaskBootFile bootFile)
+        {
+            return new DtoApiBoolResponse() { Value = new TaskBootMenu().CreatePxeBootFiles(bootFile.Computer,bootFile.ImageProfile) };
+        }
+
+        
+
+        [InterComAuth]
+        [HttpPost]
+        public DtoApiBoolResponse TerminateMulticast(EntityActiveMulticastSession multicast)
+        {
+            return new DtoApiBoolResponse() { Value = new Toems_Service.Entity.ServiceActiveMulticastSession().TerminateMulticastProcesses(multicast) };
         }
 
         [InterComAuth]

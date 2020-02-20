@@ -352,6 +352,11 @@ namespace Toems_Service.Entity
 
         }
 
+        public List<EntityImage> GetOnDemandImageList(string task, int userId = 0)
+        {
+                return _uow.ImageRepository.Get(i => i.IsVisible && i.Enabled , q => q.OrderBy(p => p.Name));
+        }
+
 
     }
 }

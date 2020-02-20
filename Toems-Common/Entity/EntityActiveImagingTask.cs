@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Toems_Common.Enum;
 
 namespace Toems_Common.Entity
 {
@@ -9,7 +10,7 @@ namespace Toems_Common.Entity
     {
         public EntityActiveImagingTask()
         {
-            Status = "0";
+            Status = 0;
             QueuePosition = 0;
         }
 
@@ -47,7 +48,7 @@ namespace Toems_Common.Entity
         public string Remaining { get; set; }
 
         [Column("task_status")]
-        public string Status { get; set; }
+        public EnumTaskStatus.ImagingStatus Status { get; set; }
 
         [Column("task_type")]
         public string Type { get; set; }
@@ -60,6 +61,9 @@ namespace Toems_Common.Entity
 
         [Column("last_update_time")]
         public DateTime LastUpdateTime { get; set; }
+
+        [Column("is_web_task")]
+        public bool IsWebTask { get; set; }
 
         [NotMapped]
         public string Direction { get; set; }

@@ -88,6 +88,11 @@ namespace Toems_Service.Entity
             return _uow.ScriptModuleRepository.Get(x => x.AddInventoryCollection);
         }
 
+        public List<EntityScriptModule> GetImagingScripts()
+        {
+            return _uow.ScriptModuleRepository.Get(x => x.ScriptType == (EnumScriptModule.ScriptType.ImagingClient_Bash) || x.ScriptType == (EnumScriptModule.ScriptType.ImagingClient_Powershell));
+        }
+
         public List<EntityScriptModule> SearchModules(DtoSearchFilterCategories filter)
         {
             var list = _uow.ScriptModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && !s.Archived).OrderBy(x => x.Name).ToList();

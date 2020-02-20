@@ -279,6 +279,16 @@ namespace Toems_FrontEnd.BasePages
 
         }
 
+        protected void PopulateMulticastComServers(DropDownList ddlComServers)
+        {
+            ddlComServers.DataSource =
+                Call.ClientComServerApi.Get().Where(x=> x.IsMulticastServer).Select(d => new { d.Id, d.DisplayName });
+            ddlComServers.DataValueField = "Id";
+            ddlComServers.DataTextField = "DisplayName";
+            ddlComServers.DataBind();
+
+        }
+
         protected void PopulateComServerUrls(DropDownList ddlComServers)
         {
             ddlComServers.DataSource =
@@ -287,6 +297,25 @@ namespace Toems_FrontEnd.BasePages
             ddlComServers.DataTextField = "Url";
             ddlComServers.DataBind();
 
+        }
+
+        protected void PopulateImageProfilesDdl(DropDownList ddlImageProfile, int value)
+        {
+            ddlImageProfile.DataSource = Call.ImageApi.GetImageProfiles(value).Select(i => new { i.Id, i.Name });
+            ddlImageProfile.DataValueField = "Id";
+            ddlImageProfile.DataTextField = "Name";
+            ddlImageProfile.DataBind();
+            ddlImageProfile.Items.Insert(0, new ListItem("Select Profile", "-1"));
+        }
+
+        protected void PopulateImagesDdl(DropDownList ddlImages)
+        {
+            ddlImages.DataSource =
+                Call.ImageApi.Get().Select(i => new { i.Id, i.Name }).OrderBy(x => x.Name).ToList();
+            ddlImages.DataValueField = "Id";
+            ddlImages.DataTextField = "Name";
+            ddlImages.DataBind();
+            ddlImages.Items.Insert(0, new ListItem("Select Image", "-1"));
         }
 
 

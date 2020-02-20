@@ -56,13 +56,18 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActiveMulticastSessionAPI.cs" />
     <Compile Include="APICall.cs" />
     <Compile Include="ApiRequest.cs" />
     <Compile Include="ApprovalRequestAPI.cs" />
     <Compile Include="AssetGroupApi.cs" />
     <Compile Include="AssetGroupMemberAPI.cs" />
     <Compile Include="AssetCategoryAPI.cs" />
+    <Compile Include="ActiveImagingTaskAPI.cs" />
     <Compile Include="ImageCategoryAPI.cs" />
+    <Compile Include="ImageProfileFileCopyAPI.cs" />
+    <Compile Include="ImageProfileSysprepAPI.cs" />
+    <Compile Include="ImageProfileScriptAPI.cs" />
     <Compile Include="ImageProfileAPI.cs" />
     <Compile Include="ImageAPI.cs" />
     <Compile Include="ImageSchemaAPI.cs" />

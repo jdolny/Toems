@@ -406,5 +406,17 @@ namespace Toems_Service.Entity
         {
             return new ReportRepository().GetTopProcessCountsForGroup(dateCutoff, limit,groupId);
         }
+
+        public int StartGroupUnicast(int groupId, int userId)
+        {
+            var count = 0;
+            var members = _uow.GroupRepository.GetGroupMembersWithImages(groupId, "");
+            foreach (var computer in members)
+            {
+                if (new Toems_Service.Workflows.Unicast(computer.Id, "deploy", userId).Start().Contains("Successfully"))
+                    count++;
+            }
+            return count;
+        }
     }
 }

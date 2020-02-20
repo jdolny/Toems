@@ -9,10 +9,36 @@
 </asp:Content>
 
 <asp:Content ID="SubNav" ContentPlaceHolderID="SubNav" runat="Server">
+    <ul class="ul-secondary-nav">
+            <li id="unicast">
+                    <a href="<%= ResolveUrl("~/views/imagingtasks/activeunicast.aspx") %>">
+                        <span class="sub-nav-text">Active Unicasts</span></a>
+                </li>
+                <li id="multicast">
+                    <a href="<%= ResolveUrl("~/views/imagingtasks/activemulticast.aspx") %>">
+                        <span class="sub-nav-text">Active Multicasts</span></a>
+                </li>
+                <li id="all">
+                    <a href="<%= ResolveUrl("~/views/imagingtasks/active.aspx") %>">
+                        <span class="sub-nav-text">All Active Tasks</span></a>
+                </li>
+            
+                <li id="unregond">
+                    <a href="<%= ResolveUrl("~/views/imagingtasks/activeond.aspx") %>">
+                        <span class="sub-nav-text">Unregistered On Demand Tasks</span></a>
+                </li>
+               
+                <li id="ond">
+                    <a href="<%= ResolveUrl("~/views/imagingtasks/ondemand.aspx") %>">
+                        <span class="sub-nav-text">Start On Demand Multicast</span></a>
+                </li>
+        </ul>
+
     <asp:ContentPlaceHolder runat="server" ID="SubNavLevel1" ></asp:ContentPlaceHolder>
 </asp:Content>
 
 <asp:Content runat="server" ID="Breadcrumb" ContentPlaceHolderID="DropDownActions">
+
     <asp:ContentPlaceHolder ID="DropDownActionsSub" runat="server">
     </asp:ContentPlaceHolder>
 </asp:Content>

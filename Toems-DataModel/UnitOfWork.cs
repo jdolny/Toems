@@ -108,6 +108,12 @@ namespace Toems_DataModel
         private IGenericRepository<EntityImage> _imageRepository;
         private IGenericRepository<EntityImageCategory> _imageCategoryRepository;
         private ImageProfileRepository _imageProfileRepository;
+        private IGenericRepository<EntityImageProfileScript> _imageProfileScriptRepository;
+        private IGenericRepository<EntityImageProfileSysprepTag> _imageProfileSysprepRepository;
+        private IGenericRepository<EntityImageProfileFileCopy> _imageProfileFileCopyRepository;
+        private IGenericRepository<EntityActiveMulticastSession> _activeMulticastSessionRepository;
+        private ActiveImagingTaskRepository _activeImagingTaskRepository;
+        private IGenericRepository<EntityMulticastPort> _multicastPortRepository;
 
 
         private bool disposed;
@@ -116,6 +122,54 @@ namespace Toems_DataModel
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public IGenericRepository<EntityMulticastPort> MulticastPortRepository
+        {
+            get
+            {
+                return _multicastPortRepository ?? (_multicastPortRepository = new GenericRepository<EntityMulticastPort>(_context));
+            }
+        }
+
+        public IGenericRepository<EntityActiveMulticastSession> ActiveMulticastSessionRepository
+        {
+            get
+            {
+                return _activeMulticastSessionRepository ?? (_activeMulticastSessionRepository = new GenericRepository<EntityActiveMulticastSession>(_context));
+            }
+        }
+
+        public ActiveImagingTaskRepository ActiveImagingTaskRepository
+        {
+            get
+            {
+                return _activeImagingTaskRepository ?? (_activeImagingTaskRepository = new ActiveImagingTaskRepository(_context));
+            }
+        }
+
+        public IGenericRepository<EntityImageProfileFileCopy> ImageProfileFileCopyRepository
+        {
+            get
+            {
+                return _imageProfileFileCopyRepository ?? (_imageProfileFileCopyRepository = new GenericRepository<EntityImageProfileFileCopy>(_context));
+            }
+        }
+
+        public IGenericRepository<EntityImageProfileSysprepTag> ImageProfileSysprepRepository
+        {
+            get
+            {
+                return _imageProfileSysprepRepository ?? (_imageProfileSysprepRepository = new GenericRepository<EntityImageProfileSysprepTag>(_context));
+            }
+        }
+
+        public IGenericRepository<EntityImageProfileScript> ImageProfileScriptRepository
+        {
+            get
+            {
+                return _imageProfileScriptRepository ?? (_imageProfileScriptRepository = new GenericRepository<EntityImageProfileScript>(_context));
+            }
         }
 
         public IGenericRepository<EntityImageCategory> ImageCategoryRepository

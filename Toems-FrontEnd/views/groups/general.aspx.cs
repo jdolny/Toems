@@ -29,7 +29,7 @@ namespace Toems_FrontEnd.views.groups
             ddlWakeup.SelectedValue = GroupEntity.WakeupScheduleId.ToString();
             ddlShutdown.SelectedValue = GroupEntity.ShutdownScheduleId.ToString();
             chkPreventShutdown.Checked = GroupEntity.PreventShutdown;
-            
+            txtPriority.Text = GroupEntity.EmPriority.ToString();
         }
 
         protected void buttonUpdate_OnClick(object sender, EventArgs e)
@@ -40,6 +40,13 @@ namespace Toems_FrontEnd.views.groups
             GroupEntity.WakeupScheduleId = Convert.ToInt32(ddlWakeup.SelectedValue);
             GroupEntity.ShutdownScheduleId = Convert.ToInt32(ddlShutdown.SelectedValue);
             GroupEntity.PreventShutdown = chkPreventShutdown.Checked;
+            var priority = 0;
+            if (!int.TryParse(txtPriority.Text, out priority))
+            {
+                EndUserMessage = "Priority Not Valid";
+                return;
+            }
+            GroupEntity.EmPriority = priority;
             var result = Call.GroupApi.Put(GroupEntity.Id, GroupEntity);
             EndUserMessage = result.Success ? String.Format("Successfully Updated Group {0}", GroupEntity.Name) : result.ErrorMessage;
         }

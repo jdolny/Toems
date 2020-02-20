@@ -94,6 +94,15 @@ namespace Toems_FrontEnd.views.groups {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl process;
         
         /// <summary>
+        /// imaging control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl imaging;
+        
+        /// <summary>
         /// DropDownActionsSub control.
         /// </summary>
         /// <remarks>
@@ -110,6 +119,24 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnCheckin;
+        
+        /// <summary>
+        /// btnMulticast control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnMulticast;
+        
+        /// <summary>
+        /// btnUnicast control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnUnicast;
         
         /// <summary>
         /// btnDelete control.

@@ -35,6 +35,9 @@ namespace Toems_Common.Entity
         [Column("toems_theme")]
         public string Theme { get; set; }
 
+        [Column("imaging_token")]
+        public string ImagingToken { get; set; }
+
 
     }
 

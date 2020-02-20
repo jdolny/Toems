@@ -67,6 +67,32 @@ namespace Toems_ApiCalls
             return responseData != null && responseData.Value;
         }
 
+        public bool CancelAllImagingTasks(string url, string serverName, string interComKey)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = "Imaging/CancelAllImagingTasks";
+            var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
+            return responseData != null && responseData.Value;
+        }
+
+        public bool CleanTaskBootFiles(string url, string serverName, string interComKey, EntityComputer computer)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = "Imaging/CleanTaskBootFiles";
+            Request.AddJsonBody(computer);
+            var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
+            return responseData != null && responseData.Value;
+        }
+
+        public bool TerminateMulticast(string url, string serverName, string interComKey, EntityActiveMulticastSession multicast)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = "Imaging/TerminateMulticast";
+            Request.AddJsonBody(multicast);
+            var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
+            return responseData != null && responseData.Value;
+        }
+
         public bool CreateDefaultBootMenu(string url, string serverName, string interComKey,DtoBootMenuGenOptions bootOptions)
         {
             Request.Method = Method.POST;
@@ -75,6 +101,28 @@ namespace Toems_ApiCalls
             var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
             return responseData != null && responseData.Value;
         }
+
+        public bool CreateTaskBootFiles(string url, string serverName, string interComKey, DtoTaskBootFile bootFile)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = "Imaging/CreateTaskBootFiles";
+            Request.AddJsonBody(bootFile);
+            var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
+            return responseData != null && responseData.Value;
+        }
+
+        public int StartUdpSender(string url, string serverName, string interComKey, DtoMulticastArgs mArgs)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = "Imaging/StartUdpSender";
+            Request.AddJsonBody(mArgs);
+            var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiIntResponse>(Request, serverName, interComKey);
+            if (responseData != null)
+                return responseData.Value;
+            else
+                return 0;
+        }
+
 
         public bool DownloadKernel(string url, string serverName, string interComKey, DtoOnlineKernel onlineKernel)
         {

@@ -99,7 +99,12 @@ namespace Toems_DataModel
         public DbSet<EntityImage> Images { get; set; }
         public DbSet<EntityImageProfile> ImageProfiles { get; set; }
         public DbSet<EntityImageCategory> ImageCategories { get; set; }
-
+        public DbSet<EntityImageProfileScript> ImageProfileScripts { get; set; }
+        public DbSet<EntityImageProfileSysprepTag> ImageProfileSyspreps { get; set; }
+        public DbSet<EntityImageProfileFileCopy> ImageProfileFileCopy { get; set; }
+        public DbSet<EntityActiveImagingTask> ActiveImagingTasks { get; set; }
+        public DbSet<EntityActiveMulticastSession> ActiveMulticastSessions { get; set; }
+        public DbSet<EntityMulticastPort> MulticastPorts { get; set; }
 
     }
 }

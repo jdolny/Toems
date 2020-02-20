@@ -94,6 +94,16 @@ namespace Toems_Service.Entity
             }
         }
 
+        public EntityToemsUser GetUserFromToken(string imagingToken)
+        {
+            var user = _uow.UserRepository.Get(x => x.ImagingToken.Equals(imagingToken)).FirstOrDefault();
+            if (user == null)
+                return null;
+            user.Password = string.Empty;
+            user.Salt = string.Empty;
+
+            return user;
+        }
       
 
         public DtoApiObjectResponse GetUserForLogin(int userId)

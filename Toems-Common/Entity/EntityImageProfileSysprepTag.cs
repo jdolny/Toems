@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Toems_Common.Entity
 {
-    [Table("image_profile_sysprep_tags")]
+    [Table("image_profile_sysprep")]
     public class EntityImageProfileSysprepTag
     {
         [Key]

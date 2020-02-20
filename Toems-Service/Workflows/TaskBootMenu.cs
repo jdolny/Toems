@@ -1,0 +1,294 @@
+﻿using log4net;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Toems_ApiCalls;
+using Toems_Common;
+using Toems_Common.Dto;
+using Toems_Common.Entity;
+using Toems_DataModel;
+using Toems_Service.Entity;
+
+namespace Toems_Service.Workflows
+{
+    public class TaskBootMenu
+    {
+
+        private EntityClientComServer _thisComServer;
+        private string _globalComputerArgs;
+        private string _webPath;
+        private string _userToken { get; set; }
+        private EntityComputer _computer;
+        private EntityImageProfile _imageProfile;
+        private UnitOfWork _uow;
+        private EntityComServerCluster _cluster;
+        private readonly ILog log = LogManager.GetLogger(typeof(TaskBootMenu));
+
+        public bool RunAllServers(EntityComputer computer, EntityImageProfile imageProfile)
+        {
+
+            _uow = new UnitOfWork();
+            var comServers = GetComputerTftpServers(computer.Id);
+            if(comServers == null)
+            {
+                log.Error("Could Not Determine Tftp Com Servers For Computer: " + computer.Name);
+                return false;
+            }
+            if (comServers.Count == 0)
+            {
+                log.Error("Could Not Determine Tftp Com Servers For Computer: " + computer.Name);
+                return false;
+            }
+
+            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+            var NoErrors = true;
+
+            var dtoTaskBootFile = new DtoTaskBootFile();
+            dtoTaskBootFile.Computer = computer;
+            dtoTaskBootFile.ImageProfile = imageProfile;
+            foreach (var com in comServers)
+            {
+                if (!new APICall().ClientComServerApi.CreateTaskBootFiles(com.Url, "", decryptedKey, dtoTaskBootFile))
+                    NoErrors = false;
+            }
+
+            return NoErrors;
+
+        }
+
+        private List<EntityClientComServer> GetComputerTftpServers(int computerId)
+        {
+            var computerGroupMemberships = new ServiceComputer().GetAllGroupMemberships(computerId);
+            var computerGroups = new List<EntityGroup>();
+            foreach(var membership in computerGroupMemberships)
+            {
+                var group = _uow.GroupRepository.GetById(membership.GroupId);
+                if (group != null)
+                    computerGroups.Add(group);
+            }
+
+            var topPriorityGroup = computerGroups.OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).FirstOrDefault();
+            if (topPriorityGroup.ClusterId == -1) //-1 is default cluster
+            {
+                _cluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
+                if (_cluster == null) return null;
+
+            }
+            else
+            {
+
+                var _cluster = _uow.ComServerClusterRepository.GetById(topPriorityGroup.ClusterId);
+                if (_cluster == null) return null;
+
+            }
+
+            var clusterServers = _uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == _cluster.Id && x.IsTftpServer);
+            var listComServers = new List<EntityClientComServer>();
+            foreach(var clusterServer in clusterServers)
+            {
+                var comServer = _uow.ClientComServerRepository.GetById(clusterServer.ComServerId);
+                listComServers.Add(comServer);
+            }
+
+            return listComServers;
+        }
+
+        private List<EntityClientComServer> GetComputerImageServers(int computerId)
+        {
+            var computerGroupMemberships = new ServiceComputer().GetAllGroupMemberships(computerId);
+            var computerGroups = new List<EntityGroup>();
+            foreach (var membership in computerGroupMemberships)
+            {
+                var group = _uow.GroupRepository.GetById(membership.GroupId);
+                if (group != null)
+                    computerGroups.Add(group);
+            }
+
+            var topPriorityGroup = computerGroups.OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).FirstOrDefault();
+            if (topPriorityGroup.ClusterId == -1) //-1 is default cluster
+            {
+                _cluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
+                if (_cluster == null) return null;
+
+            }
+            else
+            {
+
+                var _cluster = _uow.ComServerClusterRepository.GetById(topPriorityGroup.ClusterId);
+                if (_cluster == null) return null;
+
+            }
+
+            var clusterServers = _uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == _cluster.Id && x.IsImagingServer);
+            var listComServers = new List<EntityClientComServer>();
+            foreach (var clusterServer in clusterServers)
+            {
+                var comServer = _uow.ClientComServerRepository.GetById(clusterServer.ComServerId);
+                listComServers.Add(comServer);
+            }
+
+            return listComServers;
+        }
+
+        public bool CreatePxeBootFiles(EntityComputer computer, EntityImageProfile imageProfile)
+        {
+            const string newLineChar = "\n";
+            _computer = computer;
+            _imageProfile = imageProfile;
+
+            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
+            _thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            if (_thisComServer == null)
+            {
+                log.Error($"Com Server With Guid {guid} Not Found");
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(_thisComServer.TftpPath))
+            {
+                log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
+                return false;
+            }
+
+            var pxeComputerMac = StringManipulationServices.MacToPxeMac(_computer.ImagingMac);
+
+            var imageComServers = GetComputerImageServers(computer.Id);
+
+            if (imageComServers == null)
+            {
+                log.Error("Could Not Determine Imaging Com Servers For Computer: " + computer.Name);
+                return false;
+            }
+            if (imageComServers.Count == 0)
+            {
+                log.Error("Could Not Determine Imaging Com Servers For Computer: " + computer.Name);
+                return false;
+            }
+
+            var webPath = "";
+            foreach (var imageServer in imageComServers)
+            {
+                webPath += imageServer.Url + "/clientimaging/,";
+            }
+
+            webPath = webPath.Trim(','); //Remove trailing comma
+
+            var globalComputerArgs = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingArguments);
+
+
+            var iPxePath = imageComServers.First().Url;
+            if (iPxePath.Contains("https://")) //just use the first imaging server for the ipxe kernel transfer
+            {
+                if (ServiceSetting.GetSettingValue(SettingStrings.IpxeSSL).Equals("False"))
+                {
+                    iPxePath = iPxePath.ToLower().Replace("https://", "http://");
+                    var currentPort = iPxePath.Split(':').Last();
+                    iPxePath = iPxePath.Replace(currentPort, ServiceSetting.GetSettingValue(SettingStrings.IpxeHttpPort)) + "/clientimaging/";
+                }
+            }
+
+
+            var ipxe = new StringBuilder();
+            ipxe.Append("#!ipxe" + newLineChar);
+            ipxe.Append("kernel " + iPxePath + "IpxeBoot?filename=" + _imageProfile.Kernel +
+                        "&type=kernel" + " initrd=" + _imageProfile.BootImage +
+                        " root=/dev/ram0 rw ramdisk_size=156000" +
+                        " consoleblank=0" + " web=" + webPath + " " + globalComputerArgs +
+                        " " + _imageProfile.KernelArguments + newLineChar);
+            ipxe.Append("imgfetch --name " + _imageProfile.BootImage + " " + iPxePath +
+                        "IpxeBoot?filename=" + _imageProfile.BootImage + "&type=bootimage" + newLineChar);
+            ipxe.Append("boot" + newLineChar);
+
+            var sysLinux = new StringBuilder();
+            sysLinux.Append("DEFAULT clonedeploy" + newLineChar);
+            sysLinux.Append("LABEL clonedeploy" + newLineChar);
+            sysLinux.Append("KERNEL kernels" + Path.DirectorySeparatorChar + _imageProfile.Kernel + newLineChar);
+            sysLinux.Append("APPEND initrd=images" + Path.DirectorySeparatorChar + _imageProfile.BootImage +
+                            " root=/dev/ram0 rw ramdisk_size=156000" +
+                            " consoleblank=0" + " web=" + webPath +  " " +
+                            globalComputerArgs +
+                            " " + _imageProfile.KernelArguments + newLineChar);
+
+            var grub = new StringBuilder();
+            grub.Append("set default=0" + newLineChar);
+            grub.Append("set timeout=0" + newLineChar);
+            grub.Append("menuentry CloneDeploy --unrestricted {" + newLineChar);
+            grub.Append("echo Please Wait While The Boot Image Is Transferred.  This May Take A Few Minutes." +
+                        newLineChar);
+            grub.Append("linux /kernels/" + _imageProfile.Kernel +
+                        " root=/dev/ram0 rw ramdisk_size=156000" + " consoleblank=0" + " web=" + webPath +
+                         " " +
+                        globalComputerArgs + " " + _imageProfile.KernelArguments + newLineChar);
+            grub.Append("initrd /images/" + _imageProfile.BootImage + newLineChar);
+            grub.Append("}" + newLineChar);
+
+            var list = new List<Tuple<string, string, string>>
+            {
+                Tuple.Create("bios", "", sysLinux.ToString()),
+                Tuple.Create("bios", ".ipxe", ipxe.ToString()),
+                Tuple.Create("efi32", "", sysLinux.ToString()),
+                Tuple.Create("efi32", ".ipxe", ipxe.ToString()),
+                Tuple.Create("efi64", "", sysLinux.ToString()),
+                Tuple.Create("efi64", ".ipxe", ipxe.ToString()),
+                Tuple.Create("efi64", ".cfg", grub.ToString())
+            };
+
+            //In proxy mode all boot files are created regardless of the pxe mode, this way computers can be customized
+            //to use a specific boot file without affecting all others, using the proxydhcp reservations file.
+            if (ServiceSetting.GetSettingValue(SettingStrings.ProxyDhcpEnabled) == "Yes")
+            {
+
+                foreach (var bootMenu in list)
+                {
+                    var path = _thisComServer.TftpPath + "proxy" +
+                               Path.DirectorySeparatorChar + bootMenu.Item1 +
+                               Path.DirectorySeparatorChar + "pxelinux.cfg" + Path.DirectorySeparatorChar +
+                               pxeComputerMac +
+                               bootMenu.Item2;
+
+                    if (!new FilesystemServices().WritePath(path, bootMenu.Item3))
+                        return false;
+                }
+
+
+            }
+            //When not using proxy dhcp, only one boot file is created
+            else
+            {
+                var mode = ServiceSetting.GetSettingValue(SettingStrings.PxeBootloader);
+                var path = "";
+
+                    path = _thisComServer.TftpPath + "pxelinux.cfg" +
+                           Path.DirectorySeparatorChar + pxeComputerMac;
+
+                    string fileContents = null;
+                    if (mode == "pxelinux" || mode == "syslinux_32_efi" || mode == "syslinux_64_efi")
+                    {
+                        fileContents = sysLinux.ToString();
+                    }
+
+                    else if (mode.Contains("ipxe"))
+                    {
+                        path += ".ipxe";
+                        fileContents = ipxe.ToString();
+                    }
+                    else if (mode.Contains("grub"))
+                    {
+                        path += ".cfg";
+                        fileContents = grub.ToString();
+                    }
+
+                    if (!new FilesystemServices().WritePath(path, fileContents))
+                        return false;
+  
+            }
+
+            return true;
+        }
+    }
+}

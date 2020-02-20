@@ -26,6 +26,8 @@ namespace Toems_FrontEnd.views.groups
                 btnWakeup.Visible = false;
                 btnPin.Visible = false;
                 btnUnpin.Visible = false;
+                btnMulticast.Visible = false;
+                btnUnicast.Visible = false;
 
             }
             else
@@ -39,6 +41,8 @@ namespace Toems_FrontEnd.views.groups
                 btnWakeup.Visible = true;
                 btnPin.Visible = true;
                 btnUnpin.Visible = true;
+                btnMulticast.Visible = true;
+                btnUnicast.Visible = true;
                 if (GroupEntity.Type == "Dynamic")
                 {
                     dynamic.Visible = true;
@@ -88,8 +92,17 @@ namespace Toems_FrontEnd.views.groups
                     result = new DtoActionResult() { Success = true };
                     actionLabel = "Sent Wake Up Request To";
                     break;
+                case "unicast":
+                    var successCount = GroupBasePage.Call.GroupApi.StartGroupUnicast(GroupEntity.Id);
+                    PageBaseMaster.EndUserMessage = "Successfully Started " + successCount + " Tasks";
+                    break;
+                case "multicast":
+                    PageBaseMaster.EndUserMessage = GroupBasePage.Call.GroupApi.StartMulticast(GroupEntity.Id);
+                    break;
             }
 
+            if (action.Equals("unicast") || action.Equals("multicast"))
+                return;
 
             if (result.Success)
             {
@@ -162,6 +175,20 @@ namespace Toems_FrontEnd.views.groups
             var result = GroupBasePage.Call.PinnedGroupApi.Delete(GroupEntity.Id, GroupBasePage.ToemsCurrentUser.Id);
             if (result.Success) PageBaseMaster.EndUserMessage = "Successfully Unpinned Group " + GroupEntity.Name;
             else PageBaseMaster.EndUserMessage = result.ErrorMessage;
+        }
+
+        protected void btnMulticast_Click(object sender, EventArgs e)
+        {
+            lblTitle.Text = "Multicast " + GroupEntity.Name + "?";
+            Session["action"] = "multicast";
+            DisplayConfirm();
+        }
+
+        protected void btnUnicast_Click(object sender, EventArgs e)
+        {
+            lblTitle.Text = "Unicast " + GroupEntity.Name + "?";
+            Session["action"] = "unicast";
+            DisplayConfirm();
         }
     }
 }

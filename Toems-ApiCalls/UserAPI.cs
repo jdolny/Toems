@@ -145,5 +145,13 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<List<DtoProcessWithUser>>(Request);
         }
 
+        public bool IsAdmin(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/IsAdmin/{1}", Resource, id);
+            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
+            return response != null && response.Value;
+        }
+
     }
 }

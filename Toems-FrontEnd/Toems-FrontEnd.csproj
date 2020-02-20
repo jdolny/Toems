@@ -212,6 +212,7 @@
     <Content Include="views\computers\custominventory.aspx" />
     <Content Include="views\computers\effective.aspx" />
     <Content Include="views\computers\general.aspx" />
+    <Content Include="views\computers\imaging.aspx" />
     <Content Include="views\computers\message.aspx" />
     <Content Include="views\computers\policyhistory.aspx" />
     <Content Include="views\computers\processreport.aspx" />
@@ -242,15 +243,32 @@
     <Content Include="views\groups\currentmembers.aspx" />
     <Content Include="views\groups\dynamic.aspx" />
     <Content Include="views\groups\general.aspx" />
+    <Content Include="views\groups\imaging.aspx" />
     <Content Include="views\groups\message.aspx" />
     <Content Include="views\groups\oubrowser.aspx" />
     <Content Include="views\groups\processreport.aspx" />
     <Content Include="views\groups\search.aspx" />
+    <Content Include="views\images\categories.aspx" />
     <Content Include="views\images\create.aspx" />
     <Content Include="views\images\general.aspx" />
+    <Content Include="views\images\history.aspx" />
+    <Content Include="views\images\profiles\deploy.aspx" />
+    <Content Include="views\images\profiles\filecopy.aspx" />
+    <Content Include="views\images\profiles\general.aspx" />
+    <Content Include="views\images\profiles\multicast.aspx" />
+    <Content Include="views\images\profiles\pxe.aspx" />
+    <Content Include="views\images\profiles\scripts.aspx" />
     <Content Include="views\images\profiles\search.aspx" />
+    <Content Include="views\images\profiles\sysprep.aspx" />
+    <Content Include="views\images\profiles\task.aspx" />
+    <Content Include="views\images\profiles\upload.aspx" />
+    <Content Include="views\images\schema.aspx" />
     <Content Include="views\images\search.aspx" />
     <Content Include="views\imagingtasks\active.aspx" />
+    <Content Include="views\imagingtasks\activemulticast.aspx" />
+    <Content Include="views\imagingtasks\activeond.aspx" />
+    <Content Include="views\imagingtasks\activeunicast.aspx" />
+    <Content Include="views\imagingtasks\ondemand.aspx" />
     <Content Include="views\modules\chooser.aspx" />
     <Content Include="views\modules\commandmodules\archived.aspx" />
     <Content Include="views\modules\commandmodules\categories.aspx" />
@@ -926,6 +944,9 @@
     <Compile Include="BasePages\Images.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="BasePages\ImagingTask.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="BasePages\Report.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -1528,6 +1549,13 @@
     <Compile Include="views\computers\general.aspx.designer.cs">
       <DependentUpon>general.aspx</DependentUpon>
     </Compile>
+    <Compile Include="views\computers\imaging.aspx.cs">
+      <DependentUpon>imaging.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\computers\imaging.aspx.designer.cs">
+      <DependentUpon>imaging.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\computers\message.aspx.cs">
       <DependentUpon>message.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1787,6 +1815,13 @@
     <Compile Include="views\groups\groups.master.designer.cs">
       <DependentUpon>groups.master</DependentUpon>
     </Compile>
+    <Compile Include="views\groups\imaging.aspx.cs">
+      <DependentUpon>imaging.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\groups\imaging.aspx.designer.cs">
+      <DependentUpon>imaging.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\groups\message.aspx.cs">
       <DependentUpon>message.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1815,6 +1850,13 @@
     <Compile Include="views\groups\search.aspx.designer.cs">
       <DependentUpon>search.aspx</DependentUpon>
     </Compile>
+    <Compile Include="views\images\categories.aspx.cs">
+      <DependentUpon>categories.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\categories.aspx.designer.cs">
+      <DependentUpon>categories.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\images\create.aspx.cs">
       <DependentUpon>create.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1829,12 +1871,47 @@
     <Compile Include="views\images\general.aspx.designer.cs">
       <DependentUpon>general.aspx</DependentUpon>
     </Compile>
+    <Compile Include="views\images\history.aspx.cs">
+      <DependentUpon>history.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\history.aspx.designer.cs">
+      <DependentUpon>history.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\images\images.master.cs">
       <DependentUpon>images.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="views\images\images.master.designer.cs">
       <DependentUpon>images.master</DependentUpon>
+    </Compile>
+    <Compile Include="views\images\profiles\deploy.aspx.cs">
+      <DependentUpon>deploy.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\profiles\deploy.aspx.designer.cs">
+      <DependentUpon>deploy.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\images\profiles\filecopy.aspx.cs">
+      <DependentUpon>filecopy.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\profiles\filecopy.aspx.designer.cs">
+      <DependentUpon>filecopy.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\images\profiles\general.aspx.cs">
+      <DependentUpon>general.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\profiles\general.aspx.designer.cs">
+      <DependentUpon>general.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\images\profiles\multicast.aspx.cs">
+      <DependentUpon>multicast.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\profiles\multicast.aspx.designer.cs">
+      <DependentUpon>multicast.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\images\profiles\profiles.master.cs">
       <DependentUpon>profiles.master</DependentUpon>
@@ -1843,12 +1920,54 @@
     <Compile Include="views\images\profiles\profiles.master.designer.cs">
       <DependentUpon>profiles.master</DependentUpon>
     </Compile>
+    <Compile Include="views\images\profiles\pxe.aspx.cs">
+      <DependentUpon>pxe.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\profiles\pxe.aspx.designer.cs">
+      <DependentUpon>pxe.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\images\profiles\scripts.aspx.cs">
+      <DependentUpon>scripts.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\profiles\scripts.aspx.designer.cs">
+      <DependentUpon>scripts.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\images\profiles\search.aspx.cs">
       <DependentUpon>search.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="views\images\profiles\search.aspx.designer.cs">
       <DependentUpon>search.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\images\profiles\sysprep.aspx.cs">
+      <DependentUpon>sysprep.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\profiles\sysprep.aspx.designer.cs">
+      <DependentUpon>sysprep.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\images\profiles\task.aspx.cs">
+      <DependentUpon>task.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\profiles\task.aspx.designer.cs">
+      <DependentUpon>task.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\images\profiles\upload.aspx.cs">
+      <DependentUpon>upload.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\profiles\upload.aspx.designer.cs">
+      <DependentUpon>upload.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\images\schema.aspx.cs">
+      <DependentUpon>schema.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\schema.aspx.designer.cs">
+      <DependentUpon>schema.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\images\search.aspx.cs">
       <DependentUpon>search.aspx</DependentUpon>
@@ -1864,12 +1983,40 @@
     <Compile Include="views\imagingtasks\active.aspx.designer.cs">
       <DependentUpon>active.aspx</DependentUpon>
     </Compile>
+    <Compile Include="views\imagingtasks\activemulticast.aspx.cs">
+      <DependentUpon>activemulticast.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\imagingtasks\activemulticast.aspx.designer.cs">
+      <DependentUpon>activemulticast.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\imagingtasks\activeond.aspx.cs">
+      <DependentUpon>activeond.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\imagingtasks\activeond.aspx.designer.cs">
+      <DependentUpon>activeond.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\imagingtasks\activeunicast.aspx.cs">
+      <DependentUpon>activeunicast.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\imagingtasks\activeunicast.aspx.designer.cs">
+      <DependentUpon>activeunicast.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\imagingtasks\imagingtasks.master.cs">
       <DependentUpon>imagingtasks.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="views\imagingtasks\imagingtasks.master.designer.cs">
       <DependentUpon>imagingtasks.master</DependentUpon>
+    </Compile>
+    <Compile Include="views\imagingtasks\ondemand.aspx.cs">
+      <DependentUpon>ondemand.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\imagingtasks\ondemand.aspx.designer.cs">
+      <DependentUpon>ondemand.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\modules\chooser.aspx.cs">
       <DependentUpon>chooser.aspx</DependentUpon>

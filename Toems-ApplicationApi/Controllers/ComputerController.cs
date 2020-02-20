@@ -12,6 +12,7 @@ using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_Service.Entity;
+using Toems_Service.Workflows;
 
 namespace Toems_ApplicationApi.Controllers
 {
@@ -418,6 +419,26 @@ namespace Toems_ApplicationApi.Controllers
         public List<DtoProcessWithUser> ComputerProcess(DateTime dateCutoff, int limit, int computerId)
         {
             return _computerServices.GetAllProcessForComputer(dateCutoff, limit, computerId);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public DtoApiStringResponse StartDeploy(int id)
+        {
+            return new DtoApiStringResponse
+            {
+                Value = new Unicast(id, "deploy", _userId).Start()
+            };
+        }
+
+        [HttpGet]
+        [Authorize]
+        public DtoApiStringResponse StartUpload(int id)
+        {
+            return new DtoApiStringResponse
+            {
+                Value = new Unicast(id, "upload", _userId).Start()
+            };
         }
     }
 }

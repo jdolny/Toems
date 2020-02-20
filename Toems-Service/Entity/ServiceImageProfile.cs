@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CloneDeploy_Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Toems_Common.Dto;
@@ -229,8 +230,59 @@ namespace Toems_Service.Entity
             return validationResult;
         }
 
-       
-        
+        public string MinimumClientSizeForGridView(int profileId, int hdNumber)
+        {
+            try
+            {
+                var profile = ReadProfile(profileId);
+                var fltClientSize = new ServiceClientPartition(profile).HardDrive(hdNumber, 1) / 1024f / 1024f / 1024f;
+                return Math.Abs(fltClientSize) < 0.1f ? "< 100M" : fltClientSize.ToString("#.##") + " GB";
+            }
+            catch
+            {
+                return "N/A";
+            }
+        }
+
+        public List<EntityImageProfileScript> GetImageProfileScripts(int profileId)
+        {
+            return _uow.ImageProfileScriptRepository.Get(x => x.ProfileId == profileId, q => q.OrderBy(t => t.Priority));
+
+        }
+
+        public List<EntityImageProfileSysprepTag> GetImageProfileSysprep(int profileId)
+        {
+            return _uow.ImageProfileSysprepRepository.Get(x => x.ProfileId == profileId, q => q.OrderBy(t => t.Priority));
+
+        }
+
+        public List<EntityImageProfileFileCopy> GetImageProfileFileCopy(int profileId)
+        {
+            return _uow.ImageProfileFileCopyRepository.Get(x => x.ProfileId == profileId, q => q.OrderBy(t => t.Priority));
+
+        }
+
+        public bool DeleteImageProfileFileCopy(int profileId)
+        {
+            _uow.ImageProfileFileCopyRepository.DeleteRange(x => x.ProfileId == profileId);
+            _uow.Save();
+            return true;
+        }
+
+        public bool DeleteImageProfileScripts(int profileId)
+        {
+            _uow.ImageProfileScriptRepository.DeleteRange(x => x.ProfileId == profileId);
+            _uow.Save();
+            return true;
+        }
+
+        public bool DeleteImageProfileSysprepTags(int profileId)
+        {
+            _uow.ImageProfileSysprepRepository.DeleteRange(x => x.ProfileId == profileId);
+            _uow.Save();
+            return true;
+        }
+
 
 
     }

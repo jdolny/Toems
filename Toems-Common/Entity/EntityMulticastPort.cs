@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Toems_Common.Entity
 {
     [Table("multicast_ports")]
-    public class PortEntity
+    public class EntityMulticastPort
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

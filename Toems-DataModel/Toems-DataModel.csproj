@@ -59,6 +59,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActiveImagingTaskRepository.cs" />
     <Compile Include="AssetGroupRepository.cs" />
     <Compile Include="CustomAttributeRepository.cs" />
     <Compile Include="AssetRepository.cs" />

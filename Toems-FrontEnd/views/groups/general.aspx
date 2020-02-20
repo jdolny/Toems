@@ -79,6 +79,13 @@
         <asp:CheckBox ID="chkPreventShutdown" runat="server" ClientIDMode="Static"></asp:CheckBox>
         <label for="chkPreventShutdown">Toggle</label>
     </div>
+        <div class="size-4 column">
+        Endpoint Priority
+    </div>
+
+    <div class="size-5 column">
+        <asp:TextBox ID="txtPriority" runat="server" CssClass="textbox"></asp:TextBox>
+    </div>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
     <h1><strong>Actions</strong></h1>

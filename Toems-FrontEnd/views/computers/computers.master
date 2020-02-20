@@ -68,6 +68,10 @@
                 <a href="<%= ResolveUrl("~/views/computers/remoteaccess.aspx") %>?computerId=<%= ComputerEntity.Id %>">
                     <span class="sub-nav-text">Remote Access</span></a>
             </li>
+                 <li id="imaging">
+                 <a href="<%= ResolveUrl("~/views/computers/imaging.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                    <span class="sub-nav-text">Image Settings</span></a>
+            </li>
                   <li id="usages">
                  <a href="<%= ResolveUrl("~/views/computers/usages.aspx") %>?computerId=<%= ComputerEntity.Id %>">
                     <span class="sub-nav-text">Usages</span></a>
@@ -118,6 +122,8 @@
 
                 <li><asp:LinkButton ID="btnArchive" runat="server" OnClick="btnArchive_OnClick" Text="Archive Computer"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="btnDelete" runat="server" OnClick="btnDelete_OnClick" Text="Delete Computer"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnDeploy" runat="server" OnClick="btnDeploy_OnClick" Text="Deploy Image"></asp:LinkButton></li>
+                 <li><asp:LinkButton ID="btnUpload" runat="server" OnClick="btnUpload_OnClick" Text="Upload Image"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="btnCheckin" runat="server" OnClick="btnCheckin_OnClick" Text="Force Checkin"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="btnUsers" runat="server" OnClick="btnUsers_OnClick" Text="Current Users"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="btnStatus" runat="server" OnClick="btnStatus_OnClick" Text="Status"></asp:LinkButton></li>
