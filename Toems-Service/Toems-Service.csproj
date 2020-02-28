@@ -66,6 +66,7 @@
     <Compile Include="ClientImagingServices.cs" />
     <Compile Include="Entity\ServiceActiveImagingTask.cs" />
     <Compile Include="Entity\ServiceActiveMulticastSession.cs" />
+    <Compile Include="Entity\ServiceComputerLog.cs" />
     <Compile Include="Entity\ServiceImageProfileFileCopy.cs" />
     <Compile Include="Entity\ServiceImageProfileSysprep.cs" />
     <Compile Include="Entity\ServiceImageProfileScript.cs" />
@@ -212,6 +213,7 @@
     <Compile Include="MailServices.cs" />
     <Compile Include="UncServices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Workflows\UploadImage.cs" />
     <Compile Include="Workflows\ValidatePolicy.cs" />
     <Compile Include="Workflows\WolRelayTask.cs" />
   </ItemGroup>

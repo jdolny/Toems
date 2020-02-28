@@ -21,7 +21,7 @@ namespace Toems_Service.Workflows
     {
         private readonly ILog log = LogManager.GetLogger(typeof(MulticastArguments));
         private EntityClientComServer _thisComServer;
-        private int RunOnComServer(DtoMulticastArgs mArgs, EntityClientComServer comServer)
+        public int RunOnComServer(DtoMulticastArgs mArgs, EntityClientComServer comServer)
         {
             var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
@@ -39,12 +39,6 @@ namespace Toems_Service.Workflows
             if (_thisComServer == null)
             {
                 log.Error($"Com Server With Guid {guid} Not Found");
-                return 0;
-            }
-
-            if (string.IsNullOrEmpty(_thisComServer.TftpPath))
-            {
-                log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
                 return 0;
             }
 
@@ -147,7 +141,7 @@ namespace Toems_Service.Workflows
                         {
                             processArguments += prefix + "cat " + "\"" + imageFile + "\"" + " | udp-sender" +
                                                 " --portbase " + mArgs.Port + minReceivers + " " +
-                                                " --ttl 32 " +
+                                                " --ttl 32 --interface " + _thisComServer.MulticastInterfaceIp +
                                                 mArgs.ExtraArgs;
                         }
 
@@ -155,7 +149,7 @@ namespace Toems_Service.Workflows
                         {
                             processArguments += prefix + compAlg + "\"" + imageFile + "\"" + stdout + " | udp-sender" +
                                                 " --portbase " + mArgs.Port + minReceivers + " " +
-                                                " --ttl 32 " +
+                                                " --ttl 32 --interface " + _thisComServer.MulticastInterfaceIp +
                                                 mArgs.ExtraArgs;
                         }
                     }
@@ -178,7 +172,7 @@ namespace Toems_Service.Workflows
                             processArguments += prefix + "\"" + appPath +
                                                 "udp-sender.exe" + "\"" + " --file " + "\"" + imageFile + "\"" +
                                                 " --portbase " + mArgs.Port + minReceivers + " " +
-                                                " --ttl 32 " +
+                                                " --ttl 32 --interface " + _thisComServer.MulticastInterfaceIp +
                                                 mArgs.ExtraArgs;
                         }
                         else
@@ -187,7 +181,7 @@ namespace Toems_Service.Workflows
                                                 " | " + "\"" + appPath +
                                                 "udp-sender.exe" + "\"" +
                                                 " --portbase " + mArgs.Port + minReceivers + " " +
-                                                " --ttl 32 " +
+                                                " --ttl 32 --interface " + _thisComServer.MulticastInterfaceIp +
                                                 mArgs.ExtraArgs;
                         }
                     }

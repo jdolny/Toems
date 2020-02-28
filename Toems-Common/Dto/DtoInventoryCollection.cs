@@ -22,7 +22,7 @@ namespace Toems_Common.Dto
         public EntityFirewallInventory Firewall { get; set; }
         public string ClientVersion { get; set; }
         public string PushUrl { get; set; }
-
+        public string HardwareUUID { get; set; }
         public DtoInventoryCollection()
         {
             WindowsUpdates = new List<EntityWindowsUpdateInventory>();

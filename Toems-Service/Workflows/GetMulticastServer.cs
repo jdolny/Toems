@@ -13,7 +13,6 @@ namespace Toems_Service.Workflows
     {
         private readonly EntityGroup _group;
         private readonly Random _random;
-        private readonly int _comServerId;
         private UnitOfWork _uow;
         private EntityComServerCluster _cluster;
         public GetMulticastServer(EntityGroup group)

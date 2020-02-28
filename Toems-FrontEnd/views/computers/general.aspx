@@ -61,6 +61,13 @@
         <asp:Label runat="server" ID="lblInstallId" ></asp:Label>
     </div>
     <br class="clear"/>
+           <div class="size-lbl column">
+        Hardware UUID:
+    </div>
+    <div class="size-lbl2 column">
+        <asp:Label runat="server" ID="lblHardwareUuid" ></asp:Label>
+    </div>
+    <br class="clear"/>
 
        <div class="size-lbl column">
         Provision Status:

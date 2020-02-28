@@ -144,6 +144,8 @@
 
         public const string TaskTimeout = "Task Timeout";
 
+        public const string GlobalImagingToken = "Global Imaging Token";
+
         public const string SharedLibraryVersion = "1.2.0.0";
 
     }

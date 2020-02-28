@@ -256,9 +256,11 @@ namespace Toems_Service.Workflows
                 multicastArgs.clientCount = _computers.Count.ToString();
             }
 
-            var pid = 0;
-            if (_multicastServerId == -1)
-                pid = new MulticastArguments().GenerateProcessArguments(multicastArgs);
+            if (_multicastServerId == null)
+                return 0;
+
+            
+            var pid = new MulticastArguments().RunOnComServer(multicastArgs,comServer);
           
 
             if (pid == 0) return pid;

@@ -64,6 +64,7 @@
     <Compile Include="AssetGroupMemberAPI.cs" />
     <Compile Include="AssetCategoryAPI.cs" />
     <Compile Include="ActiveImagingTaskAPI.cs" />
+    <Compile Include="ComputerLogAPI.cs" />
     <Compile Include="ImageCategoryAPI.cs" />
     <Compile Include="ImageProfileFileCopyAPI.cs" />
     <Compile Include="ImageProfileSysprepAPI.cs" />

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
+using Toems_DataModel;
 using Toems_Service.Entity;
 
 namespace Toems_Service.Workflows
@@ -17,12 +18,24 @@ namespace Toems_Service.Workflows
         private readonly int _userId;
         private EntityActiveImagingTask _activeTask;
         private ImageProfileWithImage _imageProfile;
+        private readonly EntityGroup _group;
+        private readonly UnitOfWork _uow;
 
         public Unicast(int computerId, string direction, int userId)
         {
             _direction = direction;
             _computer = new ServiceComputer().GetComputer(computerId);
             _userId = userId;
+            _uow = new UnitOfWork();
+        }
+
+        public Unicast(int computerId, string direction, int userId, int groupId)
+        {
+            _direction = direction;
+            _computer = new ServiceComputer().GetComputer(computerId);
+            _group = new ServiceGroup().GetGroup(groupId);
+            _userId = userId;
+            _uow = new UnitOfWork();
         }
 
         public string Start()
@@ -30,8 +43,41 @@ namespace Toems_Service.Workflows
             if (_computer == null)
                 return "The Computer Does Not Exist";
 
-            _imageProfile = new ServiceImageProfile().ReadProfile(_computer.ImageProfileId);
-            if (_imageProfile == null) return "The Image Profile Does Not Exist";
+            if (_group != null)
+            {
+                //unicast started via group, use that groups assigned image
+                _imageProfile = new ServiceImageProfile().ReadProfile(_group.ImageProfileId);
+                if (_imageProfile == null) return "The Image Profile Doesn't Exist";
+            }
+            else
+            {
+                _imageProfile = new ServiceImageProfile().ReadProfile(_computer.ImageProfileId);
+                if (_imageProfile == null)
+                {
+                    //check for an image profile via group since computer doesn't have image directly assigned
+                    var computerGroupMemberships = new ServiceComputer().GetAllGroupMemberships(_computer.Id);
+                    var computerGroups = new List<EntityGroup>();
+                    foreach (var membership in computerGroupMemberships)
+                    {
+                        var group = _uow.GroupRepository.GetById(membership.GroupId);
+                        if (group != null)
+                            computerGroups.Add(group);
+                    }
+
+                    if (computerGroups.Count == 0)
+                    {
+                        return "Couldn't Find Any Images Assigned To The Computer";
+                    }
+                    else
+                    {
+                        var topGroup = computerGroups.Where(x => x.ImageProfileId != -1).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).FirstOrDefault();
+                        if(topGroup == null)
+                            return "Couldn't Find Any Images Assigned To The Computer";
+                        else
+                            _imageProfile = new ServiceImageProfile().ReadProfile(topGroup.ImageProfileId);
+                    }
+                }
+            }
 
             if (_imageProfile.Image == null) return "The Image Does Not Exist";
 
@@ -42,7 +88,9 @@ namespace Toems_Service.Workflows
             {
                 ComputerId = _computer.Id,
                 Direction = _direction,
-                UserId = _userId
+                UserId = _userId,
+                ImageProfileId = _imageProfile.Id
+
             };
 
             _activeTask.Type = _direction;

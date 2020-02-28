@@ -102,6 +102,8 @@ namespace Toems_DataModel
         ActiveImagingTaskRepository ActiveImagingTaskRepository { get; }
         IGenericRepository<EntityActiveMulticastSession> ActiveMulticastSessionRepository { get; }
         IGenericRepository<EntityMulticastPort> MulticastPortRepository { get; }
+        IGenericRepository<EntityComputerLog> ComputerLogRepository { get; }
+        IGenericRepository<EntityClientImagingId> ClientImagingIdRepository { get; }
         void Save();
     }
 }

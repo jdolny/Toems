@@ -72,19 +72,28 @@ namespace Toems_Service.Workflows
                     computerGroups.Add(group);
             }
 
-            var topPriorityGroup = computerGroups.OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).FirstOrDefault();
-            if (topPriorityGroup.ClusterId == -1) //-1 is default cluster
+
+            if (computerGroups.Count == 0)
             {
                 _cluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
                 if (_cluster == null) return null;
-
             }
             else
             {
+                var topPriorityGroup = computerGroups.OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).FirstOrDefault();
+                if (topPriorityGroup.ClusterId == -1) //-1 is default cluster
+                {
+                    _cluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
+                    if (_cluster == null) return null;
 
-                var _cluster = _uow.ComServerClusterRepository.GetById(topPriorityGroup.ClusterId);
-                if (_cluster == null) return null;
+                }
+                else
+                {
 
+                    var _cluster = _uow.ComServerClusterRepository.GetById(topPriorityGroup.ClusterId);
+                    if (_cluster == null) return null;
+
+                }
             }
 
             var clusterServers = _uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == _cluster.Id && x.IsTftpServer);
@@ -109,19 +118,27 @@ namespace Toems_Service.Workflows
                     computerGroups.Add(group);
             }
 
-            var topPriorityGroup = computerGroups.OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).FirstOrDefault();
-            if (topPriorityGroup.ClusterId == -1) //-1 is default cluster
+            if (computerGroups.Count == 0)
             {
                 _cluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
                 if (_cluster == null) return null;
-
             }
             else
             {
+                var topPriorityGroup = computerGroups.OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).FirstOrDefault();
+                if (topPriorityGroup.ClusterId == -1) //-1 is default cluster
+                {
+                    _cluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
+                    if (_cluster == null) return null;
 
-                var _cluster = _uow.ComServerClusterRepository.GetById(topPriorityGroup.ClusterId);
-                if (_cluster == null) return null;
+                }
+                else
+                {
 
+                    var _cluster = _uow.ComServerClusterRepository.GetById(topPriorityGroup.ClusterId);
+                    if (_cluster == null) return null;
+
+                }
             }
 
             var clusterServers = _uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == _cluster.Id && x.IsImagingServer);
@@ -137,6 +154,7 @@ namespace Toems_Service.Workflows
 
         public bool CreatePxeBootFiles(EntityComputer computer, EntityImageProfile imageProfile)
         {
+            _uow = new UnitOfWork();
             const string newLineChar = "\n";
             _computer = computer;
             _imageProfile = imageProfile;
@@ -155,6 +173,13 @@ namespace Toems_Service.Workflows
                 return false;
             }
 
+            var webRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.WebTasksRequireLogin);
+            var globalToken = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingToken);
+            if (webRequiresLogin.Equals("False"))
+                _userToken = globalToken;
+            else
+                _userToken = "";
+
             var pxeComputerMac = StringManipulationServices.MacToPxeMac(_computer.ImagingMac);
 
             var imageComServers = GetComputerImageServers(computer.Id);
@@ -170,13 +195,14 @@ namespace Toems_Service.Workflows
                 return false;
             }
 
-            var webPath = "";
+            var webPath = "\"";
             foreach (var imageServer in imageComServers)
             {
-                webPath += imageServer.Url + "/clientimaging/,";
+                webPath += imageServer.Url + "clientimaging/ "; //adds a space delimiter
             }
 
-            webPath = webPath.Trim(','); //Remove trailing comma
+            webPath = webPath.Trim(' ');
+            webPath += "\"";
 
             var globalComputerArgs = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingArguments);
 
@@ -198,30 +224,30 @@ namespace Toems_Service.Workflows
             ipxe.Append("kernel " + iPxePath + "IpxeBoot?filename=" + _imageProfile.Kernel +
                         "&type=kernel" + " initrd=" + _imageProfile.BootImage +
                         " root=/dev/ram0 rw ramdisk_size=156000" +
-                        " consoleblank=0" + " web=" + webPath + " " + globalComputerArgs +
+                        " consoleblank=0" + " web=" + webPath + " USER_TOKEN=" + _userToken + " " + globalComputerArgs +
                         " " + _imageProfile.KernelArguments + newLineChar);
             ipxe.Append("imgfetch --name " + _imageProfile.BootImage + " " + iPxePath +
                         "IpxeBoot?filename=" + _imageProfile.BootImage + "&type=bootimage" + newLineChar);
             ipxe.Append("boot" + newLineChar);
 
             var sysLinux = new StringBuilder();
-            sysLinux.Append("DEFAULT clonedeploy" + newLineChar);
-            sysLinux.Append("LABEL clonedeploy" + newLineChar);
+            sysLinux.Append("DEFAULT theopenem" + newLineChar);
+            sysLinux.Append("LABEL theopenem" + newLineChar);
             sysLinux.Append("KERNEL kernels" + Path.DirectorySeparatorChar + _imageProfile.Kernel + newLineChar);
             sysLinux.Append("APPEND initrd=images" + Path.DirectorySeparatorChar + _imageProfile.BootImage +
                             " root=/dev/ram0 rw ramdisk_size=156000" +
-                            " consoleblank=0" + " web=" + webPath +  " " +
+                            " consoleblank=0" + " web=" + webPath + " USER_TOKEN=" + _userToken + " " +
                             globalComputerArgs +
                             " " + _imageProfile.KernelArguments + newLineChar);
 
             var grub = new StringBuilder();
             grub.Append("set default=0" + newLineChar);
             grub.Append("set timeout=0" + newLineChar);
-            grub.Append("menuentry CloneDeploy --unrestricted {" + newLineChar);
+            grub.Append("menuentry Theopenem --unrestricted {" + newLineChar);
             grub.Append("echo Please Wait While The Boot Image Is Transferred.  This May Take A Few Minutes." +
                         newLineChar);
             grub.Append("linux /kernels/" + _imageProfile.Kernel +
-                        " root=/dev/ram0 rw ramdisk_size=156000" + " consoleblank=0" + " web=" + webPath +
+                        " root=/dev/ram0 rw ramdisk_size=156000" + " consoleblank=0" + " web=" + webPath + " USER_TOKEN=" + _userToken +
                          " " +
                         globalComputerArgs + " " + _imageProfile.KernelArguments + newLineChar);
             grub.Append("initrd /images/" + _imageProfile.BootImage + newLineChar);

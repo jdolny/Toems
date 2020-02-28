@@ -1,7 +1,10 @@
 ﻿using log4net;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Management;
+using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -91,7 +94,64 @@ namespace Toems_Service.Entity
             if (computer != null)
                 new CleanTaskBootFiles().RunAllServers(computer);
 
+            if(activeImagingTask.Type.Contains("upload"))
+            {
+                var comServer = _uow.ClientComServerRepository.GetById(activeImagingTask.ComServerId);
+                if (comServer == null)
+                    return actionResult;
+
+                var receiverPids = _uow.ActiveMulticastSessionRepository.Get(x => x.UploadTaskId == activeImagingTask.Id).Select(x => x.Pid).ToList();
+                _uow.ActiveMulticastSessionRepository.DeleteRange(x => x.UploadTaskId == activeImagingTask.Id);
+                _uow.Save();
+                var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+
+                new APICall().ClientComServerApi.KillUdpReceiver(comServer.Url, "", decryptedKey, receiverPids);              
+            }
+
             return actionResult;
+        }
+
+        public bool KillUdpReceiver(List<int> pids)
+        {
+            foreach(var pid in pids)
+            {
+                try
+                {
+                    var prs = Process.GetProcessById(Convert.ToInt32(pid));
+                    var processName = prs.ProcessName;
+
+                    if (processName == "cmd")
+                        KillProcess(Convert.ToInt32(pid));
+                }
+                catch
+                {
+                    //ignored
+
+                }
+            }
+            return true;
+        }
+
+        private static void KillProcess(int pid)
+        {
+            var searcher =
+                new ManagementObjectSearcher("Select * From Win32_Process Where ParentProcessID=" + pid);
+            var moc = searcher.Get();
+            foreach (var o in moc)
+            {
+                var mo = (ManagementObject)o;
+                KillProcess(Convert.ToInt32(mo["ProcessID"]));
+            }
+            try
+            {
+                var proc = Process.GetProcessById(Convert.ToInt32(pid));
+                proc.Kill();
+            }
+            catch
+            {
+                //ignored
+            }
         }
 
         public void DeleteAll()
@@ -123,6 +183,21 @@ namespace Toems_Service.Entity
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = activeImagingTaskId;
+
+            if (activeImagingTask.Type.Contains("upload"))
+            {
+                var comServer = _uow.ClientComServerRepository.GetById(activeImagingTask.ComServerId);
+                if (comServer == null)
+                    return actionResult;
+
+                var receiverPids = _uow.ActiveMulticastSessionRepository.Get(x => x.UploadTaskId == activeImagingTask.Id).Select(x => x.Pid).ToList();
+                _uow.ActiveMulticastSessionRepository.DeleteRange(x => x.UploadTaskId == activeImagingTask.Id);
+                _uow.Save();
+                var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+
+                new APICall().ClientComServerApi.KillUdpReceiver(comServer.Url, "", decryptedKey, receiverPids);
+            }
 
             return actionResult;
         }

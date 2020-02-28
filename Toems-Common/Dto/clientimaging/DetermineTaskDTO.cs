@@ -5,5 +5,6 @@
         public string computerId { get; set; }
         public string task { get; set; }
         public string taskId { get; set; }
+        public string computerName { get; set; }
     }
 }

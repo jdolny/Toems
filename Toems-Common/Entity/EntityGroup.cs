@@ -6,6 +6,14 @@ namespace Toems_Common.Entity
     [Table("groups")]
     public class EntityGroup
     {
+        public EntityGroup()
+        {
+            ClusterId = -1;
+            WakeupScheduleId = -1;
+            ShutdownScheduleId = -1;
+            ImageId = -1;
+            ImageProfileId = -1;
+        }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("group_id", Order = 1)]

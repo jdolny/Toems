@@ -83,8 +83,8 @@ namespace Toems_Common.Entity
         [Column("tftp_info_server")]
         public bool IsTftpInfoServer { get; set; }
 
-        [Column("image_info_server")]
-        public bool IsImageInfoServer { get; set; }
+        [Column("imaging_ip")]
+        public string ImagingIp { get; set; }
 
     }
 }

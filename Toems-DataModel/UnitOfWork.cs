@@ -114,6 +114,8 @@ namespace Toems_DataModel
         private IGenericRepository<EntityActiveMulticastSession> _activeMulticastSessionRepository;
         private ActiveImagingTaskRepository _activeImagingTaskRepository;
         private IGenericRepository<EntityMulticastPort> _multicastPortRepository;
+        private IGenericRepository<EntityComputerLog> _computerLogRepository;
+        private IGenericRepository<EntityClientImagingId> _clientImagingIdRepository;
 
 
         private bool disposed;
@@ -122,6 +124,21 @@ namespace Toems_DataModel
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public IGenericRepository<EntityClientImagingId> ClientImagingIdRepository
+        {
+            get
+            {
+                return _clientImagingIdRepository ?? (_clientImagingIdRepository = new GenericRepository<EntityClientImagingId>(_context));
+            }
+        }
+        public IGenericRepository<EntityComputerLog> ComputerLogRepository
+        {
+            get
+            {
+                return _computerLogRepository ?? (_computerLogRepository = new GenericRepository<EntityComputerLog>(_context));
+            }
         }
 
         public IGenericRepository<EntityMulticastPort> MulticastPortRepository

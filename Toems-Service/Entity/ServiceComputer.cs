@@ -363,7 +363,7 @@ namespace Toems_Service.Entity
 
         public List<EntityComputer> SearchForGroup(DtoSearchFilter filter)
         {
-            return _uow.ComputerRepository.Get(s => s.Name.Contains(filter.SearchText) && (s.ProvisionStatus == EnumProvisionStatus.Status.PreProvisioned || s.ProvisionStatus == EnumProvisionStatus.Status.Provisioned)).OrderBy(x => x.Name).Take(filter.Limit).ToList();
+            return _uow.ComputerRepository.Get(s => s.Name.Contains(filter.SearchText) && (s.ProvisionStatus == EnumProvisionStatus.Status.PreProvisioned || s.ProvisionStatus == EnumProvisionStatus.Status.Provisioned || s.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly)).OrderBy(x => x.Name).Take(filter.Limit).ToList();
         }
 
         public List<EntityComputer> SearchPreProvision(DtoSearchFilter filter)
@@ -715,40 +715,77 @@ namespace Toems_Service.Entity
                          x.Type == "multicast"));
         }
 
-        public EntityComputer GetComputerFromMac(string mac)
-        {
-            return _uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingMac == mac);
-        }
         public EntityComputer GetComputerFromClientIdentifier(string clientIdentifier)
         {
+            EntityComputer result;
+            clientIdentifier = clientIdentifier.ToUpper();
             //Don't know if uuid is raw or pretty.  Check for both
-            var result = _uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == clientIdentifier);
-            if (result != null) return result;
-            else
+            var prettyIdentifier = "";
+            try
             {
-                //Check for opposite uuid
-                try
+                var uuid = clientIdentifier.Substring(clientIdentifier.LastIndexOf('.') + 1);
+                var clientIdFirst = clientIdentifier.Replace(uuid, string.Empty);
+                var uuidGuid = new Guid(uuid);
+                var uuidBytes = uuidGuid.ToByteArray();
+                var strReverseUuid = "";
+                foreach (var b in uuidBytes)
                 {
-                    var uuid = clientIdentifier.Substring(clientIdentifier.LastIndexOf('.') + 1);
-                    var clientIdFirst = clientIdentifier.Replace(uuid, string.Empty);
-                    var uuidGuid = new Guid(uuid);
-                    var uuidBytes = uuidGuid.ToByteArray();
-                    var strReverseUuid = "";
-                    foreach (var b in uuidBytes)
-                    {
-                        strReverseUuid += b.ToString("X2");
-                    }
-                    var reverseUuid = new Guid(strReverseUuid);
-                    var newClientId = clientIdFirst + reverseUuid;
-                    return _uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == newClientId.ToUpper());
+                    strReverseUuid += b.ToString("X2");
                 }
-                catch (Exception ex)
-                {
-                    return null;
-
-                }
-
+                var reverseUuid = new Guid(strReverseUuid);
+                prettyIdentifier = (clientIdFirst + reverseUuid).ToUpper();
             }
+            catch
+            { //ignored
+            }
+
+            //check image only computers first
+            result = _uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == clientIdentifier && p.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly);
+            if (result != null) return result;
+            result = _uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == prettyIdentifier && p.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly);
+            if (result != null) return result;
+
+            //Check provisiond computers next
+            result = _uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == clientIdentifier && p.ProvisionStatus == EnumProvisionStatus.Status.Provisioned);
+            if (result != null) return result;
+            result = _uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == prettyIdentifier && p.ProvisionStatus == EnumProvisionStatus.Status.Provisioned);
+            if (result != null) return result;
+
+            //check in global list of id's for matching computer
+            var computerClientIds = _uow.ClientImagingIdRepository.Get(x => x.ClientIdentifier == clientIdentifier);
+            var matchingComps = new List<EntityComputer>();
+            if(computerClientIds.Count > 0)
+            {
+                foreach(var clientId in computerClientIds)
+                {
+                    var computer = _uow.ComputerRepository.GetById(clientId.ComputerId);
+                    if (computer.ProvisionStatus == EnumProvisionStatus.Status.Provisioned)
+                        matchingComps.Add(computer);
+                }
+                //if no matches or more than 1 match, don't return anything, user will need to register an image only computer
+                if (matchingComps.Count == 1)
+                    return matchingComps.First();
+            }
+
+            computerClientIds = _uow.ClientImagingIdRepository.Get(x => x.ClientIdentifier == prettyIdentifier);
+            matchingComps.Clear();
+            matchingComps = new List<EntityComputer>();
+            if (computerClientIds.Count > 0)
+            {
+                foreach (var clientId in computerClientIds)
+                {
+                    var computer = _uow.ComputerRepository.GetById(clientId.ComputerId);
+                    if (computer.ProvisionStatus == EnumProvisionStatus.Status.Provisioned)
+                        matchingComps.Add(computer);
+                }
+                //if no matches or more than 1 match, don't return anything, user will need to register an image only computer
+                if (matchingComps.Count == 1)
+                    return matchingComps.First();
+            }
+
+            //no matches
+            return null;
+
         }
     }
 }

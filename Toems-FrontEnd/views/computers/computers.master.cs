@@ -165,6 +165,14 @@ namespace Toems_FrontEnd.views.computers
 
         protected void btnWakeup_OnClick(object sender, EventArgs e)
         {
+            lblTitle.Text = "Wake Up " + ComputerEntity.Name + "?";
+            Session["action"] = "wakeup";
+            DisplayConfirm();
+
+        }
+
+        protected void btnUpload_OnClick(object sender, EventArgs e)
+        {
             lblTitle.Text = "Upload Image From " + ComputerEntity.Name + "?";
             Session["action"] = "upload";
             DisplayConfirm();

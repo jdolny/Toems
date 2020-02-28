@@ -203,6 +203,7 @@ namespace Toems_Service
 
         public string IpxeLogin(string username, string password, string kernel, string bootImage, string task)
         {
+            //todo: needs to look specific imaging servers, not the current com server
             var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
             var thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
             if (thisComServer == null)
@@ -210,13 +211,16 @@ namespace Toems_Service
                 return null;
             }
 
-            if (string.IsNullOrEmpty(thisComServer.TftpPath))
-            {
-                return null;
+            string userToken;
+            var webRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.WebTasksRequireLogin);
+            var consoleRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
+            var globalToken = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingToken);
+            if (webRequiresLogin.Equals("False") || consoleRequiresLogin.Equals("False"))
+                userToken = globalToken;
+            else
+                userToken = "";
 
-            }
-
-            var webPath = thisComServer.Url + "/clientimaging/,";
+            var webPath = thisComServer.Url + "clientimaging/,";
             var globalComputerArgs = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingArguments);
 
 
@@ -239,7 +243,7 @@ namespace Toems_Service
             lines += "kernel " + iPxePath + "IpxeBoot?filename=" + kernel +
                      "&type=kernel" +
                      " initrd=" + bootImage + " root=/dev/ram0 rw ramdisk_size=156000 " + " web=" +
-                     webPath +  " consoleblank=0 " +
+                     webPath + " USER_TOKEN=" + userToken +  " consoleblank=0 " +
                      globalComputerArgs + newLineChar;
             lines += "imgfetch --name " + bootImage + " " + iPxePath +
                      "IpxeBoot?filename=" +

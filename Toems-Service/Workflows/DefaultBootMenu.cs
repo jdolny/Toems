@@ -72,7 +72,27 @@ namespace Toems_Service.Workflows
 
             _bootEntryServices = new ServiceCustomBootMenu();
             _globalComputerArgs = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingArguments);
-            _webPath = _thisComServer.Url + "clientimaging/";
+
+            var defaultCluster = new UnitOfWork().ComServerClusterRepository.Get(x => x.IsDefault).FirstOrDefault();
+            var defaultImagingServers = new UnitOfWork().ComServerClusterServerRepository.Get(x => x.ComServerClusterId == defaultCluster.Id && x.IsImagingServer);
+
+            _webPath = "\"";
+            foreach (var imageServer in defaultImagingServers)
+            {
+                var url = new ServiceClientComServer().GetServer(imageServer.ComServerId).Url;
+                _webPath += url + "clientimaging/ "; //adds a space delimiter
+            }
+            _webPath = _webPath.Trim(' ');
+            _webPath += "\"";
+
+            var webRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.WebTasksRequireLogin);
+            var consoleRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
+            var globalToken = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingToken);
+            if (webRequiresLogin.Equals("False") || consoleRequiresLogin.Equals("False"))
+                _userToken = globalToken;
+            else
+                _userToken = "";
+
             if (_defaultBoot.Type == "standard")
             {
                 if (mode.Contains("ipxe"))
@@ -188,7 +208,7 @@ namespace Toems_Service.Workflows
             grubMenu.Append("}" + NewLineChar);
             grubMenu.Append("" + NewLineChar);
 
-            grubMenu.Append("menuentry \"CloneDeploy\" --user {" + NewLineChar);
+            grubMenu.Append("menuentry \"Theopenem\" --user {" + NewLineChar);
             grubMenu.Append("echo Please Wait While The Boot Image Is Transferred.  This May Take A Few Minutes." +
                             NewLineChar);
             grubMenu.Append("linux /kernels/" + _defaultBoot.Kernel + " root=/dev/ram0 rw ramdisk_size=156000 " +
@@ -236,20 +256,18 @@ namespace Toems_Service.Workflows
 
         private void CreateIpxeMenu()
         {
-            var replacedPath = _webPath;
-            if (_webPath.Contains("https://"))
+            var iPxePath = _webPath.Split(' ').First().Trim('"');
+            if (iPxePath.Contains("https://")) //just use the first imaging server for the ipxe kernel transfer
             {
                 if (ServiceSetting.GetSettingValue(SettingStrings.IpxeSSL).Equals("False"))
                 {
-                    replacedPath = replacedPath.ToLower().Replace("https://", "http://");
-                    var currentPort = replacedPath.Split(':').Last();
-                    replacedPath = replacedPath.Replace(currentPort, ServiceSetting.GetSettingValue(SettingStrings.IpxeHttpPort)) + "/clientimaging/";
-                }
-                else
-                {
-                    replacedPath = _webPath;
+                    iPxePath = iPxePath.ToLower().Replace("https://", "http://");
+                    var currentPort = iPxePath.Split(':').Last();
+                    iPxePath = iPxePath.Replace(currentPort, ServiceSetting.GetSettingValue(SettingStrings.IpxeHttpPort)) + "/clientimaging/";
                 }
             }
+
+         
             var customMenuEntries =
                 _bootEntryServices.GetAll()
                     .Where(x => x.Type == "ipxe" && x.IsActive)
@@ -266,7 +284,7 @@ namespace Toems_Service.Workflows
             ipxeMenu.Append(":Menu" + NewLineChar);
             ipxeMenu.Append("menu Boot Menu" + NewLineChar);
             ipxeMenu.Append("item bootLocal Boot To Local Machine" + NewLineChar);
-            ipxeMenu.Append("item clonedeploy CloneDeploy" + NewLineChar);
+            ipxeMenu.Append("item theopenem Theopenem" + NewLineChar);
             ipxeMenu.Append("item console Client Console" + NewLineChar);
 
             foreach (var customEntry in customMenuEntries)
@@ -296,7 +314,7 @@ namespace Toems_Service.Workflows
 
 
 
-                ipxeMenu.Append(":clonedeploy" + NewLineChar);
+                ipxeMenu.Append(":theopenem" + NewLineChar);
                 ipxeMenu.Append("set task ond" + NewLineChar);
                 ipxeMenu.Append("goto login" + NewLineChar);
                 ipxeMenu.Append("" + NewLineChar);
@@ -311,7 +329,7 @@ namespace Toems_Service.Workflows
                 ipxeMenu.Append("param bootImage " + _defaultBoot.BootImage + "" + NewLineChar);
                 ipxeMenu.Append("param task " + "${task}" + "" + NewLineChar);
                 ipxeMenu.Append("echo Authenticating" + NewLineChar);
-                ipxeMenu.Append("chain --timeout 15000 " + replacedPath +
+                ipxeMenu.Append("chain --timeout 15000 " + iPxePath +
                                 "IpxeLogin##params || goto Menu" +
                                 NewLineChar);
             }
@@ -321,8 +339,8 @@ namespace Toems_Service.Workflows
                 ipxeMenu.Append("exit" + NewLineChar);
                 ipxeMenu.Append("" + NewLineChar);
 
-                ipxeMenu.Append(":clonedeploy" + NewLineChar);
-                ipxeMenu.Append("kernel " + replacedPath +
+                ipxeMenu.Append(":theopenem" + NewLineChar);
+                ipxeMenu.Append("kernel " + iPxePath +
                                 "IpxeBoot?filename=" + _defaultBoot.Kernel +
                                 "&type=kernel" +
                                 " initrd=" + _defaultBoot.BootImage + " root=/dev/ram0 rw ramdisk_size=156000 " +
@@ -331,14 +349,14 @@ namespace Toems_Service.Workflows
                                 " consoleblank=0 " +
                                 _globalComputerArgs + NewLineChar);
                 ipxeMenu.Append("imgfetch --name " + _defaultBoot.BootImage + " " +
-                                replacedPath +
+                                iPxePath +
                                 "IpxeBoot?filename=" +
                                 _defaultBoot.BootImage + "&type=bootimage" + NewLineChar);
                 ipxeMenu.Append("boot" + NewLineChar);
                 ipxeMenu.Append("" + NewLineChar);
 
                 ipxeMenu.Append(":console" + NewLineChar);
-                ipxeMenu.Append("kernel " + replacedPath +
+                ipxeMenu.Append("kernel " + iPxePath +
                                 "IpxeBoot?filename=" + _defaultBoot.Kernel +
                                 "&type=kernel" +
                                 " initrd=" + _defaultBoot.BootImage + " root=/dev/ram0 rw ramdisk_size=156000 " +
@@ -347,7 +365,7 @@ namespace Toems_Service.Workflows
                                 " task=debug" + " consoleblank=0 " +
                                 _globalComputerArgs + NewLineChar);
                 ipxeMenu.Append("imgfetch --name " + _defaultBoot.BootImage + " " +
-                                replacedPath +
+                                iPxePath +
                                 "IpxeBoot?filename=" +
                                 _defaultBoot.BootImage + "&type=bootimage" + NewLineChar);
                 ipxeMenu.Append("boot" + NewLineChar);
@@ -415,7 +433,7 @@ namespace Toems_Service.Workflows
             sysLinuxMenu.Append("MENU LABEL Boot To Local Machine" + NewLineChar);
             sysLinuxMenu.Append("" + NewLineChar);
 
-            sysLinuxMenu.Append("LABEL CloneDeploy" + NewLineChar);
+            sysLinuxMenu.Append("LABEL Theopenem" + NewLineChar);
             if (!string.IsNullOrEmpty(_defaultBoot.OndPwd) && _defaultBoot.OndPwd != "Error: Empty password")
                 sysLinuxMenu.Append("MENU PASSWD " + _defaultBoot.OndPwd + "" + NewLineChar);
             sysLinuxMenu.Append("kernel kernels" + Path.DirectorySeparatorChar + _defaultBoot.Kernel + "" + NewLineChar);
@@ -423,7 +441,7 @@ namespace Toems_Service.Workflows
                                 " root=/dev/ram0 rw ramdisk_size=156000 " + " web=" + _webPath + " USER_TOKEN=" +
                                 _userToken +
                                 " consoleblank=0 " + _globalComputerArgs + "" + NewLineChar);
-            sysLinuxMenu.Append("MENU LABEL CloneDeploy" + NewLineChar);
+            sysLinuxMenu.Append("MENU LABEL Theopenem" + NewLineChar);
             sysLinuxMenu.Append("" + NewLineChar);
 
             sysLinuxMenu.Append("LABEL Client Console" + NewLineChar);

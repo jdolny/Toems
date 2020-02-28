@@ -34,6 +34,8 @@ namespace Toems_Service.Workflows
                 client.ClientVersion = collection.ClientVersion;
             if(!string.IsNullOrEmpty(collection.PushUrl))
                 client.PushUrl = collection.PushUrl;
+            if (!string.IsNullOrEmpty(collection.HardwareUUID))
+                client.UUID = collection.HardwareUUID;
             new ServiceComputer().UpdateComputer(client);
 
             return true;

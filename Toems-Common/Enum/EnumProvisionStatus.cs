@@ -16,7 +16,8 @@
             Reset = 9,
             Error = 10,
             Archived = 11,
-            FullReset = 12
+            FullReset = 12,
+            ImageOnly = 13
             
         }
     }

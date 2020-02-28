@@ -8,6 +8,7 @@ using log4net;
 using Toems_ClientApi.Controllers.Authorization;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
+using Toems_Service.Entity;
 using Toems_Service.Workflows;
 
 namespace Toems_ClientApi.Controllers
@@ -53,7 +54,14 @@ namespace Toems_ClientApi.Controllers
             return new DtoApiBoolResponse() { Value = new TaskBootMenu().CreatePxeBootFiles(bootFile.Computer,bootFile.ImageProfile) };
         }
 
-        
+        [InterComAuth]
+        [HttpPost]
+        public DtoApiBoolResponse KillUdpReceiver(List<int> pids)
+        {
+            return new DtoApiBoolResponse() { Value = new ServiceActiveImagingTask().KillUdpReceiver(pids) };
+        }
+
+
 
         [InterComAuth]
         [HttpPost]

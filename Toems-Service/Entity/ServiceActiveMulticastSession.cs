@@ -33,19 +33,28 @@ namespace Toems_Service.Entity
         {
             return _userServices.IsAdmin(userId)
                 ? _uow.ActiveMulticastSessionRepository.Count()
-                : _uow.ActiveMulticastSessionRepository.Count(x => x.UserId == userId);
+                : _uow.ActiveMulticastSessionRepository.Count(x => x.UserId == userId && x.UploadTaskId == null);
         }
 
         public bool AddActiveMulticastSession(EntityActiveMulticastSession activeMulticastSession)
         {
-            if (_uow.ActiveMulticastSessionRepository.Exists(h => h.Name == activeMulticastSession.Name))
-            {
-                //Message.Text = "A Multicast Is Already Running For This Group";
-                return false;
-            }
             _uow.ActiveMulticastSessionRepository.Insert(activeMulticastSession);
             _uow.Save();
             return true;
+        }
+
+        public DtoActionResult DeleteUpload(int multicastId)
+        {
+            var upload = _uow.ActiveMulticastSessionRepository.GetById(multicastId);
+            if (upload == null) return new DtoActionResult { ErrorMessage = "Upload Session Not Found", Id = 0 };
+
+            var actionResult = new DtoActionResult();
+            _uow.ActiveMulticastSessionRepository.Delete(multicastId);
+            _uow.Save();
+            actionResult.Id = upload.Id;
+            actionResult.Success = true;
+
+            return actionResult;
         }
 
         public DtoActionResult Delete(int multicastId)
@@ -124,7 +133,7 @@ namespace Toems_Service.Entity
 
         public void DeleteAll()
         {
-            _uow.ActiveMulticastSessionRepository.DeleteRange();
+            _uow.ActiveMulticastSessionRepository.DeleteRange(x => x.UploadTaskId == null);
             _uow.Save();
         }
 
@@ -135,24 +144,20 @@ namespace Toems_Service.Entity
 
         public List<EntityActiveMulticastSession> GetAll()
         {
-            return _uow.ActiveMulticastSessionRepository.Get();
+            return _uow.ActiveMulticastSessionRepository.Get(x => x.UploadTaskId == null);
         }
 
         public List<EntityActiveMulticastSession> GetAllMulticastSessions(int userId)
         {
             if (_userServices.IsAdmin(userId))
-                return _uow.ActiveMulticastSessionRepository.Get(orderBy: q => q.OrderBy(t => t.Name));
-            return _uow.ActiveMulticastSessionRepository.Get(x => x.UserId == userId, q => q.OrderBy(t => t.Name));
+                return _uow.ActiveMulticastSessionRepository.Get(x => x.UploadTaskId == null, orderBy: q => q.OrderBy(t => t.Name));
+            return _uow.ActiveMulticastSessionRepository.Get(x => x.UserId == userId && x.UploadTaskId == null, q => q.OrderBy(t => t.Name));
         }
 
-        public EntityActiveMulticastSession GetFromPort(int port)
-        {
-            return _uow.ActiveMulticastSessionRepository.GetFirstOrDefault(x => x.Port == port);
-        }
-
+      
         public List<EntityActiveMulticastSession> GetOnDemandList()
         {
-            return _uow.ActiveMulticastSessionRepository.Get(x => x.ImageProfileId != -1, q => q.OrderBy(t => t.Name));
+            return _uow.ActiveMulticastSessionRepository.Get(x => x.ImageProfileId != -1 && x.UploadTaskId == null, q => q.OrderBy(t => t.Name));
         }
 
         private static void KillProcess(int pid)

@@ -84,6 +84,15 @@ namespace Toems_ApiCalls
             return responseData != null && responseData.Value;
         }
 
+        public bool KillUdpReceiver(string url, string serverName, string interComKey, List<int> pids)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = "Imaging/KillUdpReceiver";
+            Request.AddJsonBody(pids);
+            var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
+            return responseData != null && responseData.Value;
+        }
+
         public bool TerminateMulticast(string url, string serverName, string interComKey, EntityActiveMulticastSession multicast)
         {
             Request.Method = Method.POST;

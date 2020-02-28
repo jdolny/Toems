@@ -74,7 +74,7 @@ namespace Toems_Service.Workflows
             //On demand computer may be null if not registered
             if (_computer != null)
             {
-                AppendString("computer_name=" + _computer.Name);
+                AppendString("computer_name=" + _computer.Name.Split(':').First());
                 //AppendString("computer_id=" + _computer.Id);
             }
 
@@ -103,7 +103,6 @@ namespace Toems_Service.Workflows
                 if (Convert.ToBoolean(_imageProfile.UploadSchemaOnly)) AppendString("upload_schema_only=true");
                 if (Convert.ToBoolean(_imageProfile.SimpleUploadSchema)) AppendString("simple_upload_schema=true");
 
-                AppendString("web_wim_args=--pipable");
                 if (!string.IsNullOrEmpty(_imageProfile.CustomUploadSchema))
                 {
                     AppendString("custom_upload_schema=true");
@@ -124,7 +123,8 @@ namespace Toems_Service.Workflows
                         var compAttrib = serviceAttribute.GetCustomAttribute(attribute.CustomAttributeId);
                         if(!string.IsNullOrEmpty(attribute.Value))
                         {
-                            AppendString("\"" + compAttrib.Name + "\"=" + "\"" + attribute.Value + "\"");
+                            if(compAttrib.ClientImagingAvailable)
+                                AppendString( compAttrib.Name + "=" + "\"" + attribute.Value + "\"");
                         }
                     }
                 }
@@ -160,6 +160,7 @@ namespace Toems_Service.Workflows
                     }
 
                     AppendString("multicast_port=" + multicastPort);
+                    AppendString("multicast_server_ip=" + comServer.MulticastInterfaceIp);
                 }
             }
 

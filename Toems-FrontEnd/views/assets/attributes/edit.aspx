@@ -44,7 +44,14 @@
             <asp:DropDownList ID="ddlUsageType" runat="server" CssClass="ddlist" ClientIDMode="Static" Enabled="False">
             </asp:DropDownList>
             </div>
-
+      <div class="size-4 column">
+        Available To Imaging Client:
+    </div>
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkImaging" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkImaging">Toggle</label>
+        </div>
+     <br class="clear"/>
 
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subsubHelp">

@@ -29,5 +29,8 @@ namespace Toems_Common.Entity
 
         [Column("user_id")]
         public int UserId { get; set; }
+
+        [Column("upload_task_id")]
+        public int? UploadTaskId { get; set; }
     }
 }

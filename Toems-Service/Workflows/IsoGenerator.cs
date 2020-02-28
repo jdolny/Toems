@@ -80,11 +80,13 @@ namespace Toems_Service.Workflows
                 return null;
             }
 
-            if (string.IsNullOrEmpty(_thisComServer.TftpPath))
-            {
-                Logger.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
-                return null;
-            }
+            var webRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.WebTasksRequireLogin);
+            var consoleRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
+            var globalToken = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingToken);
+            if (webRequiresLogin.Equals("False") || consoleRequiresLogin.Equals("False"))
+                _userToken = globalToken;
+            else
+                _userToken = "";
 
             _globalComputerArgs = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingArguments);
             _webPath = _thisComServer.Url + "clientimaging/";

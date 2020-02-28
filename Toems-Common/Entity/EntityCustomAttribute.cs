@@ -24,5 +24,8 @@ namespace Toems_Common.Entity
         [Column("usage_type")]
         public int UsageType { get; set; }
 
+        [Column("client_imaging")]
+        public bool ClientImagingAvailable { get; set; }
+
     }
 }

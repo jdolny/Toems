@@ -35,18 +35,18 @@ while true; do
   fi
   
   if [ "$(parse_json "$registerSettings" .registrationEnabled)" = "No" ] && [ "$(parse_json "$registerSettings" .keepNamePrompt)" = "Yes" ]; then
-    name=$(dialog --backtitle "CloneDeploy" --title "Registration Disabled.  Enter A Computer Name To Rename During Imaging.  Leave Blank To Skip." --clear --inputbox "Interface  : $net_if \nMAC address: $mac \nClient Id  : $client_id" 20 130 2>&1 >/dev/tty0)
+    name=$(dialog --backtitle "Theopenem" --title "Registration Disabled.  Enter A Computer Name To Rename During Imaging.  Leave Blank To Skip." --clear --inputbox "Interface  : $net_if \nMAC address: $mac \nClient Id  : $client_id" 20 130 2>&1 >/dev/tty0)
 	export computer_name="$name"
 
 	break
   fi
   
   if [ -n "$(parse_json "$registerResult" .ErrorMessage)" ] && [ "$(parse_json "$registerResult" .ErrorMessage)" != "null" ]; then
-    name=$(dialog --backtitle "CloneDeploy" --title "Enter Computer Name.  Leave Blank To Skip Registration." --clear --inputbox "Interface  : $net_if \nMAC address: $mac \nClient Id  : $client_id \n\nError: $(parse_json "$registerResult" .ErrorMessage)" 20 130 2>&1 >/dev/tty0)
+    name=$(dialog --backtitle "Theopenem" --title "Enter Computer Name.  Leave Blank To Skip Registration." --clear --inputbox "Interface  : $net_if \nMAC address: $mac \nClient Id  : $client_id \n\nError: $(parse_json "$registerResult" .ErrorMessage)" 20 130 2>&1 >/dev/tty0)
   elif [ -n "$registerResult" ]; then
-    name=$(dialog --backtitle "CloneDeploy" --title "Enter Computer Name.  Leave Blank To Skip Registration." --clear --inputbox "Interface  : $net_if \nMAC address: $mac \nClient Id  : $client_id \n\nError: $registerResult" 20 130 2>&1 >/dev/tty0)
+    name=$(dialog --backtitle "Theopenem" --title "Enter Computer Name.  Leave Blank To Skip Registration." --clear --inputbox "Interface  : $net_if \nMAC address: $mac \nClient Id  : $client_id \n\nError: $registerResult" 20 130 2>&1 >/dev/tty0)
   else
-    name=$(dialog --backtitle "CloneDeploy" --title "Enter Computer Name.  Leave Blank To Skip Registration." --clear --inputbox "Interface  : $net_if \nMAC address: $mac \nClient Id  : $client_id" 20 130 2>&1 >/dev/tty0)
+    name=$(dialog --backtitle "Theopenem" --title "Enter Computer Name.  Leave Blank To Skip Registration." --clear --inputbox "Interface  : $net_if \nMAC address: $mac \nClient Id  : $client_id" 20 130 2>&1 >/dev/tty0)
   fi
   
   #Cancel Button or no name entered
@@ -80,7 +80,7 @@ done
   fi
 
 while true; do
-  taskType=$(dialog --backtitle "CloneDeploy" --title "Select A Task" --clear  --menu "$result" 20 60 15 1 "Shutdown" 2 "Reboot" 3 "Start On Demand Task"  2>&1 >/dev/tty0)
+  taskType=$(dialog --backtitle "Theopenem" --title "Select A Task" --clear  --menu "$result" 20 60 15 1 "Shutdown" 2 "Reboot" 3 "Start On Demand Task"  2>&1 >/dev/tty0)
   #Cancel Button
   if [ "$?" = "1" ]; then
     poweroff -f

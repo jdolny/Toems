@@ -77,6 +77,9 @@ namespace Toems_Common.Entity
         [Column("image_profile_id")]
         public int ImageProfileId { get; set; }
 
+        [Column("hardware_uuid")]
+        public string UUID { get; set; }
+
     }
 
     [NotMapped]

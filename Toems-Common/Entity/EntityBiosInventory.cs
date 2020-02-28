@@ -22,5 +22,7 @@ namespace Toems_Common.Entity
 
         [Column("sm_bios_version")]
         public string SMBIOSBIOSVersion { get; set; }
+
+    
     }
 }

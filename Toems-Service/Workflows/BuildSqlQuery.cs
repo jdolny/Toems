@@ -229,7 +229,7 @@ namespace Toems_Service.Workflows
 
                     parameters.Add(query.Value);
                 }
-                sb.Append(") AND (a.provision_status = 8 OR a.provision_status = 6)");
+                sb.Append(") AND (a.provision_status = 8 OR a.provision_status = 6 OR a.provision_status = 13)");
                 sb.Append(" GROUP BY a.computer_name, a.computer_id");
                 sqlQuery = new DtoRawSqlQuery();
                 sqlQuery.Sql = sb.ToString();

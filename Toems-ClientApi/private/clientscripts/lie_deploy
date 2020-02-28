@@ -51,9 +51,10 @@ function process_hard_drives()
     
 	imaged_schema_drives="$imaged_schema_drives $(parse_json "$hd_schema" .SchemaHdNumber) "
 	
-	if [ -n "$post_scripts" ]; then
-	  process_scripts "$post_scripts"
+	if [ -n "$after_file_scripts" ]; then
+	  process_scripts "$after_file_scripts"
 	fi
+	
 done
 }
 
@@ -95,6 +96,10 @@ function process_lvm()
         expand_volume /dev/mapper/$volume_group-$escaped_lv_name $(parse_json "$current_logical_volume" .FileSystem)  
       fi
     fi
+	
+	if [ -n "$before_file_scripts" ]; then
+	  process_scripts "$before_file_scripts"
+	fi
 	
 	if [ "$file_copy" = "True" ]; then
 	  process_file_copy "$current_logical_volume" "$volume_group-$escaped_lv_name"
@@ -189,15 +194,15 @@ function process_partitions()
       process_sysprep_tags  $this_partition
 	fi
 	
-	if [ "$(parse_json "$current_partition" .FileSystem)" = "hfsplus" ]; then
-	  log " ** Repairing Hfsplus filesystem" "display"
-      fsck.hfsplus -f ${hard_drive}${partition_prefix}$(parse_json "$current_partition" .Number)
-	  sleep 5
+	if [ -n "$before_file_scripts" ]; then
+	  process_scripts "$before_file_scripts"
 	fi
 	
 	if [ "$file_copy" = "True" ]; then
 	  process_file_copy "$current_partition" "partition"
 	fi
+	
+  
   done
 }
 
@@ -247,19 +252,23 @@ function download_image()
 			
   if [ "$task" = "multicast" ] || [ "$task" = "ondmulticast" ]; then
     if [ "$decompress_multicast_on_client" = "true" ]; then
-	    log "lie_reporter $task_id partclone & udp-receiver --portbase $multicast_port --no-progress $client_receiver_args | $partCompAlg | partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -o $destination"
-      lie_reporter $task_id partclone & udp-receiver --portbase $multicast_port --no-progress $client_receiver_args | $partCompAlg | partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -o $destination
+	    log "lie_reporter $task_id partclone & udp-receiver --portbase $multicast_port --no-progress --mcast-rdv-address $multicast_server_ip $client_receiver_args | $partCompAlg | partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -o $destination"
+      lie_reporter $task_id partclone & udp-receiver --portbase $multicast_port --no-progress --mcast-rdv-address $multicast_server_ip $client_receiver_args | $partCompAlg | partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -o $destination
 	else #dcompress on server
-      log "lie_reporter $task_id partclone & udp-receiver --portbase $multicast_port --no-progress $client_receiver_args | partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -o $destination"
-      lie_reporter $task_id partclone & udp-receiver --portbase $multicast_port --no-progress $client_receiver_args | partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -o $destination
+      log "lie_reporter $task_id partclone & udp-receiver --portbase $multicast_port --no-progress --mcast-rdv-address $multicast_server_ip $client_receiver_args | partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -o $destination"
+      lie_reporter $task_id partclone & udp-receiver --portbase $multicast_port --no-progress --mcast-rdv-address $multicast_server_ip $client_receiver_args | partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -o $destination
     fi
   else #unicast
     if [ "$partCompAlg" = "none" ]; then #no compression
-	   lie_reporter $task_id partclone & partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -s $image_path/$file_name_prefix.$(parse_json "$current_object" .PartcloneFileSystem).uncp -o $destination
-	   log "lie_reporter $task_id partclone & partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -s $image_path/$file_name_prefix.$(parse_json "$current_object" .PartcloneFileSystem).uncp -o $destination"
+	  log "	   lie_reporter $task_id partclone & $curlAuth --data 'profileId=$profile_id&hdNumber=$current_hd_number&fileName=$file_name_prefix.$(parse_json "$current_object" .PartcloneFileSystem).uncp' ${web}GetImagingFile $curlEnd | partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -o $destination"
+	  
+	   lie_reporter $task_id partclone & $curlAuth --data "profileId=$profile_id&hdNumber=$current_hd_number&fileName=$file_name_prefix.$(parse_json "$current_object" .PartcloneFileSystem).uncp" "${web}GetImagingFile" $curlEnd | partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -o $destination
+
 	else #compression in use
-      log "lie_reporter $task_id partclone & $partCompAlg $image_path/$file_name_prefix.$(parse_json "$current_object" .PartcloneFileSystem).$partCompExt | partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -o $destination"
-      lie_reporter $task_id partclone & $partCompAlg $image_path/$file_name_prefix.$(parse_json "$current_object" .PartcloneFileSystem).$partCompExt | partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -o $destination
+	  log "	  lie_reporter $task_id partclone & $curlAuth --data 'profileId=$profile_id&hdNumber=$current_hd_number&fileName=$file_name_prefix.$(parse_json "$current_object" .PartcloneFileSystem).$partCompExt' ${web}GetImagingFile $curlEnd | $partCompAlg | partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -o $destination"
+	  
+	  lie_reporter $task_id partclone & $curlAuth --data "profileId=$profile_id&hdNumber=$current_hd_number&fileName=$file_name_prefix.$(parse_json "$current_object" .PartcloneFileSystem).$partCompExt" "${web}GetImagingFile" $curlEnd | $partCompAlg | partclone.$(parse_json "$current_object" .PartcloneFileSystem) -B -r -o $destination
+
 	fi
   fi
 			
@@ -296,11 +305,13 @@ function download_image()
 	fi
 	
 	if [ "$task" = "multicast" ] || [ "$task" = "ondmulticast" ]; then
-	  log "lie_reporter $task_id wim & udp-receiver --portbase $multicast_port --no-progress $client_receiver_args | wimlib-imagex apply - 1 $destination $wim_arguments"
-	  lie_reporter $task_id wim & udp-receiver --portbase $multicast_port --no-progress $client_receiver_args | wimlib-imagex apply - 1 $destination $wim_arguments 2>> $CLIENT_LOG | tee /tmp/wim.progress
+	  log "lie_reporter $task_id wim & udp-receiver --portbase $multicast_port --no-progress --mcast-rdv-address $multicast_server_ip $client_receiver_args | wimlib-imagex apply - 1 $destination $wim_arguments"
+	  lie_reporter $task_id wim & udp-receiver --portbase $multicast_port --no-progress --mcast-rdv-address $multicast_server_ip $client_receiver_args | wimlib-imagex apply - 1 $destination $wim_arguments 2>> $CLIENT_LOG | tee /tmp/wim.progress
 	else
-	  log "lie_reporter $task_id wim & wimlib-imagex apply $image_path/$file_name_prefix.$(parse_json "$current_object" .PartcloneFileSystem).wim 1 $destination $wim_arguments"
-	  lie_reporter $task_id wim & wimlib-imagex apply $image_path/$file_name_prefix.$(parse_json "$current_object" .PartcloneFileSystem).wim 1 $destination $wim_arguments 2>> $CLIENT_LOG | tee /tmp/wim.progress
+	  log " lie_reporter $task_id wim & $curlAuth --data 'profileId=$profile_id&hdNumber=$current_hd_number&fileName=$file_name_prefix.$(parse_json "$current_object" .PartcloneFileSystem).wim" "${web}GetImagingFile' $curlEnd | wimlib-imagex apply - 1 $destination 2>> $CLIENT_LOG | tee /tmp/wim.progress"
+	  
+	  lie_reporter $task_id wim & $curlAuth --data "profileId=$profile_id&hdNumber=$current_hd_number&fileName=$file_name_prefix.$(parse_json "$current_object" .PartcloneFileSystem).wim" "${web}GetImagingFile" $curlEnd | wimlib-imagex apply - 1 $destination 2>> $CLIENT_LOG | tee /tmp/wim.progress
+	  
 	fi
   fi 
 }
@@ -311,7 +322,8 @@ function restore_mbr_gpt()
   local hybrid_status
   
   log " ** Restoring MBR / GPT On $hard_drive ** " "display"
-  dd if=$image_path/table of=$hard_drive &>>$CLIENT_LOG				
+
+  $curlAuth --data "profileId=$profile_id&hdNumber=$current_hd_number&fileName=table" "${web}GetImagingFile" $curlEnd | dd of=$hard_drive &>>$CLIENT_LOG				
 		
   #Sometimes restoring results in damaged GPT.  Done the long way to hide error messages.
   gdisk -l $hard_drive <<< "2" &>/tmp/gptstatus
@@ -1001,8 +1013,6 @@ function main()
 
   checkin
     
-  mount_smb
-
   process_hard_drives
 	
   checkout

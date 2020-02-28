@@ -28,6 +28,7 @@ namespace Toems_FrontEnd.views.computers
             lblPushUrl.Text = ComputerEntity.PushUrl;
             lblAdDisabled.Text = ComputerEntity.AdDisabled.ToString();
             lblRemoteAccessId.Text = ComputerEntity.RemoteAccessId;
+            lblHardwareUuid.Text = ComputerEntity.UUID;
         }
 
       

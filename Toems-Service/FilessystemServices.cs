@@ -501,11 +501,6 @@ namespace Toems_Service
                     return null;
                 }
 
-                if (string.IsNullOrEmpty(thisComServer.TftpPath))
-                {
-                    log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
-                    return null;
-                }
                 path = thisComServer.LocalStoragePath;
                 dpFreeSpace.name = thisComServer.DisplayName;
             }

@@ -109,6 +109,19 @@ namespace Toems_Service.Workflows
                         {
                             // ignored
                         }
+                        try
+                        {
+                            var killProcInfo = new ProcessStartInfo
+                            {
+                                FileName = "killall",
+                                Arguments = " -s SIGKILL udp-receiver"
+                            };
+                            Process.Start(killProcInfo);
+                        }
+                        catch
+                        {
+                            // ignored
+                        }
 
                         Thread.Sleep(200);
                     }
@@ -119,6 +132,18 @@ namespace Toems_Service.Workflows
                     for (var x = 1; x <= 10; x++)
                     {
                         foreach (var p in Process.GetProcessesByName("udp-sender"))
+                        {
+                            try
+                            {
+                                p.Kill();
+                                p.WaitForExit();
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error(ex.ToString());
+                            }
+                        }
+                        foreach (var p in Process.GetProcessesByName("udp-receiver"))
                         {
                             try
                             {

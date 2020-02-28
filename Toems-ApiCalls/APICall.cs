@@ -377,5 +377,10 @@ namespace Toems_ApiCalls
             get { return new ActiveMulticastSessionAPI("ActiveMulticastSession"); }
         }
 
+        public ComputerLogAPI ComputerLogApi
+        {
+            get { return new ComputerLogAPI("ComputerLog"); }
+        }
+
     }
 }

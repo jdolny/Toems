@@ -134,6 +134,7 @@
     <Compile Include="Controllers\AssetGroupController.cs" />
     <Compile Include="Controllers\AssetGroupMemberController.cs" />
     <Compile Include="Controllers\AssetCategoryController.cs" />
+    <Compile Include="Controllers\ComputerLogController.cs" />
     <Compile Include="Controllers\ImageProfileFileCopyController.cs" />
     <Compile Include="Controllers\ImageProfileSysprepController.cs" />
     <Compile Include="Controllers\ImageProfileScriptController.cs" />

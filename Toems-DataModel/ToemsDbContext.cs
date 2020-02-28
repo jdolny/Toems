@@ -105,6 +105,8 @@ namespace Toems_DataModel
         public DbSet<EntityActiveImagingTask> ActiveImagingTasks { get; set; }
         public DbSet<EntityActiveMulticastSession> ActiveMulticastSessions { get; set; }
         public DbSet<EntityMulticastPort> MulticastPorts { get; set; }
+        public DbSet<EntityComputerLog> ComputerLogs { get; set; }
+        public DbSet<EntityClientImagingId> ClientImagingIds { get; }
 
     }
 }

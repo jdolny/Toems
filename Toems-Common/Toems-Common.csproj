@@ -170,6 +170,10 @@
     <Compile Include="Dto\formdata\ComputerIdDTO.cs" />
     <Compile Include="Dto\formdata\ComputerMacDTO.cs" />
     <Compile Include="Dto\formdata\DpDTO.cs" />
+    <Compile Include="Dto\formdata\DtoCloseUpload.cs" />
+    <Compile Include="Dto\formdata\DtoImageFileRequest.cs" />
+    <Compile Include="Dto\formdata\DtoPrepareUpload.cs" />
+    <Compile Include="Dto\formdata\DtoUploadSchema.cs" />
     <Compile Include="Dto\formdata\EnvironmentDTO.cs" />
     <Compile Include="Dto\formdata\ErrorEmailDTO.cs" />
     <Compile Include="Dto\formdata\HdReqs.cs" />
@@ -203,6 +207,7 @@
     <Compile Include="Dto\imageschemafe\DtoVolumeGroup.cs" />
     <Compile Include="Entity\EntityActiveImagingTask.cs" />
     <Compile Include="Entity\EntityActiveMulticastSession.cs" />
+    <Compile Include="Entity\EntityClientImagingId.cs" />
     <Compile Include="Entity\EntityAntivirusInventory.cs" />
     <Compile Include="Entity\EntityComputerLog.cs" />
     <Compile Include="Entity\EntityCustomBootMenu.cs" />

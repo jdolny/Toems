@@ -105,7 +105,7 @@ namespace Toems_Service.Entity
         {
             var validationResult = new DtoValidationResult { Success = true };
 
-            if (string.IsNullOrEmpty(customAttribute.Name) || !customAttribute.Name.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '-' || c == ' '))
+            if (string.IsNullOrEmpty(customAttribute.Name) || !customAttribute.Name.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '-'))
             {
                 validationResult.Success = false;
                 validationResult.ErrorMessage = "Custom Attribute Name Is Not Valid";

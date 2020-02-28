@@ -16,9 +16,7 @@ namespace Toems_ClientApi.Controllers.Authorization
         {
             var userToken = StringManipulationServices.Decode(HttpContext.Current.Request.Headers["Authorization"],
                "Authorization");
-            var taskId = StringManipulationServices.Decode(HttpContext.Current.Request.Headers["Authorization"],
-               "TaskId");
-            if (!new ClientImagingServices().Authorize(userToken,taskId))
+            if (!new ClientImagingServices().AuthorizeApiCall(userToken))
             {
                 var response = actionContext.Request.CreateResponse(HttpStatusCode.Forbidden);
                 throw new HttpResponseException(response);

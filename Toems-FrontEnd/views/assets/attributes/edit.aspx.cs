@@ -26,6 +26,7 @@ namespace Toems_FrontEnd.views.global.attributes
             txtDescription.Text = CustomAttribute.Description;
             ddlUsageType.Text = CustomAttribute.UsageType.ToString();
             ddlTextMode.SelectedValue = CustomAttribute.TextMode.ToString();
+            chkImaging.Checked = CustomAttribute.ClientImagingAvailable;
         }
 
         protected void buttonUpdate_OnClick(object sender, EventArgs e)
@@ -34,7 +35,7 @@ namespace Toems_FrontEnd.views.global.attributes
             CustomAttribute.Description = txtDescription.Text;
             CustomAttribute.TextMode = (EnumCustomAttribute.TextMode)Enum.Parse(typeof(EnumCustomAttribute.TextMode), ddlTextMode.SelectedValue);
             CustomAttribute.UsageType = Convert.ToInt32(ddlUsageType.SelectedValue);
-
+            CustomAttribute.ClientImagingAvailable = chkImaging.Checked;
 
 
             var result = Call.CustomAttributeApi.Put(CustomAttribute.Id, CustomAttribute);

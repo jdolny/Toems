@@ -3,9 +3,15 @@ using log4net;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Management;
+using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Dto.clientimaging;
@@ -23,7 +29,6 @@ namespace Toems_Service
 
         public string AddComputer(string name, string mac, string clientIdentifier)
         {
-            clientIdentifier = clientIdentifier.ToUpper();
             var existingComputer = new ServiceComputer().GetComputerFromClientIdentifier(clientIdentifier);
             if (existingComputer != null)
             {
@@ -36,11 +41,12 @@ namespace Toems_Service
             }
             var computer = new EntityComputer
             {
-                Name = name,
-                ImagingMac = mac,
-                ImagingClientId = clientIdentifier,
+                Name = name + ":" + DateTime.Now.ToString("MM-dd-yyyy_HH_mm"),
+                ImagingClientId = clientIdentifier.ToUpper(),
+                ImagingMac = mac.ToUpper(),
                 ImageId = -1,
                 ImageProfileId = -1,
+                ProvisionStatus = EnumProvisionStatus.Status.ImageOnly
             };
             var result = new ServiceComputer().AddComputer(computer);
             return JsonConvert.SerializeObject(result);
@@ -84,22 +90,27 @@ namespace Toems_Service
             return JsonConvert.SerializeObject(result);
         }
 
-        public bool Authorize(string token, string taskID)
+        public bool AuthorizeApiCall(string token)
         {
-            var task = new ServiceActiveImagingTask().GetTask(Convert.ToInt32(taskID));
+            if (string.IsNullOrEmpty(token)) return false;
             var webRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.WebTasksRequireLogin);
             var consoleRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
+            var globalToken = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingToken);
 
-            if (task.IsWebTask && webRequiresLogin.Equals("False"))
-                return true;
-            else if (!task.IsWebTask && consoleRequiresLogin.Equals("False"))
-                return true;
-            else
+            if(webRequiresLogin.Equals("True") && consoleRequiresLogin.Equals("True"))
             {
-                var user = new ServiceUser().GetUserFromToken(token);
+                 var user = new ServiceUser().GetUserFromToken(token);
                 if (user != null)
                     return true;
             }
+            else
+            {
+                //global token is valid
+
+                if (token.Equals(globalToken) && !string.IsNullOrEmpty(globalToken))
+                    return true;
+            }
+
             return false;
         }
 
@@ -231,18 +242,20 @@ namespace Toems_Service
             task.Status = EnumTaskStatus.ImagingStatus.CheckedIn;
             task.ComServerId = comServerId;
 
-            EntityImage image = null;
+            var imageServer = new ServiceClientComServer().GetServer(comServerId);
+
+            ImageProfileWithImage imageProfile = null;
             if (task.Type == "multicast")
             {
                 var mcTask = new ServiceActiveMulticastSession().Get(task.MulticastId);
                 var group = new ServiceGroup().GetGroupByName(mcTask.Name);
-                image = new ServiceImage().GetImage(group.ImageId);
+                imageProfile = new ServiceImageProfile().ReadProfile(group.ImageProfileId);
             }
             else
             {
-                image = new ServiceImage().GetImage(computer.ImageId);
+               imageProfile = new ServiceImageProfile().ReadProfile(Convert.ToInt32(task.ImageProfileId));
             }
-            if (image.Protected && task.Type.Contains("upload"))
+            if (imageProfile.Image.Protected && task.Type.Contains("upload"))
             {
                 checkIn.Result = "false";
                 checkIn.Message = "This Image Is Protected";
@@ -253,19 +266,74 @@ namespace Toems_Service
             {
                 checkIn.Result = "true";
 
-                if (image != null)
+                if (imageProfile.Image != null)
                 {
-                    if (image.Environment == "")
-                        image.Environment = "linux";
-                    checkIn.ImageEnvironment = image.Environment;
+                    if (imageProfile.Image.Environment == "")
+                        imageProfile.Image.Environment = "linux";
+                    checkIn.ImageEnvironment = imageProfile.Image.Environment;
+                }
+                checkIn.TaskArguments = task.Arguments;
+                if (imageProfile.Image.Environment == "winpe")
+                {
+                    checkIn.TaskArguments += " image_server=\"" +
+                                            imageServer.Url + "clientimaging/" + "\"\r\n";
+                }
+                else
+                {
+                    checkIn.TaskArguments += " image_server=\"" +
+                                            imageServer.Url + "clientimaging/" + "\"";
                 }
 
-                if (image.Environment == "winpe")
-                    checkIn.TaskArguments = task.Arguments + "com_server_id=\"" +
-                                            comServerId + "\"\r\n";
-                else
-                    checkIn.TaskArguments = task.Arguments + " com_server_id=\"" +
-                                            comServerId + "\"";
+                if(task.Type.Contains("upload"))
+                {
+                    if (!string.IsNullOrEmpty(imageServer.ImagingIp))
+                    {
+                        if (imageProfile.Image.Environment == "winpe")
+                            checkIn.TaskArguments += " upload_server=\"" +
+                                           imageServer.ImagingIp + "\"\r\n";
+                        else
+                            checkIn.TaskArguments += " upload_server=\"" +
+                                          imageServer.ImagingIp + "\"";
+                    }
+
+                    else
+                    {
+                        //get the ip needed for upload
+                        var urlHasIp = Regex.Match(imageServer.Url, @"\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b");
+                        if (urlHasIp.Success)
+                        {
+                            if (imageProfile.Image.Environment == "winpe")
+                                checkIn.TaskArguments +=  " upload_server=\"" +
+                                               urlHasIp.Captures[0] + "\"\r\n";
+                            else
+                                checkIn.TaskArguments += " upload_server=\"" +
+                                              urlHasIp.Captures[0] + "\"";
+                        }
+                        else
+                        {
+                            //get from dns
+                            var dnsName = imageServer.Url.Split(new[] { "//" }, StringSplitOptions.None).Last().Split(':').First();
+                            var ipaddresses = Dns.GetHostAddresses(dnsName).Where(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).ToList();
+                            if (ipaddresses.Count > 1)
+                            {
+                                checkIn.Result = "false";
+                                checkIn.Message = "More Than 1 Ip Address Has Been Resolved For Com Server.  You Must Add an IP Override.";
+                                return JsonConvert.SerializeObject(checkIn);
+                            }
+                            else
+                            {
+                                if (imageProfile.Image.Environment == "winpe")
+                                    checkIn.TaskArguments +=  " upload_server=\"" +
+                                                   ipaddresses.First().ToString() + "\"\r\n";
+                                else
+                                    checkIn.TaskArguments += " upload_server=\"" +
+                                                  ipaddresses.First().ToString() + "\"";
+                            }
+                        }
+                    }
+                    
+                }
+
                 return JsonConvert.SerializeObject(checkIn);
             }
             checkIn.Result = "false";
@@ -361,21 +429,23 @@ namespace Toems_Service
 
         public string CheckTaskAuth(string task, string token)
         {
+            //only check console tasks, 
             var webRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.WebTasksRequireLogin);
             var consoleRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
-            if ((task.Equals("deploy") || task.Equals("upload")) && webRequiresLogin.Equals("False"))
-            {
-                return "true";
-            }
-            else if (consoleRequiresLogin.Equals("False"))
+
+            if (consoleRequiresLogin.Equals("False"))
             {
                 return "true";
             }
             else
             {
-                return "false";
+                //todo: put additonal user checks here
+                var user = new ServiceUser().GetUserFromToken(token);
+                if (user != null)
+                    return "true";
+                else
+                    return "false";
             }
-
           
         }
 
@@ -408,31 +478,15 @@ namespace Toems_Service
             return JsonConvert.SerializeObject(new ModelTaskDTO());
         }
 
-        public string DetermineTask(string idType, string id)
+        public string DetermineTask(string id)
         {
             var determineTaskDto = new DetermineTaskDTO();
             var computerServices = new ServiceComputer();
             EntityComputer computer;
-            if (idType == "mac")
-            {
-                //When searching for computer by mac, that means the first check of searching by cliend id
-                //did not yield any results.  Fall back to mac only for legacy support, but don't include computers
-                //that have a valid client id.
-                computer = computerServices.GetComputerFromMac(id);
-                if (computer != null)
-                {
-                    if (!string.IsNullOrEmpty(computer.ImagingClientId))
-                    {
-                        //act like a computer wasn't found
-                        computer = null;
-                    }
-                }
-            }
-            else
-            {
-                id = id.ToUpper();
-                computer = computerServices.GetComputerFromClientIdentifier(id);
-            }
+
+
+            computer = computerServices.GetComputerFromClientIdentifier(id);
+            
 
             if (computer == null)
             {
@@ -446,12 +500,14 @@ namespace Toems_Service
             {
                 determineTaskDto.computerId = computer.Id.ToString();
                 determineTaskDto.task = "ond";
+                determineTaskDto.computerName = computer.Name.Split(':').First(); //imaging only computers have a : in the name to avoid duplicates, just take beginning
             }
             else
             {
                 determineTaskDto.computerId = computer.Id.ToString();
                 determineTaskDto.task = computerTask.Type;
                 determineTaskDto.taskId = computerTask.Id.ToString();
+                determineTaskDto.computerName = computer.Name.Split(':').First(); //imaging only computers have a : in the name to avoid duplicates, just take beginning
             }
 
             return JsonConvert.SerializeObject(determineTaskDto);
@@ -502,14 +558,14 @@ namespace Toems_Service
             }
 
             var clusterServers = uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == cluster.Id && x.IsImagingServer);
-            var listComServers = new List<int>();
+            var listComServers = new List<string>();
             foreach (var clusterServer in clusterServers)
             {
                 var comServer = uow.ClientComServerRepository.GetById(clusterServer.ComServerId);
-                listComServers.Add(comServer.Id);
+                listComServers.Add(comServer.Url);
             }
 
-            var randomDpList = new List<int>();
+            var randomDpList = new List<string>();
             try
             {
                 randomDpList = listComServers.OrderBy(x => rnd.Next()).ToList();
@@ -522,9 +578,9 @@ namespace Toems_Service
             }
 
             var result = "";
-            foreach (var dpId in randomDpList)
+            foreach (var url in randomDpList)
             {
-                result += dpId + " ";
+                result += url + " ";
             }
 
             return result;
@@ -710,14 +766,12 @@ namespace Toems_Service
         {
             switch (task)
             {
-                case "clobber":
                 case "register_modelmatch":
                 case "register":
                 case "debug":
                 case "ond":
                     return ServiceSetting.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
                 case "deploy":
-                case "permanentdeploy":
                 case "upload":
                 case "multicast":
                 case "modelmatchdeploy":
@@ -737,7 +791,7 @@ namespace Toems_Service
                 foreach (var multicast in new ServiceActiveMulticastSession().GetOnDemandList())
                 {
                     var multicastSession = new WinPEMulticastList();
-                    multicastSession.Port = multicast.Port.ToString();
+                    multicastSession.Port = multicast.Id.ToString();
                     multicastSession.Name = multicast.Name;
                     multicastList.Add(multicastSession);
                 }
@@ -749,18 +803,19 @@ namespace Toems_Service
 
                 foreach (var multicast in new ServiceActiveMulticastSession().GetOnDemandList())
                 {
-                    multicastList.Multicasts.Add(multicast.Port + " " + multicast.Name);
+                    multicastList.Multicasts.Add(multicast.Id + " " + multicast.Name);
                 }
 
                 return JsonConvert.SerializeObject(multicastList);
             }
         }
 
-        public string MulticastCheckout(string portBase)
+        public string MulticastCheckout(string portBase,int comServerId)
         {
             string result = null;
+            var port = Convert.ToInt32(portBase);
             var activeMulticastSessionServices = new ServiceActiveMulticastSession();
-            var mcTask = activeMulticastSessionServices.GetFromPort(Convert.ToInt32(portBase));
+            var mcTask = activeMulticastSessionServices.GetAll().Where(x => x.Port == port && x.ComServerId == comServerId).FirstOrDefault();
 
             if (mcTask != null)
             {
@@ -829,7 +884,7 @@ namespace Toems_Service
                     }
                 }
 
-                if (task.Contains("upload"))
+                else if (task.Contains("upload"))
                 {
                     if (
                         !new AuthorizationServices(Convert.ToInt32(userId), AuthorizationStrings.ImageUploadTask)
@@ -841,7 +896,7 @@ namespace Toems_Service
                     }
                 }
 
-                if (task.Contains("multicast"))
+                else if (task.Contains("multicast"))
                 {
                     if (
                         !new AuthorizationServices(Convert.ToInt32(userId), AuthorizationStrings.ImageMulticastTask)
@@ -858,7 +913,7 @@ namespace Toems_Service
             if (computerId != "false")
                 computer = computerServices.GetComputer(Convert.ToInt32(computerId));
 
-            ImageProfileWithImage imageProfile;
+            ImageProfileWithImage imageProfile = null;
 
             var arguments = "";
             if (task == "deploy" || task == "upload" || task == "clobber" || task == "ondupload" || task == "onddeploy" ||
@@ -869,12 +924,22 @@ namespace Toems_Service
             }
             else //Multicast
             {
-                var multicast = new ServiceActiveMulticastSession().GetFromPort(objectId);
+                var multicast = new ServiceActiveMulticastSession().Get(objectId);
                 imageProfile = new ServiceImageProfile().ReadProfile(multicast.ImageProfileId);
-                arguments = new CreateTaskArguments(computer, imageProfile, task).Execute(objectId.ToString());
+                arguments = new CreateTaskArguments(computer, imageProfile, task,multicast.ComServerId).Execute(multicast.Port.ToString());
             }
 
-            var imageDistributionPoint = new GetImageServer(computer, task).Run();
+            int imageDistributionPoint = -1;
+            try
+            {
+                imageDistributionPoint = new GetImageServer(computer, task).Run();
+            }
+            catch
+            {
+                checkIn.Result = "false";
+                checkIn.Message = "Could Not Determine A Client Com Imaging Server";
+                return JsonConvert.SerializeObject(checkIn);
+            }
 
             if (imageProfile.Image.Protected && (task == "upload" || task == "ondupload" || task == "unregupload"))
             {
@@ -883,14 +948,74 @@ namespace Toems_Service
                 return JsonConvert.SerializeObject(checkIn);
             }
 
+            if(imageDistributionPoint == -1)
+            {
+                checkIn.Result = "false";
+                checkIn.Message = "Could Not Determine A Client Com Imaging Server";
+                return JsonConvert.SerializeObject(checkIn);
+            }
+
+            var imageServer = new ServiceClientComServer().GetServer(imageDistributionPoint);
+
             if (imageProfile.Image.Environment == "")
                 imageProfile.Image.Environment = "linux";
+
             checkIn.ImageEnvironment = imageProfile.Image.Environment;
 
             if (imageProfile.Image.Environment == "winpe")
-                arguments += "com_server_id=\"" + imageDistributionPoint + "\"\r\n";
+            {
+                arguments += " image_server=\"" + imageServer.Url + "clientimaging/" + "\"\r\n";
+            }
             else
-                arguments += " com_server_id=\"" + imageDistributionPoint + "\"";
+            {
+                arguments += " image_server=\"" + imageServer.Url + "clientimaging/" + "\"";
+            }
+
+            if (task.Contains("upload"))
+            {
+                if (!string.IsNullOrEmpty(imageServer.ImagingIp))
+                {
+                    if (imageProfile.Image.Environment == "winpe")
+                        arguments += " upload_server=\"" + imageServer.ImagingIp + "\"\r\n";
+                    else
+                        arguments += " upload_server=\"" + imageServer.ImagingIp + "\"";
+                }
+
+                else
+                {
+                    //get the ip needed for upload
+                    var urlHasIp = Regex.Match(imageServer.Url, @"\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b");
+                    if (urlHasIp.Success)
+                    {
+                        if (imageProfile.Image.Environment == "winpe")
+                            arguments += " upload_server=\"" + urlHasIp.Captures[0] + "\"\r\n";
+                        else
+                            arguments += " upload_server=\"" + urlHasIp.Captures[0] + "\"";
+                    }
+                    else
+                    {
+                        //get from dns
+                        var dnsName = imageServer.Url.Split(new[] { "//" }, StringSplitOptions.None).Last().Split(':').First();
+                        var ipaddresses = Dns.GetHostAddresses(dnsName).Where(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).ToList();
+                        if (ipaddresses.Count > 1)
+                        {
+                            checkIn.Result = "false";
+                            checkIn.Message = "More Than 1 Ip Address Has Been Resolved For Com Server.  You Must Add an IP Override.";
+                            return JsonConvert.SerializeObject(checkIn);
+                        }
+                        else
+                        {
+                            if (imageProfile.Image.Environment == "winpe")
+                                arguments += " upload_server=\"" +
+                                               ipaddresses.First().ToString() + "\"\r\n";
+                            else
+                                arguments += " upload_server=\"" +
+                                              ipaddresses.First().ToString() + "\"";
+                        }
+                    }
+                }
+
+            }
 
             var activeTask = new EntityActiveImagingTask();
             activeTask.Direction = task;
@@ -974,7 +1099,38 @@ namespace Toems_Service
             var guid = Guid.NewGuid().ToString();
             image.LastUploadGuid = guid;
             imageServices.Update(image);
-            return guid;
+
+            var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
+            var path = Path.Combine(basePath,"images",image.Name); 
+
+            using (var unc = new UncServices())
+            {
+                if (
+                      unc.NetUseWithCredentials() || unc.LastError == 1219)
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(path);
+                        using (var file = new StreamWriter(Path.Combine(path, "guid")))
+                        {
+                            file.WriteLine(guid);
+                        }
+                        return "true";
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error("Could Not Create Image Guid");
+                        log.Error(ex.Message);
+                        return "false";
+                    }
+                }
+                else
+                {
+                    log.Error("Failed to connect to " + basePath + "\r\nLastError = " + unc.LastError);
+                    return "false";
+                }
+            }
+
         }
 
         public void UpdateProgress(int taskId, string progress, string progressType)
@@ -1027,5 +1183,129 @@ namespace Toems_Service
             };
             new ServiceComputerLog().AddComputerLog(computerLog);
         }
+
+
+        public string SaveImageSchema(int profileId, string schema)
+        {
+            var profile = new UnitOfWork().ImageProfileRepository.GetImageProfileWithImage(profileId);
+
+            var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
+            var path = basePath + "images" + Path.DirectorySeparatorChar +
+                             profile.Image.Name + Path.DirectorySeparatorChar;
+            using (var unc = new UncServices())
+            {
+                if (
+                      unc.NetUseWithCredentials() || unc.LastError == 1219)
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(path);
+                        using (var file = new StreamWriter(path + "schema"))
+                        {
+                            file.WriteLine(schema);
+                        }
+                        return "true";
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error("Could Not Create Image Schema");
+                        log.Error(ex.Message);
+                        return "false";
+                    }
+                }
+                else
+                {
+                    log.Error("Failed to connect to " + basePath + "\r\nLastError = " + unc.LastError);
+                    return "false";
+                }
+            }
+        }
+
+        public string SaveMbr(HttpFileCollection files, int profileId, string hdNumber)
+        {
+            var profile = new UnitOfWork().ImageProfileRepository.GetImageProfileWithImage(profileId);
+
+            var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
+            var path = Path.Combine(basePath,"images",profile.Image.Name,$"hd{ hdNumber}"); 
+
+            using (var unc = new UncServices())
+            {
+                if (
+                      unc.NetUseWithCredentials() || unc.LastError == 1219)
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(path);
+                        foreach (string file in files)
+                        {
+                            var postedFile = files[file];
+                            var filePath = Path.Combine(path, "table");
+                            postedFile.SaveAs(filePath);
+
+                        }
+                        return "true";
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error("Could Not Save Mbr");
+                        log.Error(ex.Message);
+                        return "false";
+                    }
+                }
+                else
+                {
+                    log.Error("Failed to connect to " + basePath + "\r\nLastError = " + unc.LastError);
+                    return "false";
+                }
+            }
+        }
+
+        public void CloseUpload(int taskId, int port)
+        {
+            var activeUploadSession = new ServiceActiveMulticastSession().GetAll().Where(x => x.UploadTaskId == taskId && x.Port == port).FirstOrDefault();
+            if (activeUploadSession == null)
+                return;
+            var pid = activeUploadSession.Pid;
+            new ServiceActiveMulticastSession().DeleteUpload(activeUploadSession.Id);
+
+            //shouldn't be needed, by try to end task just in case it didn't close
+            try
+            {
+                var prs = Process.GetProcessById(Convert.ToInt32(pid));
+                var processName = prs.ProcessName;
+            
+                if (processName == "cmd")
+                        KillProcess(Convert.ToInt32(pid));            
+            }
+            catch
+            {
+                //ignored
+
+            }
+
+        }
+
+        private static void KillProcess(int pid)
+        {
+            var searcher =
+                new ManagementObjectSearcher("Select * From Win32_Process Where ParentProcessID=" + pid);
+            var moc = searcher.Get();
+            foreach (var o in moc)
+            {
+                var mo = (ManagementObject)o;
+                KillProcess(Convert.ToInt32(mo["ProcessID"]));
+            }
+            try
+            {
+                var proc = Process.GetProcessById(Convert.ToInt32(pid));
+                proc.Kill();
+            }
+            catch
+            {
+                //ignored
+            }
+        }
+
+
     }
 }

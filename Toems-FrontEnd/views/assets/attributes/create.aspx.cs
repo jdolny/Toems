@@ -27,7 +27,7 @@ namespace Toems_FrontEnd.views.global.attributes
             ca.Description = txtDescription.Text;
             ca.TextMode = (EnumCustomAttribute.TextMode)Enum.Parse(typeof(EnumCustomAttribute.TextMode), ddlTextMode.SelectedValue);
             ca.UsageType = Convert.ToInt32(ddlUsageType.SelectedValue);
-
+            ca.ClientImagingAvailable = chkImaging.Checked;
             var result = Call.CustomAttributeApi.Post(ca);
             if (!result.Success)
                 EndUserMessage = result.ErrorMessage;

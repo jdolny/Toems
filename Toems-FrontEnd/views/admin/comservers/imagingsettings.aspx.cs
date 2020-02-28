@@ -37,7 +37,6 @@ namespace Toems_FrontEnd.views.admin.comservers
             ComServer.ImagingMaxBps = Convert.ToInt32(txtMaxBitrate.Text);
             ComServer.ImagingMaxBps = (ComServer.ImagingMaxBps * 125);
             ComServer.ImagingMaxClients = Convert.ToInt32(txtMaxClients.Text);
-            ComServer.IsImageInfoServer = chkImageInformation.Checked;
 
             var result = Call.ClientComServerApi.Put(ComServer.Id, ComServer);
             EndUserMessage = result.Success ? "Successfully Updated Server" : result.ErrorMessage;
@@ -46,7 +45,6 @@ namespace Toems_FrontEnd.views.admin.comservers
         private void PopulateForm()
         {
             chkImagingServer.Checked = ComServer.IsImagingServer;
-            chkImageInformation.Checked = ComServer.IsImageInfoServer;
             if (ComServer.ImagingMaxBps != 0)
                 txtMaxBitrate.Text = (ComServer.ImagingMaxBps / 125).ToString();
             else

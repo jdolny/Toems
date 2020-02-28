@@ -28,7 +28,7 @@ namespace Toems_Service.Entity
         {
             var comServer = _uow.ClientComServerRepository.GetById(comServerId);
             var nextPort = new EntityMulticastPort();
-
+            nextPort.ComServerId = comServer.Id;
             var lastPort = _uow.MulticastPortRepository.Get(x => x.ComServerId == comServerId).OrderByDescending(x => x.Id).FirstOrDefault();
 
             if (lastPort == null)

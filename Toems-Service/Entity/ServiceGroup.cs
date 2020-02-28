@@ -413,7 +413,7 @@ namespace Toems_Service.Entity
             var members = _uow.GroupRepository.GetGroupMembersWithImages(groupId, "");
             foreach (var computer in members)
             {
-                if (new Toems_Service.Workflows.Unicast(computer.Id, "deploy", userId).Start().Contains("Successfully"))
+                if (new Toems_Service.Workflows.Unicast(computer.Id, "deploy", userId,groupId).Start().Contains("Successfully"))
                     count++;
             }
             return count;

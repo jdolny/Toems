@@ -6,18 +6,7 @@ if [ "$started_from_init" != "true" ]; then
 	error "Script Cannot Be Started This Way, Exports Are Not Set."
 fi
 
-################################################################
-#  Run Various Tasks On NTFS Partitions.
-#  Clear mounted devices in registry
-#  Save a copy of the BCD store
-#  Global Get:
-#    partition
-#	  image_path
-#  Global Set:
-#    none
-#  Arguments:
-#    none
-################################################################
+
 function ntfs_tasks()
 {
   mkdir -p /mnt/ntfs 2>> /dev/null
@@ -56,7 +45,7 @@ function save_mbr_gpt()
       usingGPT=true
       mbr_status=`gdisk -l $hard_drive 2>> $CLIENT_LOG <<< "q" 2>> $CLIENT_LOG | grep 'MBR:' | awk '{$1=""; print $0}' | sed 's/^ //'`
       if [ "$mbr_status" = "MBR only" ]; then
-        error "This Hard Drive Appears To Have Both GPT And MBR.  CloneDeploy Does Not Know What To Use.  You Must First Convert The Drive To One Or The Other Before Uploading"
+        error "This Hard Drive Appears To Have Both GPT And MBR.  Theopenem Does Not Know What To Use.  You Must First Convert The Drive To One Or The Other Before Uploading"
       fi
     elif [ "$gpt_status" = "damaged" ]; then
       error "The GPT Table Is Damaged And Cannot Be Saved.  You Must Fix This Before Uploading This Image"
@@ -77,28 +66,21 @@ function save_mbr_gpt()
     
 	dd_drive_name=$(echo $hard_drive | cut -d "/" -f 3)
     dd_lbs=$(cat /sys/block/$dd_drive_name/queue/logical_block_size)
-    dd if=$hard_drive of=$image_path/table count=$toSave bs=$dd_lbs &>> $CLIENT_LOG 
-    if [ -s "$image_path/table" ]; then
+    dd if=$hard_drive of=/tmp/table count=$toSave bs=$dd_lbs &>> $CLIENT_LOG
+	
+	mbrResult=$($curlAuth -FprofileId="$profile_id" -FhdNumber=$"$current_hd_number" -F "data=@/tmp/table" "${web}UploadMbr" $curlEnd)
+	
+    if [ "$mbrResult" = "true" ]; then
       log " ...... Success" "display"
     else
-      error "Could Not Save MBR /GPT .  Check Permissions."
+      error "Could Not Save MBR /GPT."
     fi
   
   echo
   sleep 5
 }
 
-################################################################
-#  Get logical volumes for current volume group
-#  Global Get:
-#    volume_group
-#	 custom_logical_volumes
-#  Global Set:
-#    logical_volumes
-#    logical_volume_count 
-#  Arguments:
-#    none
-################################################################
+
 function get_logical_volumes()
 {
   local lvs
@@ -123,17 +105,7 @@ function get_logical_volumes()
   done
 }
 
-################################################################
-#  Get partition list for current hard drive
-#  Global Get:
-#    custom_partitions
-#	 hard_drive
-#  Global Set:
-#    partitions
-#    partition_count  
-#  Arguments:
-#    display_onscreen - true|false - output log info to screen
-################################################################
+
 function get_partitions()
 {
   local display_onscreen="$1"
@@ -169,17 +141,6 @@ function get_partitions()
   fi
 }
 
-################################################################
-#  Shrink the filesystem to smallest usable size
-#  Global Get:
-#    filesystem_type
-#	 image_type
-#  Global Set:
-#    shrunk_volumes
-#  Arguments:
-#    volume_to_shrink - The partition or logical volume that
-#      contains the volume to shrink
-################################################################
 function shrink_volume()
 {
 	local volume_to_shrink="$1"
@@ -253,19 +214,7 @@ CONFIRM
   
 }
 
-################################################################
-#  Calculates the sizes of hard drive and partition and shrinks
-#    any applicable volumes
-#  Global Get:
-#    filesystem_type
-#	 image_type
-#  Global Set:
-#    shrunk_volumes
-#    hd_has_lvm
-#  Arguments:
-#    volume_to_shrink - The partition or logical volume that
-#      contains the volume to shrink
-################################################################
+
 function create_image_schema()
 {
   
@@ -307,7 +256,7 @@ function create_image_schema()
 	  log "Current NVRAM Entries"
 	  efibootmgr -v &>> $CLIENT_LOG
       if [ "$mbr_status" = "MBR only" ]; then
-        error "This Hard Drive Appears To Have Both GPT And MBR.  CloneDeploy Does Not Know What To Use.  You Must First Convert The Drive To One Or The Other Before Uploading"
+        error "This Hard Drive Appears To Have Both GPT And MBR.  Theopenem Does Not Know What To Use.  You Must First Convert The Drive To One Or The Other Before Uploading"
       fi
     else
       layout_type="mbr"
@@ -553,7 +502,11 @@ function create_image_schema()
   echo
   sleep 2 
   
-  echo $image_schema > /storage/images/$image_name/schema
+  schemaSaveResult=$($curlAuth --data "profileId=$profile_id&schema=$image_schema" "${web}SaveImageSchema" $curlEnd)
+  
+  if [ "$schemaSaveResult" != "true" ]; then
+	error "Could Not Save Image Schema"
+  fi
   
   if [ "$upload_schema_only" = "true" ]; then
     checkout
@@ -561,20 +514,6 @@ function create_image_schema()
 }
 
 
-################################################################
-#  Upload the image for the current hard drive
-#  Global Get:
-#    partitions
-#    compression_algorithm
-#    compression_level
-#	 computer_name
-#    web
-#    image_path
-#  Global Set:
-#    none
-#  Arguments:
-#    upload_type - physical | lvm
-################################################################
 function upload_image()
 {
   local upload_type="$1"
@@ -591,15 +530,12 @@ function upload_image()
   
   if [ "$compression_algorithm" = "lz4" ]; then
       compression_extension="lz4"
-	  partclone_out=" | "
-	  compression_out="lz4 $compression_level -c >"
+	  compression_out="lz4 $compression_level -c "
     elif [ "$compression_algorithm" = "gzip" ]; then
       compression_extension="gz"
-	   partclone_out=" | "
-	   compression_out="gzip $compression_level -c >"
+	   compression_out="gzip $compression_level -c "
 	elif [ "$compression_algorithm" = "none" ]; then
 	  compression_extension="uncp"
-	   partclone_out="-o"
 	   compression_out=""
     else
       error "Could Not Determine Current Compression Algorithm: $compression_algorithm"
@@ -636,14 +572,7 @@ function upload_image()
     elif [ "$filesystem_type" = "ext2" ] || [ "$filesystem_type" = "ext3" ] || [ "$filesystem_type" = "ext4" ]; then
       partclone_type="extfs"
       wim_arguments=" --unix-data $web_wim_args"
-    elif [ "$filesystem_type" = "hfsplus" ]; then
-      partclone_type="hfsp"
-      #I don't know why but partclone.hfsp used with lz4 results in a corrupted image file, always use gzip with hfs
-	  if [ "$compression_algorithm" = "lz4" ]; then
-        partclone_out="|"
-	    compression_out="gzip $compression_level -c >"
-        compression_extension="gz"
-      fi
+   
     elif [ "$filesystem_type" = "xfs" ]; then
       partclone_type="xfs"
       wim_arguments=" --unix-data $web_wim_args"
@@ -674,6 +603,15 @@ function upload_image()
 	  output_name=part$partition_number
 	fi
   
+	if [ "$image_type" = "File" ]; then
+	  compression_extension="wim"
+	fi
+	log " ** Preparing Client Com Imaging Server For Upload ** " "display"
+	upload_port=$($curlAuth --data "taskId=$task_id&fileName=$output_name.$partclone_type.$compression_extension&profileId=$profile_id&userId=$user_id&hdNumber=$current_hd_number" "${web}PrepareServerUpload" $curlEnd)
+	if [ "$upload_port" = "0" ]; then
+	  error "Could Not Start Server Image Receiver"
+	fi
+	
     if [ "$image_type" = "File" ] && [ -n "$wim_arguments" ]; then
 	  export WIMLIB_IMAGEX_USE_UTF8=1
 	  if [ "$filesystem_type" = "ntfs" ]; then
@@ -683,32 +621,32 @@ function upload_image()
 	    mount $partition /mnt/wimsource 2> /dev/null
 		wimsource="/mnt/wimsource"
       fi 	  
-	  touch /tmp/wim.progress
-	  log " ...... lie_reporter $task_id wim & wimlib-imagex capture $wimsource $image_path/$output_name.$partclone_type.wim $wim_arguments --compress=fast 2>> $CLIENT_LOG | tee /tmp/wim.progress"
-	  eval "lie_reporter $task_id wim & wimlib-imagex capture $wimsource $image_path/$output_name.$partclone_type.wim $wim_arguments --compress=fast 2>> $CLIENT_LOG | tee /tmp/wim.progress"
-	  rm /tmp/wim.progress
+
+	  log " ......  wimlib-imagex capture $wimsource - --pipable --compress=fast | udp-sender --portbase $upload_port  --pointopoint --no-progress --mcast-rdv-address $upload_server --min-receivers 1 "
+	   wimlib-imagex capture $wimsource - --pipable --compress=fast | udp-sender --portbase $upload_port  --pointopoint --no-progress --mcast-rdv-address $upload_server --min-receivers 1 
+
 	  umount /mnt/wimsource &> /dev/null
     else
 	  touch /tmp/clone.progress
 	  cd /
-	  log " ...... lie_reporter $task_id partclone & partclone.$partclone_type -B -c -s $partition $partclone_out $compression_out $image_path/$output_name.$partclone_type.$compression_extension"    
-	  eval "lie_reporter $task_id partclone & partclone.$partclone_type -B -c -s $partition $partclone_out $compression_out $image_path/$output_name.$partclone_type.$compression_extension"
+	  log " ..... lie_reporter $task_id partclone & partclone.$partclone_type -B -c -s $partition | $compression_out | udp-sender --portbase $upload_port --no-progress --pointopoint --mcast-rdv-address $upload_server --min-receivers 1 "
+
+	  lie_reporter $task_id partclone & partclone.$partclone_type -B -c -s $partition | $compression_out | udp-sender --portbase $upload_port --no-progress --pointopoint --mcast-rdv-address $upload_server --min-receivers 1 
       rm /tmp/clone.progress
       cat /var/log/partclone.log >> $CLIENT_LOG
-	  cd $image_path
-	  #killall lie_reporter &>/dev/null
 	fi
+	
+	session_closed=$($curlAuth --data "taskId=$task_id&port=$upload_port" "${web}CloseServerUpload" $curlEnd)
   done
 }
+
+
 
 function process_hard_drives()
 {
   current_hd_number=-1
   for hard_drive in $hard_drives; do
     current_hd_number=$(( $current_hd_number + 1 ))
-
-    image_path=/storage/images/$image_name/hd$current_hd_number
-    mkdir $image_path 2>> $CLIENT_LOG
 	
     save_mbr_gpt
   
@@ -740,7 +678,6 @@ function process_hard_drives()
   done
 
   image_guid=$($curlAuth --data "profileId=$profile_id" "${web}UpdateGuid" $curlEnd)
-  echo $image_guid > /storage/images/$image_name/guid
   
   log " shrunk_volumes: $shrunk_volumes"
   for shrunk_volume in $shrunk_volumes; do
@@ -755,8 +692,8 @@ function main()
   
   checkin
   
-  mount_smb
-
+  verify_image_server
+  
   get_hard_drives "upload"
 
   create_image_schema

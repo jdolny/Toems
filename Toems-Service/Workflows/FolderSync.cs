@@ -43,12 +43,6 @@ namespace Toems_Service.Workflows
                 return false;
             }
 
-            if (string.IsNullOrEmpty(thisComServer.TftpPath))
-            {
-                Logger.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
-                return false;
-            }
-
             using (var unc = new UncServices())
             {
                 if (unc.NetUseWithCredentials() || unc.LastError == 1219)

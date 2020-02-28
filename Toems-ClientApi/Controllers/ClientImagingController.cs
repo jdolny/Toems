@@ -16,6 +16,7 @@ using Toems_Service;
 using System.Web;
 using System.Configuration;
 using Toems_Service.Entity;
+using Toems_Common;
 
 namespace Toems_ClientApi.Controllers
 {
@@ -83,6 +84,22 @@ namespace Toems_ClientApi.Controllers
 
         [HttpPost]
         [ClientImagingAuth]
+        public HttpResponseMessage PrepareServerUpload(DtoPrepareUpload upload)
+        {
+            _response.Content = new StringContent(new UploadImage().Upload(upload.taskId,upload.fileName,upload.profileId,upload.userId,upload.hdNumber),
+               Encoding.UTF8, "text/plain");
+            return _response;
+        }
+
+        [HttpPost]
+        [ClientImagingAuth]
+        public void CloseServerUpload(DtoCloseUpload upload)
+        {
+            new ClientImagingServices().CloseUpload(upload.taskId, upload.port);
+        }
+
+        [HttpPost]
+        [ClientImagingAuth]
         public HttpResponseMessage CheckIn(ActiveTaskDTO activeTaskDto)
         {
             _response.Content = new StringContent(new ClientImagingServices().CheckIn(activeTaskDto.taskId),
@@ -144,7 +161,7 @@ namespace Toems_ClientApi.Controllers
         public HttpResponseMessage DetermineTask(IdTypeDTO idTypeDto)
         {
             _response.Content =
-                new StringContent(new ClientImagingServices().DetermineTask(idTypeDto.idType, idTypeDto.id),
+                new StringContent(new ClientImagingServices().DetermineTask(idTypeDto.id),
                     Encoding.UTF8, "text/plain");
             return _response;
         }
@@ -188,7 +205,7 @@ namespace Toems_ClientApi.Controllers
 
         [HttpPost]
         [ClientImagingAuth]
-        public HttpResponseMessage GetAllClusterDps(ComputerIdDTO computerIdDto)
+        public HttpResponseMessage GetOtherImageServers(ComputerIdDTO computerIdDto)
         {
             _response.Content = new StringContent(
                 new ClientImagingServices().GetAllClusterComServers(computerIdDto.computerId), Encoding.UTF8, "text/plain");
@@ -380,7 +397,7 @@ namespace Toems_ClientApi.Controllers
         [ClientImagingAuth]
         public HttpResponseMessage MulticastCheckOut(PortDTO portDto)
         {
-            _response.Content = new StringContent(new ClientImagingServices().MulticastCheckout(portDto.portBase),
+            _response.Content = new StringContent(new ClientImagingServices().MulticastCheckout(portDto.portBase,portDto.comServerId),
                 Encoding.UTF8, "text/plain");
             return _response;
         }
@@ -496,6 +513,17 @@ namespace Toems_ClientApi.Controllers
 
         [HttpPost]
         [ClientImagingAuth]
+        public HttpResponseMessage SaveImageSchema(DtoUploadSchema schema)
+        {
+            _response.Content = new StringContent(
+               new ClientImagingServices().SaveImageSchema(schema.profileId, schema.schema), Encoding.UTF8, "text/plain");
+            return _response;
+
+           
+        }
+
+        [HttpPost]
+        [ClientImagingAuth]
         public void UploadLog()
         {
             var computerId = StringManipulationServices.Decode(HttpContext.Current.Request.Form["computerId"],
@@ -505,6 +533,74 @@ namespace Toems_ClientApi.Controllers
             var subType = StringManipulationServices.Decode(HttpContext.Current.Request.Form["subType"], "subType");
             var computerMac = StringManipulationServices.Decode(HttpContext.Current.Request.Form["mac"], "mac");
             new ClientImagingServices().UploadLog(computerId, logContents, subType, computerMac);
+        }
+
+        [HttpPost]
+        [ClientImagingAuth]
+        public HttpResponseMessage UploadMbr()
+        {
+            var profileId = HttpContext.Current.Request.Form["profileId"];
+            var hdNumber = HttpContext.Current.Request.Form["hdNumber"];
+            var httpRequest = HttpContext.Current.Request;
+            _response.Content = new StringContent(
+              new ClientImagingServices().SaveMbr(httpRequest.Files, Convert.ToInt32(profileId),hdNumber), Encoding.UTF8, "text/plain");
+            return _response;
+         
+        }
+
+
+        [HttpPost]
+        [ClientImagingAuth]
+        public HttpResponseMessage GetImagingFile(DtoImageFileRequest fileRequest)
+        {
+            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
+            var thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            if (thisComServer == null)
+            {
+                Logger.Error($"Com Server With Guid {guid} Not Found");
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+            }
+            var profile = new ServiceImageProfile().ReadProfile(fileRequest.profileId);
+            if(profile == null)
+            {
+                Logger.Error($"Image Profile Not Found: {fileRequest.profileId}");
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+            }
+            var storageType = ServiceSetting.GetSettingValue(SettingStrings.StorageType);
+            var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
+            var maxBitRate = thisComServer.ImagingMaxBps;
+            if (storageType != "Local")
+                basePath = thisComServer.LocalStoragePath;
+
+            var fullPath = Path.Combine(basePath, "images",profile.Image.Name, $"hd{fileRequest.hdNumber}",
+                fileRequest.fileName);
+            if (File.Exists(fullPath))
+            {
+                HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
+                try
+                {
+                    var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
+                    if (maxBitRate == 0)
+                        result.Content = new StreamContent(stream);
+                    else
+                    {
+                        Stream throttledStream = new ThrottledStream(stream, maxBitRate);
+                        result.Content = new StreamContent(throttledStream);
+                    }
+
+                    result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                    result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("inline");
+                    result.Content.Headers.ContentDisposition.FileName = fileRequest.fileName;
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex.Message);
+
+                }
+            }
+
+            return new HttpResponseMessage(HttpStatusCode.NotFound);
         }
     }
 }

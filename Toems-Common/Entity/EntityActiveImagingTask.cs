@@ -62,8 +62,8 @@ namespace Toems_Common.Entity
         [Column("last_update_time")]
         public DateTime LastUpdateTime { get; set; }
 
-        [Column("is_web_task")]
-        public bool IsWebTask { get; set; }
+        [Column("image_profile_id")]
+        public int? ImageProfileId { get; set; }
 
         [NotMapped]
         public string Direction { get; set; }

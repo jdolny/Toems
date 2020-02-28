@@ -24,6 +24,7 @@ namespace Toems_Service.Workflows
             _computer = computer;
             _task = task;
             _random = new Random();
+            _uow = new UnitOfWork();
         }
 
         public int Run()
@@ -40,7 +41,7 @@ namespace Toems_Service.Workflows
             //if computer is null, probably unregistered on demand, find default group
             if (_computer == null)
             {
-                var cluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
+                _cluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
                 if (_cluster == null) return -1;
             }
             else
@@ -55,19 +56,27 @@ namespace Toems_Service.Workflows
                         computerGroups.Add(group);
                 }
 
-                var topPriorityGroup = computerGroups.OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).FirstOrDefault();
-                if (topPriorityGroup.ClusterId == -1) //-1 is default cluster
+                if (computerGroups.Count == 0)
                 {
                     _cluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
                     if (_cluster == null) return -1;
-
                 }
                 else
                 {
+                    var topPriorityGroup = computerGroups.OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).FirstOrDefault();
+                    if (topPriorityGroup.ClusterId == -1) //-1 is default cluster
+                    {
+                        _cluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
+                        if (_cluster == null) return -1;
 
-                    var _cluster = _uow.ComServerClusterRepository.GetById(topPriorityGroup.ClusterId);
-                    if (_cluster == null) return -1;
+                    }
+                    else
+                    {
 
+                        var _cluster = _uow.ComServerClusterRepository.GetById(topPriorityGroup.ClusterId);
+                        if (_cluster == null) return -1;
+
+                    }
                 }
             }
 
