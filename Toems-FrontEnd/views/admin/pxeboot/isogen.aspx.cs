@@ -16,6 +16,7 @@ namespace Toems_FrontEnd.views.admin.pxeboot
         {
             if (!IsPostBack)
             {
+                PopulateClusterGroupsDdl(ddlCluster);
                 ddlKernel.DataSource = Call.FilesystemApi.GetKernels();
                 ddlBootImage.DataSource = Call.FilesystemApi.GetBootImages();
                 ddlKernel.DataBind();
@@ -31,7 +32,7 @@ namespace Toems_FrontEnd.views.admin.pxeboot
             isoGenOptions.bootImage = ddlBootImage.Text;
             isoGenOptions.kernel = ddlKernel.Text;
             isoGenOptions.arguments = txtKernelArgs.Text;
-
+            isoGenOptions.clusterId = Convert.ToInt32(ddlCluster.SelectedValue);
             var clientboot = Call.SettingApi.GenerateIso(isoGenOptions);
 
             Response.Clear();

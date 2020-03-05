@@ -11,5 +11,6 @@ namespace Toems_Common.Dto
         public string arguments { get; set; }
         public string bootImage { get; set; }
         public string kernel { get; set; }
+        public int clusterId { get; set; }
     }
 }

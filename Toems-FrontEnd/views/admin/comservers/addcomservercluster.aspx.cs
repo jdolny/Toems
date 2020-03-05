@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
+using Toems_Common;
 using Toems_Common.Entity;
 
 namespace Toems_FrontEnd.views.admin.comservers
@@ -85,6 +86,7 @@ namespace Toems_FrontEnd.views.admin.comservers
                 return;
             }
 
+
             var result = Call.ComServerClusterApi.Post(comServerCluster);
             if (result.Success)
             {
@@ -111,6 +113,7 @@ namespace Toems_FrontEnd.views.admin.comservers
                     clusterServer.IsTftpServer = isTftpServer.Checked;
                     clusterServer.IsMulticastServer = isMulticast.Checked;
                     clusterServer.IsEndpointManagementServer = isEms.Checked;
+
                     listOfServers.Add(clusterServer);
                 }
 

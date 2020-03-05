@@ -57,6 +57,13 @@
     <div class="size-5 column">
         <asp:TextBox ID="txtUserLogin" runat="server" CssClass="textbox"></asp:TextBox>
     </div>
+     <br class="clear"/>
+    <div class="size-4 column">
+        Imaging Logs Auto Delete:
+    </div>
+    <div class="size-5 column">
+        <asp:TextBox ID="txtImagingLogs" runat="server" CssClass="textbox"></asp:TextBox>
+    </div>
 
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">

@@ -44,8 +44,7 @@ namespace Toems_Service.Workflows
             }
 
 
-
-            var availableMulticastServers = _uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == _cluster.Id && x.IsMulticastServer);
+            var availableMulticastServers = _uow.ComServerClusterServerRepository.GetMulticastClusterServers(_cluster.Id);
 
             if (!availableMulticastServers.Any())
                 return null;

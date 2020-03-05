@@ -74,6 +74,15 @@ namespace Toems_ApplicationApi.Controllers
             return result;
         }
 
+        [CustomAuth(Permission = AuthorizationStrings.ComputerUpdate)]
+        [HttpGet]
+        public DtoActionResult ClearImagingId(int id)
+        {
+            var result = _computerServices.ClearImagingClientId(id);
+            if (result == null) throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
+            return result;
+        }
+
         [CustomAuth(Permission = AuthorizationStrings.ComputerDelete)]
         public DtoActionResult Delete(int id)
         {
@@ -114,6 +123,37 @@ namespace Toems_ApplicationApi.Controllers
         {
             return _computerServices.GetComputerGroups(id);
         }
+
+        [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        public IEnumerable<DtoGroupImage> GetComputerGroupsWithImage(int id)
+        {
+            return _computerServices.GetComputerGroupsWithImage(id);
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        public IEnumerable<EntityClientComServer> GetComputerEmServers(int id)
+        {
+            return _computerServices.GetEmServers(id);
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        public IEnumerable<EntityClientComServer> GetComputerTftpServers(int id)
+        {
+            return _computerServices.GetTftpServers(id);
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        public IEnumerable<EntityClientComServer> GetComputerImageServers(int id)
+        {
+            return _computerServices.GetImageServers(id);
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        public ImageProfileWithImage GetEffectiveImage(int id)
+        {
+            return _computerServices.GetEffectiveImage(id);
+        }
+
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         public IEnumerable<DtoComputerPolicyHistory> GetPolicyHistory(int id)

@@ -57,17 +57,11 @@
                     <asp:TextBox ID="txtPartition" runat="server" CssClass="textbox height_18"/>
                 </ItemTemplate>
             </asp:TemplateField>
-            <asp:TemplateField ItemStyle-CssClass="width_100" HeaderText="Destination Path" SortExpression="Destination Path">
-                <ItemTemplate>
-
-                    <asp:TextBox ID="txtPath" runat="server" CssClass="textbox height_18"/>
-
-                </ItemTemplate>
-            </asp:TemplateField>
+          
           
         </Columns>
         <EmptyDataTemplate>
-            No Files / Folders Found
+            No Files Copy Modules Found
         </EmptyDataTemplate>
     </asp:GridView>
 

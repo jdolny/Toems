@@ -8,10 +8,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub" runat="Server">
     <li><asp:LinkButton ID="btnUpdateSettings" runat="server" Text="Update Security Settings" OnClick="btnUpdateSettings_OnClick" CssClass="main-action"/></li>
     <li><asp:LinkButton ID="btnGenKey" runat="server" Text="Generate Provison Key" OnClick="btnGenKey_OnClick" /></li>
+     <li><asp:LinkButton ID="btnGenImagingToken" runat="server" Text="Generate Imaging Token" OnClick="btnGenToken_OnClick" /></li>
 </asp:Content>
-
-
-
 
 
 <asp:Content ID="Content2" ContentPlaceHolderID="SubContent" runat="Server">
@@ -20,7 +18,7 @@
             $('#security').addClass("nav-current");
         });
     </script>
-
+    <h2>Endpoint Management Security Settings</h2>
     <div class="size-4 column">
         Provision Key:
         
@@ -69,6 +67,36 @@
     <div class="size-setting column hidden-check">
         <asp:CheckBox ID="chkResetRequest" runat="server" ClientIDMode="Static"></asp:CheckBox>
         <label for="chkResetRequest"></label>
+    </div>
+    <br class="clear"/>
+    <br />
+    <br />
+    <h2>Imaging Security Settings</h2>
+     <div class="size-4 column">
+        Global Imaging Token:
+        
+    </div>
+       <div class="size-5 column ">
+        <asp:TextBox ID="txtImagingToken" runat="server" Style="font-size:16px;" CssClass="textbox"></asp:TextBox>
+    </div>
+    <br class="clear"/>
+    <br />
+
+      <div class="size-4 column hidden-check">
+        Web Tasks Require Login:
+    </div>
+    <div class="size-setting column hidden-check">
+        <asp:CheckBox ID="chkWebTask" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkWebTask"></label>
+    </div>
+    <br class="clear"/>
+
+      <div class="size-4 column hidden-check">
+        Console Tasks Require Login:
+    </div>
+    <div class="size-setting column hidden-check">
+        <asp:CheckBox ID="chkConsoleTask" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkConsoleTask"></label>
     </div>
     <br class="clear"/>
   

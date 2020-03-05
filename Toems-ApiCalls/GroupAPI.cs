@@ -46,6 +46,27 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<List<EntityGroupCategory>>(Request);
         }
 
+        public DtoActionResult ClearImagingIds(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/ClearImagingIds/{1}", Resource, id);
+            var response = new ApiRequest().Execute<DtoActionResult>(Request);
+            if (response != null)
+            {
+                if (response.Id == 0)
+                    response.Success = false;
+            }
+            else
+            {
+                return new DtoActionResult()
+                {
+                    ErrorMessage = "Unknown Exception.  Check The Exception Logs For More Info.",
+                    Success = false
+                };
+            }
+            return response;
+        }
+
         public IEnumerable<EntitySmartGroupQuery> GetDynamicQuery(int id)
         {
             Request.Method = Method.GET;
@@ -70,9 +91,8 @@ namespace Toems_ApiCalls
             Request.AddJsonBody(queries);
             Request.Resource = string.Format("{0}/UpdateDynamicQuery/", Resource);
             var response = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
-            if (response != null)
-                return response.Value;
-            return false;
+            if (response != null) return response.Value;
+                return false;
         }
 
         public string GetMemberCount(int id)

@@ -70,6 +70,7 @@ namespace Toems_Service.Entity
             u.Archived = true;
             u.Name = u.Name + "#" + DateTime.Now.ToString("MM-dd-yyyy_HH:mm");
             u.ArchiveDateTime = DateTime.Now;
+
             var policyWithModules = _uow.PolicyRepository.GetDetailed(policyId);
             var moduleService = new ServiceModule();
             var moduleArchiveError = false;
@@ -106,6 +107,8 @@ namespace Toems_Service.Entity
                 };
             else
             {
+                _uow.PinnedPolicyRepository.DeleteRange(x => x.PolicyId == policyId);
+                _uow.Save();
                 return new DtoActionResult() {Id = u.Id, Success = true};
             }
 

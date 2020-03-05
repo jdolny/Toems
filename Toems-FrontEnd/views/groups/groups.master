@@ -96,6 +96,7 @@
     <li>      <asp:LinkButton ID="btnInventory" runat="server" OnClick="btnInventory_OnClick" Text="Collect Inventory"></asp:LinkButton></li>
     <li> <asp:LinkButton ID="btnPin" runat="server" OnClick="btnPin_OnClick" Text="Pin Group"></asp:LinkButton></li>
     <li>    <asp:LinkButton ID="btnUnpin" runat="server" OnClick="btnUnpin_OnClick" Text="Unpin Group"></asp:LinkButton></li>
+     <li><asp:LinkButton ID="btnClearImagingId" runat="server" OnClick="btnClearImagingId_Click" Text="Clear Imaging Ids"></asp:LinkButton></li>
 
 </asp:Content>
 

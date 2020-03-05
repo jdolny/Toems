@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 using System.Web.Security;
 using Toems_Common;
 using Toems_Common.Dto;
@@ -173,7 +174,42 @@ namespace Toems_Service.Entity
                 }
             }
 
-            
+            //remove for now, it's possible that you might want to com servers on the same server and still wouldn't need smb
+            /*
+            var comServerCount = Convert.ToInt32(TotalCount());
+            if(comServerCount > 0)
+            {
+                //verify storage type before allowing more than one com server
+                var storageType = ServiceSetting.GetSettingValue(SettingStrings.StorageType);
+                if(storageType.Equals("Local"))
+                {
+                    validationResult.Success = false;
+                    validationResult.ErrorMessage = "Could Not Add Server.  If Using More Than 1 Com Server, The Storage Type Must Be Set To SMB In Admin Settings->Storage Location";
+                    return validationResult;
+                }
+            }*/
+
+
+            Regex r = new Regex(@"^(?<proto>\w+)://[^/]+?(?<port>:\d+)?/",
+                                     RegexOptions.None, TimeSpan.FromMilliseconds(150));
+            Match m = r.Match(comServer.Url);
+            if (m.Success)
+            {
+                var port = r.Match(comServer.Url).Result("${port}");
+                if (string.IsNullOrEmpty(port))
+                {
+                    validationResult.Success = false;
+                    validationResult.ErrorMessage = "The URL Must Include The Port Number";
+                    return validationResult;
+                }
+            }
+            else
+            {
+                validationResult.Success = false;
+                validationResult.ErrorMessage = "The URL Is Invalid";
+                return validationResult;
+            }
+
 
             return validationResult;
 

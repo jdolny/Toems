@@ -70,6 +70,10 @@ namespace Toems_FrontEnd.views.groups
             var actionLabel = string.Empty;
             switch (action)
             {
+                case "clearImagingId":
+                    result = GroupBasePage.Call.GroupApi.ClearImagingIds(GroupEntity.Id);
+                    actionLabel = "Cleared Imaging Ids For";
+                    break;
                 case "delete":
                     result = GroupBasePage.Call.GroupApi.Delete(GroupEntity.Id);
                     actionLabel = "Deleted";
@@ -188,6 +192,13 @@ namespace Toems_FrontEnd.views.groups
         {
             lblTitle.Text = "Unicast " + GroupEntity.Name + "?";
             Session["action"] = "unicast";
+            DisplayConfirm();
+        }
+
+        protected void btnClearImagingId_Click(object sender, EventArgs e)
+        {
+            lblTitle.Text = "Clear Client Imaging Ids For " + GroupEntity.Name + "?";
+            Session["action"] = "clearImagingId";
             DisplayConfirm();
         }
     }

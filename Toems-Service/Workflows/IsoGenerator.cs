@@ -13,6 +13,7 @@ using System.Web;
 using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
+using Toems_Common.Dto.client;
 using Toems_Common.Entity;
 using Toems_DataModel;
 using Toems_Service.Entity;
@@ -69,8 +70,31 @@ namespace Toems_Service.Workflows
 
         public byte[] Create(DtoIsoGenOptions isoOptions)
         {
+            var uow = new UnitOfWork();
             _isoOptions = isoOptions;
             var mode = ServiceSetting.GetSettingValue(SettingStrings.PxeBootloader);
+            var imageServers = new List<DtoClientComServers>();
+            var defaultCluster = uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
+            if(isoOptions.clusterId == -1)
+            {
+               imageServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
+            }
+            else
+            {
+                imageServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(isoOptions.clusterId);
+            }
+
+            if(imageServers == null)
+            {
+                Logger.Error($"No Image Servers Found For This Cluster");
+                return null;
+            }
+
+            if (imageServers.Count == 0)
+            {
+                Logger.Error($"No Image Servers Found For This Cluster");
+                return null;
+            }
 
             var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
             _thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
@@ -89,7 +113,15 @@ namespace Toems_Service.Workflows
                 _userToken = "";
 
             _globalComputerArgs = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingArguments);
-            _webPath = _thisComServer.Url + "clientimaging/";
+
+            _webPath = "\"";
+            foreach (var imageServer in imageServers)
+            {
+                var url = new ServiceClientComServer().GetServer(imageServer.ComServerId).Url;
+                _webPath += url + "clientimaging/ "; //adds a space delimiter
+            }
+            _webPath = _webPath.Trim(' ');
+            _webPath += "\"";
 
             _basePath = HttpContext.Current.Server.MapPath("~") + "private" +
                       Path.DirectorySeparatorChar;
@@ -140,23 +172,23 @@ namespace Toems_Service.Workflows
             grubMenu.Append("}" + NewLineChar);
             grubMenu.Append("" + NewLineChar);
 
-            grubMenu.Append("menuentry \"CloneDeploy\" {" + NewLineChar);
+            grubMenu.Append("menuentry \"Theopenem\" {" + NewLineChar);
             grubMenu.Append("set gfxpayload=keep" + NewLineChar);
-            grubMenu.Append("linux	/clonedeploy/" + _isoOptions.kernel + " ramdisk_size=156000 root=/dev/ram0 rw web=" +
+            grubMenu.Append("linux	/theopenem/" + _isoOptions.kernel + " ramdisk_size=156000 root=/dev/ram0 rw web=" +
                             _webPath +
                             " USER_TOKEN=" + _userToken + " consoleblank=0 " + _isoOptions.arguments +
                             NewLineChar);
-            grubMenu.Append("initrd	/clonedeploy/" + _isoOptions.bootImage + NewLineChar);
+            grubMenu.Append("initrd	/theopenem/" + _isoOptions.bootImage + NewLineChar);
             grubMenu.Append("}" + NewLineChar);
             grubMenu.Append("" + NewLineChar);
 
             grubMenu.Append("menuentry \"Client Console\" {" + NewLineChar);
             grubMenu.Append("set gfxpayload=keep" + NewLineChar);
-            grubMenu.Append("linux	/clonedeploy/" + _isoOptions.kernel + " ramdisk_size=156000 root=/dev/ram0 rw web=" +
+            grubMenu.Append("linux	/theopenem/" + _isoOptions.kernel + " ramdisk_size=156000 root=/dev/ram0 rw web=" +
                             _webPath +
                             " USER_TOKEN=" + _userToken + " task=debug consoleblank=0 " + _isoOptions.arguments +
                             NewLineChar);
-            grubMenu.Append("initrd	/clonedeploy/" + _isoOptions.bootImage + NewLineChar);
+            grubMenu.Append("initrd	/theopenem/" + _isoOptions.bootImage + NewLineChar);
             grubMenu.Append("}" + NewLineChar);
             grubMenu.Append("" + NewLineChar);
 
@@ -196,19 +228,19 @@ namespace Toems_Service.Workflows
             sysLinuxMenu.Append("" + NewLineChar);
 
 
-            sysLinuxMenu.Append("LABEL CloneDeploy" + NewLineChar);
-            sysLinuxMenu.Append("kernel /clonedeploy/" + _isoOptions.kernel + "" + NewLineChar);
-            sysLinuxMenu.Append("append initrd=/clonedeploy/" + _isoOptions.bootImage +
+            sysLinuxMenu.Append("LABEL Theopenem" + NewLineChar);
+            sysLinuxMenu.Append("kernel /theopenem/" + _isoOptions.kernel + "" + NewLineChar);
+            sysLinuxMenu.Append("append initrd=/theopenem/" + _isoOptions.bootImage +
                                 " root=/dev/ram0 rw ramdisk_size=156000 " + " web=" + _webPath + " USER_TOKEN=" +
                                 _userToken +
                                 " consoleblank=0 " + _isoOptions.arguments + "" + NewLineChar);
-            sysLinuxMenu.Append("MENU LABEL CloneDeploy" + NewLineChar);
+            sysLinuxMenu.Append("MENU LABEL Theopenem" + NewLineChar);
             sysLinuxMenu.Append("" + NewLineChar);
 
 
             sysLinuxMenu.Append("LABEL Client Console" + NewLineChar);
-            sysLinuxMenu.Append("kernel /clonedeploy/" + _isoOptions.kernel + "" + NewLineChar);
-            sysLinuxMenu.Append("append initrd=/clonedeploy/" + _isoOptions.bootImage +
+            sysLinuxMenu.Append("kernel /theopenem/" + _isoOptions.kernel + "" + NewLineChar);
+            sysLinuxMenu.Append("append initrd=/theopenem/" + _isoOptions.bootImage +
                                 " root=/dev/ram0 rw ramdisk_size=156000 " + " web=" + _webPath + " USER_TOKEN=" +
                                 _userToken +
                                 " task=debug consoleblank=0 " + _isoOptions.arguments + "" + NewLineChar);
@@ -234,18 +266,18 @@ namespace Toems_Service.Workflows
                 if (Directory.Exists(_configOutPath))
                     Directory.Delete(_configOutPath, true);
                 Directory.CreateDirectory(_configOutPath);
-                Directory.CreateDirectory(_configOutPath + "clonedeploy");
+                Directory.CreateDirectory(_configOutPath + "theopenem");
                 Directory.CreateDirectory(_configOutPath + "EFI");
                 Directory.CreateDirectory(_configOutPath + "EFI" + Path.DirectorySeparatorChar + "boot");
                 Directory.CreateDirectory(_configOutPath + "syslinux");
                 File.Copy(
                     _thisComServer.TftpPath + "images" + Path.DirectorySeparatorChar +
                     _isoOptions.bootImage,
-                    _configOutPath + "clonedeploy" + Path.DirectorySeparatorChar + _isoOptions.bootImage, true);
+                    _configOutPath + "theopenem" + Path.DirectorySeparatorChar + _isoOptions.bootImage, true);
                 File.Copy(
                     _thisComServer.TftpPath + "kernels" + Path.DirectorySeparatorChar +
                     _isoOptions.kernel,
-                    _configOutPath + "clonedeploy" + Path.DirectorySeparatorChar + _isoOptions.kernel, true);
+                    _configOutPath + "theopenem" + Path.DirectorySeparatorChar + _isoOptions.kernel, true);
             }
             catch (Exception ex)
             {

@@ -31,6 +31,15 @@ namespace Toems_FrontEnd.views.admin {
         protected global::System.Web.UI.WebControls.LinkButton btnGenKey;
         
         /// <summary>
+        /// btnGenImagingToken control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnGenImagingToken;
+        
+        /// <summary>
         /// txtKey control.
         /// </summary>
         /// <remarks>
@@ -83,5 +92,32 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkResetRequest;
+        
+        /// <summary>
+        /// txtImagingToken control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtImagingToken;
+        
+        /// <summary>
+        /// chkWebTask control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkWebTask;
+        
+        /// <summary>
+        /// chkConsoleTask control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkConsoleTask;
     }
 }

@@ -7,6 +7,8 @@
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub" runat="Server">
     <li><asp:LinkButton ID="btnUpdateSettings" runat="server" Text="Update Client Settings" OnClick="btnUpdateSettings_OnClick" CssClass="main-action"/></li>
+    <li><asp:LinkButton ID="btnExportMsi" runat="server" Text="Export Client Msi 64-Bit" OnClick="btnExportMsi64_Click" CssClass="main-action"/></li>
+      <li><asp:LinkButton ID="btnExportMsi32" runat="server" Text="Export Client Msi 32-Bit" OnClick="btnExportMsi32_Click" CssClass="main-action"/></li>
 </asp:Content>
 
 

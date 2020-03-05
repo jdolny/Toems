@@ -11,6 +11,7 @@ function set_curl_command()
 function set_curl_auth()
 {
 	export curlAuth="curl -sSk -H Authorization:$(echo -n "$USER_TOKEN" | base64)"
+	export curlProgress="curl -#Sk -H Authorization:$(echo -n "$USER_TOKEN" | base64)"
 }
 
 function clear_and_move_down()
@@ -358,6 +359,7 @@ function move_to_front_of_list()
 
 function process_scripts()
 {
+  echo
   local scripts="$1"
   for script_id in $scripts; do
     $curlAuth --data "scriptId=$script_id" "${web}GetCustomScript" $curlEnd > /tmp/custom_script
@@ -370,6 +372,7 @@ function process_scripts()
 
 function process_sysprep_tags()
 {
+  echo
   local partition="$1"
   log " ** Processing Sysprep Tags On $partition ** " "display"
   sleep 5
@@ -409,6 +412,7 @@ function process_sysprep_tags()
 
 function process_file_copy()
 {
+  echo
   local current_object="$1"
   local object_type="$2"
   local array_index=-1
@@ -428,7 +432,7 @@ function process_file_copy()
     log "$current_file"
 	if [ "$object_type" = "partition" ]; then
 	  if [ "$(parse_json "$current_object" .Number)" = "$(parse_json "$current_file" .DestinationPartition)" ] || [ "$partition_method" = "standard" ]; then
-	    log "Copying /storage/resources/$(parse_json "$current_file" .SourcePath)"
+	    log "Downloading $(parse_json "$current_file" .FileName) To $(parse_json "$current_file" .DestinationFolder) " "display"
 		if [ "$(parse_json "$current_object" .FileSystem)" = "ntfs" ]; then
           mkdir /mnt/fs &> /dev/null
 		  ntfs-3g -o force,rw,remove_hiberfile $destination /mnt/fs &>/dev/null
@@ -436,7 +440,6 @@ function process_file_copy()
             log "Could Not Mount NTFS"
 	        return 1
           fi
-		  mkdir /mnt/fs/drivers &>/dev/null
 		else # only ext or xfs
 		  mkdir /mnt/fs &> /dev/null
 		  mount $destination /mnt/fs
@@ -445,19 +448,21 @@ function process_file_copy()
 	         return 1
            fi
 		fi
-		  if [ -d "/storage/resources/$(parse_json "$current_file" .SourcePath)" ]; then
-		    if [ "$(parse_json "$current_file" .FolderCopyType)" = "Folder" ]; then
-		      cp -R "/storage/resources/$(parse_json "$current_file" .SourcePath)" "/mnt/fs/$(parse_json "$current_file" .DestinationFolder)/" &>>$CLIENT_LOG
-			else #FolderCopyType = contents
-			  cp -R "/storage/resources/$(parse_json "$current_file" .SourcePath)/." "/mnt/fs/$(parse_json "$current_file" .DestinationFolder)/" &>>$CLIENT_LOG
-			fi		
-		  else
-            cp "/storage/resources/$(parse_json "$current_file" .SourcePath)" "/mnt/fs/$(parse_json "$current_file" .DestinationFolder)/" &>>$CLIENT_LOG
-		  fi
+			mkdir -p /mnt/fs/$(parse_json "$current_file" .DestinationFolder)
+			$curlProgress --data "guid=$(parse_json "$current_file" .ModuleGuid)&fileName=$(parse_json "$current_file" .FileName)" "${web}GetFile" -o /mnt/fs/$(parse_json "$current_file" .DestinationFolder)/$(parse_json "$current_file" .FileName)
+			if [ "$(parse_json "$current_file" .Unzip)" = "true" ]; then
+			  currentFileName="$(parse_json "$current_file" .FileName)"
+			  currentFileExtension=$(echo "${currentFileName##*.}")
+			  if [ "$currentFileExtension" = "zip" ]; then
+			    unzip -o /mnt/fs/$(parse_json "$current_file" .DestinationFolder)/$(parse_json "$current_file" .FileName) -d /mnt/fs/$(parse_json "$current_file" .DestinationFolder)/
+				rm -f /mnt/fs/$(parse_json "$current_file" .DestinationFolder)/$(parse_json "$current_file" .FileName)
+			  fi
+			fi
+			
 	  fi
 	else # object_type = lvm
 	  if [ "$object_type" = "$(parse_json "$current_file" .DestinationPartition)" ]; then
-	    log "Copying /storage/resources/$(parse_json "$current_file" .SourcePath)"
+	     log "Downloading $(parse_json "$current_file" .FileName) To $(parse_json "$current_file" .DestinationFolder) " "display"
 		if [ "$(parse_json "$current_object" .FileSystem)" = "ntfs" ]; then
           mkdir /mnt/fs &> /dev/null
 		  ntfs-3g -o force,rw,remove_hiberfile /dev/mapper/$object_type /mnt/fs &>/dev/null
@@ -473,15 +478,16 @@ function process_file_copy()
 	         return 1
            fi
 		fi
-		  if [ -d "/storage/resources/$(parse_json "$current_file" .SourcePath)" ]; then
-		    if [ "$(parse_json "$current_file" .FolderCopyType)" = "Folder" ]; then
-		      cp -R "/storage/resources/$(parse_json "$current_file" .SourcePath)" "/mnt/fs/$(parse_json "$current_file" .DestinationFolder)/" &>>$CLIENT_LOG
-			else #FolderCopyType = contents
-			  cp -R "/storage/resources/$(parse_json "$current_file" .SourcePath)/." "/mnt/fs/$(parse_json "$current_file" .DestinationFolder)/" &>>$CLIENT_LOG
-			fi		
-		  else
-            cp "/storage/resources/$(parse_json "$current_file" .SourcePath)" "/mnt/fs/$(parse_json "$current_file" .DestinationFolder)/" &>>$CLIENT_LOG
-		  fi
+			mkdir -p /mnt/fs/$(parse_json "$current_file" .DestinationFolder)
+			$curlProgress --data "guid=$(parse_json "$current_file" .ModuleGuid)&fileName=$(parse_json "$current_file" .FileName)" "${web}GetFile" -o /mnt/fs/$(parse_json "$current_file" .DestinationFolder)/$(parse_json "$current_file" .FileName)
+			if [ "$(parse_json "$current_file" .Unzip)" = "true" ]; then
+			  currentFileName="$(parse_json "$current_file" .FileName)"
+			  currentFileExtension=$(echo "${currentFileName##*.}")
+			  if [ "$currentFileExtension" = "zip" ]; then
+			    unzip -o /mnt/fs/$(parse_json "$current_file" .DestinationFolder)/$(parse_json "$current_file" .FileName) -d /mnt/fs/$(parse_json "$current_file" .DestinationFolder)/
+				rm -f /mnt/fs/$(parse_json "$current_file" .DestinationFolder)/$(parse_json "$current_file" .FileName)
+			  fi
+			fi
 		fi
 	fi
 	umount /mnt/fs

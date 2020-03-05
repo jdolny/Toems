@@ -185,11 +185,28 @@
           <div class="size-cron column">
            <asp:LinkButton ID="btnDataCleanup" runat="server" Text="Run Now" OnClick="btnDataCleanup_OnClick" CssClass="btn white margin-top-5"/>
         </div>
-          
-       
-          
             <br class="clear"/>
      
+           <div class="size-cron2 column">
+            Low Disk Space Report:
+        </div>
+        <div class="size-cron column">
+            <asp:TextBox ID="txtLowDiskSpace" runat="server" CssClass="textbox margin-top-10 "></asp:TextBox>
+              
+        </div>
+              <div class="size-cron2 column">
+              <asp:Label runat="server" ID="lblLowDiskLastRun"></asp:Label>
+              </div>
+          <div class="size-cron2 column">
+              <asp:Label runat="server" ID="lblLowDiskStatus"></asp:Label>
+              </div>
+         <div class="size-cron2 column">
+              <asp:Label runat="server" ID="lblLowDiskNextRun"></asp:Label>
+              </div>
+          <div class="size-cron column">
+           <asp:LinkButton ID="btnLowDisk" runat="server" Text="Run Now" OnClick="btnLowDisk_OnClick" CssClass="btn white margin-top-5"/>
+        </div>
+            <br class="clear"/>
           
 
     </div>

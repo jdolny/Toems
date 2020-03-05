@@ -63,14 +63,14 @@ namespace Toems_Service.Entity
 
         public void CancelTimedOutTasks()
         {
-            var timeout = ServiceSetting.GetSettingValue(SettingStrings.TaskTimeout);
+            var timeout = ServiceSetting.GetSettingValue(SettingStrings.ImageTaskTimeoutMinutes);
             if (string.IsNullOrEmpty(timeout)) return;
             if (timeout == "0") return;
             var tasks = GetAll();
 
-            foreach (var task in tasks.Where(task => task.Status == EnumTaskStatus.ImagingStatus.Imaging && !task.Type.ToLower().Contains("upload")))
+            foreach (var task in tasks)
             {
-                if (DateTime.Now > task.LastUpdateTime.AddMinutes(Convert.ToInt32(timeout)))
+                if (DateTime.UtcNow > task.LastUpdateTimeUTC.AddMinutes(Convert.ToInt32(timeout)))
                 {
                     DeleteActiveImagingTask(task.Id);
                     log.Debug("Task Timeout Hit. Task " + task.Id + "Cancelled.  Computer Id " + task.ComputerId);

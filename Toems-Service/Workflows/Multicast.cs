@@ -1,4 +1,4 @@
-﻿using CloneDeploy_Services;
+﻿
 using log4net;
 using Newtonsoft.Json;
 using System;
@@ -67,6 +67,13 @@ namespace Toems_Service.Workflows
 
             if (_multicastServerId == null)
                 return "Could Not Find Any Available Multicast Servers";
+
+
+            var comServer = new ServiceClientComServer().GetServer(Convert.ToInt32(_multicastServerId));
+            if(string.IsNullOrEmpty(comServer.MulticastInterfaceIp))
+            {
+                return "The Com Server's Multicast Interface IP Address Is Not Populated";
+            }
 
 
             _multicastSession.Port = new ServicePort().GetNextPort(_multicastServerId);

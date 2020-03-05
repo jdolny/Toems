@@ -37,6 +37,8 @@ namespace Toems_Service.Workflows
             if (!string.IsNullOrEmpty(collection.HardwareUUID))
                 client.UUID = collection.HardwareUUID;
             new ServiceComputer().UpdateComputer(client);
+            new ServiceImagingClientId().AddOrUpdate(client.Id);
+
 
             return true;
         }

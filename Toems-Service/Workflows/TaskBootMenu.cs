@@ -19,20 +19,17 @@ namespace Toems_Service.Workflows
     {
 
         private EntityClientComServer _thisComServer;
-        private string _globalComputerArgs;
-        private string _webPath;
         private string _userToken { get; set; }
         private EntityComputer _computer;
         private EntityImageProfile _imageProfile;
         private UnitOfWork _uow;
-        private EntityComServerCluster _cluster;
         private readonly ILog log = LogManager.GetLogger(typeof(TaskBootMenu));
 
         public bool RunAllServers(EntityComputer computer, EntityImageProfile imageProfile)
         {
 
             _uow = new UnitOfWork();
-            var comServers = GetComputerTftpServers(computer.Id);
+            var comServers = new Workflows.GetCompTftpServers().Run(computer.Id);
             if(comServers == null)
             {
                 log.Error("Could Not Determine Tftp Com Servers For Computer: " + computer.Name);
@@ -59,97 +56,6 @@ namespace Toems_Service.Workflows
 
             return NoErrors;
 
-        }
-
-        private List<EntityClientComServer> GetComputerTftpServers(int computerId)
-        {
-            var computerGroupMemberships = new ServiceComputer().GetAllGroupMemberships(computerId);
-            var computerGroups = new List<EntityGroup>();
-            foreach(var membership in computerGroupMemberships)
-            {
-                var group = _uow.GroupRepository.GetById(membership.GroupId);
-                if (group != null)
-                    computerGroups.Add(group);
-            }
-
-
-            if (computerGroups.Count == 0)
-            {
-                _cluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
-                if (_cluster == null) return null;
-            }
-            else
-            {
-                var topPriorityGroup = computerGroups.OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).FirstOrDefault();
-                if (topPriorityGroup.ClusterId == -1) //-1 is default cluster
-                {
-                    _cluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
-                    if (_cluster == null) return null;
-
-                }
-                else
-                {
-
-                    var _cluster = _uow.ComServerClusterRepository.GetById(topPriorityGroup.ClusterId);
-                    if (_cluster == null) return null;
-
-                }
-            }
-
-            var clusterServers = _uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == _cluster.Id && x.IsTftpServer);
-            var listComServers = new List<EntityClientComServer>();
-            foreach(var clusterServer in clusterServers)
-            {
-                var comServer = _uow.ClientComServerRepository.GetById(clusterServer.ComServerId);
-                listComServers.Add(comServer);
-            }
-
-            return listComServers;
-        }
-
-        private List<EntityClientComServer> GetComputerImageServers(int computerId)
-        {
-            var computerGroupMemberships = new ServiceComputer().GetAllGroupMemberships(computerId);
-            var computerGroups = new List<EntityGroup>();
-            foreach (var membership in computerGroupMemberships)
-            {
-                var group = _uow.GroupRepository.GetById(membership.GroupId);
-                if (group != null)
-                    computerGroups.Add(group);
-            }
-
-            if (computerGroups.Count == 0)
-            {
-                _cluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
-                if (_cluster == null) return null;
-            }
-            else
-            {
-                var topPriorityGroup = computerGroups.OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).FirstOrDefault();
-                if (topPriorityGroup.ClusterId == -1) //-1 is default cluster
-                {
-                    _cluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
-                    if (_cluster == null) return null;
-
-                }
-                else
-                {
-
-                    var _cluster = _uow.ComServerClusterRepository.GetById(topPriorityGroup.ClusterId);
-                    if (_cluster == null) return null;
-
-                }
-            }
-
-            var clusterServers = _uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == _cluster.Id && x.IsImagingServer);
-            var listComServers = new List<EntityClientComServer>();
-            foreach (var clusterServer in clusterServers)
-            {
-                var comServer = _uow.ClientComServerRepository.GetById(clusterServer.ComServerId);
-                listComServers.Add(comServer);
-            }
-
-            return listComServers;
         }
 
         public bool CreatePxeBootFiles(EntityComputer computer, EntityImageProfile imageProfile)
@@ -182,7 +88,7 @@ namespace Toems_Service.Workflows
 
             var pxeComputerMac = StringManipulationServices.MacToPxeMac(_computer.ImagingMac);
 
-            var imageComServers = GetComputerImageServers(computer.Id);
+            var imageComServers = new Workflows.GetCompImagingServers().Run(computer.Id);
 
             if (imageComServers == null)
             {
@@ -206,9 +112,21 @@ namespace Toems_Service.Workflows
 
             var globalComputerArgs = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingArguments);
 
+            var compTftpServers = new Workflows.GetCompTftpServers().Run(computer.Id);
 
-            var iPxePath = imageComServers.First().Url;
-            if (iPxePath.Contains("https://")) //just use the first imaging server for the ipxe kernel transfer
+            if (compTftpServers == null)
+            {
+                log.Error("Could Not Determine Tftp Com Servers For Computer: " + computer.Name);
+                return false;
+            }
+            if (compTftpServers.Count == 0)
+            {
+                log.Error("Could Not Determine Tftp Com Servers For Computer: " + computer.Name);
+                return false;
+            }
+
+            var iPxePath = compTftpServers.First().Url; //no way for fail over or load balance, just use first one
+            if (iPxePath.Contains("https://"))
             {
                 if (ServiceSetting.GetSettingValue(SettingStrings.IpxeSSL).Equals("False"))
                 {

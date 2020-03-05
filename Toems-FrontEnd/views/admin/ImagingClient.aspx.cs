@@ -36,6 +36,12 @@ namespace Toems_FrontEnd.views.admin
                     Value = txtPort.Text,
                     Id = Call.SettingApi.GetSetting(SettingStrings.IpxeHttpPort).Id
                 },
+                      new EntitySetting
+                {
+                    Name = SettingStrings.ImageTaskTimeoutMinutes,
+                    Value = txtImagingTimeout.Text,
+                    Id = Call.SettingApi.GetSetting(SettingStrings.ImageTaskTimeoutMinutes).Id
+                },
 
             };
            
@@ -49,7 +55,7 @@ namespace Toems_FrontEnd.views.admin
             if (IsPostBack) return;
             txtArguments.Text = GetSetting(SettingStrings.GlobalImagingArguments);
             txtPort.Text = GetSetting(SettingStrings.IpxeHttpPort);
-
+            txtImagingTimeout.Text = GetSetting(SettingStrings.ImageTaskTimeoutMinutes);
             if (GetSetting(SettingStrings.IpxeSSL) == "True")
                 chkIpxeSsl.Checked = true;
         }

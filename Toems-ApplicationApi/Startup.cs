@@ -136,6 +136,14 @@ namespace Toems_ApplicationApi
                     RecurringJob.AddOrUpdate("ScheduleRunner-Job", () => new ScheduleRunner().Run(), 
                        "*/15 * * * *", TimeZoneInfo.Local);
 
+                    var imagingTimeout = ServiceSetting.GetSettingValue(SettingStrings.ImageTaskTimeoutMinutes);
+                    if(!string.IsNullOrEmpty(imagingTimeout))
+                    {
+                        if(!imagingTimeout.Equals("0"))
+                            RecurringJob.AddOrUpdate("ImagingTaskTimeout-Job", () => new ServiceActiveImagingTask().CancelTimedOutTasks(),
+                      "*/5 * * * *", TimeZoneInfo.Local);
+                    }
+
                     var groupSchedule = ServiceSetting.GetSettingValue(SettingStrings.DynamicGroupSchedule);
                     var ldapSchedule = ServiceSetting.GetSettingValue(SettingStrings.LdapSyncSchedule);
                     var storageSchedule = ServiceSetting.GetSettingValue(SettingStrings.FolderSyncSchedule);
@@ -143,6 +151,7 @@ namespace Toems_ApplicationApi
                     var approvalSchedule = ServiceSetting.GetSettingValue(SettingStrings.ApproveReportSchedule);
                     var smartSchedule = ServiceSetting.GetSettingValue(SettingStrings.SmartReportSchedule);
                     var dataCleanupSchedule = ServiceSetting.GetSettingValue(SettingStrings.DataCleanupSchedule);
+                    var lowDiskSchedule = ServiceSetting.GetSettingValue(SettingStrings.LowDiskSchedule);
 
                     RecurringJob.AddOrUpdate("DynamicGroupUpdate-Job", () => new UpdateDynamicMemberships().All(),
                         groupSchedule, TimeZoneInfo.Local);
@@ -169,6 +178,12 @@ namespace Toems_ApplicationApi
                             smartSchedule, TimeZoneInfo.Local);
                     else
                         RecurringJob.RemoveIfExists("SmartReport-Job");
+
+                    if (!string.IsNullOrEmpty(lowDiskSchedule))
+                        RecurringJob.AddOrUpdate("LowDiskReport-Job", () => new ServiceReport().SendLowDiskSpaceReport(),
+                      lowDiskSchedule, TimeZoneInfo.Local);
+                    else
+                        RecurringJob.RemoveIfExists("LowDiskReport-Job");
 
 
                     if (!string.IsNullOrEmpty(dataCleanupSchedule))

@@ -203,7 +203,7 @@ namespace Toems_Service
 
         public string IpxeLogin(string username, string password, string kernel, string bootImage, string task)
         {
-            //todo: needs to look specific imaging servers, not the current com server
+            //no reason to look at other com  servers, just continue to use the currently connected one.
             var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
             var thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
             if (thisComServer == null)
@@ -225,7 +225,7 @@ namespace Toems_Service
 
 
             var iPxePath = webPath;
-            if (iPxePath.Contains("https://")) //just use the first imaging server for the ipxe kernel transfer
+            if (iPxePath.Contains("https://")) 
             {
                 if (ServiceSetting.GetSettingValue(SettingStrings.IpxeSSL).Equals("False"))
                 {

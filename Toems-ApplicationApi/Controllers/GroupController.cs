@@ -71,6 +71,15 @@ namespace Toems_ApplicationApi.Controllers
             return _groupServices.SearchGroups(new DtoSearchFilterCategories());
         }
 
+        [CustomAuth(Permission = AuthorizationStrings.GroupUpdate)]
+        [HttpGet]
+        public DtoActionResult ClearImagingIds(int id)
+        {
+            var result = _groupServices.ClearImagingIds(id);
+            if (result == null) throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
+            return result;
+        }
+
         [CustomAuth(Permission = AuthorizationStrings.GroupRead)]
         public IEnumerable<EntityGroup> GetAdGroups()
         {

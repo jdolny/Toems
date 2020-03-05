@@ -55,8 +55,14 @@ namespace Toems_FrontEnd.views.admin
                     Value = txtDataCleanup.Text,
                     Id = Call.SettingApi.GetSetting(SettingStrings.DataCleanupSchedule).Id
                 },
-               
-     
+                  new EntitySetting
+                {
+                    Name = SettingStrings.LowDiskSchedule,
+                    Value = txtLowDiskSpace.Text,
+                    Id = Call.SettingApi.GetSetting(SettingStrings.LowDiskSchedule).Id
+                },
+
+
             };
 
             foreach (var setting in listSettings)
@@ -101,7 +107,8 @@ namespace Toems_FrontEnd.views.admin
             txtApproval.Text = Call.SettingApi.GetSetting(SettingStrings.ApproveReportSchedule).Value;
             txtSmart.Text = Call.SettingApi.GetSetting(SettingStrings.SmartReportSchedule).Value;
             txtDataCleanup.Text = Call.SettingApi.GetSetting(SettingStrings.DataCleanupSchedule).Value;
-         
+            txtLowDiskSpace.Text = Call.SettingApi.GetSetting(SettingStrings.LowDiskSchedule).Value;
+
             var jobs = Call.HangfireTriggerApi.GetJobStatus();
             foreach (var job in jobs)
             {
@@ -149,7 +156,13 @@ namespace Toems_FrontEnd.views.admin
                     lblDataCleanupStatus.Text = string.IsNullOrEmpty(job.Status) ? "N/A" : job.Status;
                     lblDataCleanupNextRun.Text = string.IsNullOrEmpty(job.NextRun) ? "N/A" : job.NextRun;
                 }
-           
+                else if (job.Name.Equals("LowDiskReport-Job"))
+                {
+                    lblLowDiskLastRun.Text = string.IsNullOrEmpty(job.LastRun) ? "N/A" : job.LastRun;
+                    lblLowDiskStatus.Text = string.IsNullOrEmpty(job.Status) ? "N/A" : job.Status;
+                    lblLowDiskNextRun.Text = string.IsNullOrEmpty(job.NextRun) ? "N/A" : job.NextRun;
+                }
+
             }
         }
 
@@ -188,7 +201,12 @@ namespace Toems_FrontEnd.views.admin
             Call.HangfireTriggerApi.StartDataCleanup();
         }
 
-     
+        protected void btnLowDisk_OnClick(object sender, EventArgs e)
+        {
+            Call.HangfireTriggerApi.StartDataCleanup();
+        }
+
+
 
     }
 }

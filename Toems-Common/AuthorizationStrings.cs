@@ -72,6 +72,8 @@
 
         public const string EmailSmart = "emailSmart";
 
+        public const string EmailLowDiskSpace = "emailLowDiskSpace";
+
         public const string GroupPolicyRead = "groupPolicyRead";
 
         public const string GroupPolicyUpdate = "groupPolicyUpdate";

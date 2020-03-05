@@ -62,10 +62,8 @@ namespace Toems_FrontEnd.views.images.profiles
                         var txtPartition = row.FindControl("txtPartition") as TextBox;
                         if (txtPartition != null)
                             txtPartition.Text = profileFile.DestinationPartition;
-                        var txtPath = row.FindControl("txtPath") as TextBox;
-                        if (txtPath != null)
-                            txtPath.Text = profileFile.DestinationFolder;
-                      
+
+                     
                     }
                 }
             }
@@ -96,9 +94,6 @@ namespace Toems_FrontEnd.views.images.profiles
                 var txtPartition = row.FindControl("txtPartition") as TextBox;
                 if (txtPartition != null)
                     profileFileFolder.DestinationPartition = txtPartition.Text;
-                var txtPath = row.FindControl("txtPath") as TextBox;
-                if (txtPath != null)
-                    profileFileFolder.DestinationFolder = txtPath.Text;
               
                 EndUserMessage = Call.ImageProfileFileCopyApi.Post(profileFileFolder).Success
                     ? "Successfully Updated Image Profile"

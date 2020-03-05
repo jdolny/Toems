@@ -23,7 +23,7 @@ namespace Toems_Service
             var wc = new WebClient();
             try
             {
-                var data = wc.DownloadData("http://files.clonedeploy.org/kernels/kernels.json");
+                var data = wc.DownloadData("http://files.theopenem.com/kernels/kernels.json");
                 var text = Encoding.UTF8.GetString(data);
                 return JsonConvert.DeserializeObject<List<DtoOnlineKernel>>(text);
             }
@@ -34,25 +34,6 @@ namespace Toems_Service
             }
         }
 
-        private bool WebDownload(DtoOnlineKernel onlineKernel)
-        {
-            var baseUrl = "http://files.clonedeploy.org/kernels/";
-            using (var wc = new WebClient())
-            {
-                /*try
-                {
-                    wc.DownloadFile(new Uri(baseUrl + onlineKernel.BaseVersion + "/" + onlineKernel.FileName),
-                        ServiceSetting.GetSettingValue(SettingStrings.TftpPath) + "kernels" +
-                        Path.DirectorySeparatorChar + onlineKernel.FileName);
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex.Message);
-                    return false;
-                }*/
-            }
-            return true;
-        }
+       
     }
 }

@@ -1,4 +1,4 @@
-﻿using CloneDeploy_Services;
+﻿
 using log4net;
 using Newtonsoft.Json;
 using System;
@@ -29,6 +29,46 @@ namespace Toems_Service
 
         public string AddComputer(string name, string mac, string clientIdentifier)
         {
+            if(string.IsNullOrEmpty(name))
+            {
+                return
+                   JsonConvert.SerializeObject(new DtoActionResult
+                   {
+                       Success = false,
+                       ErrorMessage = "Name Not Valid.  Cannot Be Empty."
+                   });
+            }
+
+            if(name.Length > 15)
+            {
+                return
+                  JsonConvert.SerializeObject(new DtoActionResult
+                  {
+                      Success = false,
+                      ErrorMessage = "Name Not Valid.  Cannot Be More Than 15 characters."
+                  });
+            }
+
+            //https://support.microsoft.com/en-us/help/909264/naming-conventions-in-active-directory-for-computers-domains-sites-and
+            if (!name.All(c => char.IsLetterOrDigit(c) || (c != '\\' && c != '/' && c != ':' && c != '*' && c != '?' && c != '"' && c != '<' && c != '>' && c != '|')))
+            {
+                return
+                 JsonConvert.SerializeObject(new DtoActionResult
+                 {
+                     Success = false,
+                     ErrorMessage = "Name Not Valid.  Contains An Illegal Character"
+                 });
+            }
+            if(name.StartsWith("."))
+            {
+                return
+                 JsonConvert.SerializeObject(new DtoActionResult
+                 {
+                     Success = false,
+                     ErrorMessage = "Name Not Valid.  Cannot Start With A Period"
+                 });
+            }
+
             var existingComputer = new ServiceComputer().GetComputerFromClientIdentifier(clientIdentifier);
             if (existingComputer != null)
             {
@@ -237,7 +277,7 @@ namespace Toems_Service
                 return JsonConvert.SerializeObject(checkIn);
             }
 
-            var comServerId = new GetImageServer(computer, task.Type).Run();
+            var comServerId = new GetBestCompImageServer(computer, task.Type).Run();
 
             task.Status = EnumTaskStatus.ImagingStatus.CheckedIn;
             task.ComServerId = comServerId;
@@ -341,12 +381,17 @@ namespace Toems_Service
             return JsonConvert.SerializeObject(checkIn);
         }
 
-        public void CheckOut(int taskId, int profileId)
+        public void CheckOut(int taskId)
         {
             var activeImagingTaskServices = new ServiceActiveImagingTask();
             var task = activeImagingTaskServices.GetTask(taskId);
             if (task.Type.Contains("upload"))
             {
+                //protect image by default
+                var imageProfile = new ServiceImageProfile().ReadProfile(Convert.ToInt32(task.ImageProfileId));
+                imageProfile.Image.Protected = true;
+                new ServiceImage().Update(imageProfile.Image);
+
             }
 
             if (task.Type.Contains("unreg"))
@@ -531,44 +576,13 @@ namespace Toems_Service
             var computer = computerServices.GetComputer(computerId);
             var uow = new UnitOfWork();
 
-
-            var computerGroupMemberships = new ServiceComputer().GetAllGroupMemberships(computerId);
-            var computerGroups = new List<EntityGroup>();
-            foreach (var membership in computerGroupMemberships)
-            {
-                var group = uow.GroupRepository.GetById(membership.GroupId);
-                if (group != null)
-                    computerGroups.Add(group);
-            }
-
-            EntityComServerCluster cluster = new EntityComServerCluster();
-            var topPriorityGroup = computerGroups.OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).FirstOrDefault();
-            if (topPriorityGroup.ClusterId == -1) //-1 is default cluster
-            {
-                cluster = uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
-                if (cluster == null) return "false";
-
-            }
-            else
-            {
-
-                var _cluster = uow.ComServerClusterRepository.GetById(topPriorityGroup.ClusterId);
-                if (_cluster == null) return "false";
-
-            }
-
-            var clusterServers = uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == cluster.Id && x.IsImagingServer);
-            var listComServers = new List<string>();
-            foreach (var clusterServer in clusterServers)
-            {
-                var comServer = uow.ClientComServerRepository.GetById(clusterServer.ComServerId);
-                listComServers.Add(comServer.Url);
-            }
+            var imagingServers = new Workflows.GetCompImagingServers().Run(computerId);
+            if (imagingServers == null) return "false";
 
             var randomDpList = new List<string>();
             try
             {
-                randomDpList = listComServers.OrderBy(x => rnd.Next()).ToList();
+                randomDpList = imagingServers.OrderBy(x => rnd.Next()).Select(x => x.Url).ToList();
             }
             catch (Exception ex)
             {
@@ -603,15 +617,29 @@ namespace Toems_Service
             var counter = 0;
             foreach (var profileFileFolder in new ServiceImageProfile().GetImageProfileFileCopy(profileId))
             {
-                counter++;
+               
                 var fileFolder = new ServiceFileCopyModule().GetModule(profileFileFolder.FileCopyModuleId);
 
-                var clientFileFolder = new FileFolderCopy();
-                clientFileFolder.SourcePath = fileFolder.Name;
-                clientFileFolder.DestinationFolder = profileFileFolder.DestinationFolder;
-                clientFileFolder.DestinationPartition = profileFileFolder.DestinationPartition;
+                var moduleFiles = new ServiceModule().GetModuleFiles(fileFolder.Guid);
+                foreach (var file in moduleFiles.OrderBy(x => x.FileName))
+                {
+                    var clientFileFolder = new FileFolderCopy();
+                    clientFileFolder.ModuleGuid = fileFolder.Guid;
+                    clientFileFolder.FileName = file.FileName;
+                    clientFileFolder.DestinationFolder = fileFolder.Destination;
+                    clientFileFolder.DestinationFolder = clientFileFolder.DestinationFolder.Split(':').Last();
+                    clientFileFolder.DestinationFolder = clientFileFolder.DestinationFolder.Replace("\\", "/");
+                    clientFileFolder.DestinationPartition = profileFileFolder.DestinationPartition;
+                    if (fileFolder.DecompressAfterCopy)
+                        clientFileFolder.Unzip = "true";
+                    else
+                        clientFileFolder.Unzip = "false";
 
-                fileFolderSchema.FilesAndFolders.Add(clientFileFolder);
+                    fileFolderSchema.FilesAndFolders.Add(clientFileFolder);
+                    counter++;
+                }
+
+              
             }
             fileFolderSchema.Count = counter.ToString();
             return JsonConvert.SerializeObject(fileFolderSchema);
@@ -921,6 +949,7 @@ namespace Toems_Service
             {
                 imageProfile = new ServiceImageProfile().ReadProfile(objectId);
                 arguments = new CreateTaskArguments(computer, imageProfile, task).Execute();
+
             }
             else //Multicast
             {
@@ -932,7 +961,7 @@ namespace Toems_Service
             int imageDistributionPoint = -1;
             try
             {
-                imageDistributionPoint = new GetImageServer(computer, task).Run();
+                imageDistributionPoint = new GetBestCompImageServer(computer, task).Run();
             }
             catch
             {
@@ -1021,7 +1050,7 @@ namespace Toems_Service
             activeTask.Direction = task;
             activeTask.UserId = Convert.ToInt32(userId);
             activeTask.Type = task;
-
+            activeTask.ImageProfileId = imageProfile.Id;
             activeTask.ComServerId = imageDistributionPoint;
             activeTask.Status = EnumTaskStatus.ImagingStatus.CheckedIn;
 

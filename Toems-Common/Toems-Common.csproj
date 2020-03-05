@@ -73,6 +73,7 @@
     <Compile Include="Dto\client\DtoClientModuleCondition.cs" />
     <Compile Include="Dto\DtoActionResult.cs" />
     <Compile Include="Dto\DtoBootMenuGenOptions.cs" />
+    <Compile Include="Dto\DtoGroupImage.cs" />
     <Compile Include="Dto\DtoImageFileInfo.cs" />
     <Compile Include="Dto\DtoImageSchemaRequest.cs" />
     <Compile Include="Dto\DtoIsoGenOptions.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="Dto\formdata\ComputerMacDTO.cs" />
     <Compile Include="Dto\formdata\DpDTO.cs" />
     <Compile Include="Dto\formdata\DtoCloseUpload.cs" />
+    <Compile Include="Dto\formdata\DtoFileRequest.cs" />
     <Compile Include="Dto\formdata\DtoImageFileRequest.cs" />
     <Compile Include="Dto\formdata\DtoPrepareUpload.cs" />
     <Compile Include="Dto\formdata\DtoUploadSchema.cs" />

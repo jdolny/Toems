@@ -111,8 +111,7 @@ namespace Toems_ClientApi.Controllers
         [ClientImagingAuth]
         public void CheckOut(ActiveTaskDTO activeTaskDto)
         {
-            new ClientImagingServices().CheckOut(Convert.ToInt32(activeTaskDto.taskId),
-                Convert.ToInt32(activeTaskDto.profileId));
+            new ClientImagingServices().CheckOut(Convert.ToInt32(activeTaskDto.taskId));
         }
 
         [HttpPost]
@@ -574,6 +573,54 @@ namespace Toems_ClientApi.Controllers
 
             var fullPath = Path.Combine(basePath, "images",profile.Image.Name, $"hd{fileRequest.hdNumber}",
                 fileRequest.fileName);
+            if (File.Exists(fullPath))
+            {
+                HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
+                try
+                {
+                    var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
+                    if (maxBitRate == 0)
+                        result.Content = new StreamContent(stream);
+                    else
+                    {
+                        Stream throttledStream = new ThrottledStream(stream, maxBitRate);
+                        result.Content = new StreamContent(throttledStream);
+                    }
+
+                    result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                    result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("inline");
+                    result.Content.Headers.ContentDisposition.FileName = fileRequest.fileName;
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex.Message);
+
+                }
+            }
+
+            return new HttpResponseMessage(HttpStatusCode.NotFound);
+        }
+
+        [HttpPost]
+        [ClientImagingAuth]
+        public HttpResponseMessage GetFile(DtoFileRequest fileRequest)
+        {
+            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
+            var thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            if (thisComServer == null)
+            {
+                Logger.Error($"Com Server With Guid {guid} Not Found");
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+            }
+         
+            var storageType = ServiceSetting.GetSettingValue(SettingStrings.StorageType);
+            var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
+            var maxBitRate = thisComServer.ImagingMaxBps;
+            if (storageType != "Local")
+                basePath = thisComServer.LocalStoragePath;
+
+            var fullPath = Path.Combine(basePath, "software_uploads", fileRequest.guid, fileRequest.fileName);
             if (File.Exists(fullPath))
             {
                 HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);

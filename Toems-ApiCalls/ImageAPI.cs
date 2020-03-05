@@ -30,7 +30,8 @@ namespace Toems_ApiCalls
             Request.Resource = string.Format("{0}/GetImageSizeOnServer/", Resource);
             Request.AddParameter("imageName", imageName);
             Request.AddParameter("hdNumber", hdNumber);
-            return new ApiRequest().Execute<DtoApiStringResponse>(Request).Value;
+            var response = new ApiRequest().Execute<DtoApiStringResponse>(Request);
+            return response != null ? response.Value : string.Empty;
         }
 
         public IEnumerable<DtoImageFileInfo> GetPartitionFileInfo(int id, string selectedHd, string selectedPartition)

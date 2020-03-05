@@ -46,15 +46,33 @@ namespace Toems_FrontEnd.views.admin
                     Value = Convert.ToInt16(chkPreProvisionApproval.Checked).ToString(),
                     Id = Call.SettingApi.GetSetting(SettingStrings.PreProvisionRequiresApproval).Id
                 },
-               
+                        new EntitySetting
+                {
+                    Name = SettingStrings.WebTasksRequireLogin,
+                    Value = chkWebTask.Checked ? "True" : "False",
+                    Id = Call.SettingApi.GetSetting(SettingStrings.WebTasksRequireLogin).Id
+                },
+                         new EntitySetting
+                {
+                    Name = SettingStrings.ConsoleTasksRequireLogin,
+                    Value = chkConsoleTask.Checked ? "True" : "False",
+                    Id = Call.SettingApi.GetSetting(SettingStrings.ConsoleTasksRequireLogin).Id
+                },
+
                 new EntitySetting
                 {
                     Name = SettingStrings.IntercomKeyEncrypted,
                     Value = Guid.NewGuid().ToString("N").ToUpper() + Guid.NewGuid().ToString("N").ToUpper(),
                     Id = Call.SettingApi.GetSetting(SettingStrings.IntercomKeyEncrypted).Id
                 },
+                  new EntitySetting
+                {
+                    Name = SettingStrings.GlobalImagingToken,
+                    Value = txtImagingToken.Text,
+                    Id = Call.SettingApi.GetSetting(SettingStrings.GlobalImagingToken).Id
+                },
 
-              
+
             };
 
             if (!string.IsNullOrEmpty(txtKey.Text))
@@ -83,6 +101,9 @@ namespace Toems_FrontEnd.views.admin
             chkPreProvision.Checked = GetSetting(SettingStrings.RequirePreProvision) == "1";
             chkProvisionApproval.Checked = GetSetting(SettingStrings.RequireProvisionApproval) == "1";
             chkPreProvisionApproval.Checked = GetSetting(SettingStrings.PreProvisionRequiresApproval) == "1";
+            chkWebTask.Checked = Convert.ToBoolean(GetSetting(SettingStrings.WebTasksRequireLogin));
+            chkConsoleTask.Checked = Convert.ToBoolean(GetSetting(SettingStrings.ConsoleTasksRequireLogin));
+            txtImagingToken.Text = GetSetting(SettingStrings.GlobalImagingToken);
 
         }
 
@@ -104,6 +125,11 @@ namespace Toems_FrontEnd.views.admin
         protected void btnGenKey_OnClick(object sender, EventArgs e)
         {
             txtKey.Text = Guid.NewGuid().ToString("N").ToUpper() + Guid.NewGuid().ToString("N").ToUpper();
+        }
+
+        protected void btnGenToken_OnClick(object sender, EventArgs e)
+        {
+            txtImagingToken.Text = Guid.NewGuid().ToString("N").ToUpper();
         }
     }
 }

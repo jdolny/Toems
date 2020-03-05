@@ -116,6 +116,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.GET;
             Request.Resource = string.Format("{0}/GetClientInstallArgs/", Resource);
+
             var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
             if (response != null)
             {
@@ -205,6 +206,34 @@ namespace Toems_ApiCalls
             Request.Resource = string.Format("{0}/GenerateISO/", Resource);
             Request.AddJsonBody(isoOptions);
             return _apiRequest.ExecuteRaw(Request);
+        }
+
+        public byte[] ExportMsi(bool is64bit)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/ExportMsi/", Resource);
+            Request.AddParameter("is64bit", is64bit);
+            return _apiRequest.ExecuteRaw(Request);
+
+        }
+
+        public string GetMsiFileName(bool is64bit)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetMsiFileName/", Resource);
+            Request.AddParameter("is64bit", is64bit);
+            var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            if (response != null)
+            {
+                if (response.Value != null)
+                    return response.Value;
+                else
+                {
+                    return string.Empty;
+                }
+            }
+            return string.Empty;
+
         }
 
 

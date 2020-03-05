@@ -58,6 +58,27 @@ namespace Toems_ApiCalls
             return response;
         }
 
+        public DtoActionResult ClearImagingId(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/ClearImagingId/{1}", Resource, id);
+            var response = new ApiRequest().Execute<DtoActionResult>(Request);
+            if (response != null)
+            {
+                if (response.Id == 0)
+                    response.Success = false;
+            }
+            else
+            {
+                return new DtoActionResult()
+                {
+                    ErrorMessage = "Unknown Exception.  Check The Exception Logs For More Info.",
+                    Success = false
+                };
+            }
+            return response;
+        }
+
         public List<EntitySoftwareInventory> GetComputerSoftware(int id, string searchstring)
         {
             Request.Method = Method.GET;
@@ -65,6 +86,27 @@ namespace Toems_ApiCalls
             Request.AddParameter("id", id);
             Request.AddParameter("searchstring", searchstring);
             return new ApiRequest().Execute<List<EntitySoftwareInventory>>(Request);
+        }
+
+        public List<EntityClientComServer> GetComputerEmServers(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetComputerEmServers/{1}", Resource,id);
+            return new ApiRequest().Execute<List<EntityClientComServer>>(Request);
+        }
+
+        public List<EntityClientComServer> GetComputerTftpServers(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetComputerTftpServers/{1}", Resource, id);
+            return new ApiRequest().Execute<List<EntityClientComServer>>(Request);
+        }
+
+        public List<EntityClientComServer> GetComputerImageServers(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetComputerImageServers/{1}", Resource, id);
+            return new ApiRequest().Execute<List<EntityClientComServer>>(Request);
         }
 
         public List<EntityCertificateInventory> GetComputerCertificates(int id, string searchstring)
@@ -110,11 +152,26 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<DtoInventoryCollection>(Request);
         }
 
+        public ImageProfileWithImage GetEffectiveImage(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetEffectiveImage", Resource);
+            Request.AddParameter("id", id);
+            return new ApiRequest().Execute<ImageProfileWithImage>(Request);
+        }
+
         public IEnumerable<EntityGroup> GetComputerGroups(int id)
         {
             Request.Method = Method.GET;
             Request.Resource = string.Format("{0}/GetComputerGroups/{1}", Resource,id);
             return new ApiRequest().Execute<List<EntityGroup>>(Request);
+        }
+
+        public IEnumerable<DtoGroupImage> GetComputerGroupsWithImage(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetComputerGroupsWithImage/{1}", Resource, id);
+            return new ApiRequest().Execute<List<DtoGroupImage>>(Request);
         }
 
         public IEnumerable<EntityCustomComputerAttribute> GetCustomAttributes(int id)

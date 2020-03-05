@@ -56,6 +56,7 @@ namespace Toems_Service.Workflows
                     backup.CopyOptions.Destination = thisComServer.LocalStoragePath.Trim('\\');
                     backup.CopyOptions.CopySubdirectories = true;
                     backup.CopyOptions.UseUnbufferedIo = true;
+                    backup.CopyOptions.InterPacketGap = thisComServer.ReplicationRateIpg;
                     // select options
                     //backup.SelectionOptions.OnlyCopyArchiveFilesAndResetArchiveFlag = true;
                     backup.CopyOptions.Mirror = true;

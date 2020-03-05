@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using Toems_Common;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
@@ -47,6 +48,7 @@ namespace Toems_FrontEnd.views.admin
             }
             txtThreshold.Text = Call.SettingApi.GetSetting(SettingStrings.ThresholdWindow).Value;
             txtCheckin.Text = Call.SettingApi.GetSetting(SettingStrings.CheckinInterval).Value;
+
             txtArguments.Text = Call.SettingApi.GetClientInstallArgs();
             txtShutdownDelay.Text = Call.SettingApi.GetSetting(SettingStrings.ShutdownDelay).Value;
         }
@@ -149,6 +151,36 @@ namespace Toems_FrontEnd.views.admin
                 divDelayTime.Visible = false;
                 divDelayFilePath.Visible = false;
             }
+        }
+
+        protected void btnExportMsi64_Click(object sender, EventArgs e)
+        {
+            var msi = Call.SettingApi.ExportMsi(true);
+            var fileName = Call.SettingApi.GetMsiFileName(true);
+            Response.Clear();
+            var ms = new MemoryStream(msi);
+            Response.ContentType = "application/octet-stream";
+            Response.AddHeader("content-disposition", $"attachment;filename={fileName}");
+
+
+            Response.Buffer = true;
+            ms.WriteTo(Response.OutputStream);
+            Response.End();
+        }
+
+        protected void btnExportMsi32_Click(object sender, EventArgs e)
+        {
+            var msi = Call.SettingApi.ExportMsi(false);
+            var fileName = Call.SettingApi.GetMsiFileName(false);
+            Response.Clear();
+            var ms = new MemoryStream(msi);
+            Response.ContentType = "application/octet-stream";
+            Response.AddHeader("content-disposition", $"attachment;filename={fileName}");
+
+
+            Response.Buffer = true;
+            ms.WriteTo(Response.OutputStream);
+            Response.End();
         }
     }
 }

@@ -21,6 +21,7 @@ namespace Toems_Service.Entity
 
         public DtoActionResult AddUser(EntityToemsUser user)
         {
+            user.ImagingToken = Guid.NewGuid().ToString("N").ToUpper() + Guid.NewGuid().ToString("N").ToUpper();
             var validationResult = ValidateUser(user, true);
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
@@ -193,6 +194,7 @@ namespace Toems_Service.Entity
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
+                user.ImagingToken = Guid.NewGuid().ToString("N").ToUpper() + Guid.NewGuid().ToString("N").ToUpper(); //create new token each time user is updated
                 _uow.UserRepository.Update(user, user.Id);
                 _uow.Save();
                 actionResult.Success = true;

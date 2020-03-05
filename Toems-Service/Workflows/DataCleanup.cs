@@ -32,6 +32,7 @@ namespace Toems_Service.Workflows
             ComputerProcessHistory();
             PolicyHistory();
             UserLogins();
+            ImagingLogs();
             Logger.Info("Completed Data Cleanup Job");
             return true;
         }
@@ -139,6 +140,20 @@ namespace Toems_Service.Workflows
             Logger.Debug($"Deleting Policy History Older Than {intDays} Days");
             var dateCutOff = DateTime.UtcNow - TimeSpan.FromDays(intDays);
             _uow.UserLoginRepository.DeleteRange(x => x.LoginDateTime < dateCutOff && x.LoginDateTime > _utcCutoff);
+            _uow.Save();
+        }
+
+        private void ImagingLogs()
+        {
+            Logger.Debug("Imaging Logs Delete Started");
+            var deleteDays = ServiceSetting.GetSettingValue(SettingStrings.ImagingLogsAutoDeleteDays);
+            int intDays;
+            if (!int.TryParse(deleteDays, out intDays))
+                return;
+            if (intDays <= 0) return;
+            Logger.Debug($"Deleting Imaging Logs Older Than {intDays} Days");
+            var dateCutOff = DateTime.Now - TimeSpan.FromDays(intDays);
+            _uow.ComputerLogRepository.DeleteRange(x => x.LogTime < dateCutOff && x.LogTime > _localCutoff && !x.SubType.Equals("ondupload") && !x.SubType.Equals("upload") && !x.SubType.Equals("unregupload")); //don't delete upload logs
             _uow.Save();
         }
 

@@ -172,7 +172,30 @@ namespace Toems_ApplicationApi.Controllers
             return new DtoApiBoolResponse() { Value = new DefaultBootMenu().RunAllServers(defaultMenuOptions) };
         }
 
-     
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpGet]
+        public HttpResponseMessage ExportMsi(bool is64bit)
+        {
+            var msi = new ServiceMsiUpdater().UpdateMsis(is64bit);
+            var fileName = new ServiceMsiUpdater().GetNameForExport(is64bit);
+            var dataStream = new MemoryStream(msi);
+            var result = new HttpResponseMessage(HttpStatusCode.OK);
+            result.Content = new StreamContent(dataStream);
+            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+            result.Content.Headers.ContentDisposition.FileName = fileName;
+            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            result.Content.Headers.ContentLength = dataStream.Length;
+            return result;
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpGet]
+        public DtoApiStringResponse GetMsiFileName(bool is64bit)
+        {
+            return new DtoApiStringResponse() { Value = new ServiceMsiUpdater().GetNameForExport(is64bit) };
+        }
+
+
 
         [CustomAuth(Permission = AuthorizationStrings.PxeSettingsUpdate)]
         [HttpPost]

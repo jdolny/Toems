@@ -70,6 +70,14 @@ namespace Toems_ApiCalls
             return response != null && response.Value;
         }
 
+        public bool StartLowDiskReport()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/StartLowDiskReport", Resource);
+            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
+            return response != null && response.Value;
+        }
+
         public List<DtoRecurringJobStatus> GetJobStatus()
         {
             Request.Method = Method.GET;

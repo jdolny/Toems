@@ -45,6 +45,9 @@
                 <asp:ListItem Selected="True">Groups</asp:ListItem>
                 <asp:ListItem>Policies</asp:ListItem>
                 <asp:ListItem>Modules</asp:ListItem>
+                 <asp:ListItem>Endpoint Management Servers</asp:ListItem>
+                 <asp:ListItem>Image Servers</asp:ListItem>
+                 <asp:ListItem>Tftp Servers</asp:ListItem>
 
             </asp:DropDownList>
         </div>
@@ -68,12 +71,16 @@
         </EmptyDataTemplate>
     </asp:GridView>
     
-     <asp:GridView ID="gvGroups" runat="server"  DataKeyNames="Id"  AutoGenerateColumns="False" CssClass="Gridview extraPad" AlternatingRowStyle-CssClass="alt">
+     <asp:GridView ID="gvGroups" runat="server"  DataKeyNames="GroupId"  AutoGenerateColumns="False" CssClass="Gridview extraPad" AlternatingRowStyle-CssClass="alt">
         <Columns>
-            <asp:BoundField DataField="Id" HeaderText="Id"  Visible="False"/>
-             <asp:HyperLinkField DataNavigateUrlFields="Id" DataNavigateUrlFormatString="~/views/groups/general.aspx?groupId={0}" Text="View" ItemStyle-CssClass="chkboxwidth" Target="_blank"/>
-            <asp:BoundField DataField="Name" HeaderText="Name" ItemStyle-CssClass="width_200" ></asp:BoundField>
-            <asp:BoundField DataField="Dn" HeaderText="Dn" ></asp:BoundField>
+            <asp:BoundField DataField="GroupId" HeaderText="GroupId"  Visible="False"/>
+             <asp:HyperLinkField DataNavigateUrlFields="GroupId" DataNavigateUrlFormatString="~/views/groups/general.aspx?groupId={0}" Text="View" ItemStyle-CssClass="chkboxwidth" Target="_blank"/>
+            <asp:BoundField DataField="GroupName" HeaderText="Name" ItemStyle-CssClass="width_200" ></asp:BoundField>
+            <asp:BoundField DataField="GroupDn" HeaderText="Dn" ItemStyle-CssClass="width_200"></asp:BoundField>
+              <asp:BoundField DataField="ImageName" HeaderText="Image" ItemStyle-CssClass="width_200"></asp:BoundField>
+              <asp:BoundField DataField="ProfileName" HeaderText="Image Profile" ItemStyle-CssClass="width_200"></asp:BoundField>
+             <asp:BoundField DataField="ImagePriority" HeaderText="Imaging Priority" ItemStyle-CssClass="width_200"></asp:BoundField>
+             <asp:BoundField DataField="EmPriority" HeaderText="Endpoint Management Priority" ></asp:BoundField>
         </Columns>
         <EmptyDataTemplate>
             No Groups Found
@@ -88,6 +95,18 @@
         </Columns>
         <EmptyDataTemplate>
             No Policies Found
+        </EmptyDataTemplate>
+    </asp:GridView>
+
+     <asp:GridView ID="gvComServers" runat="server"  DataKeyNames="Id"  AutoGenerateColumns="False" CssClass="Gridview extraPad" AlternatingRowStyle-CssClass="alt">
+        <Columns>
+            <asp:BoundField DataField="Id" HeaderText="Id"  Visible="False"/>
+             <asp:HyperLinkField DataNavigateUrlFields="Id" DataNavigateUrlFormatString="~/views/admin/comservers/editcomserver.aspx?level=2&serverId={0}" Text="View" ItemStyle-CssClass="chkboxwidth" Target="_blank"/>
+            <asp:BoundField DataField="DisplayName" HeaderText="Name"  ItemStyle-CssClass="width_200" ></asp:BoundField>
+             <asp:BoundField DataField="Url" HeaderText="Url" ></asp:BoundField>
+        </Columns>
+        <EmptyDataTemplate>
+            No Com Servers Found
         </EmptyDataTemplate>
     </asp:GridView>
 </asp:Content>

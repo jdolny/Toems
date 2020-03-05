@@ -150,5 +150,63 @@ namespace Toems_Service.Entity
 
             return true;
         }
+
+        public bool SendLowDiskSpaceReport()
+        {
+            if (ServiceSetting.GetSettingValue(SettingStrings.SmtpEnabled) != "1")
+                return true;
+
+            var uow = new UnitOfWork();
+
+            var sb = new StringBuilder();
+            var errorsFound = false;
+            var comServers = new Workflows.ComServerFreeSpace().RunAllServers();
+
+            sb.Append("The Following Com Servers Have Low Disk Space:\r\n\r\n");
+            foreach (var comServer in comServers)
+            {
+                if(comServer.freePercent < 20)
+                {
+                    errorsFound = true;
+                    sb.Append(comServer.name + "\t" + comServer.freePercent + "% Free");
+                }
+            }
+
+            if (!errorsFound) return true;
+
+            var emailList = new List<string>();
+            var users = uow.UserRepository.Get();
+            foreach (var user in users)
+            {
+                if (user.Membership.Equals("Administrator"))
+                {
+                    if (!string.IsNullOrEmpty(user.Email))
+                        emailList.Add(user.Email);
+                }
+                else
+                {
+                    var rights = new ServiceUser().GetUserRights(user.Id).Select(right => right.Right).ToList();
+                    if (rights.Any(right => right == AuthorizationStrings.EmailLowDiskSpace))
+                    {
+                        if (!string.IsNullOrEmpty(user.Email))
+                            emailList.Add(user.Email);
+                    }
+                }
+            }
+
+            foreach (var email in emailList)
+            {
+                var mail = new MailServices
+                {
+                    Subject = "Com Server Low Disk Space",
+                    Body = sb.ToString(),
+                    MailTo = email
+                };
+
+                mail.Send();
+            }
+
+            return true;
+        }
     }
 }

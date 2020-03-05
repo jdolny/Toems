@@ -31,6 +31,13 @@
         <asp:DropDownList ID="ddlBootImage" runat="server" CssClass="ddlist">
         </asp:DropDownList>
     </div>
+      <div class="size-4 column">
+        Communication Server Cluster
+    </div>
+
+    <div class="size-5 column">
+        <asp:DropDownList ID="ddlCluster" runat="server" CssClass="ddlist"/>
+    </div>
     <br class="clear"/>
     <div class="size-4 column">
         Kernel Arguments:

@@ -25,7 +25,11 @@ namespace Toems_Service.Entity
                 DeleteClusterServers(clusterServer.ComServerClusterId);
             }
             foreach (var server in listOfServers)
+            {
+                if (server.IsMulticastServer)
+                    server.IsImagingServer = true; //a multicast server must be an imaging server
                 _uow.ComServerClusterServerRepository.Insert(server);
+            }
             _uow.Save();
 
             actionResult.Success = true;

@@ -26,7 +26,8 @@ namespace Toems_ApiCalls
             Request.Method = Method.GET;
             Request.Resource = string.Format("{0}/GetMinimumClientSize/{1}", Resource, id);
             Request.AddParameter("hdNumber", hdNumber);
-            return new ApiRequest().Execute<DtoApiStringResponse>(Request).Value;
+            var response = new ApiRequest().Execute<DtoApiStringResponse>(Request);
+            return response != null ? response.Value : string.Empty;
         }
 
         public IEnumerable<EntityImageProfileScript> GetScripts(int id)
@@ -66,21 +67,27 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.DELETE;
             Request.Resource = string.Format("{0}/RemoveProfileFileCopy/{1}", Resource, id);
-            return new ApiRequest().Execute<DtoApiBoolResponse>(Request).Value;
+            var response = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
+            if (response != null) return response.Value;
+            return false;
         }
 
         public bool RemoveProfileScripts(int id)
         {
             Request.Method = Method.DELETE;
             Request.Resource = string.Format("{0}/RemoveProfileScripts/{1}", Resource, id);
-            return new ApiRequest().Execute<DtoApiBoolResponse>(Request).Value;
+            var response = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
+            if (response != null) return response.Value;
+            return false;
         }
 
         public bool RemoveProfileSysprepTags(int id)
         {
             Request.Method = Method.DELETE;
             Request.Resource = string.Format("{0}/RemoveProfileSysprep/{1}", Resource, id);
-            return new ApiRequest().Execute<DtoApiBoolResponse>(Request).Value;
+            var response = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
+            if (response != null) return response.Value;
+            return false;
         }
     }
 }

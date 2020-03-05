@@ -4,5 +4,6 @@
     {
         public string Url { get; set; }
         public string Role { get; set; }
+        public int ComServerId { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using log4net;
 using Toems_Common;
@@ -53,6 +54,25 @@ namespace Toems_Service.Entity
                         }
                     }
                     setting.Value = new EncryptionServices().EncryptText(setting.Value);
+                }
+
+                if(setting.Name == SettingStrings.StoragePath)
+                {
+                    if (!string.IsNullOrEmpty(setting.Value))
+                    {
+                        if (setting.Value.StartsWith(@"\\"))
+                        {
+                            //unc path, ensure it ends with backslash
+                            if (!setting.Value.EndsWith(@"\"))
+                                setting.Value += @"\";
+                        }
+                        else
+                        {
+                            //local path, use os seperator char
+                            if (!setting.Value.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                                setting.Value += Path.DirectorySeparatorChar.ToString();
+                        }
+                    }
                 }
                 _uow.SettingRepository.Update(setting, setting.Id);
             }

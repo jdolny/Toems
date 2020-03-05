@@ -29,6 +29,7 @@ namespace Toems_FrontEnd.views.admin
             txtDeleteComputers.Text = Call.SettingApi.GetSetting(SettingStrings.ComputerAutoDelete).Value;
             txtPolicyHistory.Text = Call.SettingApi.GetSetting(SettingStrings.PolicyHistoryAutoDelete).Value;
             txtUserLogin.Text = Call.SettingApi.GetSetting(SettingStrings.UserLoginHistoryAutoDelete).Value;
+            txtImagingLogs.Text = GetSetting(SettingStrings.ImagingLogsAutoDeleteDays);
         }
 
         protected void btnUpdateSettings_OnClick(object sender, EventArgs e)
@@ -72,6 +73,12 @@ namespace Toems_FrontEnd.views.admin
                     Name = SettingStrings.UserLoginHistoryAutoDelete,
                     Value = txtUserLogin.Text,
                     Id = Call.SettingApi.GetSetting(SettingStrings.UserLoginHistoryAutoDelete).Id
+                },
+                  new EntitySetting
+                {
+                    Name = SettingStrings.ImagingLogsAutoDeleteDays,
+                    Value = txtImagingLogs.Text,
+                    Id = Call.SettingApi.GetSetting(SettingStrings.ImagingLogsAutoDeleteDays).Id
                 },
 
 

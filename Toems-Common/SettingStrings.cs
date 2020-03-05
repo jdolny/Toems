@@ -74,6 +74,8 @@
 
         public const string DataCleanupSchedule = "Data Cleanup Cron";
 
+        public const string LowDiskSchedule = "Low Disk Cron";
+
         public const string CertificateOrganization = "Certificate Organization";
 
         public const string PreProvisionRequiresApproval = "PreProvision Requires Approval";
@@ -134,17 +136,17 @@
 
         public const string DefaultKernel64 = "4.20.10x64";
 
-        public const string ImagingClientRequiresLogin = "Image Client Requires Login";
-
         public const string IpxeSSL = "iPXE SSL";
 
         public const string GlobalImagingArguments = "Global Imaging Arguments";
 
         public const string IpxeHttpPort = "iPXE Http Port";
 
-        public const string TaskTimeout = "Task Timeout";
-
         public const string GlobalImagingToken = "Global Imaging Token";
+
+        public const string ImagingLogsAutoDeleteDays = "Imaging Logs Auto Delete Days";
+
+        public const string ImageTaskTimeoutMinutes = "Image Task Timeout Minutes";
 
         public const string SharedLibraryVersion = "1.2.0.0";
 

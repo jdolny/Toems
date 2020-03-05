@@ -37,6 +37,13 @@
         <asp:TextBox ID="txtPort" runat="server" CssClass="textbox"></asp:TextBox>
     </div>
     <br class="clear"/>
+    <div class="size-4 column">
+        Imaging Task Timeout:
+    </div>
+    <div class="size-5 column">
+        <asp:TextBox ID="txtImagingTimeout" runat="server" CssClass="textbox"></asp:TextBox>
+    </div>
+    <br class="clear"/>
   
   
 

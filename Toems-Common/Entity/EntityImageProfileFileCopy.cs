@@ -12,9 +12,6 @@ namespace Toems_Common.Entity
         [Column("image_profile_file_copy_id")]
         public int Id { get; set; }
 
-        [Column("destination_folder")]
-        public string DestinationFolder { get; set; }
-
         [Column("destination_partition")]
         public string DestinationPartition { get; set; }
 

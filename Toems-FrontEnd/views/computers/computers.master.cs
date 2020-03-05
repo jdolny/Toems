@@ -58,6 +58,10 @@ namespace Toems_FrontEnd.views.computers
             var actionLabel = string.Empty;
             switch (action)
             {
+                case "clearImagingId":
+                    result = ComputerBasePage.Call.ComputerApi.ClearImagingId(ComputerEntity.Id);
+                    actionLabel = "Cleared Imaging Ids For";
+                    break;
                 case "delete":
                     result = ComputerBasePage.Call.ComputerApi.Delete(ComputerEntity.Id);
                     actionLabel = "Deleted";
@@ -185,6 +189,13 @@ namespace Toems_FrontEnd.views.computers
             Session["action"] = "deploy";
             DisplayConfirm();
 
+        }
+
+        protected void btnClearImagingId_Click(object sender, EventArgs e)
+        {
+            lblTitle.Text = "Clear Client Imaging Id For " + ComputerEntity.Name + "?";
+            Session["action"] = "clearImagingId";
+            DisplayConfirm();
         }
     }
 }

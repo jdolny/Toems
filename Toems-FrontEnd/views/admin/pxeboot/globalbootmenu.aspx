@@ -63,7 +63,7 @@
             <br/>
             <h2>Boot Menu Passwords - Optional</h2>
               <div class="size-4 column">
-                CloneDeploy Password:
+                Theopenem Password:
             </div>
             <div class="size-5 column">
                 <asp:TextBox ID="txtOndPwd" runat="server" CssClass="textbox" type="password"></asp:TextBox>
@@ -199,7 +199,7 @@
         <h2>PXELinux Boot Menu Passwords</h2>
         
           <div class="size-4 column">
-            CloneDeploy Password:
+            Theopenem Password:
         </div>
         <div class="size-5 column">
             <asp:TextBox ID="txtProxOndPwd" runat="server" CssClass="textbox" type="password"></asp:TextBox>

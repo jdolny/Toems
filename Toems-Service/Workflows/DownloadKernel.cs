@@ -57,7 +57,7 @@ namespace Toems_Service.Workflows
                 return false;
             }
 
-            var baseUrl = "http://files.clonedeploy.org/kernels/";
+            var baseUrl = "http://files.theopenem.com/kernels/";
             using (var wc = new WebClient())
             {
                 try
@@ -69,6 +69,7 @@ namespace Toems_Service.Workflows
                 }
                 catch (Exception ex)
                 {
+                    log.Error("Could Not Download Kernel On Com Server: " + _thisComServer.DisplayName);
                     log.Error(ex.Message);
                     return false;
                 }

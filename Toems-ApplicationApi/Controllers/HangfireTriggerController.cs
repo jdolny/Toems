@@ -69,6 +69,14 @@ namespace Toems_ApplicationApi.Controllers
             return new DtoApiBoolResponse() { Value = true };
         }
 
+        [HttpGet]
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        public DtoApiBoolResponse StartLowDiskReport()
+        {
+            Hangfire.RecurringJob.Trigger("LowDiskReport-Job");
+            return new DtoApiBoolResponse() { Value = true };
+        }
+
 
         [HttpGet]
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]

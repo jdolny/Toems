@@ -51,32 +51,7 @@ namespace Toems_Service.Workflows
             }
             else
             {
-                _imageProfile = new ServiceImageProfile().ReadProfile(_computer.ImageProfileId);
-                if (_imageProfile == null)
-                {
-                    //check for an image profile via group since computer doesn't have image directly assigned
-                    var computerGroupMemberships = new ServiceComputer().GetAllGroupMemberships(_computer.Id);
-                    var computerGroups = new List<EntityGroup>();
-                    foreach (var membership in computerGroupMemberships)
-                    {
-                        var group = _uow.GroupRepository.GetById(membership.GroupId);
-                        if (group != null)
-                            computerGroups.Add(group);
-                    }
-
-                    if (computerGroups.Count == 0)
-                    {
-                        return "Couldn't Find Any Images Assigned To The Computer";
-                    }
-                    else
-                    {
-                        var topGroup = computerGroups.Where(x => x.ImageProfileId != -1).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).FirstOrDefault();
-                        if(topGroup == null)
-                            return "Couldn't Find Any Images Assigned To The Computer";
-                        else
-                            _imageProfile = new ServiceImageProfile().ReadProfile(topGroup.ImageProfileId);
-                    }
-                }
+                _imageProfile = new ServiceComputer().GetEffectiveImage(_computer.Id);
             }
 
             if (_imageProfile.Image == null) return "The Image Does Not Exist";

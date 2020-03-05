@@ -18,6 +18,9 @@ namespace Toems_FrontEnd.views.computers
             gvGroups.DataBind();
             gvPolicies.DataSource = null;
             gvPolicies.DataBind();
+            gvComServers.DataSource = null;
+            gvComServers.DataBind();
+            gvComServers.Visible = false;
             gvPolicies.Visible = false;
             gvGroups.Visible = false;
             gvModules.Visible = false;
@@ -25,7 +28,7 @@ namespace Toems_FrontEnd.views.computers
             if (ddlUtil.Text == "Groups")
             {
                 gvGroups.Visible = true;
-                gvGroups.DataSource = Call.ComputerApi.GetComputerGroups(ComputerEntity.Id);
+                gvGroups.DataSource = Call.ComputerApi.GetComputerGroupsWithImage(ComputerEntity.Id);
                 gvGroups.DataBind();
             }
             else if (ddlUtil.Text == "Policies")
@@ -33,6 +36,24 @@ namespace Toems_FrontEnd.views.computers
                 gvPolicies.Visible = true;
                 gvPolicies.DataSource = Call.ComputerApi.GetComputerPolicies(ComputerEntity.Id);
                 gvPolicies.DataBind();
+            }
+            else if (ddlUtil.Text == "Endpoint Management Servers")
+            {
+                gvComServers.Visible = true;
+                gvComServers.DataSource = Call.ComputerApi.GetComputerEmServers(ComputerEntity.Id);
+                gvComServers.DataBind();
+            }
+            else if (ddlUtil.Text == "Image Servers")
+            {
+                gvComServers.Visible = true;
+                gvComServers.DataSource = Call.ComputerApi.GetComputerImageServers(ComputerEntity.Id);
+                gvComServers.DataBind();
+            }
+            else if (ddlUtil.Text == "Tftp Servers")
+            {
+                gvComServers.Visible = true;
+                gvComServers.DataSource = Call.ComputerApi.GetComputerTftpServers(ComputerEntity.Id);
+                gvComServers.DataBind();
             }
             else
             {

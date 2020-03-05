@@ -39,6 +39,20 @@ namespace Toems_FrontEnd.views.computers
             ddlComputerImage.SelectedValue = ComputerEntity.ImageId.ToString();
             PopulateProfiles();
             ddlImageProfile.SelectedValue = ComputerEntity.ImageProfileId.ToString();
+
+            try
+            {
+                var effectiveImage = Call.ComputerApi.GetEffectiveImage(ComputerEntity.Id);
+                if (effectiveImage != null)
+                {
+                    if (!string.IsNullOrEmpty(effectiveImage.Image.Name))
+                        lblImage.Text = effectiveImage.Image.Name;
+                    if (!string.IsNullOrEmpty(effectiveImage.Name))
+                        lblImageProfile.Text = effectiveImage.Name;
+                }
+            }
+            catch { //ignored
+            }
         }
 
         protected void btnUpdate_Click(object sender, EventArgs e)
@@ -53,6 +67,8 @@ namespace Toems_FrontEnd.views.computers
 
             var result = Call.ComputerApi.Put(ComputerEntity.Id, ComputerEntity);
             EndUserMessage = result.Success ? String.Format("Successfully Updated Computer {0}", ComputerEntity.Name) : result.ErrorMessage;
+
+            PopulateForm();
         }
     }
 }

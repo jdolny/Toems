@@ -22,6 +22,24 @@ namespace Toems_FrontEnd.views.admin {
         protected global::System.Web.UI.WebControls.LinkButton btnUpdateSettings;
         
         /// <summary>
+        /// btnExportMsi control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnExportMsi;
+        
+        /// <summary>
+        /// btnExportMsi32 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnExportMsi32;
+        
+        /// <summary>
         /// ddlStartupDelay control.
         /// </summary>
         /// <remarks>

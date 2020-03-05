@@ -122,6 +122,13 @@ namespace Toems_Service.Entity
             return pfx.RawData;
         }
 
+        public byte[] GetCAPublic()
+        {
+            var certEntity = _uow.CertificateRepository.GetFirstOrDefault(x => x.Type == EnumCertificate.CertificateType.Authority);
+            var pfx = new X509Certificate2(certEntity.PfxBlob, new EncryptionServices().DecryptText(certEntity.Password), X509KeyStorageFlags.Exportable);
+            return pfx.RawData;
+        }
+
         public byte[] GetCertRawPublic(int certificateId)
         {
             var certEntity = _uow.CertificateRepository.GetById(certificateId);

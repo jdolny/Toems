@@ -11,8 +11,8 @@ using LogicalVolume = Toems_Common.Dto.imageschemabe.DtoLogicalVolume;
 using VolumeGroup = Toems_Common.Dto.clientimaging.VolumeGroup;
 using Toems_Service;
 using Toems_Common.Dto.clientimaging;
+namespace Toems_Service
 
-namespace CloneDeploy_Services
 {
     /// <summary>
     ///     Calculates the minimum sizes required for various hard drives / partitions for the client imaging process

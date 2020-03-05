@@ -87,6 +87,20 @@ namespace Toems_Service.Entity
             return actionResult;
         }
 
+        public DtoActionResult ClearImagingClientId(int computerId)
+        {
+            var u = GetComputer(computerId);
+            if (u == null) return new DtoActionResult { ErrorMessage = "Computer Not Found", Id = 0 };
+            u.ImagingClientId = string.Empty;
+            u.ImagingMac = string.Empty;
+            _uow.ComputerRepository.Update(u, u.Id);
+            _uow.Save();
+            var actionResult = new DtoActionResult();
+            actionResult.Success = true;
+            actionResult.Id = u.Id;
+            return actionResult;
+        }
+
         public DtoActionResult DeleteComputer(int computerId)
         {
             var u = GetComputer(computerId);
@@ -104,6 +118,11 @@ namespace Toems_Service.Entity
             return _uow.ComputerRepository.GetAllComputerGroups(computerId);
         }
 
+        public List<DtoGroupImage> GetComputerGroupsWithImage(int computerId)
+        {
+            return _uow.ComputerRepository.GetAllComputerGroupsWithImage(computerId);
+        }
+
         public List<EntityPolicy> GetComputerPolicies(int computerId)
         {
             return _uow.ComputerRepository.GetComputerPolicies(computerId);
@@ -119,6 +138,32 @@ namespace Toems_Service.Entity
             return _uow.ComputerRepository.GetComputerModules(computerId);
         }
 
+        public ImageProfileWithImage GetEffectiveImage(int computerId)
+        {
+            var computer = GetComputer(computerId);
+            var imageProfile = new ServiceImageProfile().ReadProfile(computer.ImageProfileId);
+            if (imageProfile != null) return imageProfile;
+
+            //check for an image profile via group since computer doesn't have image directly assigned
+            var computerGroupMemberships = new ServiceComputer().GetAllGroupMemberships(computerId);
+            var computerGroups = _uow.ComputerRepository.GetAllComputerGroups(computerId).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
+
+            if (computerGroups.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                foreach (var group in computerGroups)
+                {
+                    imageProfile = new ServiceImageProfile().ReadProfile(group.ImageProfileId);
+                    if (imageProfile != null) return imageProfile;
+                }
+
+                //no images assigned to any groups
+                return null;  
+            }
+        }
 
         public string GetEffectivePolicy(int computerId, EnumPolicy.Trigger trigger, string comServerUrl)
         {
@@ -144,6 +189,28 @@ namespace Toems_Service.Entity
         public List<EntityGroup> GetComputerAdGroups(int computerId)
         {
            return _uow.ComputerRepository.GetComputerAdGroups(computerId);
+        }
+
+        public List<EntityClientComServer> GetEmServers(int computerId)
+        {
+            var list = new List<EntityClientComServer>();
+            var computer = GetComputer(computerId);
+            var result = new Workflows.GetCompEmServers().Run(computer.Guid);
+            foreach(var r in result)
+            {
+                list.Add(_uow.ClientComServerRepository.GetById(r.ComServerId));
+            }
+            return list;
+        }
+
+        public List<EntityClientComServer> GetTftpServers(int computerId)
+        {
+            return new Workflows.GetCompTftpServers().Run(computerId);
+        }
+
+        public List<EntityClientComServer> GetImageServers(int computerId)
+        {
+            return new Workflows.GetCompImagingServers().Run(computerId);
         }
 
         public EntityComputer GetByInstallationId(string installationid)
@@ -764,7 +831,16 @@ namespace Toems_Service.Entity
                 }
                 //if no matches or more than 1 match, don't return anything, user will need to register an image only computer
                 if (matchingComps.Count == 1)
+                {
+                    //since match was found update client identifier 
+                    var mac = clientIdentifier.Split('.').First();
+                    matchingComps.First().ImagingMac = mac;
+                    matchingComps.First().ImagingClientId = clientIdentifier;
+                    _uow.ComputerRepository.Update(matchingComps.First(), matchingComps.First().Id);
+                    _uow.Save();
                     return matchingComps.First();
+                    
+                }
             }
 
             computerClientIds = _uow.ClientImagingIdRepository.Get(x => x.ClientIdentifier == prettyIdentifier);
@@ -780,7 +856,15 @@ namespace Toems_Service.Entity
                 }
                 //if no matches or more than 1 match, don't return anything, user will need to register an image only computer
                 if (matchingComps.Count == 1)
+                {
+                    //since match was found update client identifier 
+                    var mac = clientIdentifier.Split('.').First();
+                    matchingComps.First().ImagingMac = mac;
+                    matchingComps.First().ImagingClientId = clientIdentifier;
+                    _uow.ComputerRepository.Update(matchingComps.First(), matchingComps.First().Id);
+                    _uow.Save();
                     return matchingComps.First();
+                }
             }
 
             //no matches

@@ -74,7 +74,7 @@ namespace Toems_Service.Workflows
             _globalComputerArgs = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingArguments);
 
             var defaultCluster = new UnitOfWork().ComServerClusterRepository.Get(x => x.IsDefault).FirstOrDefault();
-            var defaultImagingServers = new UnitOfWork().ComServerClusterServerRepository.Get(x => x.ComServerClusterId == defaultCluster.Id && x.IsImagingServer);
+            var defaultImagingServers = new UnitOfWork().ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
 
             _webPath = "\"";
             foreach (var imageServer in defaultImagingServers)
@@ -96,7 +96,7 @@ namespace Toems_Service.Workflows
             if (_defaultBoot.Type == "standard")
             {
                 if (mode.Contains("ipxe"))
-                    CreateIpxeMenu();
+                    CreateIpxeMenu(defaultCluster.Id);
                 else if (mode.Contains("grub"))
                     CreateGrubMenu();
                 else
@@ -122,7 +122,7 @@ namespace Toems_Service.Workflows
                         bootOptions.Kernel = bootOptions.Efi64Kernel;
                         bootOptions.BootImage = bootOptions.Efi64BootImage;
                     }
-                    CreateIpxeMenu();
+                    CreateIpxeMenu(defaultCluster.Id);
                     CreateSyslinuxMenu();
                     CreateGrubMenu();
                 }
@@ -145,7 +145,7 @@ namespace Toems_Service.Workflows
             grubMenu.Append("set default=0" + NewLineChar);
             grubMenu.Append("set timeout=10" + NewLineChar);
             grubMenu.Append("set pager=1" + NewLineChar);
-            if (!string.IsNullOrEmpty(_defaultBoot.GrubUserName) && !string.IsNullOrEmpty(_defaultBoot.GrubPassword))
+            /*if (!string.IsNullOrEmpty(_defaultBoot.GrubUserName) && !string.IsNullOrEmpty(_defaultBoot.GrubPassword))
             {
                 grubMenu.Append("set superusers=\"" + _defaultBoot.GrubUserName + "\"" + NewLineChar);
                 string sha = null;
@@ -164,7 +164,7 @@ namespace Toems_Service.Workflows
                 grubMenu.Append("password_pbkdf2 " + _defaultBoot.GrubUserName + " " + sha + "" + NewLineChar);
                 grubMenu.Append("export superusers" + NewLineChar);
                 grubMenu.Append("" + NewLineChar);
-            }
+            }*/
             grubMenu.Append(@"regexp -s 1:b1 '(.{1,3}):(.{1,3}):(.{1,3}):(.{1,3}):(.{1,3}):(.{1,3})' $net_default_mac" +
                             NewLineChar);
             grubMenu.Append(@"regexp -s 2:b2 '(.{1,3}):(.{1,3}):(.{1,3}):(.{1,3}):(.{1,3}):(.{1,3})' $net_default_mac" +
@@ -254,10 +254,11 @@ namespace Toems_Service.Workflows
           
         }
 
-        private void CreateIpxeMenu()
+        private void CreateIpxeMenu(int defaultClusterId)
         {
-            var iPxePath = _webPath.Split(' ').First().Trim('"');
-            if (iPxePath.Contains("https://")) //just use the first imaging server for the ipxe kernel transfer
+            var defaultTftpServers = new UnitOfWork().ComServerClusterServerRepository.GetTftpClusterServers(defaultClusterId);
+            var iPxePath = defaultTftpServers.First().Url; //just use the first tftpserver for the ipxe kernel transfer
+            if (iPxePath.Contains("https://")) 
             {
                 if (ServiceSetting.GetSettingValue(SettingStrings.IpxeSSL).Equals("False"))
                 {

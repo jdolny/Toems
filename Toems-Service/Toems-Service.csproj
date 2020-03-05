@@ -45,6 +45,25 @@
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Deployment.Compression, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
+      <HintPath>..\packages\WixMsiToolset.3.11.0\lib\net452\Microsoft.Deployment.Compression.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Deployment.Compression.Cab, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
+      <HintPath>..\packages\WixMsiToolset.3.11.0\lib\net452\Microsoft.Deployment.Compression.Cab.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Deployment.Compression.Zip, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
+      <HintPath>..\packages\WixMsiToolset.3.11.0\lib\net452\Microsoft.Deployment.Compression.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Deployment.WindowsInstaller, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
+      <HintPath>..\packages\WixMsiToolset.3.11.0\lib\net452\Microsoft.Deployment.WindowsInstaller.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Deployment.WindowsInstaller.Linq, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
+      <HintPath>..\packages\WixMsiToolset.3.11.0\lib\net452\Microsoft.Deployment.WindowsInstaller.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Deployment.WindowsInstaller.Package, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
+      <HintPath>..\packages\WixMsiToolset.3.11.0\lib\net452\Microsoft.Deployment.WindowsInstaller.Package.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -70,6 +89,7 @@
     <Compile Include="Entity\ServiceImageProfileFileCopy.cs" />
     <Compile Include="Entity\ServiceImageProfileSysprep.cs" />
     <Compile Include="Entity\ServiceImageProfileScript.cs" />
+    <Compile Include="Entity\ServiceImagingClientId.cs" />
     <Compile Include="Entity\ServicePort.cs" />
     <Compile Include="RegParser.cs" />
     <Compile Include="ServiceClientPartition.cs" />
@@ -154,6 +174,7 @@
     <Compile Include="Entity\ServiceGroupPolicy.cs" />
     <Compile Include="Entity\ServiceGroup.cs" />
     <Compile Include="Entity\ServiceCommandModule.cs" />
+    <Compile Include="ServiceMsiUpdater.cs" />
     <Compile Include="ServiceOnlineKernel.cs" />
     <Compile Include="ServiceProvision.cs" />
     <Compile Include="ServiceSymmetricEncryption.cs" />
@@ -180,7 +201,9 @@
     <Compile Include="Workflows\DataCleanup.cs" />
     <Compile Include="Workflows\DownloadKernel.cs" />
     <Compile Include="Workflows\ComServerFreeSpace.cs" />
-    <Compile Include="Workflows\GetImageServer.cs" />
+    <Compile Include="Workflows\GetCompImagingServers.cs" />
+    <Compile Include="Workflows\GetCompTftpServers.cs" />
+    <Compile Include="Workflows\GetBestCompImageServer.cs" />
     <Compile Include="Workflows\GetMulticastServer.cs" />
     <Compile Include="Workflows\IsoGenerator.cs" />
     <Compile Include="Workflows\DefaultBootMenu.cs" />
@@ -188,7 +211,7 @@
     <Compile Include="Workflows\CopyPxeBinaries.cs" />
     <Compile Include="Workflows\FolderSync.cs" />
     <Compile Include="Workflows\GenerateClientGroupPolicy.cs" />
-    <Compile Include="Workflows\GetClientComServers.cs" />
+    <Compile Include="Workflows\GetCompEmServers.cs" />
     <Compile Include="Workflows\GetClientPolicies.cs" />
     <Compile Include="Workflows\GetBootImages.cs" />
     <Compile Include="Workflows\GetKernels.cs" />

@@ -59,8 +59,8 @@ namespace Toems_Common.Entity
         [Column("com_server_id")]
         public int ComServerId { get; set; }
 
-        [Column("last_update_time")]
-        public DateTime LastUpdateTime { get; set; }
+        [Column("last_update_time_utc")]
+        public DateTime LastUpdateTimeUTC { get; set; }
 
         [Column("image_profile_id")]
         public int? ImageProfileId { get; set; }

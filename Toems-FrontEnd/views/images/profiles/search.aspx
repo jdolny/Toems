@@ -7,7 +7,7 @@
 Search
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub2" Runat="Server">
-    <li><asp:LinkButton ID="btnDelete" runat="server" Text="Delete Selected Images" OnClick="btnDelete_Click" CssClass="main-action"/></li>
+    <li><asp:LinkButton ID="btnDelete" runat="server" Text="Delete Selected Profiles" OnClick="btnDelete_Click" CssClass="main-action"/></li>
 </asp:Content>
 
 

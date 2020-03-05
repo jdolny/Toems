@@ -36,7 +36,22 @@
         <asp:DropDownList ID="ddlImageProfile" runat="server" CssClass="ddlist"/>
     </div>
     <br class="clear"/>
-   
+    <div class="size-4 column">
+        Effective Image:
+    </div>
+    <div class="size-5 column">
+        <asp:Label ID="lblImage" runat="server"/>
+    </div>
+    <br class="clear"/>
+
+     <div class="size-4 column">
+        Effective Image Profile:
+    </div>
+    <div class="size-5 column">
+        <asp:Label ID="lblImageProfile" runat="server"/>
+    </div>
+    <br class="clear"/>
+    
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
     <p>Allows you to add any comments to the computer.  Once a comment is added, it cannot be deleted or modified.  An example usage, could be to track repair history.</p>

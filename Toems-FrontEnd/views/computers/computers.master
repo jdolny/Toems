@@ -131,6 +131,7 @@
                 <li><asp:LinkButton ID="btnShutdown" runat="server" OnClick="btnShutdown_OnClick" Text="Shutdown"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="btnWakeup" runat="server" OnClick="btnWakeup_OnClick" Text="Wake Up"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="btnInventory" runat="server" OnClick="btnInventory_OnClick" Text="Collect Inventory"></asp:LinkButton></li>
+                 <li><asp:LinkButton ID="btnClearImagingId" runat="server" OnClick="btnClearImagingId_Click" Text="Clear Imaging Id"></asp:LinkButton></li>
 
 </asp:Content>
 

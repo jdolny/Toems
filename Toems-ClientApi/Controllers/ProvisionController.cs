@@ -118,7 +118,7 @@ namespace Toems_ClientApi.Controllers
             computer.ProvisionStatus = EnumProvisionStatus.Status.Provisioned;
             computerService.UpdateComputer(computer);
             var response = new DtoProvisionResponse();
-            var clientComServers = new GetClientComServers().Run(request.Guid);
+            var clientComServers = new GetCompEmServers().Run(request.Guid);
             if (clientComServers != null)
                 response.ComServers = clientComServers;
             response.ProvisionStatus = EnumProvisionStatus.Status.Provisioned;
@@ -197,7 +197,7 @@ namespace Toems_ClientApi.Controllers
             }
 
             
-            var clientComServers = new GetClientComServers().Run(request.Guid);
+            var clientComServers = new GetCompEmServers().Run(request.Guid);
             if (clientComServers != null)
                 response.ComServers = clientComServers;
             response.ProvisionStatus = EnumProvisionStatus.Status.Provisioned;

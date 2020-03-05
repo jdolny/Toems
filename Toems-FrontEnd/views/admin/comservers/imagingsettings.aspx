@@ -40,14 +40,7 @@
         <asp:TextBox ID="txtMaxClients" runat="server" CssClass="textbox"></asp:TextBox>
     </div>
      <br class="clear"/>
-     <div class="size-4 column">
-        Image Information Server:
-    </div>
-    <div class="size-5 column hidden-check">
-        <asp:CheckBox runat="server" id="chkImageInformation" ClientIDMode="Static"/>
-        <label for="chkImageInformation"></label>
-    </div>
-    <br class="clear"/>
+    
 
   
   

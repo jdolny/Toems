@@ -36,6 +36,21 @@ namespace Toems_Service.Entity
             return actionResult;
         }
 
+        public DtoActionResult ClearImagingIds(int groupId)
+        {
+            foreach(var computer in GetGroupMembers(groupId))
+            {
+                computer.ImagingClientId = string.Empty;
+                computer.ImagingMac = string.Empty;
+                _uow.ComputerRepository.Update(computer, computer.Id);
+            }
+            _uow.Save();
+            var actionResult = new DtoActionResult();
+            actionResult.Success = true;
+            actionResult.Id = groupId;
+            return actionResult;
+        }
+
         public DtoActionResult DeleteGroup(int groupId)
         {
             var u = GetGroup(groupId);

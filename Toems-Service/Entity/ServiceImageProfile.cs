@@ -1,5 +1,4 @@
-﻿using CloneDeploy_Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Toems_Common.Dto;
@@ -52,7 +51,29 @@ namespace Toems_Service.Entity
                     var clonedProfile = imageProfile;
                     clonedProfile.Name = newProfileName;
                     clonedProfile.Description = "Cloned From " + originalName;
-                    Add(clonedProfile);
+                    clonedProfile.ModelMatch = "";
+                    clonedProfile.ModelMatchType = "Disabled";
+
+                    var result = Add(clonedProfile);
+
+                    foreach (var file in GetImageProfileFileCopy(imageProfileId))
+                    {
+                        file.ProfileId = result.Id;
+                        new ServiceImageProfileFileCopy().AddImageProfileFileCopy(file);
+                    }
+
+                    foreach (var script in GetImageProfileScripts(imageProfileId))
+                    {
+                        script.ProfileId = result.Id;
+                        new ServiceImageProfileScript().AddImageProfileScript(script);
+                    }
+                
+
+                    foreach (var sysprep in GetImageProfileSysprep(imageProfileId))
+                    {
+                        sysprep.ProfileId = result.Id;
+                        new ServiceImageProfileSysprep().AddImageProfileSysprep(sysprep);
+                    }
                     break;
                 }
             }

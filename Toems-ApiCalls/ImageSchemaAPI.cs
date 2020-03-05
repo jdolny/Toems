@@ -27,6 +27,7 @@ namespace Toems_ApiCalls
             Request.Resource = string.Format("{0}/GetHardDrives", Resource);
             Request.AddJsonBody(schemaRequest);
             var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            if(response == null) return new List<DtoHardDrive>();
             var result = JsonConvert.DeserializeObject<List<DtoHardDrive>>(response.Value);
             if (result == null)
                 return new List<DtoHardDrive>();
@@ -40,6 +41,7 @@ namespace Toems_ApiCalls
             Request.Resource = string.Format("{0}/GetLogicalVolumes", Resource);
             Request.AddJsonBody(schemaRequest);
             var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            if (response == null) return new List<DtoLogicalVolume>();
             var result = JsonConvert.DeserializeObject<List<DtoLogicalVolume>>(response.Value);
             if (result == null)
                 return new List<DtoLogicalVolume>();
@@ -53,6 +55,7 @@ namespace Toems_ApiCalls
             Request.Resource = string.Format("{0}/GetPartitions", Resource);
             Request.AddJsonBody(schemaRequest);
             var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            if (response == null) return new List<DtoPartition>();
             var result = JsonConvert.DeserializeObject<List<DtoPartition>>(response.Value);
             if (result == null)
                 return new List<DtoPartition>();
@@ -66,7 +69,12 @@ namespace Toems_ApiCalls
             Request.Resource = string.Format("{0}/GetSchema", Resource);
             Request.AddJsonBody(schemaRequest);
             var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
-            return JsonConvert.DeserializeObject<DtoImageSchemaGridView>(response.Value);
+            if (response == null) return new DtoImageSchemaGridView();
+            var result = JsonConvert.DeserializeObject<DtoImageSchemaGridView>(response.Value);
+            if (result == null)
+                return new DtoImageSchemaGridView();
+            else
+                return result;
         }
     }
 }

@@ -141,6 +141,37 @@ namespace Toems_DataModel
                     select g).ToList();
         }
 
+        public List<DtoGroupImage> GetAllComputerGroupsWithImage(int computerId)
+        {
+            return (from h in _context.GroupMemberships
+                    join g in _context.Groups on h.GroupId equals g.Id
+                    join i in _context.ImageProfiles on g.ImageProfileId equals i.Id into gi
+                    from joinedProfile in gi.DefaultIfEmpty()
+                    join img in _context.Images on g.ImageId equals img.Id into gimage
+                    from joinedImage in gimage.DefaultIfEmpty()
+                    where h.ComputerId == computerId
+                    select new
+                    {
+                        groupId = g.Id,
+                        groupName = g.Name,
+                        groupDn = g.Dn,
+                        ImagePriority = g.ImagingPriority,
+                        EmPriority = g.EmPriority,
+                        ImageName = joinedImage.Name,
+                        ProfileName = joinedProfile.Name,
+                    }).AsEnumerable().Select(x => new DtoGroupImage()
+                    {
+                       GroupId = x.groupId,
+                       GroupName = x.groupName,
+                       GroupDn = x.groupDn,
+                       ImagePriority = x.ImagePriority,
+                       EmPriority = x.EmPriority,
+                       ImageName = x.ImageName,
+                       ProfileName = x.ProfileName
+
+                    }).ToList();
+        }
+
         public List<DtoModule> GetComputerModules(int computerId)
         {
             var policies = (from h in _context.GroupMemberships
