@@ -12,8 +12,9 @@ namespace Toems_FrontEnd.views.admin.comservers
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-                PopulateForm();
+            if (IsPostBack) return;
+            ViewState["clickTracker"] = "1";
+            PopulateForm();
         }
 
         protected void buttonUpdate_OnClick(object sender, EventArgs e)
@@ -25,7 +26,7 @@ namespace Toems_FrontEnd.views.admin.comservers
                 return;
             }
             ComServer.ReplicationRateIpg = Convert.ToInt32(txtMaxBitrate.Text);
-            ComServer.ReplicationRateIpg = (ComServer.ReplicationRateIpg * 750);
+        
             ComServer.ReplicateStorage = chkReplicateStorage.Checked;
             var result = Call.ClientComServerApi.Put(ComServer.Id, ComServer);
             EndUserMessage = result.Success ? "Successfully Updated Server" : result.ErrorMessage;
@@ -33,11 +34,20 @@ namespace Toems_FrontEnd.views.admin.comservers
 
         private void PopulateForm()
         {
+           
             chkReplicateStorage.Checked = ComServer.ReplicateStorage;
             if (ComServer.ReplicationRateIpg != 0)
-                txtMaxBitrate.Text = (ComServer.ReplicationRateIpg / 750).ToString();
+                txtMaxBitrate.Text = ComServer.ReplicationRateIpg.ToString();
             else
                 txtMaxBitrate.Text = "0";
+
+            PopulateGrid();
+        }
+
+        private void PopulateGrid()
+        {
+            gvProcess.DataSource = Call.ClientComServerApi.GetReplicationProcesses(ComServer.Id);
+            gvProcess.DataBind();
         }
 
         protected void btnCert_Click(object sender, EventArgs e)
@@ -51,6 +61,26 @@ namespace Toems_FrontEnd.views.admin.comservers
             Response.Buffer = true;
             ms.WriteTo(Response.OutputStream);
             Response.End();
+        }
+
+        protected void Timer_Tick(object sender, EventArgs e)
+        {
+            PopulateGrid();
+            UpdatePanel1.Update();
+        }
+
+        protected void btnCancel_Click(object sender, EventArgs e)
+        {
+            var control = sender as Control;
+            if (control != null)
+            {
+                var gvRow = (GridViewRow)control.Parent.Parent;
+                var dataKey = gvProcess.DataKeys[gvRow.RowIndex];
+                if (dataKey != null)
+
+                    Call.ClientComServerApi.KillReplicationProcess(ComServer.Id,Convert.ToInt32(dataKey.Value));
+            }
+            PopulateGrid();
         }
     }
 }

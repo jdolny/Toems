@@ -18,6 +18,10 @@
                 <a href="<%= ResolveUrl("~/views/computers/search.aspx") %>">
                     <span class="sub-nav-text">Search Active</span></a>
             </li>
+               <li id="imageonly">
+                <a href="<%= ResolveUrl("~/views/computers/searchimageonly.aspx") %>">
+                    <span class="sub-nav-text">Search Image Only</span></a>
+            </li>
               <li id="all">
                 <a href="<%= ResolveUrl("~/views/computers/all.aspx") %>">
                     <span class="sub-nav-text">Search All</span></a>
@@ -71,6 +75,10 @@
                  <li id="imaging">
                  <a href="<%= ResolveUrl("~/views/computers/imaging.aspx") %>?computerId=<%= ComputerEntity.Id %>">
                     <span class="sub-nav-text">Image Settings</span></a>
+            </li>
+                 <li id="imaginglogs">
+                 <a href="<%= ResolveUrl("~/views/computers/imaginglogs.aspx") %>?computerId=<%= ComputerEntity.Id %>">
+                    <span class="sub-nav-text">Imaging Logs</span></a>
             </li>
                   <li id="usages">
                  <a href="<%= ResolveUrl("~/views/computers/usages.aspx") %>?computerId=<%= ComputerEntity.Id %>">

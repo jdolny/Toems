@@ -89,7 +89,7 @@ namespace Toems_FrontEnd.views.admin
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            RequiresAuthorization(AuthorizationStrings.Administrator);
             if (!IsPostBack)
             {
                 PopulateForm();
@@ -169,41 +169,49 @@ namespace Toems_FrontEnd.views.admin
         protected void btnFolderSync_OnClick(object sender, EventArgs e)
         {
             Call.HangfireTriggerApi.StartFolderSync();
+            EndUserMessage = "Task Started";
         }
 
         protected void btnLdapSync_OnClick(object sender, EventArgs e)
         {
             Call.HangfireTriggerApi.StartLdapSync();
+            EndUserMessage = "Task Started";
         }
 
         protected void btnGroup_OnClick(object sender, EventArgs e)
         {
             Call.HangfireTriggerApi.StartDynamicGroupSync();
+            EndUserMessage = "Task Started";
         }
 
         protected void btnReset_OnClick(object sender, EventArgs e)
         {
             Call.HangfireTriggerApi.StartResetReport();
+            EndUserMessage = "Task Started";
         }
 
         protected void btnApproval_OnClick(object sender, EventArgs e)
         {
             Call.HangfireTriggerApi.StartApproveReport();
+            EndUserMessage = "Task Started";
         }
 
         protected void btnSmart_OnClick(object sender, EventArgs e)
         {
             Call.HangfireTriggerApi.StartSmartReport();
+            EndUserMessage = "Task Started";
         }
 
         protected void btnDataCleanup_OnClick(object sender, EventArgs e)
         {
             Call.HangfireTriggerApi.StartDataCleanup();
+            EndUserMessage = "Task Started";
         }
 
         protected void btnLowDisk_OnClick(object sender, EventArgs e)
         {
             Call.HangfireTriggerApi.StartDataCleanup();
+            EndUserMessage = "Task Started";
         }
 
 

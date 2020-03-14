@@ -29,7 +29,7 @@ namespace Toems_ApplicationApi.Controllers
             return result;
         }
 
-        [CustomAuth(Permission = "Administrator")]
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public DtoActionResult Put(EntityImageProfileTemplate template)
         {
             var result = _imageProfileTemplateService.UpdateTemplate(template);

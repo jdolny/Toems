@@ -534,7 +534,7 @@ Table.Gridview {
     color: #3d6889;
     font-weight: 700;
     padding: 5px 10px;
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .Gridview a:visited {
@@ -544,7 +544,7 @@ Table.Gridview {
 .extraPad td { padding: 10px; }
 
 Table.log {
-    max-width: 900px;
+   
     white-space: normal;
     word-wrap: break-word;
 }

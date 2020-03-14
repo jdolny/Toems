@@ -13,6 +13,7 @@ namespace Toems_FrontEnd.views.admin.logs
             HttpContext.Current.Response.AppendHeader("Content-Disposition",
                 "attachment; filename=" + ddlLog.Text);
             var log = GetLogContents(ddlLog.Text, int.MaxValue);
+            if (log == null) return;
             var sb = new StringBuilder();
             foreach (var line in log)
             {
@@ -35,7 +36,7 @@ namespace Toems_FrontEnd.views.admin.logs
                 ddlLog.DataSource = GetFeLogs();
                 ddlLog.DataBind();
                 ddlLog.Items.Insert(0, "Select A Log");
-                ddlLimit.SelectedValue = "10";
+                ddlLimit.SelectedValue = "25";
             }
             PopulateLogs();
         }

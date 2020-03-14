@@ -14,8 +14,7 @@ namespace Toems_FrontEnd.views.admin.pxeboot
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (IsPostBack) return;
-
+            RequiresAuthorization(AuthorizationStrings.PxeSettingsUpdate);
             if (IsPostBack) return;
 
             ddlPxeBootloader.SelectedValue = GetSetting(SettingStrings.PxeBootloader);
@@ -89,7 +88,7 @@ namespace Toems_FrontEnd.views.admin.pxeboot
                 },
             };
            
-            var result = Call.SettingApi.UpdateSettings(listSettings);
+            var result = Call.SettingApi.UpdatePxeSettings(listSettings);
             EndUserMessage = result
                 ? "Successfully Updated Settings"
                 : "Could Not Update Settings";
@@ -135,10 +134,13 @@ namespace Toems_FrontEnd.views.admin.pxeboot
             ViewState["proxyBios"] = ddlProxyBios.SelectedValue;
             ViewState["proxyEfi32"] = ddlProxyEfi32.SelectedValue;
             ViewState["proxyEfi64"] = ddlProxyEfi64.SelectedValue;
+
+            EndUserMessage = "Successfully Updated PXE Settings";
         }
 
         protected void OkButton_Click(object sender, EventArgs e)
         {
+            EndUserMessage = "Successfully Updated PXE Settings";
             Response.Redirect("~/views/admin/pxeboot/globalbootmenu.aspx?level=2");
         }
     }

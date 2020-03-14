@@ -3,7 +3,7 @@
     <li>All Active Tasks</li>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub1">
-
+    All Active Tasks
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub" runat="Server">
      <li><asp:LinkButton ID="btnCancelAll" runat="server" Text="Cancel All Tasks" OnClick="btnCancelAll_Click" CssClass="main-action"/></li>

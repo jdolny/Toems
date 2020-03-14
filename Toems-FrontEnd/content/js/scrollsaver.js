@@ -52,8 +52,11 @@
         }
     };
 
-    window.saveScroll = function() {
-        var positions = [];
+        window.saveScroll = function () {
+          
+            var positions = [];
+
+
         //windows scroll position
         var wl, wt;
         if (undefined !== window.pageXOffset) {
@@ -69,14 +72,15 @@
         if (wl || wt) positions.push(["", wl, wt].join(",")); //no id for window
 
         //other elements
-        var elements = document.all || document.getElementsByTagName("*");
+            var elements = document.all || document.getElementsByTagName("*");
+            console.log(elements);
         for (var i = 0; i < elements.length; i++) {
             var e = elements[i];
             if (e.id && (e.scrollLeft || e.scrollTop)) {
+                console.log(e.scrollLeft, e.scrollTop);
                 positions.push([e.id, e.scrollLeft, e.scrollTop].join(","));
             }
         }
-
         //save scroll positions
         try {
             localStorage.setItem(key, positions.join("|"));
@@ -98,6 +102,7 @@
     }
     addEvent(eventPrefix + "load", window.loadScroll, false);
     addEvent(eventPrefix + "unload", window.saveScroll, false);
+    addEvent(eventPrefix + "beforeunload", window.saveScroll, false);
 })(window);
 
 // Only for Partial PostBacks (UpdatePanel in ASP.NET)

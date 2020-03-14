@@ -6,7 +6,7 @@
  <li>Deploy Options</li>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub2">
-
+     <%= ImageProfile.Name %>
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub2" Runat="Server">
     <li><asp:LinkButton ID="btnUpdate" runat="server" Text="Update Profile" OnClick="btnUpdate_Click" CssClass="main-action"/></li>
@@ -27,18 +27,20 @@
 <div class="size-4 column">
     Change Computer Name
 </div>
-<div class="size-5 column">
-    <asp:CheckBox ID="chkChangeName" runat="server" CssClass="textbox"></asp:CheckBox>
-</div>
+ <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkChangeName" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkChangeName">Toggle</label>
+        </div>
 <br class="clear"/>
 
 <div id="divExpandVol" runat="server">
     <div class="size-4 column">
         Don't Expand Volumes
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkDownNoExpand" runat="server" CssClass="textbox"></asp:CheckBox>
-    </div>
+ <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkDownNoExpand" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkDownNoExpand">Toggle</label>
+        </div>
     <br class="clear"/>
 </div>
 
@@ -46,32 +48,36 @@
     <div class="size-4 column">
         Update BCD
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkAlignBCD" runat="server" CssClass="textbox"></asp:CheckBox>
-    </div>
+ <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkAlignBCD" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkAlignBCD">Toggle</label>
+        </div>
     <br class="clear"/>
     
      <div class="size-4 column">
         Randomize GUIDs
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkRandomize" runat="server" CssClass="textbox"></asp:CheckBox>
-    </div>
+ <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkRandomize" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkRandomize">Toggle</label>
+        </div>
     <br class="clear"/>
 
     <div class="size-4 column">
         Fix Boot Sector
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkRunFixBoot" runat="server" CssClass="textbox"></asp:CheckBox>
-    </div>
+ <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkRunFixBoot" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkRunFixBoot">Toggle</label>
+        </div>
     <br class="clear"/>
        <div class="size-4 column">
        Don't Update NVRAM
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkNvram" runat="server" CssClass="textbox"></asp:CheckBox>
-    </div>
+ <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkNvram" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkNvram">Toggle</label>
+        </div>
     <br class="clear"/>
 </div>
    
@@ -110,16 +116,18 @@
      <div class="size-4 column">
         Force Standard EFI Partitions
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkForceEfi" runat="server" CssClass="textbox"></asp:CheckBox>
-    </div>
+ <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkForceEfi" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkForceEfi">Toggle</label>
+        </div>
     <br class="clear"/>
      <div class="size-4 column">
         Force Standard Legacy Partitions
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkForceLegacy" runat="server" CssClass="textbox"></asp:CheckBox>
-    </div>
+ <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkForceLegacy" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkForceLegacy">Toggle</label>
+        </div>
     <br class="clear"/>
 </div>
 
@@ -127,17 +135,21 @@
     <div class="size-4 column">
         Force Dynamic Partition For Exact Hdd Match
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkDownForceDynamic" runat="server" AutoPostBack="True" OnCheckedChanged="chkForceDynamic_OnCheckedChanged"></asp:CheckBox>
-    </div>
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkDownForceDynamic" runat="server" ClientIDMode="Static" AutoPostBack="True" OnCheckedChanged="chkForceDynamic_OnCheckedChanged"></asp:CheckBox>
+         <label for="chkDownForceDynamic">Toggle</label>
+        </div>
+
     <br class="clear"/>
 </div>
 <div class="size-4 column">
     Modify The Image Schema
 </div>
-<div class="size-5 column">
-    <asp:CheckBox ID="chkModifySchema" runat="server" AutoPostBack="True" OnCheckedChanged="chkModifySchema_OnCheckedChanged"></asp:CheckBox>
-</div>
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkModifySchema" runat="server" ClientIDMode="Static" AutoPostBack="True" OnCheckedChanged="chkModifySchema_OnCheckedChanged"></asp:CheckBox>
+         <label for="chkModifySchema">Toggle</label>
+        </div>
+
 <br class="clear"/>
 
 <div id="imageSchema" runat="server" visible="false">
@@ -166,7 +178,7 @@
 <asp:BoundField DataField="Name" HeaderText="Name" ItemStyle-CssClass="width_100"></asp:BoundField>
 <asp:TemplateField ItemStyle-CssClass="width_50" HeaderText="Destination">
     <ItemTemplate>
-        <asp:TextBox ID="txtDestination" runat="server" Text='<%# Bind("Destination") %>'/>
+        <asp:TextBox ID="txtDestination" runat="server" Text='<%# Bind("Destination") %>' CssClass="textbox"/>
     </ItemTemplate>
 </asp:TemplateField>
 <asp:BoundField DataField="Size" HeaderText="Size (Reported / Usable)" ItemStyle-CssClass="width_200"></asp:BoundField>
@@ -201,7 +213,7 @@
                         <asp:TemplateField ItemStyle-CssClass="width_100" HeaderText="Custom Size">
                             <ItemTemplate>
                                 <div id="settings">
-                                    <asp:TextBox ID="txtCustomSize" runat="server" Text='<%# Bind("CustomSize") %>' CssClass="textbox_specs"/>
+                                    <asp:TextBox ID="txtCustomSize" runat="server" Text='<%# Bind("CustomSize") %>' CssClass="textbox"/>
                                 </div>
                             </ItemTemplate>
                         </asp:TemplateField>

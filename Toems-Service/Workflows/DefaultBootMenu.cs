@@ -266,9 +266,13 @@ namespace Toems_Service.Workflows
                     var currentPort = iPxePath.Split(':').Last();
                     iPxePath = iPxePath.Replace(currentPort, ServiceSetting.GetSettingValue(SettingStrings.IpxeHttpPort)) + "/clientimaging/";
                 }
+                else
+                    iPxePath += "clientimaging/";
             }
+            else
+                iPxePath += "clientimaging/";
 
-         
+
             var customMenuEntries =
                 _bootEntryServices.GetAll()
                     .Where(x => x.Type == "ipxe" && x.IsActive)

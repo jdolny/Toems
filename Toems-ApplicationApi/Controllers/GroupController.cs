@@ -299,7 +299,7 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageDeployTask)]
         public DtoApiIntResponse StartGroupUnicast(int id)
         {
             return new DtoApiIntResponse
@@ -308,7 +308,7 @@ namespace Toems_ApplicationApi.Controllers
             };
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageMulticastTask)]
         [HttpGet]
         public DtoApiStringResponse StartMulticast(int id)
         {

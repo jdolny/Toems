@@ -6,7 +6,7 @@
  <li>Upload Options</li>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub2">
-
+     <%= ImageProfile.Name %>
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub2" Runat="Server">
     <li><asp:LinkButton ID="btnUpdate" runat="server" Text="Update Profile" OnClick="btnUpdate_Click" CssClass="main-action"/></li>
@@ -28,43 +28,47 @@
     <div class="size-4 column">
         Remove GPT Structures
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkRemoveGpt" runat="server" CssClass="textbox"></asp:CheckBox>
-    </div>
-    <br class="clear"/>
+    <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkRemoveGpt" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkRemoveGpt">Toggle</label>
+        </div>
 </div>
 
 <div id="divShrink" runat="server">
     <div class="size-4 column">
         Don't Shrink Volumes
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkUpNoShrink" runat="server" CssClass="textbox"></asp:CheckBox>
-    </div>
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkUpNoShrink" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkUpNoShrink">Toggle</label>
+        </div>
     <br class="clear"/>
 
     <div class="size-4 column">
         Don't Shrink LVM Volumes
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkUpNoShrinkLVM" runat="server" CssClass="textbox"></asp:CheckBox>
-    </div>
+    <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkUpNoShrinkLVM" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkUpNoShrinkLVM">Toggle</label>
+        </div>
     <br class="clear"/>
 
       <div class="size-4 column">
         Skip Hibernation Check
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkSkipHibernation" runat="server" CssClass="textbox"></asp:CheckBox>
-    </div>
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkSkipHibernation" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkSkipHibernation">Toggle</label>
+        </div>
     <br class="clear"/>
 
       <div class="size-4 column">
         Skip Bitlocker Check
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkSkipBitlocker" runat="server" CssClass="textbox"></asp:CheckBox>
-    </div>
+    <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkSkipBitlocker" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkSkipBitlocker">Toggle</label>
+        </div>
     <br class="clear"/>
 </div>
 
@@ -104,26 +108,29 @@
 <div class="size-4 column">
     Use Simple Upload Schema
 </div>
-<div class="size-5 column">
-    <asp:CheckBox ID="chkSimpleSchema" runat="server" CssClass="textbox"></asp:CheckBox>
-</div>
+  <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkSimpleSchema" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkSimpleSchema">Toggle</label>
+        </div>
 
 <br class="clear"/>
     </div>
 <div class="size-4 column">
     Only Upload Schema
 </div>
-<div class="size-5 column">
-    <asp:CheckBox ID="chkSchemaOnly" runat="server" CssClass="textbox"></asp:CheckBox>
-</div>
+  <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkSchemaOnly" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkSchemaOnly">Toggle</label>
+        </div>
 
 <br class="clear"/>
 <div class="size-4 column">
     Use Custom Upload Schema
 </div>
-<div class="size-5 column">
-    <asp:CheckBox ID="chkCustomUpload" runat="server" CssClass="textbox" AutoPostBack="True" OnCheckedChanged="chkCustomUpload_OnCheckedChanged"></asp:CheckBox>
-</div>
+  <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkCustomUpload" runat="server" ClientIDMode="Static" AutoPostBack="True" OnCheckedChanged="chkCustomUpload_OnCheckedChanged"></asp:CheckBox>
+         <label for="chkCustomUpload">Toggle</label>
+      </div>
 
 <br class="clear"/>
 

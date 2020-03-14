@@ -48,11 +48,17 @@ namespace Toems_Service
                 return;
             }
 
-            using (_webClient = new WebClient())
+            using (var unc = new UncServices())
             {
-                _webClient.DownloadProgressChanged += wc_DownloadProgressChanged;
-                _webClient.DownloadFileCompleted += wc_DownloadFileCompleted;
-                await _webClient.DownloadFileTaskAsync(new Uri(EntityDownload.Url), Path.Combine(_destinationDir,EntityDownload.FileName));
+                if (unc.NetUseWithCredentials() || unc.LastError == 1219)
+                {
+                    using (_webClient = new WebClient())
+                    {
+                        _webClient.DownloadProgressChanged += wc_DownloadProgressChanged;
+                        _webClient.DownloadFileCompleted += wc_DownloadFileCompleted;
+                        await _webClient.DownloadFileTaskAsync(new Uri(EntityDownload.Url), Path.Combine(_destinationDir, EntityDownload.FileName));
+                    }
+                }
             }
 
           
@@ -120,19 +126,25 @@ namespace Toems_Service
             EntityDownload.Status = EnumFileDownloader.DownloadStatus.CalculatingSha256;
             _serviceExternalDownload.Update(EntityDownload);
 
-            try
+            using (var unc = new UncServices())
             {
-                _hasher = new ServiceFileHash(SHA256.Create());
-                _hasher.FileHashingProgress += OnFileHashingProgress;
-                using (var stream = new BufferedStream(File.OpenRead(Path.Combine(_destinationDir,EntityDownload.FileName)), 1200000))
-                    _hasher.ComputeHash(stream);
-                EntityDownload.Sha256Hash = _hasher.ToString();
-                EntityDownload.Status = EnumFileDownloader.DownloadStatus.Complete;
-            }
-            catch (Exception ex)
-            {
-                EntityDownload.Status = EnumFileDownloader.DownloadStatus.Error;
-                EntityDownload.ErrorMessage = ex.Message;
+                if (unc.NetUseWithCredentials() || unc.LastError == 1219)
+                {
+                    try
+                    {
+                        _hasher = new ServiceFileHash(SHA256.Create());
+                        _hasher.FileHashingProgress += OnFileHashingProgress;
+                        using (var stream = new BufferedStream(File.OpenRead(Path.Combine(_destinationDir, EntityDownload.FileName)), 1200000))
+                            _hasher.ComputeHash(stream);
+                        EntityDownload.Sha256Hash = _hasher.ToString();
+                        EntityDownload.Status = EnumFileDownloader.DownloadStatus.Complete;
+                    }
+                    catch (Exception ex)
+                    {
+                        EntityDownload.Status = EnumFileDownloader.DownloadStatus.Error;
+                        EntityDownload.ErrorMessage = ex.Message;
+                    }
+                }
             }
               
             _serviceExternalDownload.Update(EntityDownload);
@@ -143,19 +155,25 @@ namespace Toems_Service
             EntityDownload.Status = EnumFileDownloader.DownloadStatus.CalculatingMd5;
             _serviceExternalDownload.Update(EntityDownload);
 
-            try
+            using (var unc = new UncServices())
             {
-                _hasher = new ServiceFileHash(MD5.Create());
-                _hasher.FileHashingProgress += OnFileHashingProgress;
-                using (var stream = new BufferedStream(File.OpenRead(Path.Combine(_destinationDir, EntityDownload.FileName)), 1200000))
-                    _hasher.ComputeHash(stream);
-                EntityDownload.Md5Hash = _hasher.ToString();
-                EntityDownload.Status = EnumFileDownloader.DownloadStatus.Complete;
-            }
-            catch (Exception ex)
-            {
-                EntityDownload.Status = EnumFileDownloader.DownloadStatus.Error;
-                EntityDownload.ErrorMessage = ex.Message;
+                if (unc.NetUseWithCredentials() || unc.LastError == 1219)
+                {
+                    try
+                    {
+                        _hasher = new ServiceFileHash(MD5.Create());
+                        _hasher.FileHashingProgress += OnFileHashingProgress;
+                        using (var stream = new BufferedStream(File.OpenRead(Path.Combine(_destinationDir, EntityDownload.FileName)), 1200000))
+                            _hasher.ComputeHash(stream);
+                        EntityDownload.Md5Hash = _hasher.ToString();
+                        EntityDownload.Status = EnumFileDownloader.DownloadStatus.Complete;
+                    }
+                    catch (Exception ex)
+                    {
+                        EntityDownload.Status = EnumFileDownloader.DownloadStatus.Error;
+                        EntityDownload.ErrorMessage = ex.Message;
+                    }
+                }
             }
 
             _serviceExternalDownload.Update(EntityDownload);

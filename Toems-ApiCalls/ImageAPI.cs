@@ -62,6 +62,13 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<List<ImageWithDate>>(Request);
         }
 
+        public List<DtoServerImageRepStatus> GetReplicationStatus(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetReplicationStatus/{1}", Resource,id);
+            return new ApiRequest().Execute<List<DtoServerImageRepStatus>>(Request);
+        }
+
         public IEnumerable<EntityImageCategory> GetImageCategories(int id)
         {
             Request.Method = Method.GET;

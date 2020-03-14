@@ -72,8 +72,6 @@
 
         public const string EmailSmart = "emailSmart";
 
-        public const string EmailLowDiskSpace = "emailLowDiskSpace";
-
         public const string GroupPolicyRead = "groupPolicyRead";
 
         public const string GroupPolicyUpdate = "groupPolicyUpdate";
@@ -118,6 +116,12 @@
 
         public const string AssetDelete = "assetDelete";
 
+        public const string ImageRead = "imageRead";
+
+        public const string ImageUpdate = "imageUpdate";
+
+        public const string ImageDelete = "imageDelete";
+
         public const string RemoteAccessControl = "remoteAccessControl";
 
         public const string RemoteAccessView = "remoteAccessView";
@@ -126,15 +130,19 @@
 
         public const string PxeSettingsUpdate = "pxeSettingsUpdate";
 
+        public const string PxeISOGen = "pxeIsoGen";
+
         public const string EmailImagingTaskCompleted = "emailImagingTaskCompleted";
 
         public const string EmailImagingTaskFailed = "emailImagingTaskFailed";
 
-        public const string ImageDeployTask = "ImageDeployTask";
+        public const string ImageDeployTask = "imageDeployTask";
 
-        public const string ImageUploadTask = "ImageUploadTask";
+        public const string ImageUploadTask = "imageUploadTask";
 
-        public const string ImageMulticastTask = "ImageMulticastTask";
+        public const string ImageMulticastTask = "imageMulticastTask";
+
+        public const string EmailLowDiskSpace = "emailLowDiskSpace";
 
 
     }

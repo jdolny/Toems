@@ -20,7 +20,7 @@ namespace Toems_ApplicationApi.Controllers
           
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
         public DtoActionResult Post(EntityImageProfileSysprepTag imageProfileSysprep)
         {
             return _imageProfileSysprepService.AddImageProfileSysprep(imageProfileSysprep);

@@ -83,6 +83,13 @@ namespace Toems_ApplicationApi.Controllers
             return new DtoApiBoolResponse { Value = _settingServices.UpdateSetting(listSettings) };
         }
 
+        [CustomAuth(Permission = AuthorizationStrings.PxeSettingsUpdate)]
+        [HttpPost]
+        public DtoApiBoolResponse UpdatePxeSettings(List<EntitySetting> listSettings)
+        {
+            return new DtoApiBoolResponse { Value = _settingServices.UpdatePxeSetting(listSettings) };
+        }
+
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         [HttpGet]
         public List<EntityCertificate> GetCAInt()
@@ -197,7 +204,7 @@ namespace Toems_ApplicationApi.Controllers
 
 
 
-        [CustomAuth(Permission = AuthorizationStrings.PxeSettingsUpdate)]
+        [CustomAuth(Permission = AuthorizationStrings.PxeISOGen)]
         [HttpPost]
         public HttpResponseMessage GenerateIso(DtoIsoGenOptions isoOptions)
         {

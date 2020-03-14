@@ -88,6 +88,13 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<List<EntitySoftwareInventory>>(Request);
         }
 
+        public IEnumerable<EntityComputerLog> GetComputerImagingLogs(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetComputerImagingLogs/{1}", Resource, id);
+            return new ApiRequest().Execute<List<EntityComputerLog>>(Request);
+        }
+
         public List<EntityClientComServer> GetComputerEmServers(int id)
         {
             Request.Method = Method.GET;
@@ -322,6 +329,15 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<List<EntityComputer>>(Request);
         }
 
+        public List<EntityComputer> SearchImageOnlyComputers(DtoSearchFilterCategories filter)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = $"{Resource}/SearchImageOnlyComputers";
+            Request.AddJsonBody(filter);
+
+            return new ApiRequest().Execute<List<EntityComputer>>(Request);
+        }
+
         public Task<List<EntityComputer>> SearchAsync(DtoSearchFilterAllComputers filter)
         {
             Request.Method = Method.POST;
@@ -345,6 +361,15 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.GET;
             Request.Resource = string.Format("{0}/GetActiveCount", Resource);
+            var responseData = new ApiRequest().Execute<DtoApiStringResponse>(Request);
+            return responseData != null ? responseData.Value : string.Empty;
+
+        }
+
+        public string GetImageOnlyCount()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetImageOnlyCount", Resource);
             var responseData = new ApiRequest().Execute<DtoApiStringResponse>(Request);
             return responseData != null ? responseData.Value : string.Empty;
 

@@ -73,12 +73,18 @@
     <Compile Include="Dto\client\DtoClientModuleCondition.cs" />
     <Compile Include="Dto\DtoActionResult.cs" />
     <Compile Include="Dto\DtoBootMenuGenOptions.cs" />
+    <Compile Include="Dto\DtoComPid.cs" />
     <Compile Include="Dto\DtoGroupImage.cs" />
     <Compile Include="Dto\DtoImageFileInfo.cs" />
     <Compile Include="Dto\DtoImageSchemaRequest.cs" />
     <Compile Include="Dto\DtoIsoGenOptions.cs" />
+    <Compile Include="Dto\DtoLogContentRequest.cs" />
     <Compile Include="Dto\DtoMulticastArgs.cs" />
     <Compile Include="Dto\DtoOnlineKernel.cs" />
+    <Compile Include="Dto\DtoProxyReservation.cs" />
+    <Compile Include="Dto\DtoRepImageCom.cs" />
+    <Compile Include="Dto\DtoReplicationProcess.cs" />
+    <Compile Include="Dto\DtoServerImageRepStatus.cs" />
     <Compile Include="Dto\DtoSocketRequest.cs" />
     <Compile Include="Dto\DtoApiBoolResponse.cs" />
     <Compile Include="Dto\DtoApiIntResponse.cs" />
@@ -117,6 +123,7 @@
     <Compile Include="Dto\DtoRAServerLogin.cs" />
     <Compile Include="Dto\DtoSocketServerVerify.cs" />
     <Compile Include="Dto\DtoTaskBootFile.cs" />
+    <Compile Include="Dto\DtoTftpServer.cs" />
     <Compile Include="Dto\exports\DtoCommandModuleExport.cs" />
     <Compile Include="Dto\exports\DtoExternalFileExport.cs" />
     <Compile Include="Dto\exports\DtoFileCopyModuleExport.cs" />

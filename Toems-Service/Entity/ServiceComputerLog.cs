@@ -51,7 +51,7 @@ namespace Toems_Service.Entity
             return _uow.ComputerLogRepository.GetById(computerLogId);
         }
 
-        public List<EntityComputerLog> SearchOnDemand(int limit)
+        public List<EntityComputerLog> SearchUnreg(int limit)
         {
             return
                 _uow.ComputerLogRepository.Get(x => x.ComputerId <= -1, q => q.OrderByDescending(x => x.LogTime))

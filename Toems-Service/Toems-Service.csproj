@@ -67,8 +67,9 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="RoboSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\RoboSharp.1.1.2\lib\net45\RoboSharp.dll</HintPath>
+    <Reference Include="RoboSharp, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Users\dolnyj\Desktop\RoboSharp-dev\RoboSharp\bin\Release\net45\RoboSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -177,6 +178,7 @@
     <Compile Include="ServiceMsiUpdater.cs" />
     <Compile Include="ServiceOnlineKernel.cs" />
     <Compile Include="ServiceProvision.cs" />
+    <Compile Include="ServiceProxyDhcp.cs" />
     <Compile Include="ServiceSymmetricEncryption.cs" />
     <Compile Include="Entity\ServiceSoftwareModule.cs" />
     <Compile Include="Entity\ServiceUploadedFile.cs" />
@@ -201,6 +203,7 @@
     <Compile Include="Workflows\DataCleanup.cs" />
     <Compile Include="Workflows\DownloadKernel.cs" />
     <Compile Include="Workflows\ComServerFreeSpace.cs" />
+    <Compile Include="Workflows\ImageSync.cs" />
     <Compile Include="Workflows\GetCompImagingServers.cs" />
     <Compile Include="Workflows\GetCompTftpServers.cs" />
     <Compile Include="Workflows\GetBestCompImageServer.cs" />

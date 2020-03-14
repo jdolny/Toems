@@ -29,6 +29,7 @@ namespace Toems_FrontEnd.views.computers
                 btnInventory.Visible = false;
                 btnDeploy.Visible = false;
                 btnUpload.Visible = false;
+                btnClearImagingId.Visible = false;
 
             }
             else

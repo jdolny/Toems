@@ -1,5 +1,6 @@
 ﻿using System;
 using Toems_ApiCalls;
+using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_FrontEnd.BasePages;
@@ -13,6 +14,7 @@ namespace Toems_FrontEnd.views.admin.wolrelays
         protected void Page_Load(object sender, EventArgs e)
         {
             AdminBasePage = Page as BasePages.Admin;
+            AdminBasePage.RequiresAuthorization(AuthorizationStrings.Administrator);
             WolRelay = AdminBasePage.WolRelay;
 
             if (WolRelay == null)

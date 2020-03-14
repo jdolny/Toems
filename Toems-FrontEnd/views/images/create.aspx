@@ -3,7 +3,7 @@
     <li>New Image</li>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub1">
-
+    Images
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub" runat="Server">
     <li><asp:LinkButton ID="btnDelete" runat="server" Text="Add Image" OnClick="btnSubmit_Click" CssClass="main-action"/></li>
@@ -65,17 +65,19 @@
     <div class="size-4 column">
         Protected:
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkProtected" runat="server"/>
-    </div>
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkProtected" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkProtected">Toggle</label>
+        </div>
     <br class="clear"/>
     <br/>
     <div class="size-4 column">
         Available On Demand:
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkVisible" runat="server"/>
-    </div>
+      <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkVisible" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkVisible">Toggle</label>
+        </div>
 
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">

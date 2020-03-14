@@ -14,6 +14,7 @@ namespace Toems_FrontEnd.views.admin.pxeboot
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            RequiresAuthorization(AuthorizationStrings.PxeISOGen);
             if (!IsPostBack)
             {
                 PopulateClusterGroupsDdl(ddlCluster);

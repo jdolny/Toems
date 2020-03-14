@@ -12,7 +12,7 @@ namespace Toems_FrontEnd.views.admin
 {
     public partial class ImagingClient : Admin
     {
-       
+
 
         protected void btnUpdateSettings_OnClick(object sender, EventArgs e)
         {
@@ -42,9 +42,22 @@ namespace Toems_FrontEnd.views.admin
                     Value = txtImagingTimeout.Text,
                     Id = Call.SettingApi.GetSetting(SettingStrings.ImageTaskTimeoutMinutes).Id
                 },
+                    new EntitySetting
+            {
+                Name = SettingStrings.RegistrationEnabled,
+                Value = ddlRegistration.Text,
+                Id = Call.SettingApi.GetSetting(SettingStrings.RegistrationEnabled).Id
+            },
+                    new EntitySetting
+            {
+                Name = SettingStrings.DisabledRegNamePrompt,
+                Value = ddlKeepNamePrompt.Text,
+                Id = Call.SettingApi.GetSetting(SettingStrings.DisabledRegNamePrompt).Id
+            }
+
 
             };
-           
+
             EndUserMessage = Call.SettingApi.UpdateSettings(listSettings)
                 ? "Successfully Updated Settings"
                 : "Could Not Update Settings";
@@ -52,12 +65,15 @@ namespace Toems_FrontEnd.views.admin
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            RequiresAuthorization(AuthorizationStrings.Administrator);
             if (IsPostBack) return;
             txtArguments.Text = GetSetting(SettingStrings.GlobalImagingArguments);
             txtPort.Text = GetSetting(SettingStrings.IpxeHttpPort);
             txtImagingTimeout.Text = GetSetting(SettingStrings.ImageTaskTimeoutMinutes);
             if (GetSetting(SettingStrings.IpxeSSL) == "True")
                 chkIpxeSsl.Checked = true;
+            ddlRegistration.Text = GetSetting(SettingStrings.RegistrationEnabled);
+            ddlKeepNamePrompt.Text = GetSetting(SettingStrings.DisabledRegNamePrompt);
         }
     }
 }

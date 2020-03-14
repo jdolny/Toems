@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.IO;
 using log4net;
 using RoboSharp;
 using Toems_ApiCalls;
@@ -15,6 +16,7 @@ namespace Toems_Service.Workflows
         private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public bool RunAllServers()
         {
+           
             if (!ServiceSetting.GetSettingValue(SettingStrings.StorageType).Equals("SMB")) return true;
 
             var uow = new UnitOfWork();
@@ -26,6 +28,9 @@ namespace Toems_Service.Workflows
             {
                 new APICall().ClientComServerApi.SyncStorage(com.Url, "", decryptedKey);
             }
+
+            //sync images separately after the modules are synced
+            new ImageSync().RunAllServers();
 
             return true;
 
@@ -43,51 +48,46 @@ namespace Toems_Service.Workflows
                 return false;
             }
 
+           
             using (var unc = new UncServices())
             {
                 if (unc.NetUseWithCredentials() || unc.LastError == 1219)
                 {
-                    RoboCommand backup = new RoboCommand();
-                    // events
-                    backup.OnFileProcessed += backup_OnFileProcessed;
-                    backup.OnCommandCompleted += backup_OnCommandCompleted;
-                    // copy options
-                    backup.CopyOptions.Source = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
-                    backup.CopyOptions.Destination = thisComServer.LocalStoragePath.Trim('\\');
-                    backup.CopyOptions.CopySubdirectories = true;
-                    backup.CopyOptions.UseUnbufferedIo = true;
-                    backup.CopyOptions.InterPacketGap = thisComServer.ReplicationRateIpg;
-                    // select options
-                    //backup.SelectionOptions.OnlyCopyArchiveFilesAndResetArchiveFlag = true;
-                    backup.CopyOptions.Mirror = true;
-                    backup.CopyOptions.Purge = false;
-                    backup.SelectionOptions.ExcludeOlder = true;
-                    backup.LoggingOptions.VerboseOutput = true;
-                    // retry options
-                    backup.RetryOptions.RetryCount = 1;
-                    backup.RetryOptions.RetryWaitTime = 2;
-                    backup.Start();
+                    foreach (var folder in new []{ "client_versions", "software_uploads" })
+                    {
+                        RoboCommand backup = new RoboCommand();
+                        // events
+                        backup.OnError += Backup_OnError;
+
+                        // copy options
+                        backup.CopyOptions.Source = ServiceSetting.GetSettingValue(SettingStrings.StoragePath) + folder;
+                        backup.CopyOptions.Destination = thisComServer.LocalStoragePath + folder.Trim('\\');
+                        backup.CopyOptions.CopySubdirectories = true;
+                        backup.CopyOptions.UseUnbufferedIo = true;
+                        if (thisComServer.ReplicationRateIpg != 0)
+                            backup.CopyOptions.InterPacketGap = thisComServer.ReplicationRateIpg;
+                        else
+                            backup.CopyOptions.InterPacketGap = 0;
+                        // select options
+                        backup.CopyOptions.Mirror = true;
+                        backup.CopyOptions.Purge = true;
+
+                        backup.LoggingOptions.VerboseOutput = false;
+                        // retry options
+                        backup.RetryOptions.RetryCount = 3;
+                        backup.RetryOptions.RetryWaitTime = 10;
+                        backup.Start().Wait();
+                    }
                     return true;
                 }
                 return false;
             }
         }
 
-        void backup_OnFileProcessed(object sender, FileProcessedEventArgs e)
+        private void Backup_OnError(object sender, RoboSharp.ErrorEventArgs e)
         {
-
-            Logger.Info(e.ProcessedFile.FileClass);
-            Logger.Info(e.ProcessedFile.Name);
-            Logger.Info(e.ProcessedFile.Size.ToString());
-           
+            Logger.Error($"Module Folder Replication Failed.");
+            Logger.Error(e.ErrorCode + " " + e.Error);
         }
-
-        void backup_OnCommandCompleted(object sender, RoboCommandCompletedEventArgs e)
-        {
-        Logger.Info(e.ToString() + "Complete");
-            
-        }
-
-       
     }
 }

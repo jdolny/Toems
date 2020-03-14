@@ -233,7 +233,11 @@ namespace Toems_Service
                     var currentPort = iPxePath.Split(':').Last();
                     iPxePath = iPxePath.Replace(currentPort, ServiceSetting.GetSettingValue(SettingStrings.IpxeHttpPort)) + "/clientimaging/";
                 }
+                else
+                    iPxePath += "clientimaging/";
             }
+            else
+                iPxePath += "clientimaging/";
 
             var newLineChar = "\n";
 

@@ -201,6 +201,13 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         [HttpPost]
+        public IEnumerable<EntityComputer> SearchImageOnlyComputers(DtoSearchFilterCategories filter)
+        {
+            return _computerServices.SearchImageOnlyComputers(filter);
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        [HttpPost]
         public IEnumerable<EntityComputer> SearchAllComputers(DtoSearchFilterAllComputers filter)
         {
             return _computerServices.SearchAllComputers(filter);
@@ -249,6 +256,12 @@ namespace Toems_ApplicationApi.Controllers
         public DtoApiStringResponse GetArchivedCount()
         {
             return new DtoApiStringResponse { Value = _computerServices.ArchivedCount() };
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        public DtoApiStringResponse GetImageOnlyCount()
+        {
+            return new DtoApiStringResponse { Value = _computerServices.ImageOnlyCount() };
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
@@ -462,7 +475,7 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageDeployTask)]
         public DtoApiStringResponse StartDeploy(int id)
         {
             return new DtoApiStringResponse
@@ -472,13 +485,19 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageUploadTask)]
         public DtoApiStringResponse StartUpload(int id)
         {
             return new DtoApiStringResponse
             {
                 Value = new Unicast(id, "upload", _userId).Start()
             };
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        public IEnumerable<EntityComputerLog> GetComputerImagingLogs(int id)
+        {
+            return _computerServices.GetComputerLogs(id);
         }
     }
 }

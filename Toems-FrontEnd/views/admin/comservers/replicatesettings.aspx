@@ -18,6 +18,11 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $('#replicate').addClass("nav-current");
+                 $("[id*=gvProcess] td").hover(function() {
+                $("td", $(this).closest("tr")).addClass("hover_row");
+            }, function() {
+                $("td", $(this).closest("tr")).removeClass("hover_row");
+            });
         });
     </script>
    
@@ -29,13 +34,39 @@
         <label for="chkReplicateStorage"></label>
     </div>
       <div class="size-4 column">
-       Max Bitrate Mbps:
+       Max Bitrate (IGP):
     </div>
     <div class="size-5 column">
         <asp:TextBox ID="txtMaxBitrate" runat="server" CssClass="textbox"></asp:TextBox>
     </div>
      <br class="clear"/>
-   
+    <h1>Active Replications</h1>
+   <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+            <asp:Timer ID="Timer" runat="server" Interval="2000" OnTick="Timer_Tick">
+            </asp:Timer>
+        
+            <asp:GridView ID="gvProcess" runat="server" AutoGenerateColumns="False" DataKeyNames="Pid" CssClass="Gridview extraPad" AlternatingRowStyle-CssClass="alt">
+                <Columns>
+                    <asp:TemplateField ShowHeader="False" ItemStyle-CssClass="chkboxwidth">
+                        <ItemTemplate>
+                            <asp:LinkButton ID="btnCancel" runat="server" CausesValidation="false" CommandName="" Text="Cancel" OnClick="btnCancel_Click"></asp:LinkButton>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:BoundField DataField="Pid" HeaderText="PID" InsertVisible="False" ReadOnly="True" ItemStyle-CssClass="width_50"/>
+                
+                    <asp:BoundField DataField="ProcessName" HeaderText="Process" SortExpression="Status" ItemStyle-CssClass="width_200"/>
+                    <asp:BoundField DataField="ProcessArguments" HeaderText="Start Time" />
+                  
+
+                </Columns>
+                <EmptyDataTemplate>
+                    No Active Processes
+                </EmptyDataTemplate>
+            </asp:GridView>
+
+        </ContentTemplate>
+    </asp:UpdatePanel>
   
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subsubHelp">

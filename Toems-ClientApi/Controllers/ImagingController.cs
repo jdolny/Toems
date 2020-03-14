@@ -8,6 +8,7 @@ using log4net;
 using Toems_ClientApi.Controllers.Authorization;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
+using Toems_Service;
 using Toems_Service.Entity;
 using Toems_Service.Workflows;
 
@@ -24,6 +25,27 @@ namespace Toems_ClientApi.Controllers
         public DtoApiBoolResponse CopyPxeBinaries()
         {
             return new DtoApiBoolResponse(){Value = new CopyPxeBinaries().Copy()};
+        }
+
+        [InterComAuth]
+        [HttpPost]
+        public DtoApiBoolResponse CheckImageExists(int id)
+        {
+            return new DtoApiBoolResponse() { Value = new FilesystemServices().CheckImageExists(id) };
+        }
+
+        [InterComAuth]
+        [HttpPost]
+        public DtoApiBoolResponse SyncComToSmb(List<int> imageIds)
+        {
+            return new DtoApiBoolResponse() { Value = new Toems_Service.Workflows.ImageSync().SyncToSmb(imageIds) };
+        }
+
+        [InterComAuth]
+        [HttpPost]
+        public DtoApiBoolResponse SyncSmbToCom(List<int> imageIds)
+        {
+            return new DtoApiBoolResponse() { Value = new Toems_Service.Workflows.ImageSync().SyncToCom(imageIds) };
         }
 
         [InterComAuth]
@@ -82,6 +104,20 @@ namespace Toems_ClientApi.Controllers
         public DtoApiBoolResponse DownloadKernel(DtoOnlineKernel onlineKernel)
         {
             return new DtoApiBoolResponse() { Value = new DownloadKernel().Download(onlineKernel) };
+        }
+
+        [InterComAuth]
+        [HttpPost]
+        public List<string> GetComServerLogs()
+        {
+            return Toems_Service.FilesystemServices.GetLogs();
+        }
+
+        [InterComAuth]
+        [HttpPost]
+        public List<string> GetComServerLogContents(DtoLogContentRequest logRequest)
+        {
+            return new Toems_Service.FilesystemServices().GetLogContents(logRequest.name,logRequest.limit);
         }
 
         [InterComAuth]

@@ -20,7 +20,7 @@ namespace Toems_ApplicationApi.Controllers
           
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
         public DtoActionResult Post(EntityImageProfileScript imageProfileScript)
         {
             return _imageProfileScriptService.AddImageProfileScript(imageProfileScript);

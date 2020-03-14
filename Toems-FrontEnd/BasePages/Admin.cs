@@ -17,7 +17,7 @@ namespace Toems_FrontEnd.BasePages
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            RequiresAuthorization(AuthorizationStrings.Administrator);
+           //auth not checked here, to allow pxe updates / gen by non admin
             ImpersonationAccount = !string.IsNullOrEmpty(Request["impersonationId"])
                 ? Call.ImpersonationAccountApi.Get(Convert.ToInt32(Request.QueryString["impersonationId"]))
                 : null;

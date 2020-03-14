@@ -34,6 +34,10 @@
                 <a href="<%= ResolveUrl("~/views/images/profiles/search.aspx") %>?imageId=<%= ImageEntity.Id %>&sub=profiles">
                     <span class="sub-nav-text">Image Profiles</span></a>
             </li>
+                   <li id="repstatus">
+                <a href="<%= ResolveUrl("~/views/images/replicationstatus.aspx") %>?imageId=<%= ImageEntity.Id %>">
+                    <span class="sub-nav-text">Replication Status</span></a>
+            </li>
                <li id="categories">
                 <a href="<%= ResolveUrl("~/views/images/categories.aspx") %>?imageId=<%= ImageEntity.Id %>">
                     <span class="sub-nav-text">Categories</span></a>

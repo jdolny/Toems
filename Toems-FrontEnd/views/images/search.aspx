@@ -3,7 +3,7 @@
     <li>Search</li>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub1">
-
+    Images
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub" runat="Server">
     <li><asp:LinkButton ID="btnDelete" runat="server" Text="Delete Selected Images" OnClick="btnDelete_Click" CssClass="main-action"/></li>
@@ -79,7 +79,7 @@
             </asp:TemplateField>
             <asp:TemplateField ShowHeader="False" ItemStyle-CssClass="width_30 mobi-hide-smaller" HeaderStyle-CssClass="mobi-hide-smaller">
                 <ItemTemplate>
-                    <div style="width: 0">
+                    <div style="width: 0;">
                         <asp:LinkButton ID="btnHds" runat="server" CausesValidation="false" CommandName="" Text="+" OnClick="btnHds_Click"></asp:LinkButton>
                     </div>
                 </ItemTemplate>
@@ -98,7 +98,7 @@
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:BoundField DataField="Environment" HeaderText="Imaging Environment" ItemStyle-CssClass="width_200"></asp:BoundField>
-            <asp:BoundField DataField="LastUsed" HeaderText="Last Used" SortExpression="LastUsed" ItemStyle-CssClass="width_200"/>
+            <asp:BoundField DataField="LastUsed" HeaderText="Last Used" SortExpression="LastUsed" />
 
             <asp:TemplateField>
                 <ItemTemplate>

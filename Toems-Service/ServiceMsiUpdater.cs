@@ -32,13 +32,11 @@ namespace Toems_Service
         public string GetNameForExport(bool is64bit)
         {
             var expectedClient = new ServiceVersion().Get(1).LatestClientVersion;
-            var org = ServiceSetting.GetSettingValue(SettingStrings.CertificateOrganization);
-            Regex rgx = new Regex("[^a-zA-Z]");
-            var cleanedOrg = rgx.Replace(org, "");
+        
             var newVersion = expectedClient.Split('.');
             var v = string.Join(".", newVersion.Take(newVersion.Length - 1));
             var type = is64bit ? "-x64.msi" : "-x86.msi";
-            var outputFileName = $"Toec-{v}-{cleanedOrg}{type}";
+            var outputFileName = $"Toec-{v}{type}";
             return outputFileName;
         }
         public byte[] UpdateMsis(bool is64bit)
@@ -51,14 +49,6 @@ namespace Toems_Service
                 return null;
             }
             
-            var org = ServiceSetting.GetSettingValue(SettingStrings.CertificateOrganization);
-            if (string.IsNullOrEmpty(org))
-            {
-                Logger.Debug("Cannot Create MSI.  Server Organization Must Be Filled In.");
-                return null;
-            }
-            Regex rgx = new Regex("[^a-zA-Z]");
-            var cleanedOrg = rgx.Replace(org, "");
 
             var type = is64bit ? "-x64.msi" : "-x86.msi";
             var basePath = Path.Combine(HttpContext.Current.Server.MapPath("~"), "private", "agent");
@@ -78,7 +68,7 @@ namespace Toems_Service
 
             var newVersion = expectedClient.Split('.');
             var v = string.Join(".", newVersion.Take(newVersion.Length - 1));
-            var outputFileName = $"Toec-{v}-{cleanedOrg}{type}";
+            var outputFileName = $"Toec-{v}{type}";
             var outputFileFullPath = Path.Combine(basePath, outputFileName);
 
             try

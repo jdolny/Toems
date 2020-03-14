@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/admin/pxeboot/pxeboot.master" AutoEventWireup="true" CodeBehind="pxesettings.aspx.cs" Inherits="Toems_FrontEnd.views.admin.pxeboot.pxesettings" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="TopBreadCrumbSub2" runat="server">
-     <li><a href="<%= ResolveUrl("~/views/admin/pxeboot/pxebootsettings.aspx") %>?level=2">PXE Boot Settings</a></li>
+     <li><a href="<%= ResolveUrl("~/views/admin/pxeboot/pxesettings.aspx") %>?level=2">PXE Boot Settings</a></li>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="SubNavTitle_Sub2" runat="server">
 

@@ -82,6 +82,20 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpPost]
+        public List<DtoReplicationProcess> GetReplicationProcesses(int id)
+        {
+            return _clientComService.GetReplicationProcesses(id);
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpPost]
+        public DtoApiBoolResponse KillReplicationProcess(DtoComPid comPid)
+        {
+            return new DtoApiBoolResponse { Value = _clientComService.KillProcess(comPid.ComServerId, comPid.Pid) };
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public DtoActionResult Post(EntityClientComServer server)
         {
             var result = _clientComService.Add(server);

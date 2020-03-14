@@ -31,14 +31,14 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
         public DtoApiBoolResponse Clone(int id)
         {
             _imageProfileService.CloneProfile(id);
             return new DtoApiBoolResponse { Value = true };
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
         public DtoActionResult Delete(int id)
         {
             var image = _imageProfileService.GetImageProfile(id);
@@ -59,9 +59,9 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [Authorize]
-        public EntityImageProfile Get(int id)
+        public ImageProfileWithImage Get(int id)
         {
-            var result = _imageProfileService.GetImageProfile(id);
+            var result = _imageProfileService.ReadProfile(id);
             if (result == null) throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
             return result;
         }
@@ -80,14 +80,14 @@ namespace Toems_ApplicationApi.Controllers
             return _imageProfileService.Search(filter);
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageRead)]
         public DtoApiStringResponse GetCount()
         {
             return new DtoApiStringResponse {Value = _imageProfileService.TotalCount()};
         }
 
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
         public DtoActionResult Post(EntityImageProfile imageProfile)
         {
             var result = _imageProfileService.Add(imageProfile);
@@ -105,7 +105,7 @@ namespace Toems_ApplicationApi.Controllers
             return result;
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
         public DtoActionResult Put(int id, EntityImageProfile imageProfile)
         {
             imageProfile.Id = id;
@@ -125,7 +125,7 @@ namespace Toems_ApplicationApi.Controllers
             return result;
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageRead)]
         public DtoApiStringResponse GetMinimumClientSize(int id, int hdNumber)
         {
             return new DtoApiStringResponse
@@ -135,39 +135,39 @@ namespace Toems_ApplicationApi.Controllers
         }
 
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageRead)]
         public IEnumerable<EntityImageProfileScript> GetScripts(int id)
         {
             return _imageProfileService.GetImageProfileScripts(id);
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageRead)]
         public IEnumerable<EntityImageProfileSysprepTag> GetSysprep(int id)
         {
             return _imageProfileService.GetImageProfileSysprep(id);
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageRead)]
         public IEnumerable<EntityImageProfileFileCopy> GetFileCopy(int id)
         {
             return _imageProfileService.GetImageProfileFileCopy(id);
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
         [HttpDelete]
         public DtoApiBoolResponse RemoveProfileFileCopy(int id)
         {
             return new DtoApiBoolResponse { Value = _imageProfileService.DeleteImageProfileFileCopy(id) };
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
         [HttpDelete]
         public DtoApiBoolResponse RemoveProfileScripts(int id)
         {
             return new DtoApiBoolResponse { Value = _imageProfileService.DeleteImageProfileScripts(id) };
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
         [HttpDelete]
         public DtoApiBoolResponse RemoveProfileSysprep(int id)
         {

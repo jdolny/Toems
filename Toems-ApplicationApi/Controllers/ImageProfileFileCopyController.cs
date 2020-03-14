@@ -20,7 +20,7 @@ namespace Toems_ApplicationApi.Controllers
           
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
         public DtoActionResult Post(EntityImageProfileFileCopy imageProfileFileCopy)
         {
             return _imageProfileFileCopyService.AddImageProfileFileCopy(imageProfileFileCopy);

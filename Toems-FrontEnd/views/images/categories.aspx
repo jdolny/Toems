@@ -6,7 +6,7 @@
     <li>Categories</li>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub1">
-
+    <%= ImageEntity.Name %>
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub" runat="Server">
     <li><asp:LinkButton ID="buttonUpdate" runat="server" OnClick="buttonUpdate_OnClick" Text="Update Image" CssClass="main-action"></asp:LinkButton></li>

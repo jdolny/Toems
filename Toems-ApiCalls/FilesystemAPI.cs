@@ -26,10 +26,31 @@ namespace Toems_ApiCalls
             return response;
         }
 
+        public IEnumerable<string> GetComServerLogContents(string name, int limit, int comServerId)
+        {
+            _request.Method = Method.GET;
+            _request.Resource = string.Format("{0}/GetComServerLogContents/", _resource);
+            _request.AddParameter("name", name);
+            _request.AddParameter("limit", limit);
+            _request.AddParameter("comServerId", comServerId);
+            var response = new ApiRequest().Execute<List<string>>(_request);
+
+            return response;
+        }
+
         public List<string> GetLogs()
         {
             _request.Method = Method.GET;
             _request.Resource = string.Format("{0}/GetLogs/", _resource);
+            var response = new ApiRequest().Execute<List<string>>(_request);
+
+            return response;
+        }
+
+        public List<string> GetComServerLogs(int comServerId)
+        {
+            _request.Method = Method.GET;
+            _request.Resource = string.Format("{0}/GetComServerLogs/{1}", _resource,comServerId);
             var response = new ApiRequest().Execute<List<string>>(_request);
 
             return response;
@@ -58,16 +79,6 @@ namespace Toems_ApiCalls
 
 
 
-        public string GetServerPaths(string type, string subType)
-        {
-            _request.Method = Method.GET;
-            _request.Resource = string.Format("{0}/GetServerPaths/", _resource);
-            _request.AddParameter("type", type);
-            _request.AddParameter("subType", subType);
-            var response = new ApiRequest().Execute<DtoApiStringResponse>(_request);
-
-            return response != null ? response.Value : string.Empty;
-        }
 
         public DtoFreeSpace GetSMBFreeSpace()
         {

@@ -84,7 +84,18 @@ namespace Toems_FrontEnd.views.users
                 policyImport,
                 policyExport,
                 moduleUploadFiles,
-                moduleExternalFiles
+                moduleExternalFiles,
+                  imageRead,
+                imageUpdate,
+                imageDelete,
+                imageUploadTask,
+                imageDeployTask,
+                imageMulticastTask,
+                emailLowDiskSpace,
+                emailImagingTaskFailed,
+                emailImagingTaskCompleted,
+                pxeSettingsUpdate,
+                pxeIsoGen
             };
             if (!IsPostBack) PopulateForm();
         }

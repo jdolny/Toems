@@ -6,7 +6,7 @@
  <li>Task Options</li>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub2">
-
+     <%= ImageProfile.Name %>
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub2" Runat="Server">
     <li><asp:LinkButton ID="btnUpdate" runat="server" Text="Update Profile" OnClick="btnUpdate_Click" CssClass="main-action"/></li>
@@ -27,9 +27,10 @@
      <div class="size-4 column">
         Enable Web Cancel
     </div>
-    <div class="size-5 column">
-        <asp:CheckBox ID="chkWebCancel" runat="server" CssClass="textbox"></asp:CheckBox>
-    </div>
+    <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkWebCancel" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkWebCancel">Toggle</label>
+        </div>
 
     <br class="clear"/>
 

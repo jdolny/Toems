@@ -17,11 +17,24 @@ namespace Toems_ApplicationApi.Controllers
             return new FilesystemServices().GetLogContents(name, limit);
         }
 
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        public List<string> GetComServerLogContents(string name, int limit, int comServerId)
+        {
+            return new FilesystemServices().GetComServerLogContents(name, limit, comServerId);
+        }
+
         [HttpGet]
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public List<string> GetLogs()
         {
             return FilesystemServices.GetLogs();
+        }
+
+        [HttpGet]
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        public List<string> GetComServerLogs(int id)
+        {
+            return FilesystemServices.GetComServerLogs(id);
         }
 
         [HttpGet]
@@ -38,11 +51,6 @@ namespace Toems_ApplicationApi.Controllers
             return new GetBootImages().Run();
         }
 
-        [Authorize]
-        public DtoApiStringResponse GetServerPaths(string type, string subType)
-        {
-            return new DtoApiStringResponse { Value = new FilesystemServices().GetServerPaths(type, subType) };
-        }
 
          [Authorize]
          public DtoFreeSpace GetSMBFreeSpace()

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Web;
 using log4net;
@@ -117,30 +119,21 @@ namespace Toems_Service
 
         public List<string> GetLogContents(string name, int limit)
         {
-            var path = GetServerPaths("logs") + name;
+            var basePath = HttpContext.Current.Server.MapPath("~");
+            var path = Path.Combine(basePath, "private", "logs", name);
             return File.ReadLines(path).Reverse().Take(limit).Reverse().ToList();
         }
 
-        public string GetServerPaths(string type, string subType = "")
+        public List<string> GetComServerLogContents(string name, int limit, int comServerId)
         {
-            var basePath = HttpContext.Current.Server.MapPath("~");
-            var seperator = Path.DirectorySeparatorChar;
-            switch (type)
-            {
+            var comServer = new ServiceClientComServer().GetServer(comServerId);
+            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
 
-                case "csv":
-                    return basePath + seperator + "private" + seperator + "imports" + seperator + subType;
-                case "exports":
-                    return basePath + seperator + "private" + seperator + "exports" + seperator;
-
-                case "seperator":
-                    return seperator.ToString();
-                case "logs":
-                    return basePath + seperator + "private" + seperator + "logs" + seperator;
-                default:
-                    return null;
-            }
+            return new APICall().ClientComServerApi.GetComServerLogContents(comServer.Url, "", decryptedKey, name, limit);
         }
+
+
 
 
 
@@ -289,6 +282,48 @@ namespace Toems_Service
 
         }
 
+        public bool CheckImageExists(int imageId)
+        {
+            //storage type is set to smb, get this current com server's storage
+            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
+            var thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            if (thisComServer == null)
+            {
+                log.Error($"Com Server With Guid {guid} Not Found");
+                return false;
+            }
+
+            var image = new ServiceImage().GetImage(imageId);
+
+            var basePath = thisComServer.LocalStoragePath;
+
+            if (string.IsNullOrEmpty(image.Name))
+                return false;
+
+
+            var imagePath = Path.Combine(basePath, "images", image.Name);
+            if (!Directory.Exists(imagePath))
+            {
+                return false;
+            }
+            var guidPath = Path.Combine(imagePath, "guid");
+            if (!File.Exists(guidPath))
+            {
+                return false;
+            }
+            using (StreamReader reader = new StreamReader(guidPath))
+            {
+                var fileGuid = reader.ReadLine() ?? "";
+                if (fileGuid.Equals(image.LastUploadGuid))
+                {
+                    return true;
+                }
+            }
+
+
+            return false;
+        }
+
         public bool DeleteImageFolders(string imageName)
         {
             //Check again
@@ -421,6 +456,16 @@ namespace Toems_Service
             }
 
         }
+        public static List<string> GetComServerLogs(int comServerId)
+        {
+            var comServer = new ServiceClientComServer().GetServer(comServerId);
+            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+
+            return new APICall().ClientComServerApi.GetComServerLogs(comServer.Url, "", decryptedKey);
+
+
+        }
 
         public static List<string> GetLogs()
         {
@@ -468,6 +513,7 @@ namespace Toems_Service
                     dpFreeSpace.total = total;
                     dpFreeSpace.freePercent = freePercent;
                     dpFreeSpace.usedPercent = usedPercent;
+                    dpFreeSpace.dPPath = basePath;
                 }
                 else
                 {
@@ -481,18 +527,8 @@ namespace Toems_Service
         public DtoFreeSpace GetComServerFreeSpace()
         {
             var dpFreeSpace = new DtoFreeSpace();
-            var storageType = ServiceSetting.GetSettingValue(SettingStrings.StorageType);
             string path = string.Empty;
-            if (storageType.Equals("Local"))
-            {
-                //if storage type is local, then only a single server with a com, api, and front end are in use
-                //just get the size of the global local path
-                path = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
-                dpFreeSpace.name = "Local Storage";
-            }
-            else
-            {
-                //storage type is set to smb, get this current com server's storage
+
                 var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
                 var thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
                 if (thisComServer == null)
@@ -503,7 +539,7 @@ namespace Toems_Service
 
                 path = thisComServer.LocalStoragePath;
                 dpFreeSpace.name = thisComServer.DisplayName;
-            }
+            
 
             dpFreeSpace.dPPath = path;
 
@@ -684,6 +720,37 @@ namespace Toems_Service
 
 
            
+        }
+
+        public List<DtoReplicationProcess> GetRunningSyncProcess()
+        {
+            var list = new List<DtoReplicationProcess>();
+            var processes = Process.GetProcessesByName("Robocopy");
+            foreach(var p in processes)
+            {
+                var proc = new DtoReplicationProcess();
+                proc.Pid = p.Id;
+                proc.ProcessName = p.ProcessName;
+                proc.ProcessArguments = p.StartTime.ToString();
+                list.Add(proc);
+            }
+
+            return list;
+        }
+
+        public bool KillRoboProcess(int pid)
+        {
+            try
+            {
+                var proc = Process.GetProcessById(pid);
+                if(proc.ProcessName.Equals("Robocopy"))
+                    proc.Kill();
+            }
+            catch
+            {
+                //ignored
+            }
+            return true;
         }
     }
 }

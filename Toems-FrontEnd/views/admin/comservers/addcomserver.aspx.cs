@@ -8,7 +8,14 @@ namespace Toems_FrontEnd.views.admin.comservers
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            try
+            {
+                var storageType = GetSetting(SettingStrings.StorageType);
+                if (storageType == "Local")
+                    txtLocalStorage.Text = GetSetting(SettingStrings.StoragePath);
+            }
+            catch
+            { }
         }
 
          protected void buttonAdd_OnClick(object sender, EventArgs e)

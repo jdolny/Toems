@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using log4net;
 
 namespace Toems_Service
@@ -53,7 +54,13 @@ namespace Toems_Service
 
         public static string MacToPxeMac(string mac)
         {
-            var pxeMac = "01-" + mac.ToLower().Replace(':', '-');
+            string pxeMac = "";
+            if (!mac.Contains(":"))
+            {
+                pxeMac = Regex.Replace(mac, ".{2}", "$0:");
+                pxeMac = pxeMac.Trim(':');
+            }
+            pxeMac = "01-" + pxeMac.ToLower().Replace(':', '-');
             return pxeMac;
         }
 

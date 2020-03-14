@@ -44,9 +44,9 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [Authorize]
-        public IEnumerable<EntityComputerLog> GetOnDemandLogs(int limit = 0)
+        public IEnumerable<EntityComputerLog> GetUnregLogs(int limit = 0)
         {
-            return _computerLogService.SearchOnDemand(limit);
+            return _computerLogService.SearchUnreg(limit);
         }
     }
 }

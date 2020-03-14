@@ -67,6 +67,12 @@
                             <li class="li-mobile" >
                                 <a href="<%= ResolveUrl("~/views/computers/search.aspx") %>"  title="Computers">Computers</a>
                             </li>
+                               <li class="li-mobile">
+                                <a href="<%= ResolveUrl("~/views/images/search.aspx") %>"  title="Images">Images</a>
+                            </li>
+                              <li class="li-mobile">
+                                <a href="<%= ResolveUrl("~/views/imagingtasks/active.aspx") %>" title="Imaging Tasks">Imaging Tasks</a>
+                            </li>
                             <li class="li-mobile" >
                                 <a href="<%= ResolveUrl("~/views/assets/chooser.aspx") %>"  title="Assets">Assets</a>
                             </li>
@@ -227,7 +233,7 @@
 
                        
 
-                        <div class="size-fullgrid column">
+                        <div class="size-fullgrid column" id="scrollsave1">
                             <div class="help-content">
                                 <br class="clear"/>
                                 <asp:ContentPlaceHolder runat="server" ID="Help"></asp:ContentPlaceHolder>
@@ -246,7 +252,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-           
+
             $('.rounded-search').watermark('Search', { useNative: false });
             $('.txt-generate').watermark('Password', { useNative: false });
             $('.password').watermark('******', { useNative: false });

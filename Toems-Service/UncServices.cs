@@ -93,7 +93,7 @@ namespace Toems_Service
             var settingService = new ServiceSetting();
             if(settingService.GetSetting(SettingStrings.StorageType).Value == "Local")
             return true;
-            sUNCPath = settingService.GetSetting(SettingStrings.StoragePath).Value;
+            sUNCPath = settingService.GetSetting(SettingStrings.StoragePath).Value.TrimEnd('\\'); //dont' know why, but mount fails if path ends with \
             sUser = settingService.GetSetting(SettingStrings.StorageUsername).Value;
             sPassword =
                 new EncryptionServices().DecryptText(settingService.GetSetting(SettingStrings.StoragePassword).Value);

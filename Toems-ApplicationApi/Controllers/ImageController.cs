@@ -30,7 +30,7 @@ namespace Toems_ApplicationApi.Controllers
 
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageDelete)]
         public DtoActionResult Delete(int id)
         {
             var image = _imageService.GetImage(id);
@@ -50,7 +50,7 @@ namespace Toems_ApplicationApi.Controllers
             }
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageRead)]
         public EntityImage Get(int id)
         {
             var result = _imageService.GetImage(id);
@@ -65,14 +65,21 @@ namespace Toems_ApplicationApi.Controllers
             return _imageService.GetAll();
         }
 
+
         [Authorize]
+        public IEnumerable<DtoServerImageRepStatus> GetReplicationStatus(int id)
+        {
+            return _imageService.GetReplicationStatus(id);
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ImageRead)]
         [HttpPost]
         public IEnumerable<ImageWithDate> Search(DtoSearchFilterCategories filter)
         {
             return _imageService.Search(filter);
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageRead)]
         public DtoApiStringResponse GetCount()
         {
             return new DtoApiStringResponse {Value = _imageService.TotalCount()};
@@ -84,19 +91,19 @@ namespace Toems_ApplicationApi.Controllers
             return _imageService.SearchProfiles(id);
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageRead)]
         public DtoApiStringResponse GetImageSizeOnServer(string imageName, string hdNumber)
         {
             return new DtoApiStringResponse { Value = _imageService.ImageSizeOnServerForGridView(imageName, hdNumber) };
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageRead)]
         public IEnumerable<DtoImageFileInfo> GetPartitionFileInfo(int id, string selectedHd, string selectedPartition)
         {
             return _imageService.GetPartitionImageFileInfoForGridView(id, selectedHd, selectedPartition);
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
         public DtoActionResult Post(EntityImage image)
         {
             var result = _imageService.Add(image);
@@ -114,7 +121,7 @@ namespace Toems_ApplicationApi.Controllers
             return result;
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
         public DtoActionResult Put(int id, EntityImage image)
         {
             image.Id = id;
@@ -141,13 +148,13 @@ namespace Toems_ApplicationApi.Controllers
             return _imageService.SeedDefaultImageProfile(id);
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageRead)]
         public IEnumerable<EntityImageCategory> GetImageCategories(int id)
         {
             return _imageService.GetImageCategories(id);
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageRead)]
         public IEnumerable<EntityAuditLog> GetImageAuditLogs(int id, int limit)
         {
             return _imageService.GetImageAuditLogs(id, limit);

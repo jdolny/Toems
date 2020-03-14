@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Web.Security;
+using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -109,7 +110,7 @@ namespace Toems_Service.Entity
         public DtoActionResult Update(EntityClientComServer clientServer)
         {
             var u = GetServer(clientServer.Id);
-            if (u == null) return new DtoActionResult {ErrorMessage = "Com Server Not Found", Id = 0};
+            if (u == null) return new DtoActionResult { ErrorMessage = "Com Server Not Found", Id = 0 };
             var actionResult = new DtoActionResult();
             if (!clientServer.Url.EndsWith("/"))
                 clientServer.Url += "/";
@@ -189,6 +190,12 @@ namespace Toems_Service.Entity
                 }
             }*/
 
+            if(string.IsNullOrEmpty(comServer.LocalStoragePath))
+            {
+                validationResult.Success = false;
+                validationResult.ErrorMessage = "Local Storage Path Must Be Populated.";
+                return validationResult;
+            }
 
             Regex r = new Regex(@"^(?<proto>\w+)://[^/]+?(?<port>:\d+)?/",
                                      RegexOptions.None, TimeSpan.FromMilliseconds(150));
@@ -231,11 +238,30 @@ namespace Toems_Service.Entity
             certRequest.SubjectName = string.Format($"CN={site.Host}");
             certRequest.NotBefore = DateTime.UtcNow;
             certRequest.NotAfter = certRequest.NotBefore.AddYears(10);
-            var certificate = new ServiceGenerateCertificate(certRequest).IssueCertificate(intermediateCert, false,true);
+            var certificate = new ServiceGenerateCertificate(certRequest).IssueCertificate(intermediateCert, false, true);
 
             var bytes = certificate.Export(X509ContentType.Pfx);
 
             return bytes;
+        }
+
+        public List<DtoReplicationProcess> GetReplicationProcesses(int comServerId)
+        {
+            var comServer = _uow.ClientComServerRepository.GetById(comServerId);
+            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+
+            return new APICall().ClientComServerApi.GetReplicationProcesses(comServer.Url, "", decryptedKey);
+        }
+
+        public bool KillProcess(int comServerId, int pid)
+        {
+            var comServer = _uow.ClientComServerRepository.GetById(comServerId);
+            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+
+            return new APICall().ClientComServerApi.KillProcess(comServer.Url, "", decryptedKey,pid);
+
         }
 
 

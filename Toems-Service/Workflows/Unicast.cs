@@ -54,6 +54,11 @@ namespace Toems_Service.Workflows
                 _imageProfile = new ServiceComputer().GetEffectiveImage(_computer.Id);
             }
 
+            if(_imageProfile == null)
+            {
+                return "No Image Has Been Selected";
+            }
+
             if (_imageProfile.Image == null) return "The Image Does Not Exist";
 
             if (new ServiceComputer().IsComputerActive(_computer.Id))

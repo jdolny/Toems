@@ -23,6 +23,14 @@
         <a href="<%= ResolveUrl("~/views/admin/logs/frontend.aspx") %>?level=2">
             <span class="sub-nav-text">Front End Logs</span></a>
     </li>
+      <li id="comserver">
+        <a href="<%= ResolveUrl("~/views/admin/logs/comserver.aspx") %>?level=2">
+            <span class="sub-nav-text">Com Server Logs</span></a>
+    </li>
+           <li id="unreg">
+        <a href="<%= ResolveUrl("~/views/admin/logs/unregimaging.aspx") %>?level=2">
+            <span class="sub-nav-text">Unregistered Imaging Logs</span></a>
+    </li>
           </ul>
     
   

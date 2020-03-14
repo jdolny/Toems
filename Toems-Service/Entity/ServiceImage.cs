@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Toems_ApiCalls;
+using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
@@ -82,6 +85,73 @@ namespace Toems_Service.Entity
 
             return actionResult;
         }
+
+        public List<DtoServerImageRepStatus> GetReplicationStatus(int imageId)
+        {
+            var list = new List<DtoServerImageRepStatus>();
+            var image = GetImage(imageId);
+            var comServers = _uow.ClientComServerRepository.Get(x => x.IsImagingServer);
+            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+
+            foreach(var com in comServers)
+            {
+                var status = new DtoServerImageRepStatus();
+                status.Servername = com.DisplayName;
+                var hasImage = new APICall().ClientComServerApi.CheckImageExists(com.Url, "", decryptedKey, imageId);
+                if(hasImage)
+                    status.Status = "Replicated";
+                else
+                    status.Status = "Not Replicated";
+
+                list.Add(status);
+            }
+
+            //check if images already exist on smb share
+            var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
+            using (var unc = new UncServices())
+            {
+                if (unc.NetUseWithCredentials() || unc.LastError == 1219)
+                {
+
+                    var imagePath = Path.Combine(basePath, "images", image.Name);
+
+                    var guidPath = Path.Combine(imagePath, "guid");
+                    if (File.Exists(guidPath))
+                    {
+                        using (StreamReader reader = new StreamReader(guidPath))
+                        {
+                            var fileGuid = reader.ReadLine() ?? "";
+                            if (fileGuid.Equals(image.LastUploadGuid))
+                            {
+                                var status = new DtoServerImageRepStatus();
+                                status.Servername = basePath.Replace(@"\", "\\");
+                                status.Status = "Replicated";
+                                list.Add(status);
+                            }
+                            else
+                            {
+                                var status = new DtoServerImageRepStatus();
+                                status.Servername = basePath.Replace(@"\", "\\");
+                                status.Status = "Not Replicated";
+                                list.Add(status);
+                            }
+                           
+                        }
+                    }
+                    else
+                    {
+                        var status = new DtoServerImageRepStatus();
+                        status.Servername = basePath.Replace(@"\", "\\");
+                        status.Status = "Not Replicated";
+                        list.Add(status);
+                    }
+                }
+            }
+
+            return list;
+        }
+
 
         public List<EntityAuditLog> GetImageAuditLogs(int imageId, int limit)
         {

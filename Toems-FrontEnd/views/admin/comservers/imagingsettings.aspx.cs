@@ -34,6 +34,7 @@ namespace Toems_FrontEnd.views.admin.comservers
                 return;
             }
 
+            ComServer.ImagingIp = txtImagingIp.Text;
             ComServer.ImagingMaxBps = Convert.ToInt32(txtMaxBitrate.Text);
             ComServer.ImagingMaxBps = (ComServer.ImagingMaxBps * 125);
             ComServer.ImagingMaxClients = Convert.ToInt32(txtMaxClients.Text);
@@ -50,6 +51,7 @@ namespace Toems_FrontEnd.views.admin.comservers
             else
                 txtMaxBitrate.Text = "0";
             txtMaxClients.Text = ComServer.ImagingMaxClients.ToString();
+            txtImagingIp.Text = ComServer.ImagingIp;
         }
 
         protected void btnCert_Click(object sender, EventArgs e)

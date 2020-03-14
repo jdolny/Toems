@@ -12,6 +12,7 @@ namespace Toems_Common.Entity
         {
             Status = 0;
             QueuePosition = 0;
+            LastUpdateTimeUTC = DateTime.UtcNow;
         }
 
         [Key]

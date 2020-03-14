@@ -19,12 +19,13 @@ namespace Toems_ApplicationApi.Controllers
             _imageCategoryServices = new ServiceImageCategory();
         }
 
-
+        [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
         public DtoActionResult Post(List<EntityImageCategory> imageCategories)
         {
             return _imageCategoryServices.AddOrUpdate(imageCategories);
         }
 
+        [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
         public DtoActionResult Delete(int id)
         {
             var result = _imageCategoryServices.DeleteAllForImage(id);

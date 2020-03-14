@@ -328,6 +328,60 @@ namespace Toems_FrontEnd.views.users {
         protected global::System.Web.UI.WebControls.CheckBox assetDelete;
         
         /// <summary>
+        /// imageRead control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox imageRead;
+        
+        /// <summary>
+        /// imageUpdate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox imageUpdate;
+        
+        /// <summary>
+        /// imageDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox imageDelete;
+        
+        /// <summary>
+        /// imageUploadTask control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox imageUploadTask;
+        
+        /// <summary>
+        /// imageDeployTask control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox imageDeployTask;
+        
+        /// <summary>
+        /// imageMulticastTask control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox imageMulticastTask;
+        
+        /// <summary>
         /// policyActivate control.
         /// </summary>
         /// <remarks>
@@ -524,5 +578,50 @@ namespace Toems_FrontEnd.views.users {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox emailSmart;
+        
+        /// <summary>
+        /// emailLowDiskSpace control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox emailLowDiskSpace;
+        
+        /// <summary>
+        /// emailImagingTaskFailed control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox emailImagingTaskFailed;
+        
+        /// <summary>
+        /// emailImagingTaskCompleted control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox emailImagingTaskCompleted;
+        
+        /// <summary>
+        /// pxeSettingsUpdate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox pxeSettingsUpdate;
+        
+        /// <summary>
+        /// pxeIsoGen control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox pxeIsoGen;
     }
 }

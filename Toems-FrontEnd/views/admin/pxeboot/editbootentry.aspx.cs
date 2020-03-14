@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Toems_Common;
 using Toems_Common.Entity;
 
 namespace Toems_FrontEnd.views.admin.pxeboot
@@ -12,6 +13,7 @@ namespace Toems_FrontEnd.views.admin.pxeboot
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            RequiresAuthorization(AuthorizationStrings.PxeSettingsUpdate);
             if (!IsPostBack) PopulateForm();
         }
 

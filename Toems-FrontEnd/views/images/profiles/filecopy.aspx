@@ -6,7 +6,7 @@
  <li>File Copy</li>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub2">
-
+     <%= ImageProfile.Name %>
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub2" Runat="Server">
     <li><asp:LinkButton ID="btnUpdate" runat="server" Text="Update Profile" OnClick="btnUpdate_Click" CssClass="main-action"/></li>
@@ -49,15 +49,21 @@
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:BoundField DataField="Id" Visible="False"/>
-            <asp:BoundField DataField="Name" HeaderText="Name" SortExpression="Name" ItemStyle-CssClass="width_100"></asp:BoundField>
+            <asp:BoundField DataField="Name" HeaderText="Name" SortExpression="Name" ItemStyle-CssClass="width_200"></asp:BoundField>
 
-            <asp:TemplateField ItemStyle-CssClass="width_50" HeaderText="Destination Partition" SortExpression="Destination Partition">
+            <asp:TemplateField HeaderText="Destination Partition" SortExpression="Destination Partition" ItemStyle-CssClass="width_100">
                 <ItemTemplate>
 
                     <asp:TextBox ID="txtPartition" runat="server" CssClass="textbox height_18"/>
                 </ItemTemplate>
             </asp:TemplateField>
-          
+           <asp:TemplateField >
+                <ItemTemplate>
+
+                   
+
+                </ItemTemplate>
+            </asp:TemplateField>
           
         </Columns>
         <EmptyDataTemplate>

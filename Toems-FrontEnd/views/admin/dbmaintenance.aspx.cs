@@ -13,7 +13,7 @@ namespace Toems_FrontEnd.views.admin
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            RequiresAuthorization(AuthorizationStrings.Administrator);
             if (!IsPostBack)
             {
                 PopulateForm();

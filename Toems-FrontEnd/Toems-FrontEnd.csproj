@@ -169,7 +169,10 @@
     <Content Include="views\admin\kernels\profileupdater.aspx" />
     <Content Include="views\admin\ldap.aspx" />
     <Content Include="views\admin\logs\application.aspx" />
+    <Content Include="views\admin\logs\comserver.aspx" />
     <Content Include="views\admin\logs\frontend.aspx" />
+    <Content Include="views\admin\logs\unregimaging.aspx" />
+    <Content Include="views\admin\pxeboot\chooser.aspx" />
     <Content Include="views\admin\pxeboot\createbootentry.aspx" />
     <Content Include="views\admin\pxeboot\editbootentry.aspx" />
     <Content Include="views\admin\pxeboot\globalbootmenu.aspx" />
@@ -213,12 +216,14 @@
     <Content Include="views\computers\effective.aspx" />
     <Content Include="views\computers\general.aspx" />
     <Content Include="views\computers\imaging.aspx" />
+    <Content Include="views\computers\imaginglogs.aspx" />
     <Content Include="views\computers\message.aspx" />
     <Content Include="views\computers\policyhistory.aspx" />
     <Content Include="views\computers\processreport.aspx" />
     <Content Include="views\computers\remoteaccess.aspx" />
     <Content Include="views\computers\resetrequests.aspx" />
     <Content Include="views\computers\search.aspx" />
+    <Content Include="views\computers\searchimageonly.aspx" />
     <Content Include="views\computers\software.aspx" />
     <Content Include="views\computers\systeminfo.aspx" />
     <Content Include="views\computers\updates.aspx" />
@@ -252,6 +257,7 @@
     <Content Include="views\images\create.aspx" />
     <Content Include="views\images\general.aspx" />
     <Content Include="views\images\history.aspx" />
+    <Content Include="views\images\profiles\create.aspx" />
     <Content Include="views\images\profiles\deploy.aspx" />
     <Content Include="views\images\profiles\filecopy.aspx" />
     <Content Include="views\images\profiles\general.aspx" />
@@ -262,6 +268,7 @@
     <Content Include="views\images\profiles\sysprep.aspx" />
     <Content Include="views\images\profiles\task.aspx" />
     <Content Include="views\images\profiles\upload.aspx" />
+    <Content Include="views\images\replicationstatus.aspx" />
     <Content Include="views\images\schema.aspx" />
     <Content Include="views\images\search.aspx" />
     <Content Include="views\imagingtasks\active.aspx" />
@@ -1185,6 +1192,13 @@
     <Compile Include="views\admin\logs\application.aspx.designer.cs">
       <DependentUpon>application.aspx</DependentUpon>
     </Compile>
+    <Compile Include="views\admin\logs\comserver.aspx.cs">
+      <DependentUpon>comserver.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\logs\comserver.aspx.designer.cs">
+      <DependentUpon>comserver.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\admin\logs\frontend.aspx.cs">
       <DependentUpon>frontend.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1198,6 +1212,20 @@
     </Compile>
     <Compile Include="views\admin\logs\logs.master.designer.cs">
       <DependentUpon>logs.master</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\logs\unregimaging.aspx.cs">
+      <DependentUpon>unregimaging.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\logs\unregimaging.aspx.designer.cs">
+      <DependentUpon>unregimaging.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\chooser.aspx.cs">
+      <DependentUpon>chooser.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\chooser.aspx.designer.cs">
+      <DependentUpon>chooser.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\admin\pxeboot\createbootentry.aspx.cs">
       <DependentUpon>createbootentry.aspx</DependentUpon>
@@ -1556,6 +1584,13 @@
     <Compile Include="views\computers\imaging.aspx.designer.cs">
       <DependentUpon>imaging.aspx</DependentUpon>
     </Compile>
+    <Compile Include="views\computers\imaginglogs.aspx.cs">
+      <DependentUpon>imaginglogs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\computers\imaginglogs.aspx.designer.cs">
+      <DependentUpon>imaginglogs.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\computers\message.aspx.cs">
       <DependentUpon>message.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1597,6 +1632,13 @@
     </Compile>
     <Compile Include="views\computers\search.aspx.designer.cs">
       <DependentUpon>search.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\computers\searchimageonly.aspx.cs">
+      <DependentUpon>searchimageonly.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\computers\searchimageonly.aspx.designer.cs">
+      <DependentUpon>searchimageonly.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\computers\software.aspx.cs">
       <DependentUpon>software.aspx</DependentUpon>
@@ -1885,6 +1927,13 @@
     <Compile Include="views\images\images.master.designer.cs">
       <DependentUpon>images.master</DependentUpon>
     </Compile>
+    <Compile Include="views\images\profiles\create.aspx.cs">
+      <DependentUpon>create.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\profiles\create.aspx.designer.cs">
+      <DependentUpon>create.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\images\profiles\deploy.aspx.cs">
       <DependentUpon>deploy.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1961,6 +2010,13 @@
     </Compile>
     <Compile Include="views\images\profiles\upload.aspx.designer.cs">
       <DependentUpon>upload.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\images\replicationstatus.aspx.cs">
+      <DependentUpon>replicationstatus.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\images\replicationstatus.aspx.designer.cs">
+      <DependentUpon>replicationstatus.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\images\schema.aspx.cs">
       <DependentUpon>schema.aspx</DependentUpon>

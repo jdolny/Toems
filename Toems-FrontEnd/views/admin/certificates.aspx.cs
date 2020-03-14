@@ -2,6 +2,7 @@
 using System.IO;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Toems_Common;
 
 namespace Toems_FrontEnd.views.admin
 {
@@ -9,6 +10,7 @@ namespace Toems_FrontEnd.views.admin
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            RequiresAuthorization(AuthorizationStrings.Administrator);
             if (!IsPostBack)
                 PopulateForm();
         }

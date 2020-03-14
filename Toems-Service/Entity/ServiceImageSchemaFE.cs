@@ -25,12 +25,12 @@ namespace Toems_Service.Entity
 
             if (schemaRequest.imageProfile != null)
             {
-                if (!string.IsNullOrEmpty(schemaRequest.imageProfile.CustomSchema) &&
+                if (!string.IsNullOrEmpty(schemaRequest.imageProfile.CustomSchema) && schemaRequest.imageProfile.CustomSchema != "{}" &&
                     schemaRequest.schemaType == "deploy")
                 {
                     schema = schemaRequest.imageProfile.CustomSchema;
                 }
-                else if (!string.IsNullOrEmpty(schemaRequest.imageProfile.CustomUploadSchema) &&
+                else if (!string.IsNullOrEmpty(schemaRequest.imageProfile.CustomUploadSchema) && schemaRequest.imageProfile.CustomSchema != "{}" &&
                          schemaRequest.schemaType == "upload")
                 {
                     schema = schemaRequest.imageProfile.CustomUploadSchema;

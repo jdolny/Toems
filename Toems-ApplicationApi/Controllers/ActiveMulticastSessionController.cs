@@ -7,6 +7,8 @@ using System.Security.Claims;
 using System.Threading;
 using System.Web;
 using System.Web.Http;
+using Toems_ApplicationApi.Controllers.Authorization;
+using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Service.Entity;
@@ -71,7 +73,7 @@ namespace Toems_ApplicationApi.Controllers
             return new ServiceActiveImagingTask().MulticastProgress(id);
         }
 
-        [Authorize]
+        [CustomAuth(Permission = AuthorizationStrings.ImageMulticastTask)]
         [HttpGet]
         public DtoApiStringResponse StartOnDemandMulticast(int profileId, string clientCount, string sessionName, int comServerId)
         {

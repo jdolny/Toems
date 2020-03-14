@@ -40,6 +40,14 @@
         <asp:TextBox ID="txtMaxClients" runat="server" CssClass="textbox"></asp:TextBox>
     </div>
      <br class="clear"/>
+
+       <div class="size-4 column">
+       Upload Interface IP:
+    </div>
+    <div class="size-5 column">
+        <asp:TextBox ID="txtImagingIp" runat="server" CssClass="textbox"></asp:TextBox>
+    </div>
+     <br class="clear"/>
     
 
   

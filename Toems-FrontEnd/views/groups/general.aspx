@@ -79,6 +79,7 @@
         <asp:CheckBox ID="chkPreventShutdown" runat="server" ClientIDMode="Static"></asp:CheckBox>
         <label for="chkPreventShutdown">Toggle</label>
     </div>
+    <br class="clear" />
         <div class="size-4 column">
         Endpoint Priority
     </div>

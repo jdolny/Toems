@@ -86,8 +86,17 @@ namespace Toems_Service.Workflows
             else
                 _userToken = "";
 
-            var pxeComputerMac = StringManipulationServices.MacToPxeMac(_computer.ImagingMac);
-
+            var listOfMacs = new List<string>();
+            if (!string.IsNullOrEmpty(_computer.ImagingMac))
+                listOfMacs.Add(StringManipulationServices.MacToPxeMac(_computer.ImagingMac));
+            else
+            {
+                var computerMacs = _uow.NicInventoryRepository.Get(x => x.ComputerId == computer.Id && x.Type.Equals("Ethernet")).Select(x => x.Mac).ToList();
+                foreach(var mac in computerMacs)
+                {
+                    listOfMacs.Add(StringManipulationServices.MacToPxeMac(mac));
+                }
+            }
             var imageComServers = new Workflows.GetCompImagingServers().Run(computer.Id);
 
             if (imageComServers == null)
@@ -134,7 +143,11 @@ namespace Toems_Service.Workflows
                     var currentPort = iPxePath.Split(':').Last();
                     iPxePath = iPxePath.Replace(currentPort, ServiceSetting.GetSettingValue(SettingStrings.IpxeHttpPort)) + "/clientimaging/";
                 }
+                else
+                    iPxePath += "clientimaging/";
             }
+            else
+                iPxePath += "clientimaging/";
 
 
             var ipxe = new StringBuilder();
@@ -186,17 +199,19 @@ namespace Toems_Service.Workflows
             //to use a specific boot file without affecting all others, using the proxydhcp reservations file.
             if (ServiceSetting.GetSettingValue(SettingStrings.ProxyDhcpEnabled) == "Yes")
             {
-
-                foreach (var bootMenu in list)
+                foreach (var mac in listOfMacs)
                 {
-                    var path = _thisComServer.TftpPath + "proxy" +
-                               Path.DirectorySeparatorChar + bootMenu.Item1 +
-                               Path.DirectorySeparatorChar + "pxelinux.cfg" + Path.DirectorySeparatorChar +
-                               pxeComputerMac +
-                               bootMenu.Item2;
+                    foreach (var bootMenu in list)
+                    {
+                        var path = _thisComServer.TftpPath + "proxy" +
+                                   Path.DirectorySeparatorChar + bootMenu.Item1 +
+                                   Path.DirectorySeparatorChar + "pxelinux.cfg" + Path.DirectorySeparatorChar +
+                                   mac +
+                                   bootMenu.Item2;
 
-                    if (!new FilesystemServices().WritePath(path, bootMenu.Item3))
-                        return false;
+                        if (!new FilesystemServices().WritePath(path, bootMenu.Item3))
+                            return false;
+                    }
                 }
 
 
@@ -205,10 +220,12 @@ namespace Toems_Service.Workflows
             else
             {
                 var mode = ServiceSetting.GetSettingValue(SettingStrings.PxeBootloader);
-                var path = "";
+                foreach (var mac in listOfMacs)
+                {
+                    var path = "";
 
                     path = _thisComServer.TftpPath + "pxelinux.cfg" +
-                           Path.DirectorySeparatorChar + pxeComputerMac;
+                           Path.DirectorySeparatorChar + mac;
 
                     string fileContents = null;
                     if (mode == "pxelinux" || mode == "syslinux_32_efi" || mode == "syslinux_64_efi")
@@ -229,6 +246,7 @@ namespace Toems_Service.Workflows
 
                     if (!new FilesystemServices().WritePath(path, fileContents))
                         return false;
+                }
   
             }
 

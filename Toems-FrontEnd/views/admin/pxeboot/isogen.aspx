@@ -31,6 +31,7 @@
         <asp:DropDownList ID="ddlBootImage" runat="server" CssClass="ddlist">
         </asp:DropDownList>
     </div>
+     <br class="clear"/>
       <div class="size-4 column">
         Communication Server Cluster
     </div>

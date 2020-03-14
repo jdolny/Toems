@@ -3,6 +3,7 @@ using log4net;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -128,6 +129,14 @@ namespace Toems_Service
                 result.Id = image.Id;
 
             return JsonConvert.SerializeObject(result);
+        }
+
+        public string GetRegistrationSettings()
+        {
+            var regDto = new RegistrationDTO();
+            regDto.registrationEnabled = ServiceSetting.GetSettingValue(SettingStrings.RegistrationEnabled);
+            regDto.keepNamePrompt = ServiceSetting.GetSettingValue(SettingStrings.DisabledRegNamePrompt);
+            return JsonConvert.SerializeObject(regDto);
         }
 
         public bool AuthorizeApiCall(string token)
@@ -475,7 +484,6 @@ namespace Toems_Service
         public string CheckTaskAuth(string task, string token)
         {
             //only check console tasks, 
-            var webRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.WebTasksRequireLogin);
             var consoleRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
 
             if (consoleRequiresLogin.Equals("False"))
@@ -484,12 +492,17 @@ namespace Toems_Service
             }
             else
             {
-                //todo: put additonal user checks here
-                var user = new ServiceUser().GetUserFromToken(token);
-                if (user != null)
+                var globalToken = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingToken);
+                if (token.Equals(globalToken) && !string.IsNullOrEmpty(globalToken))
                     return "true";
                 else
-                    return "false";
+                {
+                    var user = new ServiceUser().GetUserFromToken(token);
+                    if (user != null)
+                        return "true";
+                    else
+                        return "false";
+                }
             }
           
         }
@@ -501,6 +514,9 @@ namespace Toems_Service
             //Remove existing custom deploy schema, it may not match newly updated image
             profile.CustomSchema = string.Empty;
             new ServiceImageProfile().Update(profile);
+
+            profile.Image.LastUploadGuid = string.Empty;
+            new ServiceImage().Update(profile.Image);
 
             var delResult = new FilesystemServices().DeleteImageFolders(profile.Image.Name);
 
@@ -897,7 +913,7 @@ namespace Toems_Service
             var checkIn = new CheckIn();
             var computerServices = new ServiceComputer();
 
-            if (userId != null) //on demand
+            if (userId != null) 
             {
                 //Check permissions
                 if (task.Contains("deploy"))
@@ -1118,10 +1134,19 @@ namespace Toems_Service
             return JsonConvert.SerializeObject(checkIn);
         }
 
-       
+
 
         public string UpdateGuid(int profileId)
         {
+            var comGuid = ConfigurationManager.AppSettings["ComServerUniqueId"];
+            var thisComServer = new ServiceClientComServer().GetServerByGuid(comGuid);
+
+            if (thisComServer == null)
+            {
+                log.Error($"Com Server With Guid {comGuid} Not Found");
+                return "false";
+            }
+
             var imageProfile = new ServiceImageProfile().ReadProfile(profileId);
             var imageServices = new ServiceImage();
             var image = imageServices.GetImage(imageProfile.ImageId);
@@ -1129,37 +1154,25 @@ namespace Toems_Service
             image.LastUploadGuid = guid;
             imageServices.Update(image);
 
-            var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
-            var path = Path.Combine(basePath,"images",image.Name); 
+            var basePath = thisComServer.LocalStoragePath;
+            var path = Path.Combine(basePath, "images", image.Name);
 
-            using (var unc = new UncServices())
+
+            try
             {
-                if (
-                      unc.NetUseWithCredentials() || unc.LastError == 1219)
+                Directory.CreateDirectory(path);
+                using (var file = new StreamWriter(Path.Combine(path, "guid")))
                 {
-                    try
-                    {
-                        Directory.CreateDirectory(path);
-                        using (var file = new StreamWriter(Path.Combine(path, "guid")))
-                        {
-                            file.WriteLine(guid);
-                        }
-                        return "true";
-                    }
-                    catch (Exception ex)
-                    {
-                        log.Error("Could Not Create Image Guid");
-                        log.Error(ex.Message);
-                        return "false";
-                    }
+                    file.WriteLine(guid);
                 }
-                else
-                {
-                    log.Error("Failed to connect to " + basePath + "\r\nLastError = " + unc.LastError);
-                    return "false";
-                }
+                return "true";
             }
-
+            catch (Exception ex)
+            {
+                log.Error("Could Not Create Image Guid");
+                log.Error(ex.Message);
+                return "false";
+            }
         }
 
         public void UpdateProgress(int taskId, string progress, string progressType)
@@ -1216,77 +1229,74 @@ namespace Toems_Service
 
         public string SaveImageSchema(int profileId, string schema)
         {
+            var comGuid = ConfigurationManager.AppSettings["ComServerUniqueId"];
+            var thisComServer = new ServiceClientComServer().GetServerByGuid(comGuid);
+
+            if (thisComServer == null)
+            {
+                log.Error($"Com Server With Guid {comGuid} Not Found");
+                return "false";
+            }
+
             var profile = new UnitOfWork().ImageProfileRepository.GetImageProfileWithImage(profileId);
 
-            var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
+            var basePath = thisComServer.LocalStoragePath;
             var path = basePath + "images" + Path.DirectorySeparatorChar +
                              profile.Image.Name + Path.DirectorySeparatorChar;
-            using (var unc = new UncServices())
+
+            try
             {
-                if (
-                      unc.NetUseWithCredentials() || unc.LastError == 1219)
+                Directory.CreateDirectory(path);
+                using (var file = new StreamWriter(path + "schema"))
                 {
-                    try
-                    {
-                        Directory.CreateDirectory(path);
-                        using (var file = new StreamWriter(path + "schema"))
-                        {
-                            file.WriteLine(schema);
-                        }
-                        return "true";
-                    }
-                    catch (Exception ex)
-                    {
-                        log.Error("Could Not Create Image Schema");
-                        log.Error(ex.Message);
-                        return "false";
-                    }
+                    file.WriteLine(schema);
                 }
-                else
-                {
-                    log.Error("Failed to connect to " + basePath + "\r\nLastError = " + unc.LastError);
-                    return "false";
-                }
+                return "true";
             }
+            catch (Exception ex)
+            {
+                log.Error("Could Not Create Image Schema");
+                log.Error(ex.Message);
+                return "false";
+            }
+
         }
 
         public string SaveMbr(HttpFileCollection files, int profileId, string hdNumber)
         {
+            var comGuid = ConfigurationManager.AppSettings["ComServerUniqueId"];
+            var thisComServer = new ServiceClientComServer().GetServerByGuid(comGuid);
+
+            if (thisComServer == null)
+            {
+                log.Error($"Com Server With Guid {comGuid} Not Found");
+                return "false";
+            }
             var profile = new UnitOfWork().ImageProfileRepository.GetImageProfileWithImage(profileId);
 
-            var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
-            var path = Path.Combine(basePath,"images",profile.Image.Name,$"hd{ hdNumber}"); 
+            var basePath = thisComServer.LocalStoragePath;
+            var path = Path.Combine(basePath, "images", profile.Image.Name, $"hd{ hdNumber}");
 
-            using (var unc = new UncServices())
+
+            try
             {
-                if (
-                      unc.NetUseWithCredentials() || unc.LastError == 1219)
+                Directory.CreateDirectory(path);
+                foreach (string file in files)
                 {
-                    try
-                    {
-                        Directory.CreateDirectory(path);
-                        foreach (string file in files)
-                        {
-                            var postedFile = files[file];
-                            var filePath = Path.Combine(path, "table");
-                            postedFile.SaveAs(filePath);
+                    var postedFile = files[file];
+                    var filePath = Path.Combine(path, "table");
+                    postedFile.SaveAs(filePath);
 
-                        }
-                        return "true";
-                    }
-                    catch (Exception ex)
-                    {
-                        log.Error("Could Not Save Mbr");
-                        log.Error(ex.Message);
-                        return "false";
-                    }
                 }
-                else
-                {
-                    log.Error("Failed to connect to " + basePath + "\r\nLastError = " + unc.LastError);
-                    return "false";
-                }
+                return "true";
             }
+            catch (Exception ex)
+            {
+                log.Error("Could Not Save Mbr");
+                log.Error(ex.Message);
+                return "false";
+            }
+
         }
 
         public void CloseUpload(int taskId, int port)

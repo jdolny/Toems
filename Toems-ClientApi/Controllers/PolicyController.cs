@@ -125,11 +125,8 @@ namespace Toems_ClientApi.Controllers
                 Logger.Error($"Com Server With Guid {guid} Not Found");
                 return new HttpResponseMessage(HttpStatusCode.NotFound);
             }
-            var storageType = ServiceSetting.GetSettingValue(SettingStrings.StorageType);
-            var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
             var maxBitRate = thisComServer.EmMaxBps;
-            if (storageType != "Local")
-                basePath = thisComServer.LocalStoragePath;
+            var basePath = thisComServer.LocalStoragePath;
 
             var fullPath = Path.Combine(basePath, "software_uploads", fileRequest.ModuleGuid,
                 fileRequest.FileName);
@@ -171,11 +168,8 @@ namespace Toems_ClientApi.Controllers
                 Logger.Error($"Com Server With Guid {guid} Not Found");
                 return new HttpResponseMessage(HttpStatusCode.NotFound);
             }
-            var storageType = ServiceSetting.GetSettingValue(SettingStrings.StorageType);
-            var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
             var maxBitRate = thisComServer.EmMaxBps;
-            if (storageType != "Local")
-                basePath = thisComServer.LocalStoragePath;
+            var basePath = thisComServer.LocalStoragePath;
 
             var fullPath = Path.Combine(basePath, "client_versions", fileRequest.FileName);
             if (File.Exists(fullPath))

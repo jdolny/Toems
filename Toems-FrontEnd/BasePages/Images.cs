@@ -12,7 +12,7 @@ namespace Toems_FrontEnd.BasePages
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-
+            RequiresAuthorization(AuthorizationStrings.ImageRead);
             ImageEntity = !string.IsNullOrEmpty(Request.QueryString["imageId"])
                ? Call.ImageApi.Get(Convert.ToInt32(Request.QueryString["imageId"]))
                : null;

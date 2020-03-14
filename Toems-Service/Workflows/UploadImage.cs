@@ -41,20 +41,8 @@ namespace Toems_Service.Workflows
 
             var uploadPort = new ServicePort().GetNextPort(task.ComServerId);
       
-            var storageType = ServiceSetting.GetSettingValue(SettingStrings.StorageType);
-            string path = string.Empty;
-            if (storageType.Equals("Local"))
-            {
-                //if storage type is local, then only a single server with a com, api, and front end are in use
-                //just save image there
-                path = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
-            }
-            else
-            {
-                //get this com servers local storage and save there
-                path = _thisComServer.LocalStoragePath;
-            }
-
+            var path = _thisComServer.LocalStoragePath;
+            
             
             path = Path.Combine(path, "images", imageProfile.Image.Name, $"hd{hdNumber}", fileName);
             string arguments = " /c \"";

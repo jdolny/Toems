@@ -90,6 +90,15 @@ namespace Toems_ApiCalls
             return response != null && response.Value;
         }
 
+        public bool UpdatePxeSettings(List<EntitySetting> listSettings)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = string.Format("{0}/UpdatePxeSettings/", Resource);
+            Request.AddJsonBody(listSettings);
+            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
+            return response != null && response.Value;
+        }
+
         public IEnumerable<EntityCertificate> GetCAInt()
         {
             Request.Method = Method.GET;

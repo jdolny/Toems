@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Toems_Common;
 
 namespace Toems_FrontEnd.views.admin
 {
@@ -11,6 +12,7 @@ namespace Toems_FrontEnd.views.admin
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            RequiresAuthorization(AuthorizationStrings.Administrator);
             PopulateForm();
         }
 

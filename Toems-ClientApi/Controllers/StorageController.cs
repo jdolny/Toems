@@ -1,7 +1,9 @@
-﻿using System.Web.Http;
+﻿using System.Collections.Generic;
+using System.Web.Http;
 using log4net;
 using Toems_ClientApi.Controllers.Authorization;
 using Toems_Common.Dto;
+using Toems_Service;
 using Toems_Service.Workflows;
 
 namespace Toems_ClientApi.Controllers
@@ -24,6 +26,20 @@ namespace Toems_ClientApi.Controllers
         public DtoFreeSpace GetFreeSpace()
         {
             return new Toems_Service.Workflows.ComServerFreeSpace().GetFreeSpace();
+        }
+
+        [InterComAuth]
+        [HttpPost]
+        public List<DtoReplicationProcess> GetReplicationProcesses()
+        {
+            return new FilesystemServices().GetRunningSyncProcess();
+        }
+
+        [InterComAuth]
+        [HttpPost]
+        public DtoApiBoolResponse KillProcess(int id)
+        {
+            return new DtoApiBoolResponse() { Value = new FilesystemServices().KillRoboProcess(id) };
         }
 
 

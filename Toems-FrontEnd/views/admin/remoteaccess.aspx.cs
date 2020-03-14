@@ -48,6 +48,7 @@ namespace Toems_FrontEnd.views.admin
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            RequiresAuthorization(AuthorizationStrings.Administrator);
             NodeId = "node//";
             var mesh = GetSetting(SettingStrings.RemoteAccessServer);
             MeshServer = Utility.ReplaceHttp(mesh);

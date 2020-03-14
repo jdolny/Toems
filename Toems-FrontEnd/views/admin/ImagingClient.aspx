@@ -44,6 +44,27 @@
         <asp:TextBox ID="txtImagingTimeout" runat="server" CssClass="textbox"></asp:TextBox>
     </div>
     <br class="clear"/>
+    <div class="size-4 column">
+        Registration Enabled:
+    </div>
+    <div class="size-5 column">
+        <asp:DropDownList ID="ddlRegistration" runat="server" CssClass="ddlist" >
+            <asp:ListItem>Yes</asp:ListItem>
+            <asp:ListItem>No</asp:ListItem>
+        </asp:DropDownList>
+    </div>
+      <br class="clear"/>
+    
+
+     <div class="size-4 column">
+        Registration Disabled Keep Name Prompt:
+    </div>
+    <div class="size-5 column">
+        <asp:DropDownList ID="ddlKeepNamePrompt" runat="server" CssClass="ddlist" >
+            <asp:ListItem>Yes</asp:ListItem>
+            <asp:ListItem>No</asp:ListItem>
+        </asp:DropDownList>
+    </div>
   
   
 

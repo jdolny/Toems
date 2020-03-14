@@ -274,6 +274,14 @@ float:left;
     width: 150px;
 }
 
+.container .size-10-2.column {
+    color: #83cce9;
+    font-size: 24px;
+    margin-bottom: 5px;
+    width: 160px;
+    margin-top:-10px;
+}
+
 .container .size-11.column {
     float: right;
     width: 150px;
@@ -423,7 +431,7 @@ float:left;
    
 }
 
-@media screen and (max-height: 600px) {
+@media screen and (max-height: 675px) {
     #leftnav {
         display: none;
     }

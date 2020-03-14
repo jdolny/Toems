@@ -355,3 +355,8 @@ select {
 .margin-top-10{
     margin-top:0;
 }
+
+a.confirm_yes,a.confirm_no
+{
+    color:#333;
+}

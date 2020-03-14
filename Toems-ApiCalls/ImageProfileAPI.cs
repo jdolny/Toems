@@ -89,5 +89,27 @@ namespace Toems_ApiCalls
             if (response != null) return response.Value;
             return false;
         }
+
+        public DtoActionResult Post(EntityImageProfile profile)
+        {
+            Request.Method = Method.POST;
+            Request.AddJsonBody(profile);
+            Request.Resource = string.Format("{0}/Post/",Resource);
+            var response = new ApiRequest().Execute<DtoActionResult>(Request);
+            if (response != null)
+            {
+                if (response.Id == 0)
+                    response.Success = false;
+            }
+            else
+            {
+                return new DtoActionResult()
+                {
+                    ErrorMessage = "Unknown Exception.  Check The Exception Logs For More Info.",
+                    Success = false
+                };
+            }
+            return response;
+        }
     }
 }

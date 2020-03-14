@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using log4net;
 using Toems_ApiCalls;
 using Toems_Common;
@@ -13,10 +15,10 @@ namespace Toems_Service.Workflows
     public class CleanTaskBootFiles
     {
         private const string ConfigFolder = "pxelinux.cfg";
-        private  string _bootFile;
         private  EntityComputer _computer;
         private  ServiceComputer _computerServices;
         private EntityClientComServer _thisComServer;
+        private List<string> _listOfMacs;
         private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public bool RunAllServers(EntityComputer computer)
@@ -42,7 +44,18 @@ namespace Toems_Service.Workflows
         public bool Execute(EntityComputer computer)
         {
             _computer = computer;
-            _bootFile = StringManipulationServices.MacToPxeMac(_computer.ImagingMac);
+            _listOfMacs = new List<string>();
+            if (!string.IsNullOrEmpty(_computer.ImagingMac))
+                _listOfMacs.Add(StringManipulationServices.MacToPxeMac(_computer.ImagingMac));
+            else
+            {
+                var computerMacs = new UnitOfWork().NicInventoryRepository.Get(x => x.ComputerId == computer.Id && x.Type.Equals("Ethernet")).Select(x => x.Mac).ToList();
+                foreach (var mac in computerMacs)
+                {
+                    _listOfMacs.Add(StringManipulationServices.MacToPxeMac(mac));
+                }
+            }
+
             _computerServices = new ServiceComputer();
 
             var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
@@ -85,31 +98,36 @@ namespace Toems_Service.Workflows
 
         private void DeleteProxyFile(string architecture, string extension = "")
         {
-
-            try
+            foreach (var mac in _listOfMacs)
             {
-                File.Delete(_thisComServer.TftpPath + "proxy" +
-                            Path.DirectorySeparatorChar + architecture +
-                            Path.DirectorySeparatorChar + ConfigFolder + Path.DirectorySeparatorChar + _bootFile +
-                            extension);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex.Message);
+                try
+                {
+                    File.Delete(_thisComServer.TftpPath + "proxy" +
+                                Path.DirectorySeparatorChar + architecture +
+                                Path.DirectorySeparatorChar + ConfigFolder + Path.DirectorySeparatorChar + mac +
+                                extension);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex.Message);
+                }
             }
         }
 
         private void DeleteStandardFile(string extension = "")
         {
-            try
+            foreach (var mac in _listOfMacs)
             {
-                File.Delete(_thisComServer.TftpPath + ConfigFolder +
-                            Path.DirectorySeparatorChar +
-                            _bootFile + extension);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex.Message);
+                try
+                {
+                    File.Delete(_thisComServer.TftpPath + ConfigFolder +
+                                Path.DirectorySeparatorChar +
+                                mac + extension);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex.Message);
+                }
             }
 
 

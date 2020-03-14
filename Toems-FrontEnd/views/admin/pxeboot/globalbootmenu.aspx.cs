@@ -28,6 +28,7 @@ namespace Toems_FrontEnd.views.admin.pxeboot
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            RequiresAuthorization(AuthorizationStrings.PxeSettingsUpdate);
             if (!IsPostBack) PopulateForm();
             else
             {
@@ -54,7 +55,7 @@ namespace Toems_FrontEnd.views.admin.pxeboot
                 }
             };
 
-            Call.SettingApi.UpdateSettings(listSettings);
+            Call.SettingApi.UpdatePxeSettings(listSettings);
 
             var defaultBootMenuOptions = new DtoBootMenuGenOptions()
             {
@@ -91,7 +92,7 @@ namespace Toems_FrontEnd.views.admin.pxeboot
                 }
             };
 
-            Call.SettingApi.UpdateSettings(listSettings);
+            Call.SettingApi.UpdatePxeSettings(listSettings);
 
             var defaultBootMenuOptions = new DtoBootMenuGenOptions();
             var pxeMode = GetSetting(SettingStrings.PxeBootloader);

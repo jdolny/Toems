@@ -32,6 +32,22 @@ namespace Toems_Service.Entity
             return setting != null ? setting.Value : string.Empty;
         }
 
+        public bool UpdatePxeSetting(List<EntitySetting> listSettings)
+        {
+
+            foreach (var setting in listSettings)
+            {
+                if (setting.Name != SettingStrings.IpxeRequiresLogin && setting.Name != SettingStrings.PxeBootloader && setting.Name != SettingStrings.ProxyDhcpEnabled && setting.Name != SettingStrings.ProxyBiosBootloader 
+                    && setting.Name != SettingStrings.ProxyEfi32Bootloader && setting.Name != SettingStrings.ProxyEfi64Bootloader)
+                    return false;
+
+          
+                _uow.SettingRepository.Update(setting, setting.Id);
+            }
+            _uow.Save();
+            return true;
+        }
+
         public bool UpdateSetting(List<EntitySetting> listSettings)
         {
           

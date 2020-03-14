@@ -16,6 +16,28 @@ namespace Toems_ApiCalls
            
         }
 
+        public List<DtoReplicationProcess> GetReplicationProcesses(int id)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = string.Format("{0}/GetReplicationProcesses/{1}", Resource, id);
+            return new ApiRequest().Execute<List<DtoReplicationProcess>>(Request);
+        }
+
+        public bool KillReplicationProcess(int comServerId, int pid)
+        {
+            var comPid = new DtoComPid();
+            comPid.ComServerId = comServerId;
+            comPid.Pid = pid;
+            Request.Method = Method.POST;
+            Request.Resource = string.Format("{0}/KillReplicationProcess/", Resource);
+            Request.AddJsonBody(comPid);
+            var response = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
+            if (response == null)
+                return false;
+            else
+                return response.Value;
+        }
+
         public void SendAction(string url, string serverName, string interComKey, DtoSocketRequest socketRequest)
         {
             Request.Method = Method.POST;
@@ -28,6 +50,32 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = "Storage/Sync";
+            var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
+            return responseData != null && responseData.Value;
+        }
+
+        public bool CheckImageExists(string url, string serverName, string interComKey,int imageId)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = "Imaging/CheckImageExists/" + imageId;
+            var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
+            return responseData != null && responseData.Value;
+        }
+
+        public bool SyncComToSmb(string url, string serverName, string interComKey, List<int> imageIds)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = "Imaging/SyncComToSmb/";
+            Request.AddJsonBody(imageIds);
+            var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
+            return responseData != null && responseData.Value;
+        }
+
+        public bool SyncSmbToCom(string url, string serverName, string interComKey, List<int> imageIds)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = "Imaging/SyncSmbToCom/";
+            Request.AddJsonBody(imageIds);
             var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
             return responseData != null && responseData.Value;
         }
@@ -142,11 +190,44 @@ namespace Toems_ApiCalls
             return responseData != null && responseData.Value;
         }
 
+        public List<string> GetComServerLogs(string url, string serverName, string interComKey)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = "Imaging/GetComServerLogs";
+            return new ApiRequest(new Uri(url)).ExecuteHMACInterCom<List<string>>(Request, serverName, interComKey);
+        }
+
+        public List<string> GetComServerLogContents(string url, string serverName, string interComKey, string name, int limit)
+        {
+            var dtorequest = new DtoLogContentRequest();
+            dtorequest.name = name;
+            dtorequest.limit = limit;
+            Request.Method = Method.POST;
+            Request.Resource = "Imaging/GetComServerLogContents";
+            Request.AddJsonBody(dtorequest);
+            return new ApiRequest(new Uri(url)).ExecuteHMACInterCom<List<string>>(Request, serverName, interComKey);
+        }
+
         public List<string> GetKernels(string url, string serverName, string interComKey)
         {
             Request.Method = Method.POST;
             Request.Resource = "Imaging/GetKernels";
             return new ApiRequest(new Uri(url)).ExecuteHMACInterCom<List<string>>(Request, serverName, interComKey);
+        }
+
+        public List<DtoReplicationProcess> GetReplicationProcesses(string url, string serverName, string interComKey)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = "Storage/GetReplicationProcesses";
+            return new ApiRequest(new Uri(url)).ExecuteHMACInterCom<List<DtoReplicationProcess>>(Request, serverName, interComKey);
+        }
+
+        public bool KillProcess(string url, string serverName, string interComKey, int pid)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = "Storage/KillProcess/" + pid;
+            var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
+            return responseData != null && responseData.Value;
         }
 
         public List<string> GetBootImages(string url, string serverName, string interComKey)

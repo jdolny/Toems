@@ -29,6 +29,7 @@ namespace Toems_Service.Entity
            u.ProvisionStatus = EnumProvisionStatus.Status.PreProvisioned;     
             u.ArchiveDateTime = null;
             u.Name = u.Name.Split('#').First();
+            if (u.Name.Contains(":")) u.ProvisionStatus = EnumProvisionStatus.Status.ImageOnly;
             if(_uow.ComputerRepository.Exists(x => x.Name.Equals(u.Name)))
                 return new DtoActionResult() { ErrorMessage = "Could Not Restore Computer.  A Computer With Name " + u.Name + " Already Exists"};
             _uow.ComputerRepository.Update(u, u.Id);
@@ -44,9 +45,12 @@ namespace Toems_Service.Entity
             u.ProvisionStatus = EnumProvisionStatus.Status.Archived;
             u.Name = u.Name + "#" + DateTime.Now.ToString("MM-dd-yyyy_HH:mm");
             u.ArchiveDateTime = DateTime.Now;
+            u.ImagingClientId = null;
+            u.ImagingMac = null;
             _uow.ComputerRepository.Update(u,u.Id);
             _uow.CertificateRepository.DeleteRange(x => x.Id == u.CertificateId);
             _uow.GroupMembershipRepository.DeleteRange(x => x.ComputerId == u.Id);
+            _uow.NicInventoryRepository.DeleteRange(x => x.ComputerId == u.Id);
             u.CertificateId = -1;
             _uow.Save();
             return new DtoActionResult() {Id = u.Id, Success = true};
@@ -106,6 +110,7 @@ namespace Toems_Service.Entity
             var u = GetComputer(computerId);
             if (u == null) return new DtoActionResult {ErrorMessage = "Computer Not Found", Id = 0};
             _uow.ComputerRepository.Delete(computerId);
+            _uow.ComputerLogRepository.DeleteRange(x => x.ComputerId == computerId);
             _uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
@@ -243,18 +248,18 @@ namespace Toems_Service.Entity
                 filter.State = "true";
 
             if(filter.State.Equals("Any State") && filter.Status.Equals("Any Status"))
-                list = _uow.ComputerRepository.Get(s => s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText)).OrderBy(x => x.Name).ToList();
+                list = _uow.ComputerRepository.Get(s => s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)).OrderBy(x => x.Name).ToList();
             else if(filter.State.Equals("Any State") && !filter.Status.Equals("Any Status"))
-                list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status).OrderBy(x => x.Name).ToList();
+                list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status).OrderBy(x => x.Name).ToList();
          
             else if (filter.State.Equals("true") && !filter.Status.Equals("Any Status"))
-                list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status && s.AdDisabled).OrderBy(x => x.Name).ToList();
+                list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status && s.AdDisabled).OrderBy(x => x.Name).ToList();
             else if (filter.State.Equals("false") && !filter.Status.Equals("Any Status"))
-                list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status && !s.AdDisabled).OrderBy(x => x.Name).ToList();
+                list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status && !s.AdDisabled).OrderBy(x => x.Name).ToList();
             else if(filter.State.Equals("true") && filter.Status.Equals("Any Status"))
-                list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText)) && s.AdDisabled).OrderBy(x => x.Name).ToList();
+                list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.AdDisabled).OrderBy(x => x.Name).ToList();
             else if (filter.State.Equals("false") && filter.Status.Equals("Any Status"))
-                list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText)) && !s.AdDisabled).OrderBy(x => x.Name).ToList();
+                list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && !s.AdDisabled).OrderBy(x => x.Name).ToList();
 
             if (list.Count == 0) return list;
 
@@ -343,7 +348,84 @@ namespace Toems_Service.Entity
 
         public List<EntityComputer> SearchComputers(DtoSearchFilterCategories filter)
         {
-            var list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && s.ProvisionStatus != EnumProvisionStatus.Status.Archived && s.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved).OrderByDescending(x => x.LastCheckinTime).ToList();
+            var list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && s.ProvisionStatus != EnumProvisionStatus.Status.Archived && s.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved && s.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly).OrderByDescending(x => x.LastCheckinTime).ToList();
+            if (list.Count == 0) return list;
+
+            var categoryFilterIds = new List<int>();
+            foreach (var catName in filter.Categories)
+            {
+                var category = _uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
+                if (category != null)
+                    categoryFilterIds.Add(category.Id);
+            }
+
+            var toRemove = new List<EntityComputer>();
+            if (filter.CategoryType.Equals("Any Category"))
+                return list.Take(filter.Limit).ToList();
+            else if (filter.CategoryType.Equals("And Category"))
+            {
+                foreach (var computer in list)
+                {
+                    var cCategories = GetComputerCategories(computer.Id);
+                    if (cCategories == null) continue;
+
+                    if (filter.Categories.Count == 0)
+                    {
+                        if (cCategories.Count > 0)
+                        {
+                            toRemove.Add(computer);
+                            continue;
+                        }
+                    }
+
+                    foreach (var id in categoryFilterIds)
+                    {
+                        if (cCategories.Any(x => x.CategoryId == id)) continue;
+                        toRemove.Add(computer);
+                        break;
+                    }
+                }
+            }
+            else if (filter.CategoryType.Equals("Or Category"))
+            {
+                foreach (var computer in list)
+                {
+                    var cCategories = GetComputerCategories(computer.Id);
+                    if (cCategories == null) continue;
+                    if (filter.Categories.Count == 0)
+                    {
+                        if (cCategories.Count > 0)
+                        {
+                            toRemove.Add(computer);
+                            continue;
+                        }
+                    }
+                    var catFound = false;
+                    foreach (var id in categoryFilterIds)
+                    {
+                        if (cCategories.Any(x => x.CategoryId == id))
+                        {
+                            catFound = true;
+                            break;
+                        }
+
+                    }
+                    if (!catFound)
+                        toRemove.Add(computer);
+                }
+            }
+
+            foreach (var p in toRemove)
+            {
+                list.Remove(p);
+            }
+
+            return list.Take(filter.Limit).ToList();
+        }
+
+        public List<EntityComputer> SearchImageOnlyComputers(DtoSearchFilterCategories filter)
+        {
+            var list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly).OrderByDescending(x => x.LastCheckinTime).ToList();
             if (list.Count == 0) return list;
 
             var categoryFilterIds = new List<int>();
@@ -586,6 +668,11 @@ namespace Toems_Service.Entity
         public string ArchivedCount()
         {
             return _uow.ComputerRepository.Count(s => s.ProvisionStatus == EnumProvisionStatus.Status.Archived);
+        }
+
+        public string ImageOnlyCount()
+        {
+            return _uow.ComputerRepository.Count(s => s.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly);
         }
 
         public string TotalPreProvisionCount()
@@ -870,6 +957,12 @@ namespace Toems_Service.Entity
             //no matches
             return null;
 
+        }
+
+        public List<EntityComputerLog> GetComputerLogs(int computerId)
+        {
+            return _uow.ComputerLogRepository.Get(x => x.ComputerId == computerId,
+                q => q.OrderByDescending(x => x.LogTime));
         }
     }
 }

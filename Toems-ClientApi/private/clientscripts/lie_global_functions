@@ -10,8 +10,8 @@ function set_curl_command()
 
 function set_curl_auth()
 {
-	export curlAuth="curl -sSk -H Authorization:$(echo -n "$USER_TOKEN" | base64)"
-	export curlProgress="curl -#Sk -H Authorization:$(echo -n "$USER_TOKEN" | base64)"
+	export curlAuth="curl -sSk -H Authorization:$(echo -n "$USER_TOKEN" | base64 -w0)"
+	export curlProgress="curl -#Sk -H Authorization:$(echo -n "$USER_TOKEN" | base64 -w0)"
 }
 
 function clear_and_move_down()

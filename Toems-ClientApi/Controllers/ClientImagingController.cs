@@ -70,6 +70,15 @@ namespace Toems_ClientApi.Controllers
             return _response;
         }
 
+        [HttpGet]
+        [ClientImagingAuth]
+        public HttpResponseMessage RegistrationSettings()
+        {
+            _response.Content = new StringContent(
+                new ClientImagingServices().GetRegistrationSettings(), Encoding.UTF8, "text/plain");
+            return _response;
+        }
+
         [HttpPost]
         [ClientImagingAuth]
         public HttpResponseMessage CheckHdRequirements(HdReqs hdReqs)
@@ -565,11 +574,9 @@ namespace Toems_ClientApi.Controllers
                 Logger.Error($"Image Profile Not Found: {fileRequest.profileId}");
                 return new HttpResponseMessage(HttpStatusCode.NotFound);
             }
-            var storageType = ServiceSetting.GetSettingValue(SettingStrings.StorageType);
-            var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
+
             var maxBitRate = thisComServer.ImagingMaxBps;
-            if (storageType != "Local")
-                basePath = thisComServer.LocalStoragePath;
+            var basePath = thisComServer.LocalStoragePath;
 
             var fullPath = Path.Combine(basePath, "images",profile.Image.Name, $"hd{fileRequest.hdNumber}",
                 fileRequest.fileName);
@@ -614,11 +621,8 @@ namespace Toems_ClientApi.Controllers
                 return new HttpResponseMessage(HttpStatusCode.NotFound);
             }
          
-            var storageType = ServiceSetting.GetSettingValue(SettingStrings.StorageType);
-            var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
             var maxBitRate = thisComServer.ImagingMaxBps;
-            if (storageType != "Local")
-                basePath = thisComServer.LocalStoragePath;
+            var basePath = thisComServer.LocalStoragePath;
 
             var fullPath = Path.Combine(basePath, "software_uploads", fileRequest.guid, fileRequest.fileName);
             if (File.Exists(fullPath))
@@ -648,6 +652,35 @@ namespace Toems_ClientApi.Controllers
             }
 
             return new HttpResponseMessage(HttpStatusCode.NotFound);
+        }
+
+        [HttpGet]
+        public DtoTftpServer GetAllTftpServers()
+        {
+            var allTftpServers = new ServiceProxyDhcp().GetAllTftpServers();
+            if (allTftpServers == null)
+                throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
+            return allTftpServers;
+        }
+
+
+
+        [HttpGet]
+        public DtoTftpServer GetComputerTftpServers(string mac)
+        {
+            var computerTftpServers = new ServiceProxyDhcp().GetComputerTftpServers(mac);
+            if (computerTftpServers == null)
+                throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
+            return computerTftpServers;
+        }
+
+        [HttpGet]
+        public DtoProxyReservation GetProxyReservation(string mac)
+        {
+            var proxyReservation = new ServiceProxyDhcp().GetProxyReservation(mac);
+            if (proxyReservation == null)
+                throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
+            return proxyReservation;
         }
     }
 }

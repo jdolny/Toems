@@ -50,7 +50,7 @@ namespace Toems_ApplicationApi.Controllers
             return result;
         }
 
-        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [Authorize]
         public EntityComServerCluster Get(int id)
         {
             var result = _comServerClusterService.GetCluster(id);
@@ -59,7 +59,7 @@ namespace Toems_ApplicationApi.Controllers
         }
 
 
-        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [Authorize]
         public IEnumerable<EntityComServerCluster> Get()
         {
             return _comServerClusterService.GetAll();
