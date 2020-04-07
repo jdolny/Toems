@@ -31,7 +31,7 @@ namespace Toems_FrontEnd.views.admin
             {
                 comServerPlaceholder.Controls.Add(new LiteralControl($"<div class=\"size-lbl column\">{comServer.DisplayName}:</div>"));
                 var version = Call.ClientComServerApi.GetVersion(comServer.Url);
-                comServerPlaceholder.Controls.Add(new LiteralControl($"<div class=\"size-lbl2 column\">{version}"));
+                comServerPlaceholder.Controls.Add(new LiteralControl($"<div class=\"size-lbl2 column\">{version}</div>"));
                 comServerPlaceholder.Controls.Add(new LiteralControl("<br class=\"clear\"/>"));
 
             }

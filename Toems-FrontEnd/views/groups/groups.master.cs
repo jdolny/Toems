@@ -28,6 +28,7 @@ namespace Toems_FrontEnd.views.groups
                 btnUnpin.Visible = false;
                 btnMulticast.Visible = false;
                 btnUnicast.Visible = false;
+                btnClearImagingId.Visible = false;
 
             }
             else
@@ -43,6 +44,7 @@ namespace Toems_FrontEnd.views.groups
                 btnUnpin.Visible = true;
                 btnMulticast.Visible = true;
                 btnUnicast.Visible = true;
+                btnClearImagingId.Visible = true;
                 if (GroupEntity.Type == "Dynamic")
                 {
                     dynamic.Visible = true;

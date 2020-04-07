@@ -67,9 +67,8 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="RoboSharp, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Users\dolnyj\Desktop\RoboSharp-dev\RoboSharp\bin\Release\net45\RoboSharp.dll</HintPath>
+    <Reference Include="RoboSharp">
+      <HintPath>..\..\..\Users\dolnyj\Desktop\RoboSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

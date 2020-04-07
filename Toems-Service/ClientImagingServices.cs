@@ -400,6 +400,7 @@ namespace Toems_Service
                 var imageProfile = new ServiceImageProfile().ReadProfile(Convert.ToInt32(task.ImageProfileId));
                 imageProfile.Image.Protected = true;
                 new ServiceImage().Update(imageProfile.Image);
+                new Workflows.ImageSync().RunAllServers();
 
             }
 

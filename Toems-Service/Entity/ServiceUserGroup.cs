@@ -160,7 +160,7 @@ namespace Toems_Service.Entity
 
         public bool UpdateAllGroupMembersAcls(int userGroupId)
         {
-            var rights = _userServices.GetUserRights(userGroupId);
+            var rights = GetUserGroupRights(userGroupId);
 
             foreach (var user in GetGroupMembers(userGroupId,new DtoSearchFilter()))
             {

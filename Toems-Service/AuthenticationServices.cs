@@ -88,7 +88,11 @@ namespace Toems_Service
                             {
                                 Name = userName,
                                 Salt = Utility.CreateSalt(64),
-                                IsLdapUser = 1
+                                IsLdapUser = 1,
+                                Membership = "User",
+                                Theme = "dark",
+
+                                
                             };
                             //Create a local random db pass, should never actually be possible to use.
                             cdUser.Password = Utility.CreatePasswordHash(Utility.GenerateKey(), cdUser.Salt);

@@ -44,7 +44,8 @@ namespace Toems_Service.Workflows
             if (computer == null) return false;
             var computerList = new List<EntityComputer>();
             computerList.Add(computer);
-            Wakeup(computerList);
+            Task.Run(() => Wakeup(computerList)); //don't wait for result
+            //Wakeup(computerList);
             return true;
         }
 
@@ -91,7 +92,8 @@ namespace Toems_Service.Workflows
             foreach (var group in groups)
                 wakeUpMembers = _uow.GroupRepository.GetGroupMembers(group.Id, "");
             var distinctWakeup = wakeUpMembers.GroupBy(x => x.Id).Select(y => y.First());
-            Wakeup(distinctWakeup);
+            Task.Run(() => Wakeup(distinctWakeup)); // don't wait for result
+            //Wakeup(distinctWakeup);
 
             return true;
         }

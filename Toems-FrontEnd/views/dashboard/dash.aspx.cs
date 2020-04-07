@@ -99,7 +99,7 @@ namespace Toems_FrontEnd.views.dashboard
                         var pFree = com.freePercent + "% Free";
                         divName.Controls.Add(new LiteralControl($"{free} {total} {pFree}"));
                         divName.Controls.Add(new LiteralControl("<br class=\"clear\" />"));
-
+                        divName.Controls.Add(new LiteralControl("<br/>"));
                         comServerStorageHolder.Controls.Add(divName);
 
                     }
