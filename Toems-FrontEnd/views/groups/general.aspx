@@ -89,10 +89,14 @@
     </div>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
-    <h1><strong>Actions</strong></h1>
-<p>The actions menu has a few options that can be used to run computer specific tasks on all computers in the group.  These actions are available from any of the pages listed below.  These actions use DNS to find the computers and will only work with onsite computers.</p>
+    <h1><strong>Actions Menu</strong></h1>
+<p>The actions menu has a few options that can be used to run computer specific tasks on all computers in the group.</p>
 <h5><span style="color: #ff9900;">Force Checkin:</span></h5>
 <p>Forces all computers in the group to checkin immediately, instead of waiting for the next checkin interval.</p>
+    <h5><span style="color: #ff9900;">Start Multicast Imaging:</span></h5>
+    <p>Starts a multicast session for all members of the group using the image defined in the group's Image Settings</p>
+     <h5><span style="color: #ff9900;">Start Unicast Imaging:</span></h5>
+    <p>Starts a unicast session for all members of the group using the image defined in the group's Image Settings</p>
 <h5><span style="color: #ff9900;">Reboot:</span></h5>
 <p>Reboots all computers in the group.</p>
 <h5><span style="color: #ff9900;">Shutdown:</span></h5>
@@ -101,7 +105,13 @@
 <p>Powers on all computers in the group, using WOL.</p>
 <h5><span style="color: #ff9900;">Collect Inventory:</span></h5>
 <p>Immediately runs an inventory collection on all computers in the group without needing to wait for an inventory policy to run.</p>
-
+<h5><span style="color: #ff9900;">Pin / Unpin:</span></h5>
+<p>Adds or removes the group from the current users' dashboard.</p>
+    <h5><span style="color: #ff9900;">Clear Imaging Ids:</span></h5>
+<p>Resets the ImagingId for all computers in a group.  An imaging id is based on a computers physical hardware.  If imaging a computer does not correctly identify itself
+, it probably needs it's id reset.
+</p>
+    <br />
      <h1><strong>General</strong></h1>
     <h5><span style="color: #ff9900;">Name:</span></h5>
 <p>The name of the group, group names must be unique and contain only alphanumeric characters, space, underscore, or dash.</p>
@@ -118,5 +128,7 @@
 <p>Groups can be used to automatically power off computers based on a schedule you define.  Schedules can be created in Global Properties-&gt;Schedules.</p>
 <h5><span style="color: #ff9900;">Prevent Shutdown:</span></h5>
 <p>If this option is enabled, any computers in this group cannot be shutdown or rebooted from Theopenem.  This is helpful to prevent accidentally turning off an important computer.  If a computer is in a group with this option enabled, and someone accidentally adds the computer to a group that has a shutdown schedule, it will not be powered off.  This also applies to the Actions menu to shutdown or reboot.</p>
+<h5><span style="color: #ff9900;">Endpoint Priority</span></h5>
+    <p>Used to help determine which Communication Server Cluster an endpoint will use if it is a member of multiple groups that use different clusters.  The lower number priority takes precedence.</p>
 </asp:Content>
 

@@ -72,7 +72,7 @@
 
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
-    <p>This page displays all of the certificates from the Personal, Trusted Root, and Trusted Intermediate stores for the computer.  This info is collected during an inventory scan.</p>
+    <p>Displays the list of imaging logs for the computer.</p>
 </asp:Content>
 
 

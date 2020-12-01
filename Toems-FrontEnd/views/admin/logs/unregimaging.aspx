@@ -70,5 +70,5 @@
     </div>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subsubHelp">
-    <p>Logs display some of the available logs through the WebUI.  The Application logs and Front End Logs are available for viewing, but the Toec Api log must be viewed from the filesystem.</p>
+    <p>Displays imaging logs for unregistered computers.</p>
 </asp:Content>

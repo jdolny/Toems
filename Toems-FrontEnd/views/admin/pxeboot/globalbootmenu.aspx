@@ -250,4 +250,6 @@
 </div>
 </asp:Content>
 <asp:Content ID="Content5" ContentPlaceHolderID="subsubHelp" runat="server">
+    This is where you create the Global Default Boot Menu used for PXE booting. This the menu that client computers will see when pxe booted. It only applies to the Linux Imaging Environment. 
+    Also remember this menu is loaded only when an active task has not been created for a computer. Additionally you can set boot menu passwords here.
 </asp:Content>

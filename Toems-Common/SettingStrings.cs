@@ -132,9 +132,9 @@
 
         public const string DefaultInit = "initrd.xz";
 
-        public const string DefaultKernel32 = "4.20.10";
+        public const string DefaultKernel32 = "5.6.4";
 
-        public const string DefaultKernel64 = "4.20.10x64";
+        public const string DefaultKernel64 = "5.6.4x64";
 
         public const string IpxeSSL = "iPXE SSL";
 

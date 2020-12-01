@@ -63,6 +63,14 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<List<EntityPolicy>>(Request);
         }
 
+        public IEnumerable<EntityImage> GetModuleImages(string moduleGuid)
+        {
+            Request.Method = Method.GET;
+            Request.AddParameter("moduleGuid", moduleGuid);
+            Request.Resource = string.Format("{0}/GetModuleImages/", Resource);
+            return new ApiRequest().Execute<List<EntityImage>>(Request);
+        }
+
         public IEnumerable<EntityGroup> GetModuleGroups(string moduleGuid)
         {
             Request.Method = Method.GET;

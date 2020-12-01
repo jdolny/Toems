@@ -268,12 +268,32 @@
 
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subsubHelp">
-    <h5><span style="color: #ff9900;">Display Name:</span></h5>
-<p>A name used to identify the com server, it has not effect on the functionality.</p>
-<h5><span style="color: #ff9900;">URL:</span></h5>
-<p>The url used to access the com server, this must match the url that is set in IIS.</p>
-<h5><span style="color: #ff9900;">Description:</span></h5>
-<p>An optional description for the com server.</p>
-<h5><span style="color: #ff9900;">Replicate Storage:</span></h5>
-<p>This option is only available after the com server is added.  When multiple com servers are defined, files for your modules must be replicated across all com servers.  If you want to disable replication to a com server, then disable this option.  If this option is disabled, you must manually replicate the files.</p>
+    <h5><span style="color: #ff9900;">Remove GPT Structures:</span></h5>
+<p>A hard drive can actually have an mbr and a gpt partition table. Hard drives that have both will not function with Theopenem. 
+    If you are certain that you are using mbr, this will clear out the gpt part of the table before the upload.</p>
+
+        <h5><span style="color: #ff9900;">Don't Shrink Volumes:</span></h5>
+        <p>By default, when a Block image is uploaded, all ntfs or extfs filesystems that are larger than 5GB are shrunk to the smallest volume size possible to allow restoring to 
+            hard drives that are smaller than the current one being captured. If this is causing problems you can disable that here.</p>
+        <h5><span style="color: #ff9900;">Don't Shrink LVM Volumes:</span></h5>
+        <p>Same as above but specifically for LVM. Don’t Shrink Volumes will supersede this setting, but not vice versa.
+
+</p>
+        <h5><span style="color: #ff9900;">Skip Hibernation Check:</span></h5>
+        <p>Before an image is uploaded, it checks for the presence of hiberfil.sys and cancels the upload if it exists. Uploading an image while hibernated can completely break the original image. 
+            Enabling this option will skip this check.</p>
+        <h5><span style="color: #ff9900;">Skip Bitlocker Check:</span></h5>
+        <p>Bitlocker is not supported and must be disabled before uploading an image. CloneDeploy will attempt to see if Bitlocker is enabled and error out if so. Enabling this option skips the bitlocker check.</p>
+        <h5><span style="color: #ff9900;">Compression Algorithm:</span></h5>
+        <p>A few different ways to compress or not compress your image</p>
+        <h5><span style="color: #ff9900;">Compression Level:</span></h5>
+        <p>Higher number is greater compression</p>
+        <h5><span style="color: #ff9900;">Only Upload Schema:</span></h5>
+        <p>If you want to control what hard drives or partitions to upload, this is the first step. Turn this setting On and start an upload task. Instead of uploading an entire image, it will only upload the schema.</p>
+        <h5><span style="color: #ff9900;">Use Custom Upload Schema:</span></h5>
+        <p>If you want to control what hard drives or partitions to upload, this is the second step. Check this box and a new table will be available to visually pick your partitions but only after you 
+            have uploaded the schema. The table will list each hard drive and partition that was found, simply check or uncheck the one’s you want. There is also an option for each partition called fixed. 
+            If this box is checked the filesystem for that partition will not be shrunk. This is a more flexible option than setting the Don’t shrink volumes setting which applies to all partitions. 
+            The Upload schema only box must be unchecked when use custom upload schema is checked. This does not modify the schema that was uploaded, it generates a new one that is stored in the database, 
+            the original is never modified.</p>
 </asp:Content>

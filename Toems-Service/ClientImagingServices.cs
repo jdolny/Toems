@@ -142,23 +142,18 @@ namespace Toems_Service
         public bool AuthorizeApiCall(string token)
         {
             if (string.IsNullOrEmpty(token)) return false;
-            var webRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.WebTasksRequireLogin);
-            var consoleRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
             var globalToken = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingToken);
 
-            if(webRequiresLogin.Equals("True") && consoleRequiresLogin.Equals("True"))
-            {
-                 var user = new ServiceUser().GetUserFromToken(token);
-                if (user != null)
-                    return true;
-            }
-            else
-            {
-                //global token is valid
+            var user = new ServiceUser().GetUserFromToken(token);
+            if (user != null)
+                return true;
 
-                if (token.Equals(globalToken) && !string.IsNullOrEmpty(globalToken))
-                    return true;
-            }
+
+            //check global token
+
+            if (token.Equals(globalToken) && !string.IsNullOrEmpty(globalToken))
+                return true;
+
 
             return false;
         }
@@ -758,7 +753,7 @@ namespace Toems_Service
                     images =
                         images.Where(x => x.Environment != "winpe").ToList();
                 foreach (var image in images)
-                    imageList.Images.Add(image.Id + " " + image.Name);
+                    imageList.Images.Add(image.Id + " " + image.Name.Replace(" ","_"));
 
                 if (imageList.Images.Count == 0)
                     imageList.Images.Add(-1 + " " + "No_Images_Found");
@@ -797,7 +792,7 @@ namespace Toems_Service
                 foreach (var imageProfile in imageServices.SearchProfiles(Convert.ToInt32(imageId)))
                 {
                     profileCounter++;
-                    imageProfileList.ImageProfiles.Add(imageProfile.Id + " " + imageProfile.Name);
+                    imageProfileList.ImageProfiles.Add(imageProfile.Id + " " + imageProfile.Name.Replace(" ","_"));
                     if (profileCounter == 1)
                         imageProfileList.FirstProfileId = imageProfile.Id.ToString();
                 }
@@ -848,7 +843,7 @@ namespace Toems_Service
 
                 foreach (var multicast in new ServiceActiveMulticastSession().GetOnDemandList())
                 {
-                    multicastList.Multicasts.Add(multicast.Id + " " + multicast.Name);
+                    multicastList.Multicasts.Add(multicast.Id + " " + multicast.Name.Replace(" ","_"));
                 }
 
                 return JsonConvert.SerializeObject(multicastList);

@@ -78,5 +78,7 @@
            </div>
 </asp:Content>
 <asp:Content ID="Content5" ContentPlaceHolderID="subsubHelp" runat="server">
+    <p>Boot Menu Entries are a way to add custom boot menu options to the existing Global Default Boot Menu. The entries are inserted every time you generate the Global Default 
+        Boot Menu. They do not get inserted when you create the entry, only after you generate the new boot files in Admin Settings->Global Boot Menu</p>
 </asp:Content>
 

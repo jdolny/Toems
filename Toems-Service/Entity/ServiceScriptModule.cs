@@ -25,6 +25,11 @@ namespace Toems_Service.Entity
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
+                if(module.ScriptType == EnumScriptModule.ScriptType.ImagingClient_Bash)
+                {
+                    var fixedLineEnding = module.ScriptContents.Replace("\r\n", "\n");
+                    module.ScriptContents = fixedLineEnding;
+                }
                 _uow.ScriptModuleRepository.Insert(module);
                 var moduleType = new EntityModule();
                 moduleType.ModuleType = EnumModule.ModuleType.Script;
@@ -217,6 +222,11 @@ namespace Toems_Service.Entity
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
+                if (module.ScriptType == EnumScriptModule.ScriptType.ImagingClient_Bash)
+                {
+                    var fixedLineEnding = module.ScriptContents.Replace("\r\n", "\n");
+                    module.ScriptContents = fixedLineEnding;
+                }
                 _uow.ScriptModuleRepository.Update(module, module.Id);
                 _uow.Save();
                 actionResult.Success = true;

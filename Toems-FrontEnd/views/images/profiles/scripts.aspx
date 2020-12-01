@@ -61,12 +61,8 @@
 
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subsubHelp">
-    <h5><span style="color: #ff9900;">Display Name:</span></h5>
-<p>A name used to identify the com server, it has not effect on the functionality.</p>
-<h5><span style="color: #ff9900;">URL:</span></h5>
-<p>The url used to access the com server, this must match the url that is set in IIS.</p>
-<h5><span style="color: #ff9900;">Description:</span></h5>
-<p>An optional description for the com server.</p>
-<h5><span style="color: #ff9900;">Replicate Storage:</span></h5>
-<p>This option is only available after the com server is added.  When multiple com servers are defined, files for your modules must be replicated across all com servers.  If you want to disable replication to a com server, then disable this option.  If this option is disabled, you must manually replicate the files.</p>
+   This view allows you to set any custom scripts you want to run during the imaging process. They are only applied to deploy or multicast tasks.  Scripts are only assigned to the image profile here.  To create
+    the script select Modules->Script Modules.  The priority can be used to control the order if multiple scripts are assigned.  Lower numbers run first.  You can also select when to run the script in the imaging
+    process.  It can be before imaging occurs, or after imaging.  After imaging is broken down into before file copy and after file copy.  If you are using a file copy module, you may want a script to run before
+    or after that.  If you are not using a file copy module, you can select either option to run the script after imaging.
 </asp:Content>

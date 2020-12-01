@@ -119,7 +119,8 @@
 </asp:Content>
 
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
-      <p>The search active page displays all computers that have been provisioned / checked into Theopenem. Filtering options include:</p>
+      <p>The search image only page displays all computers that have been registered with Theopenem using the Client Imaging OS, but do not have Toec
+          installed, or do not have a relationship with the Toec.  Filtering options include:</p>
 <ul>
 	<li><strong>Search by computer name</strong></li>
 	<li><strong>By category</strong></li>

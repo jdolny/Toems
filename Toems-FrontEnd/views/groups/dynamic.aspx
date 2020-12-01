@@ -199,5 +199,9 @@
    
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
-    <p>This page is only available when the group type is set to dynamic.  This is used to set the criteria for the group members.  Criteria is based on any inventory collection value or custom inventory script value or custom attribute value.  Each line must be started with and / or, except for the first line.  If using the not operator, there can be only one and it must be first.  The example below would find all computers that have Firefox installed and the major version is less than 63.  A wildcard % can be used before or after the string to match.  The Actions menu has option to test the criteria before saving it.  Dynamic groups update themselves every 3 hours based on the Admin Settings->Task Scheduler->Cron Expression.  You can update this value to be more or less often.</p>
+    <p>This page is only available when the group type is set to dynamic.  This is used to set the criteria for the group members.  Criteria is based on any inventory collection value or custom inventory
+        script value or custom attribute value.  Each line must be started with and / or, except for the first line.  If using the not operator, there can be only one and it must be first.  
+        A wildcard % can be used before or after the string to match.  
+        The Actions menu has option to test the criteria before saving it.  Dynamic groups update themselves every 3 hours based on the Admin Settings->Task Scheduler->Cron Expression.  
+        You can update this value to be more or less often.</p>
 </asp:Content>

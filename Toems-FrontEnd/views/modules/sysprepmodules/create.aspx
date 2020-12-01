@@ -87,5 +87,17 @@
     </div>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subsubHelp">
+   Sysprep Modules can only be assigned to Image Profiles.
+    <h5><span style="color: #ff9900;"><strong>Display Name:</strong></span></h5>
+<p>The name of the module, module names must be unique and contain only alphanumeric characters, space, underscore, or dash.</p>
+
+<h5><span style="color: #ff9900;"><strong>Description:</strong></span></h5>
+<p>The description field is optional for you to give a short description for what the module does.</p>
+<h5><span style="color: #ff9900;"><strong>Opening Tag</strong></span></h5>
+<p>The opening tag of the sysprep element you want to modify.  Such as &lt;MachineObjectOU&gt;</p>
+    <h5><span style="color: #ff9900;"><strong>Closing Tag</strong></span></h5>
+<p>The closing tag of the sysprep element you want to modify.  Such as &lt;/MachineObjectOU&gt;</p>
+<h5 class="alert alert-error"><span style="color: #ff9900;"><strong>Contents</strong></span></h5>
+<p class="alert alert-error">The value that will be put inside the sysprep element.  Custom attributes can be used in the contents.</p>
 
 </asp:Content>

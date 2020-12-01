@@ -104,6 +104,7 @@
     <br class="clear"/>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subsubHelp">
+    Command Modules can only be assigned to Policies.
     <h5><span style="color: #ff9900;"><strong>Display Name:</strong></span></h5>
 <p>The name of the module, module names must be unique and contain only alphanumeric characters, space, underscore, or dash.</p>
 

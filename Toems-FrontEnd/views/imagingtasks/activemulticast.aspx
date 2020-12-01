@@ -107,13 +107,5 @@
    
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
-    <p>Specifies if the storage path is local to this server or on a remote SMB share.  The local type can only be used if only a single server is used for all Toec Api's, Toems Api's, and Toems Front Ends.</p>
-<h5><span style="color: #ff9900;">Storage Path:</span></h5>
-<p>The path to the storage directory.  If the storage type is local, the path should be a local drive, such as c:\toems-local-storage.  If the storage type is SMB, the path must be a UNC path, such as \\server\toems-remote-storage.</p>
-<h5><span style="color: #ff9900;">Username:</span></h5>
-<p>Only available for a storage type of SMB.  This is the username used to connect to the share.</p>
-<h5><span style="color: #ff9900;">Password:</span></h5>
-<p>Only available for a storage type of SMB.  This is the password used to connect to the share.</p>
-<h5><span style="color: #ff9900;">Domain:</span></h5>
-<p>Only available for a storage type of SMB.  This is the domain used to connect to the share.</p>
+  Displays all active multicast tasks that have been started by the current user. Administrators see tasks created from all users. Multicast tasks can also be cancelled from this page.
 </asp:Content>

@@ -172,6 +172,12 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ModuleRead)]
+        public List<EntityImage> GetModuleImages(string moduleGuid)
+        {
+            return _moduleServices.GetModuleImages(moduleGuid);
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ModuleRead)]
         public List<EntityModuleCategory> GetModuleCategories(string moduleGuid)
         {
             return _moduleServices.GetModuleCategories(moduleGuid);

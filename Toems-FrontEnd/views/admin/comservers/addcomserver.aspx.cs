@@ -20,6 +20,11 @@ namespace Toems_FrontEnd.views.admin.comservers
 
          protected void buttonAdd_OnClick(object sender, EventArgs e)
         {
+            if (txtLocalStorage.Text.Contains(" "))
+            {
+                EndUserMessage = "Storage Path Cannot Contain Any Spaces";
+                return;
+            }
             var server = new EntityClientComServer()
             {
                 DisplayName = txtName.Text,

@@ -49,4 +49,5 @@
     </div>
     </asp:Content>
 <asp:Content ID="Content5" ContentPlaceHolderID="subsubHelp" runat="server">
+    <p>This page is used to generate an imaging client ISO that can be used to boot a computer to an imaging environment instead of PXE boot.</p>
 </asp:Content>

@@ -54,13 +54,13 @@
   
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subsubHelp">
-    <h5><span style="color: #ff9900;">Display Name:</span></h5>
-<p>A name used to identify the com server, it has not effect on the functionality.</p>
-<h5><span style="color: #ff9900;">URL:</span></h5>
-<p>The url used to access the com server, this must match the url that is set in IIS.</p>
-<h5><span style="color: #ff9900;">Description:</span></h5>
-<p>An optional description for the com server.</p>
-<h5><span style="color: #ff9900;">Replicate Storage:</span></h5>
-<p>This option is only available after the com server is added.  When multiple com servers are defined, files for your modules must be replicated across all com servers.  If you want to disable replication to a com server, then disable this option.  If this option is disabled, you must manually replicate the files.</p>
+    <h5><span style="color: #ff9900;">Imaging Server:</span></h5>
+<p>Determines if this com server can be used as an imaging server.</p>
+<h5><span style="color: #ff9900;">Max Bitrate:</span></h5>
+<p>The max bitrate per client connection.  0 = no limit.</p>
+<h5><span style="color: #ff9900;">Max Simultaneous Client Connection:</span></h5>
+<p>The max number of imaging connections that can occur at the same time.  After this number is reached others will be placed in a queue.  0 = none.  The minimum value should be 1.</p>
+    <h5><span style="color: #ff9900;">Upload Interface IP:</span></h5>
+    <p>The ip address of the nic that will be used for image uploads.  This must be populated before an image can be uploaded.</p>
 </asp:Content>
 

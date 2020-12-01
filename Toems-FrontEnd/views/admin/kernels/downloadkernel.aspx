@@ -50,4 +50,5 @@
 
 </asp:Content>
 <asp:Content ID="Content5" ContentPlaceHolderID="subsubHelp" runat="server">
+    The kernel downloads provide a simple interface to install new kernels when they are released.
 </asp:Content>

@@ -41,6 +41,7 @@
 
 <div class="size-5 column">
     <asp:DropDownList ID="ddlBootFile" runat="server" CssClass="ddlist">
+        <asp:ListItem Selected="True"></asp:ListItem>
         <asp:ListItem>bios_pxelinux</asp:ListItem>
         <asp:ListItem>bios_ipxe</asp:ListItem>
         <asp:ListItem>bios_x86_winpe</asp:ListItem>
@@ -68,5 +69,14 @@
     
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
-    <p>This page can be used to send a message to all the computers in the group.  A message will only display if a user is logged into the computer.  The message just needs a Title and the message itself.  The timeout value is used to automatically close the message after a certain time period.  The default is 0, meaning it will not automatically close.  This value is in seconds.</p>
+  <h5><span style="color: #ff9900;">Image</span></h5>
+    <p>The image that is assigned to the group.  Setting an image here will not overwrite an image that is set directly on the computer.  The image that is set individually on a computer always has a higher
+        priority.
+    </p>
+    <h5><span style="color: #ff9900;">Image Profile</span></h5>
+    <p>The image profile to be used with the image</p>
+    <h5><span style="color: #ff9900;">Proxy Bootloader</span></h5>
+    <p>If Theopenem Proxy DHCP is being used, a specific bootloader can be specified for all group members, overriding the global values.</p>
+    <h5><span style="color: #ff9900;">Imaging Priority</span></h5>
+    <p>Used to help determine which Image to use if the computer is a member of multiple groups that have different images assigned.  The lower number priority takes precedence.</p>
 </asp:Content>

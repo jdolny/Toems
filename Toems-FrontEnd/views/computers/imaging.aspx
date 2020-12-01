@@ -54,5 +54,7 @@
     
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
-    <p>Allows you to add any comments to the computer.  Once a comment is added, it cannot be deleted or modified.  An example usage, could be to track repair history.</p>
+    <p>Allows you to set an image for the computer to deploy or upload.  The effective image takes group membership into account.  An image does not need
+        to be assigned directly to a computer, it can be from a group.
+    </p>
 </asp:Content>

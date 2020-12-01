@@ -79,7 +79,7 @@ namespace Toems_ApplicationApi
             {
                 AllowInsecureHttp = true,
                 TokenEndpointPath = new PathString("/token"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromHours(1),
+                AccessTokenExpireTimeSpan = TimeSpan.FromHours(4),
                 Provider = new SimpleAuthorizationServerProvider()
             };
 

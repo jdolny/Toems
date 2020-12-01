@@ -157,13 +157,16 @@
     </div>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subsubHelp">
+    Script Modules can be assigned to both Policies and Image Profiles.
     <h5><span style="color: #ff9900;"><strong>Display Name:</strong></span></h5>
 <p>The name of the module, module names must be unique and contain only alphanumeric characters, space, underscore, or dash.</p>
 
 <h5><span style="color: #ff9900;"><strong>Description:</strong></span></h5>
 <p>The description field is optional for you to give a short description for what the module does.</p>
 <h5><span style="color: #ff9900;"><strong>Script Type:</strong></span></h5>
-<p>There are 3 script type options, Powershell, VbScript, and Batch.  The script contents must be for the appropriate script type.</p>
+<p>There are 5 script type options, Powershell, VbScript, Batch, ImagingClientBash, and ImagingClientPowershell.  The first 3 are used with Toec and can be assigned to Policies.  The last 2 are
+    specific to Client Imaging.  If you want to run a custom script while using the Linux Imaging Environment, select ImagingClientBash.  If you want to run a custom script while using the WinPE Imaging
+    Environment, select ImagingClientPowershell.  The script contents must be for the appropriate script type.</p>
 <h5><span style="color: #ff9900;"><strong>Arguments:</strong></span></h5>
 <p>The arguments field is used to pass any arguments to the script.</p>
 <h5><span style="color: #ff9900;"><strong>Working Directory:</strong></span></h5>

@@ -43,6 +43,19 @@ namespace Toems_Service.Entity
             return _uow.ModuleRepository.GetModuleComputers(moduleGuid);
         }
 
+        public List<EntityImage> GetModuleImages(string moduleGuid)
+        {
+            var typeMapping = GetModuleIdFromGuid(moduleGuid);
+            if(typeMapping.moduleType == EnumModule.ModuleType.FileCopy)
+            return _uow.ModuleRepository.GetModuleImagesFileCopy(moduleGuid);
+            if (typeMapping.moduleType == EnumModule.ModuleType.Script)
+                return _uow.ModuleRepository.GetModuleImagesScript(moduleGuid);
+            if (typeMapping.moduleType == EnumModule.ModuleType.Sysprep)
+                return _uow.ModuleRepository.GetModuleImagesSysprep(moduleGuid);
+
+            return new List<EntityImage>();
+        }
+
         public DtoGuidTypeMapping GetModuleIdFromGuid(string moduleGuid)
         {
             var softwareModule = _uow.SoftwareModuleRepository.GetFirstOrDefault(x => x.Guid == moduleGuid);

@@ -61,4 +61,5 @@
 
 </asp:Content>
 <asp:Content ID="Content5" ContentPlaceHolderID="subsubHelp" runat="server">
+    When a new kernel is released, you may want to update all of your image profiles to use the new kernel, that can quickly be done here instead of needing to visit every image profile.
 </asp:Content>

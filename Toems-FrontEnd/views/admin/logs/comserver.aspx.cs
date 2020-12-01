@@ -63,5 +63,18 @@ namespace Toems_FrontEnd.views.admin.logs
                 gvLog.DataBind();
             }
         }
+
+        protected void ddlComServer_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var comLogs = Call.FilesystemApi.GetComServerLogs(Convert.ToInt32(ddlComServer.SelectedValue));
+            if (comLogs != null)
+            {
+                ddlLog.DataSource = comLogs;
+                ddlLog.DataBind();
+                ddlLog.Items.Insert(0, "Select A Log");
+            }
+            ddlLimit.SelectedValue = "25";
+            PopulateLogs();
+        }
     }
 }

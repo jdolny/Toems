@@ -18,9 +18,12 @@ namespace Toems_FrontEnd.views.modules.filecopymodules
             gvGroups.DataBind();
             gvPolicies.DataSource = null;
             gvPolicies.DataBind();
+            gvImages.DataSource = null;
+            gvImages.DataBind();
             gvPolicies.Visible = false;
             gvGroups.Visible = false;
             gvComputers.Visible = false;
+            gvImages.Visible = false;
 
             if (ddlUtil.Text == "Computers")
             {
@@ -33,6 +36,12 @@ namespace Toems_FrontEnd.views.modules.filecopymodules
                 gvPolicies.Visible = true;
                 gvPolicies.DataSource = Call.ModuleApi.GetModulePolicies(FileCopyModule.Guid);
                 gvPolicies.DataBind();
+            }
+            else if (ddlUtil.Text == "Images")
+            {
+                gvImages.Visible = true;
+                gvImages.DataSource = Call.ModuleApi.GetModuleImages(FileCopyModule.Guid);
+                gvImages.DataBind();
             }
             else
             {

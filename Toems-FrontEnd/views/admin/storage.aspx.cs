@@ -36,6 +36,12 @@ namespace Toems_FrontEnd.views.admin
 
         protected void btnUpdateSettings_OnClick(object sender, EventArgs e)
         {
+            //this should be moved to back end
+            if(txtPath.Text.Contains(" "))
+            {
+                EndUserMessage = "Storage Path Cannot Contain Any Spaces";
+                return;
+            }
             var listSettings = new List<EntitySetting>
             {
               

@@ -42,5 +42,34 @@ namespace Toems_DataModel
                     where (h.Guid == moduleGuid)
                     select g).ToList();
         }
+
+        public List<EntityImage> GetModuleImagesFileCopy(string moduleGuid)
+        {
+            return (from h in _context.ImageProfileFileCopy
+                    join g in _context.ImageProfiles on h.ProfileId equals g.Id
+                    join i in _context.Images on g.ImageId equals i.Id
+                    join k in _context.FileCopyModules on h.FileCopyModuleId equals k.Id
+                    where k.Guid == moduleGuid
+                    select i).ToList();
+        }
+        public List<EntityImage> GetModuleImagesScript(string moduleGuid)
+        {
+            return (from h in _context.ImageProfileScripts
+                    join g in _context.ImageProfiles on h.ProfileId equals g.Id
+                    join i in _context.Images on g.ImageId equals i.Id
+                    join k in _context.ScriptModules on h.ScriptModuleId equals k.Id
+                    where k.Guid == moduleGuid
+                    select i).ToList();
+        }
+        public List<EntityImage> GetModuleImagesSysprep(string moduleGuid)
+        {
+            return (from h in _context.ImageProfileSyspreps
+                    join g in _context.ImageProfiles on h.ProfileId equals g.Id
+                    join i in _context.Images on g.ImageId equals i.Id
+                    join k in _context.SysprepModules on h.SysprepModuleId equals k.Id
+                    where k.Guid == moduleGuid
+                    select i).ToList();
+        }
+
     }
 }

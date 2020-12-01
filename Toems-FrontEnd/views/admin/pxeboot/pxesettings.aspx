@@ -121,4 +121,6 @@
     </div>
 </asp:Content>
 <asp:Content ID="Content5" ContentPlaceHolderID="subsubHelp" runat="server">
+    <p;>The pxe settings control which bootloader is globally applied to computers when pxe booting. If you are booting a mix of legacy bios and EFI computers, it is recommended to use ProxyDHCP. 
+        When using ProxyDHCP, up to 3 different boot loaders can be utilized simultaneously to match the correct boot architecture. If not using ProxyDHCP, only one can be enabled at a time.</p>
 </asp:Content>

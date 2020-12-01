@@ -24,5 +24,7 @@
     <asp:FileUpload runat="server" ID="FileImport"/>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
-    <p>The import page allows you to import Policies that have already been created and exported by someone.  An imported policy will create the policy and all required modules for that policy in a deactivated state.  After the import is complete you can review the policy and activate when ready.  An official repository of Theopenem approved policies can be found at theopenem.com/policyrepo.  It is highly encouraged for users to contribute their policies in order to help grow the repo.</p>
+    <p>The import page allows you to import Policies that have already been created and exported by someone.  An imported policy will create the policy 
+        and all required modules for that policy in a deactivated state.  After the import is complete you can review the policy and activate when ready.  
+        An official repository of Theopenem approved policies can be found at https://github.com/theopenem/Policy-Templates.  It is highly encouraged for users to contribute their policies in order to help grow the repo.</p>
 </asp:Content>

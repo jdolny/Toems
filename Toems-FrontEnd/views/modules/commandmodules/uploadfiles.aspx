@@ -202,5 +202,7 @@
     </div>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="SubSubHelp">
-    <p>The upload files page is where you add or remove your msi, msp,or mst files to / from the software module.  Uploading software module files will only accept extensions of .msi, .msp, or .mst.  Only a single msi can be uploaded, but unlimited msp and mst files can be added.  When file uploads or deletions are completed, the software module's command and arguments and automatically updated.  Finally, if you are using multiple Client Communication Servers, you will be prompted to replicate the files to all servers when uploading is complete.  Finally, you must stay on the upload files page while files are uploading, navigating to a different page will stop the uploads.</p>
+    <p>The upload files page is where you add or remove an additional files required for your command to run.  
+        Finally, if you are using multiple Client Communication Servers, you will be prompted to replicate the files to all servers when uploading is complete.  
+        You must stay on the upload files page while files are uploading, navigating to a different page will stop the uploads.</p>
 </asp:Content>

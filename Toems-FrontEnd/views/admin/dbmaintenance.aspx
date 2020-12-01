@@ -87,4 +87,7 @@
 <h5><span style="color: #ff9900;">User Login History Auto Delete:</span></h5>
 <p><strong>Deletes the user login history data for all computers where the login was longer than X days ago.<br />
 </strong></p>
+    <h5><span style="color: #ff9900;">Imaging Logs Auto Delete:</span></h5>
+<p><strong>Deletes the imaging logs for computers where the log was recorded longer than X days ago.<br />
+</strong></p>
 </asp:Content>

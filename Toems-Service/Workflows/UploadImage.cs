@@ -47,7 +47,7 @@ namespace Toems_Service.Workflows
             path = Path.Combine(path, "images", imageProfile.Image.Name, $"hd{hdNumber}", fileName);
             string arguments = " /c \"";
             var receiverPath = Path.Combine(appPath, "udp-receiver.exe");
-            arguments += $" {receiverPath} --portbase {uploadPort}";
+            arguments += $"{receiverPath}\" --portbase {uploadPort}";
             arguments += $" --interface {_thisComServer.MulticastInterfaceIp} --file {path}";
 
             var pid = StartReceiver(arguments, imageProfile.Image.Name);

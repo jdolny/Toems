@@ -402,12 +402,52 @@
 
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subsubHelp">
-    <h5><span style="color: #ff9900;">Display Name:</span></h5>
-<p>A name used to identify the com server, it has not effect on the functionality.</p>
-<h5><span style="color: #ff9900;">URL:</span></h5>
-<p>The url used to access the com server, this must match the url that is set in IIS.</p>
-<h5><span style="color: #ff9900;">Description:</span></h5>
-<p>An optional description for the com server.</p>
-<h5><span style="color: #ff9900;">Replicate Storage:</span></h5>
-<p>This option is only available after the com server is added.  When multiple com servers are defined, files for your modules must be replicated across all com servers.  If you want to disable replication to a com server, then disable this option.  If this option is disabled, you must manually replicate the files.</p>
+    <h5><span style="color: #ff9900;">Change Computer Name:</span></h5>
+    <p>When this option is checked the computer’s name will be updated match what you have stored in CloneDeploy either by modifying the sysprep file or the registry during the imaging process.</p>
+
+     <h5><span style="color: #ff9900;">Don't Expand Volumes:</span></h5>
+    <p>During the deployment process ntfs, extfs, and xfs filesystems are expanded to fill the full partition. Setting this option will disable that. I honestly can’t think of reason to do this, but it may be helpful for debugging.</p>
+
+       <h5><span style="color: #ff9900;">Update BCD:</span></h5>
+    <p>If your computer does not boot after deployment, try turning this on. CloneDeploy will update the BCD boot file on Windows machines to correct the boot problem.</p>
+
+       <h5><span style="color: #ff9900;">Randomize GUIDs:</span></h5>
+    <p>Generates new partition Guids on GPT tables to avoid collisions.</p>
+
+       <h5><span style="color: #ff9900;">Fix Boot Sector:</span></h5>
+    <p>This fixes the partition that is set to active / boot in cases where the NTFS geometry is incorrect. This should almost be left checked. Only applies to mbr partition tables.</p>
+
+       <h5><span style="color: #ff9900;">Don't Update NVRAM:</span></h5>
+    <p>When deploying an EFI image. The NVRAM is updated in order to make the machine bootable. In some cases this may cause problems and can be disabled here. Many new systems will automatically detect the correct partition to boot even without correct NVRAM values.</p>
+
+       <h5><span style="color: #ff9900;">Create Partitons Method:</span></h5>
+    <p>This option selects how the partition tables will be setup on the client machine before image deployment. The default option is Dynamic and should work for most situations. 
+        This means that Theopenem will generate the appropriate sized partitions based on many different factors. It could possibly shrink or grow a partition to make them fit the new hard drive.<br /></p>
+        <h5>Use Original MBR / GPT</h5>
+    <p>Restores the exact same partition table that was used on the original image. This option should only be used if you are having problems with the dynamic option. 
+        You can also only use this if the new hard drive is the same size or larger than the original. If you create an image from 80GB hard drive and you deploy to a 120GB hard drive, 
+        the 120GB hard drive will effectively become an 80GB hard drive. You would manually need to resize the partitions.</p>
+    <h5>Dynamic</h5>
+    <p>Generates / resizes the appropriate partitions to fit on the destination drive based on many different factors.</p>
+    <h5>Standard</h5>
+    <p>A simple standard partition table is created, as if a new installation with default partitioning and then only the OS volume image is restored. Using this option enables you to deploy an EFI image to a legacy bios machine, and vice versa. When using this option 
+        you must select on a single partition to deploy in the modify image schema.</p>
+    <h5>Custom Script</h5>
+    <p>Allows you to make your own partitions via a shell script. You can use the partitioning tools available in the client boot image. These include fdisk, gdisk, and parted.</p>
+       <h5><span style="color: #ff9900;">Force Dynamic Partition For Exact Hdd Match:</span></h5>
+    <p>When deploying an image to a hard drive that is the exact same size as the source. They dynamic partition method is not used even if selected. The Use Original MBR / GPT option is used. This option will disable that and force the Dynamic partition option to 
+        be used, for cases where the mbr / gpt does not restore properly.</p>
+
+       <h5><span style="color: #ff9900;">Modify The Image Schema:</span></h5>
+    <p>Checking this box gives you control over what hard drives and partitions will be deployed, where they will restore to and give you custom sizing options. A new table will be 
+        displayed with these options. Any hard drive or partition that is checked will be deployed. Hard drives are always deployed in the order they are listed in this table. You can 
+        modify this by setting a value in the Destination box. For example, if the first hard drive listed in the table was originally /dev/sda it will be restored to the first hard drive that is 
+        found during the imaging process, it may also be /dev/sda or may not be. If you wanted to send this hard drive to the second hard drive in the system, you would set the Destination
+        to /dev/sdb or whatever the matching hard drive name may be. Next, each partition can be set with a Custom Size. Enter a size you want the partition to be and select a unit for the size. 
+        Current options are MB, GB, and %. If you are using a percentage they do not need to add up to 100. Whatever percentage is remaining will automatically be spread across the remaining partitions. 
+        The same is true when using MB or GB. Finally each partition has check box called Fixed. When this box is checked the partition will not be adjusted to fit the new hard drive size. It will 
+        remain the exact same as the original partition that you uploaded. Partitions smaller than 5GB use this logic automatically. When you change the deploy schema, the original schema is never modified, 
+        a new copy is created and stored in the database so don’t worry about messing anything up. There is also an option to export the schema you have defined, I may ask for this for debugging info 
+        if you are having problems. One final note, if you set a custom size to use a percentage, the minimum client size that is displayed in the profile list will show N/A. This is because a minimum 
+        size cannot be known without knowing the size of the hard you are deploying to.</p>
 </asp:Content>

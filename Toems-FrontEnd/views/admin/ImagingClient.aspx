@@ -70,6 +70,23 @@
 
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
+    <h5><span style="color: #ff9900;">Global Imaging Arguments:</span></h5>
+    <p>Arguments that will be passed to every imaging client.</p>
 
+    <h5><span style="color: #ff9900;">Enable iPXE SSL:</span></h5>
+    <p>Enable if iPXE should connect over SSL.  Requires you to correctly setup certs.  By default iPXE doesn't trust certs unless they are embedded.  Typically this option should be off.</p>
 
+     <h5><span style="color: #ff9900;">iPXE SSL Disabled Port:</span></h5>
+    <p>If a com server has SSL enabled for everything except iPXE.  A port is needed in order to communicate with the com server that is not Https.</p>
+
+     <h5><span style="color: #ff9900;">Imaging Task Timeout:</span></h5>
+    <p>The time in minutes that an imaging task will auto close if not completed.</p>
+
+     <h5><span style="color: #ff9900;">Registration Enabled:</span></h5>
+    <p>When imaging a computer, it will check to see if a matching computer already exists in Theopenem.  If not, it will ask you to register the computer and will by added to the imaging only computers page.
+        When a computer is registered, it will keep track of all imaging logs and auto rename it using the registered name.  If you don't want these features, then set this to no.
+    </p>
+
+     <h5><span style="color: #ff9900;">Registration Disabled Keep Name Prompt:</span></h5>
+    <p>If registration is disabled but you still want a prompt to rename the computer during imaging then enable this option.</p>
 </asp:Content>

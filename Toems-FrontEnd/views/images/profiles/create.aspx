@@ -39,12 +39,9 @@ New Profile
   
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subsubHelp">
-    <h5><span style="color: #ff9900;">Display Name:</span></h5>
-<p>A name used to identify the com server, it has not effect on the functionality.</p>
-<h5><span style="color: #ff9900;">URL:</span></h5>
-<p>The url used to access the com server, this must match the url that is set in IIS.</p>
-<h5><span style="color: #ff9900;">Description:</span></h5>
-<p>An optional description for the com server.</p>
-<h5><span style="color: #ff9900;">Replicate Storage:</span></h5>
-<p>This option is only available after the com server is added.  When multiple com servers are defined, files for your modules must be replicated across all com servers.  If you want to disable replication to a com server, then disable this option.  If this option is disabled, you must manually replicate the files.</p>
+    <h5><span style="color: #ff9900;">Profile Name:</span></h5>
+<p>A display name to identify the profile.</p>
+<h5><span style="color: #ff9900;">Profile Description:</span></h5>
+<p>An optional description for the profile.</p>
+
 </asp:Content>

@@ -322,6 +322,7 @@
     <Content Include="views\modules\sysprepmodules\create.aspx" />
     <Content Include="views\modules\sysprepmodules\general.aspx" />
     <Content Include="views\modules\sysprepmodules\search.aspx" />
+    <Content Include="views\modules\sysprepmodules\usages.aspx" />
     <Content Include="views\modules\wumodules\archived.aspx" />
     <Content Include="views\modules\wumodules\categories.aspx" />
     <Content Include="views\modules\wumodules\create.aspx" />
@@ -2444,6 +2445,13 @@
     </Compile>
     <Compile Include="views\modules\sysprepmodules\sysprepmodule.master.designer.cs">
       <DependentUpon>sysprepmodule.master</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\sysprepmodules\usages.aspx.cs">
+      <DependentUpon>usages.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\sysprepmodules\usages.aspx.designer.cs">
+      <DependentUpon>usages.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\modules\wumodules\archived.aspx.cs">
       <DependentUpon>archived.aspx</DependentUpon>

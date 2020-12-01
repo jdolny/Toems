@@ -129,12 +129,16 @@
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
     <h1>Actions</h1>
+     <h5><span style="color: #ff9900;">Deploy Image:</span></h5>
+    <p>Starts an image deployment task for the computer using it's effective image, defined in Image Settings.</p>
+     <h5><span style="color: #ff9900;">Upload Image:</span></h5>
+    <p>Starts an image upload task for the computer using it's effective image, defined in Image Settings.</p>
     <h5><span style="color: #ff9900;">Force Checkin:</span></h5>
 <p>Forces the computer to checkin immediately, instead of waiting for the next checkin interval.</p>
 <h5><span style="color: #ff9900;">Current Users:</span></h5>
-<p>Displays any users that are currently logged into the computer.</p>
+<p>Displays any users that are currently logged into the computer.  The computer must be on the internal network for this to work.</p>
 <h5><span style="color: #ff9900;">Status:</span></h5>
-<p>Displays true if the client computer can be reached through the client(toec), otherwise false.</p>
+<p>Displays true if the client computer can be reached through the client(toec), otherwise false.  The computer must be on the interal network for this to work.</p>
 <h5><span style="color: #ff9900;">Reboot:</span></h5>
 <p>Reboots the computer.</p>
 <h5><span style="color: #ff9900;">Shutdown:</span></h5>
@@ -143,6 +147,10 @@
 <p>Powers on the computer, using WOL.</p>
 <h5><span style="color: #ff9900;">Collect Inventory:</span></h5>
 <p>Immediately runs an inventory collection on the computer without needing to wait for an inventory policy to run.</p>
+     <h5><span style="color: #ff9900;">Clear Imaging Id:</span></h5>
+<p>Resets the ImagingId for this computer.  An imaging id is based on a computers physical hardware.  If imaging a computer does not correctly identify itself
+, it probably needs it's id reset.
+</p>
     <h1>General</h1>
     <p>The general page displays information specific to the functionality of Theopenem.  This information cannot be modified.</p>
 </asp:Content>

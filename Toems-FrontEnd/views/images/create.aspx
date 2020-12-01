@@ -81,13 +81,19 @@
 
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
-    <p>Specifies if the storage path is local to this server or on a remote SMB share.  The local type can only be used if only a single server is used for all Toec Api's, Toems Api's, and Toems Front Ends.</p>
-<h5><span style="color: #ff9900;">Storage Path:</span></h5>
-<p>The path to the storage directory.  If the storage type is local, the path should be a local drive, such as c:\toems-local-storage.  If the storage type is SMB, the path must be a UNC path, such as \\server\toems-remote-storage.</p>
-<h5><span style="color: #ff9900;">Username:</span></h5>
-<p>Only available for a storage type of SMB.  This is the username used to connect to the share.</p>
-<h5><span style="color: #ff9900;">Password:</span></h5>
-<p>Only available for a storage type of SMB.  This is the password used to connect to the share.</p>
-<h5><span style="color: #ff9900;">Domain:</span></h5>
-<p>Only available for a storage type of SMB.  This is the domain used to connect to the share.</p>
+ 
+<h5><span style="color: #ff9900;">Image Name:</span></h5>
+<p>The name of the image.</p>
+<h5><span style="color: #ff9900;">Image Client Environment:</span></h5>
+<p>The Client Environment that will be used to deploy or upload an image.  This should stay as linux for most images, only switching to WinPE when the Linux environment has issues.</p>
+<h5><span style="color: #ff9900;">Image Type</span></h5>
+<p>Specifies if the image will be captured at the Block or File level.  Most cases should be Block unless you have a need for a file based image.</p>
+<h5><span style="color: #ff9900;">Image Description:</span></h5>
+<p>Optional, for your own use.</p>
+    <h5><span style="color: #ff9900;">Protected:</span></h5>
+<p>A protected image cannot be deleted or uploaded.  Helpful to avoid accidentally overwriting an image if someone accidently selects upload instead of deploy.
+    After an image has uploaded, this setting automatically enables itself.
+</p>
+    <h5><span style="color: #ff9900;">Available On Demand:</span></h5>
+<p>Specifies if the image can be used directly from the Client Imaging OS menu, instead of a web based task.</p>
 </asp:Content>

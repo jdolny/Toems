@@ -44,7 +44,7 @@ namespace Toems_Service.Entity
             clientServer.EmMaxBps = 0;
             clientServer.EmMaxClients = 0;
             clientServer.ImagingMaxBps = 0;
-            clientServer.ImagingMaxClients = 0;
+            clientServer.ImagingMaxClients = 5;
             clientServer.IsEndpointManagementServer = true;
             clientServer.IsImagingServer = true;
             clientServer.IsMulticastServer = true;
@@ -53,7 +53,10 @@ namespace Toems_Service.Entity
             clientServer.MulticastStartPort = 9000;
             clientServer.ReplicateStorage = true;
             clientServer.ReplicationRateIpg = 0;
+            clientServer.TftpPath = @"C:\Program Files\Theopenem\tftpboot\";
+            clientServer.IsTftpInfoServer = true;
             clientServer.UniqueId = Guid.NewGuid().ToString();
+
             var validationResult = Validate(clientServer, true);
             if (validationResult.Success)
             {
@@ -193,7 +196,7 @@ namespace Toems_Service.Entity
             if(string.IsNullOrEmpty(comServer.LocalStoragePath))
             {
                 validationResult.Success = false;
-                validationResult.ErrorMessage = "Local Storage Path Must Be Populated.";
+                validationResult.ErrorMessage = "Local Storage Path Must Be Populated.  If Global Storage is set to Local, verify Admin Settings-> Storage Location is populated.";
                 return validationResult;
             }
 

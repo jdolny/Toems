@@ -46,6 +46,7 @@
              <asp:ListItem Selected="True">Policies</asp:ListItem>
               <asp:ListItem>Computers</asp:ListItem>
              <asp:ListItem>Groups</asp:ListItem>
+            <asp:ListItem>Images</asp:ListItem>
         </asp:DropDownList>
             </div>
     </div>
@@ -85,6 +86,18 @@
             No Groups Found
         </EmptyDataTemplate>
     </asp:GridView>
+
+     <asp:GridView ID="gvImages" runat="server"  DataKeyNames="Id"  AutoGenerateColumns="False" CssClass="Gridview extraPad" AlternatingRowStyle-CssClass="alt">
+        <Columns>
+            <asp:BoundField DataField="Id" HeaderText="Id"  Visible="False"/>
+             <asp:HyperLinkField DataNavigateUrlFields="Id" DataNavigateUrlFormatString="~/views/images/general.aspx?imageId={0}" Text="View" ItemStyle-CssClass="chkboxwidth" Target="_blank"/>
+            <asp:BoundField DataField="Name" HeaderText="Name" ItemStyle-CssClass="width_200" ></asp:BoundField>
+
+        </Columns>
+        <EmptyDataTemplate>
+            No Images Found
+        </EmptyDataTemplate>
+         </asp:GridView>
 
    
 </asp:Content>
