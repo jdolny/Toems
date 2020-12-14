@@ -88,11 +88,14 @@ namespace Toems_Service.Workflows
 
             var listOfMacs = new List<string>();
             if (!string.IsNullOrEmpty(_computer.ImagingMac))
+            {
+                log.Debug("Computer Task PXE Mac: " + _computer.ImagingMac);
                 listOfMacs.Add(StringManipulationServices.MacToPxeMac(_computer.ImagingMac));
+            }
             else
             {
                 var computerMacs = _uow.NicInventoryRepository.Get(x => x.ComputerId == computer.Id && x.Type.Equals("Ethernet")).Select(x => x.Mac).ToList();
-                foreach(var mac in computerMacs)
+                foreach (var mac in computerMacs)
                 {
                     listOfMacs.Add(StringManipulationServices.MacToPxeMac(mac));
                 }
@@ -134,7 +137,7 @@ namespace Toems_Service.Workflows
                 return false;
             }
 
-            var iPxePath = compTftpServers.First().Url; //no way for fail over or load balance, just use first one
+            var iPxePath = _thisComServer.Url;
             if (iPxePath.Contains("https://"))
             {
                 if (ServiceSetting.GetSettingValue(SettingStrings.IpxeSSL).Equals("False"))

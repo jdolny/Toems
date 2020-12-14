@@ -179,6 +179,7 @@
     <Compile Include="ServiceOnlineKernel.cs" />
     <Compile Include="ServiceProvision.cs" />
     <Compile Include="ServiceProxyDhcp.cs" />
+    <Compile Include="ServiceRawSql.cs" />
     <Compile Include="ServiceSymmetricEncryption.cs" />
     <Compile Include="Entity\ServiceSoftwareModule.cs" />
     <Compile Include="Entity\ServiceUploadedFile.cs" />
@@ -201,6 +202,7 @@
     <Compile Include="Workflows\CleanTaskBootFiles.cs" />
     <Compile Include="Workflows\CreateTaskArguments.cs" />
     <Compile Include="Workflows\DataCleanup.cs" />
+    <Compile Include="Workflows\DbUpdater.cs" />
     <Compile Include="Workflows\DownloadKernel.cs" />
     <Compile Include="Workflows\ComServerFreeSpace.cs" />
     <Compile Include="Workflows\ImageSync.cs" />

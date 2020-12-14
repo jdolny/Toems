@@ -21,5 +21,20 @@ namespace Toems_ApiCalls
             return response != null && response.Value;
         }
 
+        public DtoVersion GetAllVersionInfo()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetAllVersionInfo", Resource);
+            return _apiRequest.Execute<DtoVersion>(Request);
+        }
+
+        public DtoActionResult UpdateDatabase()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/UpdateDatabase/", Resource);
+            return _apiRequest.Execute<DtoActionResult>(Request);
+
+        }
+
     }
 }

@@ -588,7 +588,7 @@ namespace Toems_Service
             var computer = computerServices.GetComputer(computerId);
             var uow = new UnitOfWork();
 
-            var imagingServers = new Workflows.GetCompImagingServers().Run(computerId);
+            var imagingServers = new Workflows.GetCompImagingServers().Run(computerId,true);
             if (imagingServers == null) return "false";
 
             var randomDpList = new List<string>();

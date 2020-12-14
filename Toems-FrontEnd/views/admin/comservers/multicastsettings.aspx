@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/admin/comservers/comservers.master" AutoEventWireup="true" CodeBehind="multicastsettings.aspx.cs" Inherits="Toems_FrontEnd.views.admin.comservers.multicastsettings" %>
 <asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub2">
-    <li><a href="<%= ResolveUrl("~/views/admin/comservers/multicastsettings.aspx") %>?level=2">Multicast Settings</a></li>
+     <li><a href="<%= ResolveUrl("~/views/admin/comservers/comservers.aspx") %>?level=2">Com Servers</a></li>
     <li><%=ComServer.DisplayName %></li>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub2">

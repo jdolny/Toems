@@ -21,7 +21,7 @@
             <img src="content/img/logowhite.png" />
     </div>
          <br class="clear" />
-        <asp:Login ID="WebLogin" runat="server" OnAuthenticate="WebLogin_Authenticate" DestinationPageUrl="~/views/dashboard/dash.aspx">
+        <asp:Login ID="WebLogin" runat="server" OnAuthenticate="WebLogin_Authenticate" DestinationPageUrl="~/views/dashboard/dash.aspx?fromlogin=true">
             <LayoutTemplate>
                 
                 <div class="fields">

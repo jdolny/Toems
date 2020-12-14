@@ -45,12 +45,12 @@ namespace Toems_Service.Workflows
             if (_computer == null)
             {
                 //use default
-                var clusterImagingServers = _uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
+                var clusterImagingServers = _uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id).Where(x => x.Role.Equals("Active")).ToList();
                 if (clusterImagingServers != null)
                 {
                     if (clusterImagingServers.Count > 0)
                     {
-                        foreach(var serverId in clusterImagingServers.Select(x => x.ComServerId).ToList())
+                        foreach (var serverId in clusterImagingServers.Select(x => x.ComServerId).ToList())
                         {
                             var comServer = _uow.ClientComServerRepository.GetById(serverId);
                             listOfImagingServers.Add(comServer);
@@ -59,6 +59,8 @@ namespace Toems_Service.Workflows
                     else
                         return -1; //default cluster has no imaging servers
                 }
+                else
+                    return -1; //result was null for some reason
             }
             else
             {

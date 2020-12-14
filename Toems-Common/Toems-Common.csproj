@@ -45,6 +45,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorizationStrings.cs" />
+    <Compile Include="DbUpgrades\121.cs" />
+    <Compile Include="DbUpgrades\IDbScript.cs" />
+    <Compile Include="DbUpgrades\VersionMapping.cs" />
     <Compile Include="Dto\clientimaging\CheckIn.cs" />
     <Compile Include="Dto\clientimaging\DetermineTaskDTO.cs" />
     <Compile Include="Dto\clientimaging\FileFolderCopy.cs" />
@@ -124,6 +127,7 @@
     <Compile Include="Dto\DtoSocketServerVerify.cs" />
     <Compile Include="Dto\DtoTaskBootFile.cs" />
     <Compile Include="Dto\DtoTftpServer.cs" />
+    <Compile Include="Dto\DtoVersion.cs" />
     <Compile Include="Dto\exports\DtoCommandModuleExport.cs" />
     <Compile Include="Dto\exports\DtoExternalFileExport.cs" />
     <Compile Include="Dto\exports\DtoFileCopyModuleExport.cs" />

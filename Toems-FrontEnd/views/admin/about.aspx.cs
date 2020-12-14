@@ -19,7 +19,6 @@ namespace Toems_FrontEnd.views.admin
         private void PopulateForm()
         {
             lblToemsApi.Text = Call.SettingApi.GetApplicationVersion();
-            lblShared.Text = Call.SettingApi.GetSharedLibraryVersion();
             var versions = Call.VersionApi.Get(1);
             lblDatabaseVersion.Text = versions.DatabaseVersion;
             lblExpectedToec.Text = versions.LatestClientVersion;

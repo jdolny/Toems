@@ -54,14 +54,16 @@ namespace Toems_Service
 
         public static string MacToPxeMac(string mac)
         {
-            string pxeMac = "";
             if (!mac.Contains(":"))
             {
-                pxeMac = Regex.Replace(mac, ".{2}", "$0:");
-                pxeMac = pxeMac.Trim(':');
+                mac = Regex.Replace(mac, ".{2}", "$0:");
+                mac = mac.Trim(':');
             }
-            pxeMac = "01-" + pxeMac.ToLower().Replace(':', '-');
-            return pxeMac;
+
+            mac = "01-" + mac.ToLower().Replace(':', '-');
+            
+
+            return mac;
         }
 
 

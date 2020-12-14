@@ -191,15 +191,25 @@ namespace Toems_ClientApi.Controllers
             var scriptPath = HttpContext.Current.Server.MapPath("~") + Path.DirectorySeparatorChar + "private" +
                              Path.DirectorySeparatorChar + "clientscripts" + Path.DirectorySeparatorChar;
 
+
             if (File.Exists(scriptPath + scriptDto.scriptName))
             {
-                var result = new HttpResponseMessage(HttpStatusCode.OK);
-                var stream = new FileStream(scriptPath + scriptDto.scriptName, FileMode.Open);
-                result.Content = new StreamContent(stream);
-                result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-                result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
-                result.Content.Headers.ContentDisposition.FileName = scriptDto.scriptName;
-                return result;
+
+                try
+                {
+                    var result = new HttpResponseMessage(HttpStatusCode.OK);
+                    var stream = new FileStream(scriptPath + scriptDto.scriptName, FileMode.Open);
+                    result.Content = new StreamContent(stream);
+                    result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                    result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+                    result.Content.Headers.ContentDisposition.FileName = scriptDto.scriptName;
+                    return result;
+                }
+                catch(Exception ex)
+                {
+                    Logger.Debug("Error");
+                    Logger.Debug(ex.Message);
+                }
             }
             return new HttpResponseMessage(HttpStatusCode.NotFound);
         }

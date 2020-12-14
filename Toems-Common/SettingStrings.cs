@@ -152,7 +152,7 @@
 
         public const string DisabledRegNamePrompt = "Disabled Registration Name Prompt";
 
-        public const string SharedLibraryVersion = "1.2.0.0";
+        public const int GlobalVersion = 121;
 
     }
 }

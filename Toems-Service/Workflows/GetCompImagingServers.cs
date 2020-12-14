@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Toems_Common.Dto.client;
 using Toems_Common.Entity;
 using Toems_DataModel;
 using Toems_Service.Entity;
@@ -11,7 +12,7 @@ namespace Toems_Service.Workflows
 {
     public class GetCompImagingServers
     {
-        public List<EntityClientComServer> Run(int computerId)
+        public List<EntityClientComServer> Run(int computerId, bool includePassive=false)
         {
             var uow = new UnitOfWork();
             var defaultCluster = uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
@@ -23,7 +24,11 @@ namespace Toems_Service.Workflows
             if (computerGroups.Count() == 0)
             {
                 //use default
-                var clusterImagingServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
+                List<DtoClientComServers> clusterImagingServers;
+                if (includePassive)
+                    clusterImagingServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
+                else
+                    clusterImagingServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id).Where(x => x.Role.Equals("Active")).ToList();
                 if (clusterImagingServers != null)
                 {
                     if (clusterImagingServers.Count > 0)
@@ -39,12 +44,17 @@ namespace Toems_Service.Workflows
                     //check if assigned cluster has any imaging servers, if not, go to next group
                     if (group.ClusterId == -1)
                         group.ClusterId = defaultCluster.Id;
-                    var clusterImagingServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(group.ClusterId);
+                    List<DtoClientComServers> clusterImagingServers;
+                    if (includePassive)
+                        clusterImagingServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(group.ClusterId);
+                    else
+                        clusterImagingServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(group.ClusterId).Where(x => x.Role.Equals("Active")).ToList();
                     if (clusterImagingServers != null)
                     {
                         if (clusterImagingServers.Count > 0)
                         {
                             imagingServerIds = clusterImagingServers.Select(x => x.ComServerId).ToList();
+                            break; //use first found imaging cluster
                         }
                     }
                 }
@@ -53,7 +63,11 @@ namespace Toems_Service.Workflows
                 {
                     //no groups with an imaging server found for this computer, use default cluster
                     //use default
-                    var clusterImagingServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
+                    List<DtoClientComServers> clusterImagingServers;
+                    if (includePassive)
+                        clusterImagingServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
+                    else
+                        clusterImagingServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id).Where(x => x.Role.Equals("Active")).ToList();
                     if (clusterImagingServers != null)
                     {
                         if (clusterImagingServers.Count > 0)

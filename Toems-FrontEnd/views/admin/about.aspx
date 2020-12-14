@@ -22,7 +22,7 @@
         Toems UI Version:
     </div>
     <div class="size-lbl2 column">
-        <asp:Label runat="server" ID="tomesUiVersion" Text="1.2.0.0" ></asp:Label>
+        <asp:Label runat="server" ID="tomesUiVersion" Text="1.2.1.0" ></asp:Label>
     </div>
     <br class="clear"/>
 
@@ -34,13 +34,6 @@
     </div>
     <br class="clear"/>
 
-     <div class="size-lbl column">
-        Shared Library Version:
-    </div>
-    <div class="size-lbl2 column">
-        <asp:Label runat="server" ID="lblShared"></asp:Label>
-    </div>
-    <br class="clear"/>
     <div class="size-lbl column">
         Database Version:
     </div>

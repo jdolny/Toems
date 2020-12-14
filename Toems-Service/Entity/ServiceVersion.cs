@@ -1,4 +1,6 @@
 ﻿using System;
+using Toems_Common;
+using Toems_Common.DbUpgrades;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_DataModel;
@@ -37,6 +39,16 @@ namespace Toems_Service.Entity
             actionResult.Success = true;
             actionResult.Id = version.Id;
             return actionResult;
+        }
+
+        public DtoVersion GetAllVersionInfo()
+        {
+            var versionDto = new DtoVersion();
+            var dbversions = _uow.VersionRepository.GetById(1);
+            versionDto.DatabaseVersion = dbversions.DatabaseVersion;
+            var versionMapping = new VersionMapping().Get();
+            versionDto.TargetDbVersion = versionMapping[SettingStrings.GlobalVersion];
+            return versionDto;
         }
     }
 }

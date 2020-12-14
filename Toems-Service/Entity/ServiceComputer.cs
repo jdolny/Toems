@@ -215,7 +215,7 @@ namespace Toems_Service.Entity
 
         public List<EntityClientComServer> GetImageServers(int computerId)
         {
-            return new Workflows.GetCompImagingServers().Run(computerId);
+            return new Workflows.GetCompImagingServers().Run(computerId,true);
         }
 
         public EntityComputer GetByInstallationId(string installationid)

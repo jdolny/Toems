@@ -45,6 +45,7 @@ namespace Toems_Service.Workflows
                         if (clusterTftpServers.Count > 0)
                         {
                             tftpServerIds = clusterTftpServers.Select(x => x.ComServerId).ToList();
+                            break;
                         }
                     }
                 }

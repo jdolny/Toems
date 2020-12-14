@@ -4,6 +4,7 @@ using System.Web.Http;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Service.Entity;
+using Toems_Service.Workflows;
 
 namespace Toems_ApplicationApi.Controllers
 {
@@ -40,6 +41,20 @@ namespace Toems_ApplicationApi.Controllers
                 throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound, result));
           
             return result;
+        }
+
+        [Authorize]
+        public DtoVersion GetAllVersionInfo()
+        {
+            return _versionServices.GetAllVersionInfo();
+        }
+
+        [HttpGet]
+        [Authorize]
+        public DtoActionResult UpdateDatabase()
+        {
+            return new DbUpdater().Update();
+
         }
     }
 }

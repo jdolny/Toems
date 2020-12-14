@@ -22,7 +22,15 @@ namespace Toems_FrontEnd.views.dashboard
 
         protected void Page_Load(object sender, EventArgs e)
         {
-           
+            //Only check after login
+            if (Request.QueryString["fromlogin"] == "true")
+            {
+                //check for db upgrades here
+                var versionInfo = Call.VersionApi.GetAllVersionInfo();
+                if (versionInfo.DatabaseVersion != versionInfo.TargetDbVersion)
+                    Response.Redirect("~/views/dashboard/dbupdate.aspx");
+            }
+
             if (Request.QueryString["access"] == "denied")
             {
                 lblDenied.Text = "You Are Not Authorized For That Action<br><br>";

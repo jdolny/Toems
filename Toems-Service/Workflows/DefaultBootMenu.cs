@@ -77,10 +77,20 @@ namespace Toems_Service.Workflows
             var defaultImagingServers = new UnitOfWork().ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
 
             _webPath = "\"";
-            foreach (var imageServer in defaultImagingServers)
+
+            //the global default menu doesn't really have a way of knowing which imaging server to connect to since it's not related to a computer /group with
+            // the com server assigned.  Instead use this server if it's an imaging server, otherwise use the default cluster.
+            if (_thisComServer.IsImagingServer)
             {
-                var url = new ServiceClientComServer().GetServer(imageServer.ComServerId).Url;
-                _webPath += url + "clientimaging/ "; //adds a space delimiter
+                _webPath = _thisComServer.Url + "clientimaging/ ";
+            }
+            else
+            {
+                foreach (var imageServer in defaultImagingServers)
+                {
+                    var url = new ServiceClientComServer().GetServer(imageServer.ComServerId).Url;
+                    _webPath += url + "clientimaging/ "; //adds a space delimiter
+                }
             }
             _webPath = _webPath.Trim(' ');
             _webPath += "\"";
@@ -257,7 +267,7 @@ namespace Toems_Service.Workflows
         private void CreateIpxeMenu(int defaultClusterId)
         {
             var defaultTftpServers = new UnitOfWork().ComServerClusterServerRepository.GetTftpClusterServers(defaultClusterId);
-            var iPxePath = defaultTftpServers.First().Url; //just use the first tftpserver for the ipxe kernel transfer
+            var iPxePath = _thisComServer.Url;
             if (iPxePath.Contains("https://")) 
             {
                 if (ServiceSetting.GetSettingValue(SettingStrings.IpxeSSL).Equals("False"))

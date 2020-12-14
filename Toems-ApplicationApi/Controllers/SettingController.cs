@@ -54,13 +54,6 @@ namespace Toems_ApplicationApi.Controllers
             return new DtoApiStringResponse() { Value = ApplicationStrings.ApplicationVersion };
         }
 
-        [Authorize]
-        public DtoApiStringResponse GetSharedLibraryVersion()
-        {
-            return new DtoApiStringResponse() { Value = SettingStrings.SharedLibraryVersion };
-        }
-
-
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         [HttpGet]
         public DtoApiBoolResponse SendEmailTest()

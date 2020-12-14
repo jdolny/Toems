@@ -7,72 +7,72 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.admin {
+namespace Toems_FrontEnd.views.dashboard {
     
     
-    public partial class about {
+    public partial class dbupdate {
         
         /// <summary>
-        /// tomesUiVersion control.
+        /// form1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label tomesUiVersion;
+        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
-        /// lblToemsApi control.
+        /// lblVersion control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblToemsApi;
+        protected global::System.Web.UI.WebControls.Label lblVersion;
         
         /// <summary>
-        /// lblDatabaseVersion control.
+        /// ScriptManager control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblDatabaseVersion;
+        protected global::System.Web.UI.ScriptManager ScriptManager;
         
         /// <summary>
-        /// lblExpectedToecApi control.
+        /// AsynUpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblExpectedToecApi;
+        protected global::System.Web.UI.UpdatePanel AsynUpdatePanel;
         
         /// <summary>
-        /// lblExpectedToemsApi control.
+        /// btnUpdate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblExpectedToemsApi;
+        protected global::System.Web.UI.WebControls.Button btnUpdate;
         
         /// <summary>
-        /// lblExpectedToec control.
+        /// lblResult control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblExpectedToec;
+        protected global::System.Web.UI.WebControls.Label lblResult;
         
         /// <summary>
-        /// comServerPlaceholder control.
+        /// UpdateProgress control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder comServerPlaceholder;
+        protected global::System.Web.UI.UpdateProgress UpdateProgress;
     }
 }
