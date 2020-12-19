@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorizationStrings.cs" />
+    <Compile Include="DbUpgrades\130.cs" />
     <Compile Include="DbUpgrades\121.cs" />
     <Compile Include="DbUpgrades\IDbScript.cs" />
     <Compile Include="DbUpgrades\VersionMapping.cs" />
@@ -316,6 +317,9 @@
     <Compile Include="Entity\EntityUserLockout.cs" />
     <Compile Include="Entity\EntityUserRight.cs" />
     <Compile Include="Entity\EntityVersion.cs" />
+    <Compile Include="Entity\Remotely\Device.cs" />
+    <Compile Include="Entity\Remotely\Organization.cs" />
+    <Compile Include="Entity\Remotely\RemotelyUser.cs" />
     <Compile Include="Enum\EnumCondition.cs" />
     <Compile Include="Enum\EnumCustomAttribute.cs" />
     <Compile Include="Enum\EnumFileDownloader.cs" />

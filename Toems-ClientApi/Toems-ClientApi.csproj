@@ -113,6 +113,7 @@
     <Compile Include="Controllers\Authorization\ProvisionAuth.cs" />
     <Compile Include="Controllers\ClientImagingController.cs" />
     <Compile Include="Controllers\InventoryController.cs" />
+    <Compile Include="Controllers\RemoteAccessController.cs" />
     <Compile Include="Controllers\SocketController.cs" />
     <Compile Include="Controllers\ImagingController.cs" />
     <Compile Include="Controllers\WolController.cs" />

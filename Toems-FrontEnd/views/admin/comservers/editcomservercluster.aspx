@@ -100,6 +100,14 @@
                     </ItemTemplate>
                </asp:TemplateField>
 
+                <asp:TemplateField ItemStyle-CssClass="width_100" HeaderText="Remote Access Server">
+                <ItemTemplate>
+                   
+        <asp:CheckBox runat="server" id="chkRemote" ClientIDMode="Static"/>
+       
+                    </ItemTemplate>
+               </asp:TemplateField>
+
               <asp:TemplateField>
                 <ItemTemplate>
                    &nbsp;

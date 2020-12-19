@@ -92,6 +92,8 @@
     <Compile Include="Entity\ServiceImageProfileScript.cs" />
     <Compile Include="Entity\ServiceImagingClientId.cs" />
     <Compile Include="Entity\ServicePort.cs" />
+    <Compile Include="Entity\ServiceRemoteAccess.cs" />
+    <Compile Include="PasswordGenerator.cs" />
     <Compile Include="RegParser.cs" />
     <Compile Include="ServiceClientPartition.cs" />
     <Compile Include="Entity\ServiceAntivirusInventory.cs" />

@@ -252,6 +252,14 @@ namespace Toems_ApiCalls
             return new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoFreeSpace>(Request, serverName, interComKey);
         }
 
+        public bool VerifyRemoteAccessInstalled(string url, string serverName, string interComKey)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = "RemoteAccess/VerifyRemoteAccessInstalled";
+            var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
+            return responseData != null && responseData.Value;
+        }
+
 
     }
 }

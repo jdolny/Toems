@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using log4net;
 using Newtonsoft.Json;
 using Toems_Common;
 using Toems_Common.Dto;
@@ -13,7 +14,7 @@ namespace Toems_Service.Entity
     public class ServiceUser
     {
         private readonly UnitOfWork _uow;
-
+        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public ServiceUser()
         {
             _uow = new UnitOfWork();
@@ -186,6 +187,29 @@ namespace Toems_Service.Entity
 
         public DtoActionResult UpdateUser(EntityToemsUser user)
         {
+            try
+            {
+                var org = _uow.RemotelyOrganizationRepository.GetFirstOrDefault();
+                if (org != null)
+                {
+                    var device = new Toems_Common.Entity.Remotely.Device();
+                    device.OrganizationID = org.ID;
+                    device.DeviceName = "TestDevice";
+                    device.ID = Guid.NewGuid().ToString();
+                    device.ServerVerificationToken = Guid.NewGuid().ToString();
+
+                        _uow.RemotelyDeviceRepository.Insert(device);
+                        _uow.SaveRemotely();
+
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Debug(ex.Message);
+                Logger.Debug(ex.InnerException);
+            }
+
             var u = GetUser(user.Id);
             if (u == null) return new DtoActionResult { ErrorMessage = "User Not Found", Id = 0 };
             if (GetAdminCount() == 1 && user.Membership != "Administrator" && u.Membership.Equals("Administrator"))

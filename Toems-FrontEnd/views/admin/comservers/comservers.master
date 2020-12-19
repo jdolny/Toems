@@ -67,6 +67,10 @@
                    <a href="<%= ResolveUrl("~/views/admin/comservers/tftpsettings.aspx") %>?level=2&serverId=<%=ComServer.Id %>">
             <span class="sub-nav-text">Tftp Settings</span></a>
                         </li>
+                   <li id="remoteaccess">
+                   <a href="<%= ResolveUrl("~/views/admin/comservers/remoteaccess.aspx") %>?level=2&serverId=<%=ComServer.Id %>">
+            <span class="sub-nav-text">Remote Access Settings</span></a>
+                        </li>
                 </div>
 
               <div id="divCluster" runat="server">

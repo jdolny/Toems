@@ -40,6 +40,13 @@ namespace Toems_Service.Entity
                 if (!clientServer.TftpPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
                     clientServer.TftpPath += Path.DirectorySeparatorChar.ToString();
             }
+            if(!string.IsNullOrEmpty(clientServer.RemoteAccessUrl))
+            {
+                if (!clientServer.RemoteAccessUrl.EndsWith("/"))
+                    clientServer.RemoteAccessUrl += "/";
+            }
+
+
             clientServer.DecompressImageOn = "client";
             clientServer.EmMaxBps = 0;
             clientServer.EmMaxClients = 0;
@@ -128,6 +135,12 @@ namespace Toems_Service.Entity
                 if (!clientServer.TftpPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
                     clientServer.TftpPath += Path.DirectorySeparatorChar.ToString();
             }
+            if (!string.IsNullOrEmpty(clientServer.RemoteAccessUrl))
+            {
+                if (!clientServer.RemoteAccessUrl.EndsWith("/"))
+                    clientServer.RemoteAccessUrl += "/";
+            }
+
             var validationResult = Validate(clientServer, false);
             if (validationResult.Success)
             {
@@ -266,6 +279,8 @@ namespace Toems_Service.Entity
             return new APICall().ClientComServerApi.KillProcess(comServer.Url, "", decryptedKey,pid);
 
         }
+
+     
 
 
     }

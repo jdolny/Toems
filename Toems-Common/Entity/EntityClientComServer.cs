@@ -86,5 +86,20 @@ namespace Toems_Common.Entity
         [Column("imaging_ip")]
         public string ImagingIp { get; set; }
 
+        [Column("is_ra_server")]
+        public bool IsRemoteAccessServer { get; set; }
+
+        [Column("ra_url")]
+        public string RemoteAccessUrl { get; set; }
+
+        [Column("ra_username")]
+        public string RaUsername { get; set; }
+
+        [Column("ra_password_encrypted")]
+        public string RaPasswordEncrypted { get; set; }
+
+        [Column("ra_auth_header_encrypted")]
+        public string RaAuthHeaderEncrypted { get; set; }
+
     }
 }

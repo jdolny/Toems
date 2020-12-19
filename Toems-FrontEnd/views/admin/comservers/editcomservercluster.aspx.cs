@@ -37,6 +37,7 @@ namespace Toems_FrontEnd.views.admin.comservers
                 var isTftpServer = (CheckBox)row.FindControl("chkTftp");
                 var isMulticast = (CheckBox)row.FindControl("chkMulticast");
                 var isEms = (CheckBox)row.FindControl("chkEmServer");
+                var isRaServer = (CheckBox)row.FindControl("chkRemote");
                 var dataKey = gvServers.DataKeys[row.RowIndex];
                 if (dataKey == null) continue;
 
@@ -49,6 +50,7 @@ namespace Toems_FrontEnd.views.admin.comservers
                         isImagingServer.Checked = clusterServer.IsImagingServer;
                         isTftpServer.Checked = clusterServer.IsTftpServer;
                         isMulticast.Checked = clusterServer.IsMulticastServer;
+                        isRaServer.Checked = clusterServer.IsRemoteAccessServer;
 
                         var comServer = Call.ClientComServerApi.Get(Convert.ToInt32(dataKey.Value));
                         if (comServer == null) continue;
@@ -106,6 +108,7 @@ namespace Toems_FrontEnd.views.admin.comservers
                     var isTftpServer = (CheckBox)row.FindControl("chkTftp");
                     var isMulticast = (CheckBox)row.FindControl("chkMulticast");
                     var isEms = (CheckBox)row.FindControl("chkEmServer");
+                    var isRaServer = (CheckBox)row.FindControl("chkRemote");
                     var dataKey = gvServers.DataKeys[row.RowIndex];
                     if (dataKey == null) continue;
 
@@ -119,6 +122,7 @@ namespace Toems_FrontEnd.views.admin.comservers
                     clusterServer.IsTftpServer = isTftpServer.Checked;
                     clusterServer.IsMulticastServer = isMulticast.Checked;
                     clusterServer.IsEndpointManagementServer = isEms.Checked;
+                    clusterServer.IsRemoteAccessServer = isRaServer.Checked;
                     listOfServers.Add(clusterServer);
                 }
 

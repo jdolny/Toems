@@ -140,7 +140,14 @@ namespace Toems_Service
 
         public bool FileExists(string filePath)
         {
-            return File.Exists(filePath);
+            try
+            {
+                return File.Exists(filePath);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public static List<string> GetBootImages()

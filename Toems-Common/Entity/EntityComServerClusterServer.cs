@@ -31,5 +31,8 @@ namespace Toems_Common.Entity
 
         [Column("is_em_server")]
         public bool IsEndpointManagementServer { get; set; }
+
+        [Column("is_ra_server")]
+        public bool IsRemoteAccessServer { get; set; }
     }
 }

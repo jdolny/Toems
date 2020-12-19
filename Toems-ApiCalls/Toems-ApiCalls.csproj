@@ -72,6 +72,7 @@
     <Compile Include="ImageProfileAPI.cs" />
     <Compile Include="ImageAPI.cs" />
     <Compile Include="ImageSchemaAPI.cs" />
+    <Compile Include="RemoteAccessApi.cs" />
     <Compile Include="SysprepModuleAPI.cs" />
     <Compile Include="ImageProfileTemplateApi.cs" />
     <Compile Include="CustomBootMenuAPI.cs" />

@@ -157,6 +157,7 @@
     <Content Include="views\admin\comservers\emssettings.aspx" />
     <Content Include="views\admin\comservers\imagingsettings.aspx" />
     <Content Include="views\admin\comservers\multicastsettings.aspx" />
+    <Content Include="views\admin\comservers\remoteaccess.aspx" />
     <Content Include="views\admin\comservers\replicatesettings.aspx" />
     <Content Include="views\admin\comservers\tftpsettings.aspx" />
     <Content Include="views\admin\dbmaintenance.aspx" />
@@ -1088,6 +1089,13 @@
     </Compile>
     <Compile Include="views\admin\comservers\multicastsettings.aspx.designer.cs">
       <DependentUpon>multicastsettings.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\comservers\remoteaccess.aspx.cs">
+      <DependentUpon>remoteaccess.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\comservers\remoteaccess.aspx.designer.cs">
+      <DependentUpon>remoteaccess.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\admin\comservers\replicatesettings.aspx.cs">
       <DependentUpon>replicatesettings.aspx</DependentUpon>

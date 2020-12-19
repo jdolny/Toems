@@ -382,5 +382,10 @@ namespace Toems_ApiCalls
             get { return new ComputerLogAPI("ComputerLog"); }
         }
 
+        public RemoteAccessApi RemoteAccessApi
+        {
+            get { return new RemoteAccessApi("RemoteAccess"); }
+        }
+
     }
 }

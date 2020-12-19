@@ -14,6 +14,7 @@ namespace Toems_Common.DbUpgrades
         {
             _mapping = new Dictionary<int, string>();
             _mapping.Add(121, "1.2.1.0");
+            _mapping.Add(130, "1.3.0.0");
 
         }
 

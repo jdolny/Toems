@@ -338,6 +338,40 @@ namespace Toems_ApiCalls
             return response;
         }
 
+        public string ExecuteRemotely(RestRequest request)
+        {
+            if (request == null)
+            {
+                _log.Error("Could Not Execute Remotely API Request.  The Request was empty.");
+                return null;
+            }
+
+            var response = _client.Execute(request);
+            if(response == null)
+            {
+                return null;
+            }
+
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                _log.Error("Could Not Complete Remotely API Request.  The Response Produced An Error." + request.Resource);
+                _log.Error(response.Content);
+                return null;
+            }
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return "The Remote Access Server Has Already Been Initialized";
+            }
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return response.Content;
+            }
+
+            return null;
+        }
+
         public async Task<TClass> ExecuteHMACAsync<TClass>(RestRequest request, X509Certificate2 cert) where TClass : new()
         {
             //Calculate UNIX time
