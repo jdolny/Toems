@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Toems_Common.Entity.Remotely
+namespace Toems_Common.Dto
 {
     public class RemotelyUser
     {

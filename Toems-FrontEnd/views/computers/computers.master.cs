@@ -73,14 +73,48 @@ namespace Toems_FrontEnd.views.computers
                     break;
                 case "reboot":
                     ComputerBasePage.RequiresAuthorization(AuthorizationStrings.ComputerReboot);
+                    ComputerBasePage.Call.ComputerApi.ClearLastSocketResult(ComputerEntity.Id);
                     ComputerBasePage.Call.ComputerApi.Reboot(ComputerEntity.Id);
-                    actionLabel = "Rebooted";
+                    var counter = 0;
+                    while (counter < 10)
+                    {
+                        var lastSocketResult = ComputerBasePage.Call.ComputerApi.GetLastSocketResult(ComputerEntity.Id);
+                        if (!string.IsNullOrEmpty(lastSocketResult))
+                        {
+                            PageBaseMaster.EndUserMessage = lastSocketResult;
+                            break;
+                        }
+                        if (counter == 9)
+                        {
+                            PageBaseMaster.EndUserMessage = "Could Not Reboot Computer";
+                            return;
+                        }
+                        System.Threading.Thread.Sleep(1000);
+                        counter++;
+                    }
                     result = new DtoActionResult() {Success = true};
                     break;
                 case "shutdown":
                     ComputerBasePage.RequiresAuthorization(AuthorizationStrings.ComputerShutdown);
+                    ComputerBasePage.Call.ComputerApi.ClearLastSocketResult(ComputerEntity.Id);
                     ComputerBasePage.Call.ComputerApi.Shutdown(ComputerEntity.Id);
-                    actionLabel = "Shutdown";
+                    var counter1 = 0;
+                    while (counter1 < 10)
+                    {
+                        var lastSocketResult = ComputerBasePage.Call.ComputerApi.GetLastSocketResult(ComputerEntity.Id);
+                        if (!string.IsNullOrEmpty(lastSocketResult))
+                        {
+                            PageBaseMaster.EndUserMessage = lastSocketResult;
+                            break;
+                        }
+                        if (counter1 == 9)
+                        {
+                            PageBaseMaster.EndUserMessage = "Could Not Shutdown Computer";
+                            return;
+                        }
+                        System.Threading.Thread.Sleep(1000);
+                        counter1++;
+                    }
                     result = new DtoActionResult() { Success = true };
                     break;
                 case "wakeup":
@@ -129,28 +163,97 @@ namespace Toems_FrontEnd.views.computers
         protected void btnCheckin_OnClick(object sender, EventArgs e)
         {
             ComputerBasePage.RequiresAuthorization(AuthorizationStrings.ComputerForceCheckin);
+            ComputerBasePage.Call.ComputerApi.ClearLastSocketResult(ComputerEntity.Id);
             ComputerBasePage.Call.ComputerApi.ForceCheckin(ComputerEntity.Id);
-            PageBaseMaster.EndUserMessage = "Force Checkin Request Sent";
+            var counter = 0;
+            while (counter < 10)
+            {
+                var lastSocketResult = ComputerBasePage.Call.ComputerApi.GetLastSocketResult(ComputerEntity.Id);
+                if (!string.IsNullOrEmpty(lastSocketResult))
+                {
+                    PageBaseMaster.EndUserMessage = lastSocketResult;
+                    break;
+                }
+                if (counter == 9)
+                {
+                    PageBaseMaster.EndUserMessage = "Could Not Run Checkin";
+                    return;
+                }
+                System.Threading.Thread.Sleep(1000);
+                counter++;
+            }
         }
 
         protected void btnInventory_OnClick(object sender, EventArgs e)
         {
             ComputerBasePage.RequiresAuthorization(AuthorizationStrings.ComputerForceCheckin);
+            ComputerBasePage.Call.ComputerApi.ClearLastSocketResult(ComputerEntity.Id);
             ComputerBasePage.Call.ComputerApi.CollectInventory(ComputerEntity.Id);
-            PageBaseMaster.EndUserMessage = "Inventory Request Sent";
+            var counter = 0;
+            while (counter < 10)
+            {
+                var lastSocketResult = ComputerBasePage.Call.ComputerApi.GetLastSocketResult(ComputerEntity.Id);
+                if (!string.IsNullOrEmpty(lastSocketResult))
+                {
+                    PageBaseMaster.EndUserMessage = lastSocketResult;
+                    break;
+                }
+                if (counter == 9)
+                {
+                    PageBaseMaster.EndUserMessage = "Could Not Run Inventory";
+                    return;
+                }
+                System.Threading.Thread.Sleep(1000);
+                counter++;
+            }
         }
 
         protected void btnUsers_OnClick(object sender, EventArgs e)
         {
-            var users = ComputerBasePage.Call.ComputerApi.GetLoggedInUsers(ComputerEntity.Id);
-            var replaced = users.Replace("\\", "\\\\");
-            PageBaseMaster.EndUserMessage = "Logged In Users: " + replaced;
+            ComputerBasePage.Call.ComputerApi.ClearLastSocketResult(ComputerEntity.Id);
+            ComputerBasePage.Call.ComputerApi.GetLoggedInUsers(ComputerEntity.Id);
+
+            var counter = 0;
+            while (counter < 10)
+            {
+                var lastSocketResult = ComputerBasePage.Call.ComputerApi.GetLastSocketResult(ComputerEntity.Id);
+                if (!string.IsNullOrEmpty(lastSocketResult))
+                {
+                    PageBaseMaster.EndUserMessage = lastSocketResult.Replace("\\\\", "\\");
+                    break;
+                }
+                if (counter == 9)
+                {
+                    PageBaseMaster.EndUserMessage = "Could Not Determine Logged On Users";
+                    return;
+                }
+                System.Threading.Thread.Sleep(1000);
+                counter++;
+            }
         }
 
         protected void btnStatus_OnClick(object sender, EventArgs e)
         {
-            var status = ComputerBasePage.Call.ComputerApi.GetStatus(ComputerEntity.Id);
-            PageBaseMaster.EndUserMessage = "Status: " + status;
+            ComputerBasePage.Call.ComputerApi.ClearLastSocketResult(ComputerEntity.Id);
+            ComputerBasePage.Call.ComputerApi.GetStatus(ComputerEntity.Id);
+
+            var counter = 0;
+            while (counter < 10)
+            {
+                var lastSocketResult = ComputerBasePage.Call.ComputerApi.GetLastSocketResult(ComputerEntity.Id);
+                if (!string.IsNullOrEmpty(lastSocketResult))
+                {
+                    PageBaseMaster.EndUserMessage = lastSocketResult;
+                    break;
+                }
+                if (counter == 9)
+                {
+                    PageBaseMaster.EndUserMessage = "Disconnected";
+                    return;
+                }
+                System.Threading.Thread.Sleep(1000);
+                counter++;
+            }
         }
 
         protected void btnReboot_OnClick(object sender, EventArgs e)
@@ -197,6 +300,74 @@ namespace Toems_FrontEnd.views.computers
             lblTitle.Text = "Clear Client Imaging Id For " + ComputerEntity.Name + "?";
             Session["action"] = "clearImagingId";
             DisplayConfirm();
+        }
+
+        protected void btnRemoteControl_Click(object sender, EventArgs e)
+        {
+            ComputerBasePage.RequiresAuthorization(AuthorizationStrings.AllowRemoteControl);
+            if (string.IsNullOrEmpty(ComputerEntity.RemoteAccessId))
+            {
+                PageBaseMaster.EndUserMessage = "Cannot Start Remote Control.  The Remote Control Agent Is Not Installed On This Computer.";
+                return;
+            }
+            ComputerBasePage.Call.ComputerApi.ClearLastSocketResult(ComputerEntity.Id);
+
+            ComputerBasePage.Call.ComputerApi.StartRemoteControl(ComputerEntity.Id);
+
+            var counter = 0;
+            while(counter < 10)
+            {
+                var lastSocketResult = ComputerBasePage.Call.ComputerApi.GetLastSocketResult(ComputerEntity.Id);
+                if(!string.IsNullOrEmpty(lastSocketResult))
+                {
+                    if (lastSocketResult.Contains("Error"))
+                    {
+                        PageBaseMaster.EndUserMessage = lastSocketResult;
+                        return;
+                    }
+                    if (lastSocketResult.Equals("Ready"))
+                        break;
+                }
+                if (counter == 9)
+                {
+                    PageBaseMaster.EndUserMessage = "Remote Access Is Not Ready";
+                    return;
+                }
+                System.Threading.Thread.Sleep(1000);
+                counter++;
+            }
+
+            //give device time to come online
+            counter = 0;
+            while (counter < 10)
+            {
+                var isOnline = ComputerBasePage.Call.RemoteAccessApi.IsDeviceOnline(ComputerEntity.RemoteAccessId);
+                if(isOnline != null)
+                {
+                    if (isOnline.Equals("true"))
+                        break;
+                }
+                if(counter == 9)
+                {
+                    PageBaseMaster.EndUserMessage = "Device Is Not Online";
+                    return;
+                }
+                System.Threading.Thread.Sleep(1000);
+                counter++;
+            }
+
+            var url = ComputerBasePage.Call.RemoteAccessApi.GetRemoteControlUrl(ComputerEntity.RemoteAccessId);
+            if (string.IsNullOrEmpty(url))
+                PageBaseMaster.EndUserMessage = "Unknown Error.  Check The Exception Logs.";
+            else if (url.Contains("Error"))
+                PageBaseMaster.EndUserMessage = url;
+            else if (url.Contains("http") || url.Contains("https"))
+            {
+                PageBaseMaster.EndUserMessage = "Started Remote Control";
+                string redirect = $"<script>window.open('{url}');</script>";
+                Response.Write(redirect);
+            }
+
         }
     }
 }

@@ -174,7 +174,13 @@
          <label for="chkApplicationMonitor"></label>
         </div>
     <br class="clear"/>
-    
+         <div class="size-4 column">
+        Remote Access:
+    </div>
+     <div class="size-5 column">
+            <asp:DropDownList ID="ddlRemoteAccess" runat="server" CssClass="ddlist"></asp:DropDownList>
+        </div>
+     <br class="clear"/>
     <div class="size-4 column">
         Install Available Windows Updates:
     </div>

@@ -338,13 +338,15 @@ namespace Toems_ApiCalls
             return response;
         }
 
-        public string ExecuteRemotely(RestRequest request)
+        public string ExecuteRemotely(RestRequest request, string authHeader)
         {
             if (request == null)
             {
                 _log.Error("Could Not Execute Remotely API Request.  The Request was empty.");
                 return null;
             }
+
+            request.AddHeader("Authorization", authHeader);
 
             var response = _client.Execute(request);
             if(response == null)
@@ -364,11 +366,23 @@ namespace Toems_ApiCalls
                 return "The Remote Access Server Has Already Been Initialized";
             }
 
+            if(response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return "Error: The Remotely Call Was Unauthorized";
+            }
+
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 return response.Content;
             }
 
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return "Error: " + response.Content;
+            }
+
+            _log.Error("Unknown Remotely Call Error");
+            _log.Error(response.Content);
             return null;
         }
 

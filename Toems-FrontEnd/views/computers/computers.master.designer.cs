@@ -85,6 +85,15 @@ namespace Toems_FrontEnd.views.computers {
         protected global::System.Web.UI.WebControls.LinkButton btnDelete;
         
         /// <summary>
+        /// btnClearImagingId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnClearImagingId;
+        
+        /// <summary>
         /// btnDeploy control.
         /// </summary>
         /// <remarks>
@@ -112,6 +121,15 @@ namespace Toems_FrontEnd.views.computers {
         protected global::System.Web.UI.WebControls.LinkButton btnCheckin;
         
         /// <summary>
+        /// btnInventory control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnInventory;
+        
+        /// <summary>
         /// btnUsers control.
         /// </summary>
         /// <remarks>
@@ -128,6 +146,15 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnStatus;
+        
+        /// <summary>
+        /// btnRemoteControl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnRemoteControl;
         
         /// <summary>
         /// btnReboot control.
@@ -155,24 +182,6 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnWakeup;
-        
-        /// <summary>
-        /// btnInventory control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnInventory;
-        
-        /// <summary>
-        /// btnClearImagingId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnClearImagingId;
         
         /// <summary>
         /// SubContent control.

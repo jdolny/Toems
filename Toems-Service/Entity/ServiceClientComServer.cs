@@ -261,6 +261,28 @@ namespace Toems_Service.Entity
             return bytes;
         }
 
+        public byte[] GenerateRemoteAccessCert(int comServerId)
+        {
+            var comServer = GetServer(comServerId);
+            if (comServer == null) return null;
+
+            var iCert = new ServiceCertificate().GetIntermediate();
+            var site = new Uri(comServer.RemoteAccessUrl);
+            var intermediateEntity = new ServiceCertificate().GetIntermediateEntity();
+            var pass = new EncryptionServices().DecryptText(intermediateEntity.Password);
+            var intermediateCert = new X509Certificate2(intermediateEntity.PfxBlob, pass, X509KeyStorageFlags.Exportable);
+            var certRequest = new CertificateRequest();
+            var organization = ServiceSetting.GetSettingValue(SettingStrings.CertificateOrganization);
+            certRequest.SubjectName = string.Format($"CN={site.Host}");
+            certRequest.NotBefore = DateTime.UtcNow;
+            certRequest.NotAfter = certRequest.NotBefore.AddYears(10);
+            var certificate = new ServiceGenerateCertificate(certRequest).IssueCertificate(intermediateCert, false, true);
+
+            var bytes = certificate.Export(X509ContentType.Pfx);
+
+            return bytes;
+        }
+
         public List<DtoReplicationProcess> GetReplicationProcesses(int comServerId)
         {
             var comServer = _uow.ClientComServerRepository.GetById(comServerId);

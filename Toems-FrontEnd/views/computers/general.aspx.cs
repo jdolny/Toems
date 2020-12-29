@@ -25,7 +25,6 @@ namespace Toems_FrontEnd.views.computers
             lblLastIp.Text = ComputerEntity.LastIp;
             lblProvisionDate.Text = ComputerEntity.ProvisionedTime.ToString();
             lblStatus.Text = ComputerEntity.ProvisionStatus.ToString();
-            lblPushUrl.Text = ComputerEntity.PushUrl;
             lblAdDisabled.Text = ComputerEntity.AdDisabled.ToString();
             lblRemoteAccessId.Text = ComputerEntity.RemoteAccessId;
             lblHardwareUuid.Text = ComputerEntity.UUID;

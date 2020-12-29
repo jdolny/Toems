@@ -235,6 +235,19 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        [HttpGet]
+        public DtoApiStringResponse ClearLastSocketResult(int id)
+        {
+            return new DtoApiStringResponse { Value = _computerServices.ClearLastSocketResult(id) };
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        public DtoApiStringResponse GetLastSocketResult(int id)
+        {
+            return new DtoApiStringResponse { Value = _computerServices.LastSocketResult(id) };
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         public DtoApiStringResponse GetActiveCount()
         {
             return new DtoApiStringResponse { Value = _computerServices.TotalActiveCount() };
@@ -321,9 +334,9 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         [HttpGet]
-        public DtoApiStringResponse GetLoggedInUsers(int id)
+        public DtoApiBoolResponse GetLoggedInUsers(int id)
         {
-            return new DtoApiStringResponse() { Value = _computerServices.GetLoggedInUsers(id) };
+            return new DtoApiBoolResponse() { Value = _computerServices.GetLoggedInUsers(id) };
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
@@ -350,6 +363,25 @@ namespace Toems_ApplicationApi.Controllers
                 _auditLogService.AddAuditLog(auditLog);
             }
             return new DtoApiBoolResponse() { Value = _computerServices.Reboot(id) };
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.AllowRemoteControl)]
+        [HttpGet]
+        public DtoApiBoolResponse StartRemoteControl(int id)
+        {
+            var computer = _computerServices.GetComputer(id);
+            if (computer != null)
+            {
+                var auditLog = new EntityAuditLog();
+                auditLog.ObjectType = "Computer";
+                auditLog.ObjectId = id;
+                auditLog.ObjectName = computer.Name;
+                auditLog.ObjectJson = JsonConvert.SerializeObject(computer);
+                auditLog.UserId = _userId;
+                auditLog.AuditType = EnumAuditEntry.AuditType.RemoteControl;
+                _auditLogService.AddAuditLog(auditLog);
+            }
+            return new DtoApiBoolResponse() { Value = _computerServices.StartRemoteControl(id) };
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerShutdown)]

@@ -1,6 +1,5 @@
 ﻿using System;
 using Toems_Common.Entity;
-using Toems_Common.Entity.Remotely;
 namespace Toems_DataModel
 {
     public interface IUnitOfWork : IDisposable
@@ -104,8 +103,6 @@ namespace Toems_DataModel
         IGenericRepository<EntityMulticastPort> MulticastPortRepository { get; }
         IGenericRepository<EntityComputerLog> ComputerLogRepository { get; }
         IGenericRepository<EntityClientImagingId> ClientImagingIdRepository { get; }
-        IGenericRepository<Device> RemotelyDeviceRepository { get; }
-        IGenericRepository<Organization> RemotelyOrganizationRepository { get; }
         void Save();
     }
 }

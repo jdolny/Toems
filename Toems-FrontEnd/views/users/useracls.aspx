@@ -620,6 +620,17 @@ Module Download External Files
     <asp:CheckBox runat="server" Id="pxeIsoGen" ClientIDMode="Static"/>
      <label for="pxeIsoGen"></label>
 </div>
+
+    <br class="clear"/>
+<br/>
+<div class="size-4 column">
+    Allow Remote Control
+</div>
+
+<div class="size-10 column hidden-check">
+    <asp:CheckBox runat="server" Id="allowRemoteControl" ClientIDMode="Static"/>
+     <label for="allowRemoteControl"></label>
+</div>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
     <p>This page is used to set the permissions for the user.  It has no effect if the user is in the administrator role.  The permissions are mostly self explanatory, following the general navigational layout of Theopenem.  There are also some more specific options below the first section.</p>

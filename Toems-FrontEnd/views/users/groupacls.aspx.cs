@@ -95,7 +95,8 @@ namespace Toems_FrontEnd.views.users
                 emailImagingTaskFailed,
                 emailImagingTaskCompleted,
                 pxeSettingsUpdate,
-                pxeIsoGen
+                pxeIsoGen,
+                allowRemoteControl
             };
             if (!IsPostBack) PopulateForm();
         }

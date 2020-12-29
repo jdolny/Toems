@@ -92,6 +92,7 @@ namespace Toems_FrontEnd.views.policies
             PopulateAutoArchive(ddlAutoArchive);
             PopulateErrorAction(ddlErrorAction);
             PopulateInventoryAction(ddlInventory);
+            PopulateRemoteAccess(ddlRemoteAccess);
             PopulateWuType(ddlWinUpdates);
             PopulatePolicyComCondition(ddlComCondition);
             PopulateConditions(ddlCondition);
@@ -118,6 +119,7 @@ namespace Toems_FrontEnd.views.policies
             txtStartDate.Text = Policy.StartDate.ToShortDateString();
             ddlCompletedAction.SelectedValue = Policy.CompletedAction.ToString();
             ddlInventory.SelectedValue = Policy.RunInventory.ToString();
+            ddlRemoteAccess.SelectedValue = Policy.RemoteAccess.ToString();
             chkLoginTracker.Checked = Policy.RunLoginTracker;
             chkApplicationMonitor.Checked = Policy.RunApplicationMonitor;
             chkDeleteCache.Checked = Policy.RemoveInstallCache;
@@ -211,6 +213,7 @@ namespace Toems_FrontEnd.views.policies
             Policy.StartDate = string.IsNullOrEmpty(txtStartDate.Text) ? Convert.ToDateTime(DateTime.UtcNow.ToShortDateString()) : Convert.ToDateTime(txtStartDate.Text).ToUniversalTime();
             Policy.CompletedAction = (EnumPolicy.CompletedAction)Enum.Parse(typeof(EnumPolicy.CompletedAction), ddlCompletedAction.SelectedValue);
             Policy.RunInventory = (EnumPolicy.InventoryAction)Enum.Parse(typeof(EnumPolicy.InventoryAction), ddlInventory.SelectedValue);
+            Policy.RemoteAccess = (EnumPolicy.RemoteAccess)Enum.Parse(typeof(EnumPolicy.RemoteAccess), ddlRemoteAccess.SelectedValue);
             Policy.RunLoginTracker = chkLoginTracker.Checked;
             Policy.RemoveInstallCache = chkDeleteCache.Checked;
             Policy.WuType = (EnumPolicy.WuType)Enum.Parse(typeof(EnumPolicy.WuType), ddlWinUpdates.SelectedValue);

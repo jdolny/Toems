@@ -107,6 +107,13 @@ namespace Toems_ApiCalls
             return new ApiRequest().ExecuteRaw(Request);
         }
 
+        public byte[] GenerateRemoteAccessCert(int id)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = string.Format("{0}/GenerateRemoteAccessCert/{1}", Resource, id);
+            return new ApiRequest().ExecuteRaw(Request);
+        }
+
         public bool CopyPxeBinaries(string url, string serverName, string interComKey)
         {
             Request.Method = Method.POST;

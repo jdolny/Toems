@@ -250,6 +250,18 @@ namespace Toems_ApiCalls
             return false;
         }
 
+        public bool StartRemoteControl(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/StartRemoteControl/{1}", Resource, id);
+            var responseData = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
+            if (responseData != null)
+            {
+                return responseData.Value;
+            }
+            return false;
+        }
+
         public bool Shutdown(int id)
         {
             Request.Method = Method.GET;
@@ -274,16 +286,16 @@ namespace Toems_ApiCalls
             return false;
         }
 
-        public string GetLoggedInUsers(int id)
+        public bool GetLoggedInUsers(int id)
         {
             Request.Method = Method.GET;
             Request.Resource = string.Format("{0}/GetLoggedInUsers/{1}", Resource, id);
-            var responseData = new ApiRequest().Execute<DtoApiStringResponse>(Request);
+            var responseData = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
             if (responseData != null)
             {
                 return responseData.Value;
             }
-            return string.Empty;
+            return false;
         }
 
         public IEnumerable<DtoComputerPolicyHistory> GetPolicyHistory(int id)
@@ -356,6 +368,23 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<List<EntityComputer>>(Request);
         }
 
+        public string ClearLastSocketResult(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/ClearLastSocketResult/{1}", Resource, id);
+            var responseData = new ApiRequest().Execute<DtoApiStringResponse>(Request);
+            return responseData != null ? responseData.Value : string.Empty;
+
+        }
+
+        public string GetLastSocketResult(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetLastSocketResult/{1}", Resource,id);
+            var responseData = new ApiRequest().Execute<DtoApiStringResponse>(Request);
+            return responseData != null ? responseData.Value : string.Empty;
+
+        }
 
         public string GetActiveCount()
         {

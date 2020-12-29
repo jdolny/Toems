@@ -50,8 +50,14 @@ namespace Toems_FrontEnd.views.admin
         {
             RequiresAuthorization(AuthorizationStrings.Administrator);
             NodeId = "node//";
-            var mesh = GetSetting(SettingStrings.RemoteAccessServer);
-            MeshServer = Utility.ReplaceHttp(mesh);
+            MeshServer = GetSetting(SettingStrings.RemoteAccessServer);
+
+            if (!IsPostBack)
+            {
+
+                txtRemoteAccessServer.Text = GetSetting(SettingStrings.RemoteAccessServer);
+            }
+
             if (IsPostBack)
             {
                 if (Session["MeshLoginParams"] != null)
@@ -71,7 +77,7 @@ namespace Toems_FrontEnd.views.admin
             }
 
 
-            txtRemoteAccessServer.Text = mesh;
+           
 
 
         }
@@ -115,10 +121,12 @@ namespace Toems_FrontEnd.views.admin
             PassRequirements = loginParams.passRequirements;
             ServerRedirectPort = loginParams.serverRedirPort;
             WebCertHash = loginParams.webcerthash;
+            MeshServer = GetSetting(SettingStrings.RemoteAccessServer);
         }
 
         protected void SetupUsers_Click(object sender, EventArgs e)
         {
+            MeshServer = GetSetting(SettingStrings.RemoteAccessServer);
             var raServer = GetSetting(SettingStrings.RemoteAccessServer);
             if (string.IsNullOrEmpty(raServer))
             {
@@ -210,13 +218,15 @@ namespace Toems_FrontEnd.views.admin
 
         protected void Unnamed_Click(object sender, EventArgs e)
         {
+            MeshServer = GetSetting(SettingStrings.RemoteAccessServer);
             var meshId = meshID.Value.Replace("mesh//", "");
 
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             ServicePointManager.Expect100Continue = false;
+            var raServer = GetSetting(SettingStrings.RemoteAccessServer);
             using (var webClient = new WebClient())
             {
-                webClient.DownloadFile(new Uri($"https://{GetSetting(SettingStrings.RemoteAccessServer)}meshagents?id=3&meshid={meshId}&installflags=1"), "C:\\toems-local-storage\\software_uploads\\mesh.exe");
+                webClient.DownloadFile(new Uri($"{raServer}meshagents?id=3&meshid={meshId}&installflags=1"), "C:\\toems-local-storage\\software_uploads\\mesh.exe");
             }
         }
     }

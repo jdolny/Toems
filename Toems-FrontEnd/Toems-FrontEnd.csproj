@@ -142,6 +142,7 @@
     <Content Include="content\js\moment.min.js" />
     <Content Include="content\js\select2.min.js" />
     <Content Include="content\js\sha512.js" />
+    <Content Include="content\js\sweetalert2.all.min.js" />
     <Content Include="content\js\tooltipster.bundle.min.js" />
     <Content Include="private\logs\.gitignore" />
     <Content Include="views\admin\about.aspx" />

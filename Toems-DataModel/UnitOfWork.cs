@@ -3,14 +3,12 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using log4net;
 using Toems_Common.Entity;
-using Toems_Common.Entity.Remotely;
 
 namespace Toems_DataModel
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ToemsDbContext _context = new ToemsDbContext();
-        private readonly RemotelyDbContext _remotelyDbContext = new RemotelyDbContext();
 
         private static readonly ILog Logger =
          LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -120,8 +118,6 @@ namespace Toems_DataModel
         private IGenericRepository<EntityComputerLog> _computerLogRepository;
         private IGenericRepository<EntityClientImagingId> _clientImagingIdRepository;
 
-        private IGenericRepository<Device> _remotelyDeviceRepository;
-        private IGenericRepository<Organization> _remotelyOrganizationRepository;
 
         private bool disposed;
 
@@ -867,21 +863,6 @@ namespace Toems_DataModel
             }
         }
 
-        public IGenericRepository<Device> RemotelyDeviceRepository
-        {
-            get
-            {
-                return _remotelyDeviceRepository ?? (_remotelyDeviceRepository = new GenericRepository<Device>(_remotelyDbContext));
-            }
-        }
-
-        public IGenericRepository<Organization> RemotelyOrganizationRepository
-        {
-            get
-            {
-                return _remotelyOrganizationRepository ?? (_remotelyOrganizationRepository = new GenericRepository<Organization>(_remotelyDbContext));
-            }
-        }
 
         public void Save()
         {
@@ -912,35 +893,7 @@ namespace Toems_DataModel
             }
         }
 
-        public void SaveRemotely()
-        {
-            try
-            {
-                _remotelyDbContext.SaveChanges();
-            }
-            catch (DbEntityValidationException ex)
-            {
-                foreach (var eve in ex.EntityValidationErrors)
-                {
-                    Logger.Error(
-                        string.Format(
-                            "{0}: Entity of type \"{1}\" in state \"{2}\" has the following validation errors:",
-                            DateTime.Now, eve.Entry.Entity.GetType().Name, eve.Entry.State));
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        Logger.Error(string.Format("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage));
-                    }
-                }
-                throw;
-            }
-            catch (DbUpdateException ex)
-            {
-                Logger.Error(ex.Message);
-                Logger.Error(ex.InnerException);
-                throw;
-            }
-        }
-
+    
 
 
         public IGenericRepository<EntitySetting> SettingRepository

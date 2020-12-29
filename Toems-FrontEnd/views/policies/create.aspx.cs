@@ -25,6 +25,7 @@ namespace Toems_FrontEnd.views.policies
                 PopulateAutoArchive(ddlAutoArchive);
                 PopulateErrorAction(ddlErrorAction);
                 PopulateInventoryAction(ddlInventory);
+                PopulateRemoteAccess(ddlRemoteAccess);
                 PopulateWuType(ddlWinUpdates);
                 PopulatePolicyComCondition(ddlComCondition);
                 PopulateConditions(ddlCondition);
@@ -64,6 +65,7 @@ namespace Toems_FrontEnd.views.policies
             policy.RunInventory = (EnumPolicy.InventoryAction)Enum.Parse(typeof(EnumPolicy.InventoryAction), ddlInventory.SelectedValue);
             policy.RunLoginTracker = chkLoginTracker.Checked;
             policy.RemoveInstallCache = chkDeleteCache.Checked;
+            policy.RemoteAccess = (EnumPolicy.RemoteAccess)Enum.Parse(typeof(EnumPolicy.RemoteAccess), ddlRemoteAccess.SelectedValue);
             policy.MissedAction = (EnumPolicy.FrequencyMissedAction)Enum.Parse(typeof(EnumPolicy.FrequencyMissedAction), ddlMissed.SelectedValue);
             policy.ExecutionType = (EnumPolicy.ExecutionType)Enum.Parse(typeof(EnumPolicy.ExecutionType), ddlExecType.SelectedValue);
             policy.ErrorAction = (EnumPolicy.ErrorAction)Enum.Parse(typeof(EnumPolicy.ErrorAction), ddlErrorAction.SelectedValue);

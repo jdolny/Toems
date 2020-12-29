@@ -23,10 +23,10 @@ namespace Toems_FrontEnd.views.computers
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            /*ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             var cookies = new CookieContainer();
             ServicePointManager.Expect100Continue = false;
-
+            var pass = Call.SettingApi.GetMeshAdminPass();
             var request = (HttpWebRequest)WebRequest.Create(GetSetting(SettingStrings.RemoteAccessServer) + "login");
             request.CookieContainer = cookies;
             request.Method = "POST";
@@ -48,7 +48,6 @@ namespace Toems_FrontEnd.views.computers
             if (loginParams == null) return;
 
             Session["MeshLoginParams"] = result;
-
             DebugLevel = loginParams.debuglevel;
             Domain = loginParams.domain;
             DomainUrl = loginParams.domainurl;
@@ -58,8 +57,29 @@ namespace Toems_FrontEnd.views.computers
             PassRequirements = loginParams.passRequirements;
             ServerRedirectPort = loginParams.serverRedirPort;
             WebCertHash = loginParams.webcerthash;
-            NodeId = ComputerEntity.RemoteAccessId;
+            NodeId = "node//" + ComputerEntity.RemoteAccessId;
+            MeshServer = GetSetting(SettingStrings.RemoteAccessServer);*/
           
+        }
+
+        protected void Unnamed_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(ComputerEntity.RemoteAccessId))
+            {
+                EndUserMessage = "Cannot Start Remote Control.  The Remote Control Agent Is Not Installed On This Computer.";
+                return;
+            }
+            var url = Call.RemoteAccessApi.GetRemoteControlUrl(ComputerEntity.RemoteAccessId);
+            if (string.IsNullOrEmpty(url))
+                EndUserMessage = "Unknown Error.  Check The Exception Logs.";
+            else if (url.Contains("Error"))
+                EndUserMessage = url;
+            else if (url.Contains("http") || url.Contains("https"))
+            {
+                string redirect = $"<script>window.open('{url}');</script>";
+                frame.Attributes.Add("src", url);
+            }
+
         }
     }
 }

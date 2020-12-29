@@ -101,5 +101,8 @@ namespace Toems_Common.Entity
         [Column("ra_auth_header_encrypted")]
         public string RaAuthHeaderEncrypted { get; set; }
 
+        [Column("ra_organization")]
+        public string RaOrganizationId { get; set; }
+
     }
 }

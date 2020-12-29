@@ -144,6 +144,7 @@
 
         public const string EmailLowDiskSpace = "emailLowDiskSpace";
 
+        public const string AllowRemoteControl = "allowRemoteControl";
 
     }
 }

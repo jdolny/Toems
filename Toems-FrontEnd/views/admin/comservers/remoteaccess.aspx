@@ -8,12 +8,30 @@
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub2" Runat="Server">
    <li><asp:LinkButton ID="buttonUpdate" runat="server" OnClick="buttonUpdate_OnClick" Text="Update Server" CssClass="main-action" /></li>
-     <li><asp:LinkButton ID="btnInitialize" runat="server" OnClick="btnInitialize_Click" Text="Initialize Remote Access" /></li>
+     <li><asp:LinkButton ID="btnInitialize" runat="server" OnClick="btnInitialize_Click" Text="Initialize Remote Access" OnClientClick="initialize();" /></li>
+     <li><asp:LinkButton ID="btnCopyFiles" runat="server" OnClick="btnCopyFiles_Click" Text="Copy Remote Access Files" OnClientClick="copy();"/></li>
+         <li><asp:LinkButton ID="btnCert" runat="server" OnClick="btnCert_Click" Text="Create Remote Access Certificate" /></li>
+     <li><asp:LinkButton ID="btnHealthCheck" runat="server" OnClick="btnHealthCheck_Click" Text="Run Health Check" /></li>
 </asp:Content>
-
-
+         
 <asp:Content ID="Content2" ContentPlaceHolderID="SubContent2" Runat="Server">
     <script type="text/javascript">
+         function initialize() {
+              Swal.fire({
+                  title: 'Please Wait',
+                  text: 'Initializing Remote Access Server',
+                  footer: 'This box will close automatically when ready.'
+              })
+        }
+
+          function copy() {
+              Swal.fire({
+                  title: 'Please Wait',
+                  text: 'Copying Remote Access File To Storage Path',
+                  footer: 'This box will close automatically when ready.'
+              })
+        }
+
         $(document).ready(function() {
             $('#remoteaccess').addClass("nav-current");
         });
@@ -34,8 +52,6 @@
         <asp:TextBox ID="txtUrl" runat="server" CssClass="textbox" ClientIDMode="Static"></asp:TextBox>
     </div>
     <br class="clear"/>
-
-     
   
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subsubHelp">

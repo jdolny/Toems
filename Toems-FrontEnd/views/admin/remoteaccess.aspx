@@ -39,7 +39,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('#remoteaccess').addClass("nav-current");
-            meshserver = MeshServerCreateControl(meshServer, authCookie);
+            meshserver = MeshServerCreateControl(domainUrl, authCookie);
             meshserver.onStateChanged = onStateChanged;
             meshserver.onMessage = onMessage;
             meshserver.Start();
@@ -56,10 +56,12 @@
         var serverPublicPort = "<%= ServerPublicPort %>";
         var webCertHash = "<%= WebCertHash %>";
         var nodeId = "<%= NodeId %>";
-        var meshServer = "<%= MeshServer %>";
+        var meshUrl = "<%= MeshServer %>";
         var autoReconnect = true;
         var authCookieRenewTimer = null;
         var meshes = null;
+        var urlargs = parseUriArgs();
+
         function onStateChanged(server, state, prevState, errorCode) {
             if (state == 0) {
                 if (errorCode == 'noauth') { console.log('Unable to perform authentication'); return; }

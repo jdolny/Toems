@@ -97,6 +97,9 @@ namespace Toems_Common.Entity
 
         [Column("condition_failed_action")]
         public EnumCondition.FailedAction ConditionFailedAction { get; set; }
+
+        [Column("policy_remote_access")]
+        public EnumPolicy.RemoteAccess RemoteAccess { get; set; }
     }
 
     [NotMapped]

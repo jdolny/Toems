@@ -31,6 +31,33 @@ namespace Toems_FrontEnd.views.admin.comservers {
         protected global::System.Web.UI.WebControls.LinkButton btnInitialize;
         
         /// <summary>
+        /// btnCopyFiles control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnCopyFiles;
+        
+        /// <summary>
+        /// btnCert control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnCert;
+        
+        /// <summary>
+        /// btnHealthCheck control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnHealthCheck;
+        
+        /// <summary>
         /// chkRemote control.
         /// </summary>
         /// <remarks>

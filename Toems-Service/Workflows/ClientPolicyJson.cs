@@ -81,6 +81,7 @@ namespace Toems_Service.Workflows
             _clientPolicy.ExecutionType = _policy.ExecutionType;
             _clientPolicy.ErrorAction = _policy.ErrorAction;
             _clientPolicy.IsInventory = _policy.RunInventory;
+            _clientPolicy.RemoteAccess = _policy.RemoteAccess;
             _clientPolicy.IsLoginTracker = _policy.RunLoginTracker;
             _clientPolicy.FrequencyMissedAction = _policy.MissedAction;
             _clientPolicy.LogLevel = _policy.LogLevel;

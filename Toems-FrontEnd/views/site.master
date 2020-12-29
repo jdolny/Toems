@@ -18,6 +18,7 @@
     <script type="text/javascript" src="<%= ResolveUrl("~/content/js/scrollsaver.js") %>" charset="utf-8"></script>
     <script type="text/javascript" src="<%= ResolveUrl("~/content/js/bootstrap.min.js") %>" charset="utf-8"></script>
     <script type="text/javascript" src="<%= ResolveUrl("~/content/js/tooltipster.bundle.min.js") %>" charset="utf-8"></script>
+     <script type="text/javascript" src="<%= ResolveUrl("~/content/js/sweetalert2.all.min.js") %>" charset="utf-8"></script>
     
     <link href="~/content/css/splitbutton.css" rel="stylesheet" type="text/css" />
     <link href="~/content/css/select2.min.css" rel="stylesheet" type="text/css" />

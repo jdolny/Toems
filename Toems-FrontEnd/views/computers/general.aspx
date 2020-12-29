@@ -111,13 +111,7 @@
         <asp:Label runat="server" ID="lblInventoryTime" ></asp:Label>
     </div>
       <br class="clear"/>
-       <div class="size-lbl column">
-        Push URL:
-    </div>
-    <div class="size-lbl2 column">
-        <asp:Label runat="server" ID="lblPushUrl" ></asp:Label>
-    </div>
-    <br class="clear"/>
+      
        <div class="size-lbl column">
         Remote Access ID:
     </div>

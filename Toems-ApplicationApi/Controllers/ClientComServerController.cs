@@ -150,5 +150,20 @@ namespace Toems_ApplicationApi.Controllers
             result.Content.Headers.ContentLength = dataStream.Length;
             return result;
         }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpPost]
+        public HttpResponseMessage GenerateRemoteAccessCert(int id)
+        {
+            var cert = _clientComService.GenerateRemoteAccessCert(id);
+            var dataStream = new MemoryStream(cert);
+            var result = new HttpResponseMessage(HttpStatusCode.OK);
+            result.Content = new StreamContent(dataStream);
+            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+            result.Content.Headers.ContentDisposition.FileName = "Certificate.pfx";
+            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            result.Content.Headers.ContentLength = dataStream.Length;
+            return result;
+        }
     }
 }

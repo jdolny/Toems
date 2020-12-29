@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Toems_Common.Dto;
-using Toems_Common.Entity.Remotely;
 
 namespace Toems_ApiCalls
 {
@@ -33,7 +32,50 @@ namespace Toems_ApiCalls
             _request.Method = Method.GET;
             _request.Resource = string.Format("{0}/InitializeRemotelyServer/{1}", _resource, id);
             return new ApiRequest().Execute<DtoActionResult>(_request);
+        }
 
+        public DtoActionResult HealthCheck()
+        {
+            _request.Method = Method.GET;
+            _request.Resource = string.Format("{0}/HealthCheck/", _resource);
+            return new ApiRequest().Execute<DtoActionResult>(_request);
+        }
+
+        public DtoActionResult CopyRemotelyInstallerToStorage()
+        {
+            _request.Method = Method.GET;
+            _request.Resource = string.Format("{0}/CopyRemotelyInstallerToStorage/", _resource);
+            var result = new ApiRequest().Execute<DtoActionResult>(_request);
+            return result;
+        }
+
+        public int GetRemoteAccessCount()
+        {
+            _request.Method = Method.GET;
+            _request.Resource = string.Format("{0}/GetRemoteAccessCount/", _resource);
+            var response = new ApiRequest().Execute<DtoApiIntResponse>(_request);
+            if (response == null)
+                return -1;
+            else
+                return response.Value; 
+        }
+
+        public string IsDeviceOnline(string deviceId)
+        {
+            _request.Method = Method.GET;
+            _request.Resource = string.Format("{0}/IsDeviceOnline/{1}", _resource, deviceId);
+            var response = new ApiRequest().Execute<DtoApiStringResponse>(_request);
+            if (response != null) return response.Value;
+            else return null;
+        }
+
+        public string GetRemoteControlUrl(string deviceId)
+        {
+            _request.Method = Method.GET;
+            _request.Resource = string.Format("{0}/GetRemoteControlUrl/{1}", _resource, deviceId);
+            var response = new ApiRequest().Execute<DtoApiStringResponse>(_request);
+            if (response != null) return response.Value;
+            else return null;
         }
 
         public string CreateRemotelyFirstUser(string remotelyUrl, RemotelyUser user)
@@ -41,7 +83,29 @@ namespace Toems_ApiCalls
             _request.Method = Method.POST;
             _request.AddJsonBody(user);
             _request.Resource = "api/Theopenem/CreateFirstUser";
-            return new ApiRequest(new Uri(remotelyUrl)).ExecuteRemotely(_request);
+            return new ApiRequest(new Uri(remotelyUrl)).ExecuteRemotely(_request,"");
+        }
+
+        public string GetRemoteUrl(string remotelyUrl, string deviceId, string auth)
+        {
+            _request.Method = Method.GET;
+            _request.Resource = $"api/RemoteControl/{deviceId}";
+            return new ApiRequest(new Uri(remotelyUrl)).ExecuteRemotely(_request,auth);
+        }
+
+        public string RemotelyIsDeviceOnline(string remotelyUrl, string deviceId, string auth)
+        {
+            _request.Method = Method.GET;
+            _request.Resource = $"api/Theopenem/IsDeviceOnline/";
+            _request.AddParameter("deviceID", deviceId);
+            return new ApiRequest(new Uri(remotelyUrl)).ExecuteRemotely(_request, auth);
+        }
+
+        public string RemotelyStatus(string remotelyUrl)
+        {
+            _request.Method = Method.GET;
+            _request.Resource = $"api/Theopenem/Status/";
+            return new ApiRequest(new Uri(remotelyUrl)).ExecuteRemotely(_request, "");
         }
 
 

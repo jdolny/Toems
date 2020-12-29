@@ -31,6 +31,7 @@ namespace Toems_Common.Dto
         public EnumPolicy.ExecutionType ExecutionType { get; set; }
         public EnumPolicy.ErrorAction ErrorAction { get; set; }
         public EnumPolicy.InventoryAction IsInventory { get; set; }
+        public EnumPolicy.RemoteAccess RemoteAccess { get; set; }
         public bool IsLoginTracker { get; set; }
         public bool IsApplicationMonitor { get; set; }
         public int Order { get; set; }

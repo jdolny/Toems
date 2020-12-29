@@ -78,6 +78,14 @@
             Both = 3
         }
 
+        public enum RemoteAccess
+        {
+            NotConfigured = 0,
+            Disabled = 1,
+            Enabled = 2,
+            ForceReinstall = 3
+        }
+
         public enum WuType
         {
             Disabled = 0,

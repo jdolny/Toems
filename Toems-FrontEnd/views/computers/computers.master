@@ -128,19 +128,24 @@
     <asp:ContentPlaceHolder ID="DropDownActionsSub" runat="server">
     </asp:ContentPlaceHolder>
 
-                <li><asp:LinkButton ID="btnArchive" runat="server" OnClick="btnArchive_OnClick" Text="Archive Computer"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnArchive" runat="server" OnClick="btnArchive_OnClick" Text="Archive Computer"></asp:LinkButton></li>             
                 <li><asp:LinkButton ID="btnDelete" runat="server" OnClick="btnDelete_OnClick" Text="Delete Computer"></asp:LinkButton></li>
+               <li><asp:LinkButton ID="btnClearImagingId" runat="server" OnClick="btnClearImagingId_Click" Text="Clear Imaging Id"></asp:LinkButton></li>
+    <hr />
                 <li><asp:LinkButton ID="btnDeploy" runat="server" OnClick="btnDeploy_OnClick" Text="Deploy Image"></asp:LinkButton></li>
                  <li><asp:LinkButton ID="btnUpload" runat="server" OnClick="btnUpload_OnClick" Text="Upload Image"></asp:LinkButton></li>
-                <li><asp:LinkButton ID="btnCheckin" runat="server" OnClick="btnCheckin_OnClick" Text="Force Checkin"></asp:LinkButton></li>
-                <li><asp:LinkButton ID="btnUsers" runat="server" OnClick="btnUsers_OnClick" Text="Current Users"></asp:LinkButton></li>
-                <li><asp:LinkButton ID="btnStatus" runat="server" OnClick="btnStatus_OnClick" Text="Status"></asp:LinkButton></li>
-                <li><asp:LinkButton ID="btnReboot" runat="server" OnClick="btnReboot_OnClick" Text="Reboot"></asp:LinkButton></li>
-                <li><asp:LinkButton ID="btnShutdown" runat="server" OnClick="btnShutdown_OnClick" Text="Shutdown"></asp:LinkButton></li>
+    <hr />
+                <li><asp:LinkButton ID="btnCheckin" runat="server" OnClick="btnCheckin_OnClick" Text="Force Checkin" OnClientClick="checkin();"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnInventory" runat="server" OnClick="btnInventory_OnClick" Text="Collect Inventory" OnClientClick="inventory();"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnUsers" runat="server" OnClick="btnUsers_OnClick" Text="Current Users" OnClientClick="users();"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnStatus" runat="server" OnClick="btnStatus_OnClick" Text="Status" OnClientClick="status();"></asp:LinkButton></li>
+                 <li><asp:LinkButton ID="btnRemoteControl" runat="server" OnClick="btnRemoteControl_Click" Text="Remote Control" OnClientClick="remote_control();"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnReboot" runat="server" OnClick="btnReboot_OnClick" Text="Reboot" OnClientClick="reboot();"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnShutdown" runat="server" OnClick="btnShutdown_OnClick" Text="Shutdown" OnClientClick="shutdown();"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="btnWakeup" runat="server" OnClick="btnWakeup_OnClick" Text="Wake Up"></asp:LinkButton></li>
-                <li><asp:LinkButton ID="btnInventory" runat="server" OnClick="btnInventory_OnClick" Text="Collect Inventory"></asp:LinkButton></li>
-                 <li><asp:LinkButton ID="btnClearImagingId" runat="server" OnClick="btnClearImagingId_Click" Text="Clear Imaging Id"></asp:LinkButton></li>
-
+               
+                 
+    
 </asp:Content>
 
 
@@ -149,8 +154,66 @@
 
 <asp:Content ID="MainContent" ContentPlaceHolderID="Content" runat="Server">
     <script type="text/javascript">
+          function status() {
+              Swal.fire({
+                  title: 'Please Wait',
+                  text: 'Attempting To Get Computer Status',
+                  timer: 9000,
+                  timerProgressBar: true
+              })
+        }
+          function users() {
+              Swal.fire({
+                  title: 'Please Wait',
+                  text: 'Attempting To Get Logged On Users',
+                  timer: 9000,
+                  timerProgressBar: true
+              })
+        }
+         function remote_control() {
+              Swal.fire({
+                  title: 'Please Wait',
+                  text: 'Attempting To Start Remote Control Session',
+                  timer: 9000,
+                  timerProgressBar: true
+              })
+        }
+         function checkin() {
+              Swal.fire({
+                  title: 'Please Wait',
+                  text: 'Attempting To Start Checkin',
+                  timer: 9000,
+                  timerProgressBar: true
+              })
+        }
+         function inventory() {
+              Swal.fire({
+                  title: 'Please Wait',
+                  text: 'Attempting To Start Inventory Collection',
+                  timer: 9000,
+                  timerProgressBar: true
+              })
+        }
+         function reboot() {
+              Swal.fire({
+                  title: 'Please Wait',
+                  text: 'Attempting To Reboot Computer',
+                  timer: 9000,
+                  timerProgressBar: true
+              })
+        }
+         function shutdown() {
+              Swal.fire({
+                  title: 'Please Wait',
+                  text: 'Attempting To Shutdown Computer',
+                  timer: 9000,
+                  timerProgressBar: true
+              })
+        }
+
         $(document).ready(function() {
             $('#nav-hosts').addClass("nav-current");
+          
         });
     </script>
     <asp:ContentPlaceHolder ID="SubContent" runat="server">

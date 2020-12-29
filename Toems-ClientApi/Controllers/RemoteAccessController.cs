@@ -15,7 +15,7 @@ namespace Toems_ClientApi.Controllers
         [HttpPost]
         public DtoApiBoolResponse VerifyRemoteAccessInstalled()
         {
-            return new DtoApiBoolResponse() { Value = new Toems_Service.FilesystemServices().FileExists(string.Format(@"{0}\Theopenem\Remotely\Remotely.db",
+            return new DtoApiBoolResponse() { Value = new Toems_Service.FilesystemServices().FileExists(string.Format(@"{0}\Theopenem\Remotely\Remotely_Server.exe",
                             Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles))) };
         }
 

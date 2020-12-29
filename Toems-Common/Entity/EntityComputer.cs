@@ -80,6 +80,9 @@ namespace Toems_Common.Entity
         [Column("hardware_uuid")]
         public string UUID { get; set; }
 
+        [Column("last_socket_result")]
+        public string LastSocketResult { get; set; }
+
     }
 
     [NotMapped]

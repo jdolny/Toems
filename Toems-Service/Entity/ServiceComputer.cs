@@ -532,6 +532,16 @@ namespace Toems_Service.Entity
 
         }
 
+        public DtoActionResult UpdateSocketResult(string result, string clientIdentity)
+        {
+            var client = _uow.ComputerRepository.GetFirstOrDefault(x => x.Guid == clientIdentity);
+            if (client == null) return new DtoActionResult() { ErrorMessage = "Client Not Found", Success = false };
+            client.LastSocketResult = result;
+            _uow.ComputerRepository.Update(client, client.Id);
+            _uow.Save();
+            return new DtoActionResult() { Success = true, Id = client.Id };
+        }
+
         public bool SendMessage(int id, DtoMessage message)
         {
             var computer = _uow.ComputerRepository.GetById(id);
@@ -548,6 +558,26 @@ namespace Toems_Service.Entity
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Message";
                 socketRequest.message = JsonConvert.SerializeObject(message);
+                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+            }
+            return true;
+        }
+
+        public bool StartRemoteControl(int id)
+        {
+            var computer = _uow.ComputerRepository.GetById(id);
+            if (computer == null) return false;
+            if (computer.CertificateId == -1) return false;
+            var socket = _uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            if (socket != null)
+            {
+                var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, new EncryptionServices().DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+                var socketRequest = new DtoSocketRequest();
+                socketRequest.connectionIds.Add(socket.ConnectionId);
+                socketRequest.action = "Start_Remote_Control";
                 new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
             }
             return true;
@@ -594,16 +624,24 @@ namespace Toems_Service.Entity
             return true;
         }
 
-        public string GetLoggedInUsers(int id)
+        public bool GetLoggedInUsers(int id)
         {
             var computer = _uow.ComputerRepository.GetById(id);
-            if (computer == null) return string.Empty;
-            if (computer.CertificateId == -1) return string.Empty;
-            if (string.IsNullOrEmpty(computer.PushUrl)) return string.Empty;
-            var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
-            var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, new EncryptionServices().DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-            var result = new APICall().ClientApi.GetLoggedInUsers(computer.PushUrl, deviceCert);
-            return result;
+            if (computer == null) return false;
+            if (computer.CertificateId == -1) return false;
+            var socket = _uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            if (socket != null)
+            {
+                var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, new EncryptionServices().DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+                var socketRequest = new DtoSocketRequest();
+                socketRequest.connectionIds.Add(socket.ConnectionId);
+                socketRequest.action = "Current_Users";
+                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+            }
+            return true;
         }
 
         public bool GetStatus(int id)
@@ -611,10 +649,19 @@ namespace Toems_Service.Entity
             var computer = _uow.ComputerRepository.GetById(id);
             if (computer == null) return false;
             if (computer.CertificateId == -1) return false;
-            if (string.IsNullOrEmpty(computer.PushUrl)) return false;
-            var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
-            var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, new EncryptionServices().DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-            return new APICall().ClientApi.GetStatus(computer.PushUrl, deviceCert);
+            var socket = _uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            if (socket != null)
+            {
+                var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, new EncryptionServices().DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+                var socketRequest = new DtoSocketRequest();
+                socketRequest.connectionIds.Add(socket.ConnectionId);
+                socketRequest.action = "Get_Status";
+                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+            }
+            return true;
 
         }
 
@@ -663,6 +710,23 @@ namespace Toems_Service.Entity
         public string TotalActiveCount()
         {
             return _uow.ComputerRepository.Count(s => s.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && s.ProvisionStatus != EnumProvisionStatus.Status.Archived);
+        }
+
+        public string ClearLastSocketResult(int id)
+        {
+            var computer = _uow.ComputerRepository.GetById(id);
+            if (computer == null) return string.Empty;
+            computer.LastSocketResult = string.Empty;
+            _uow.ComputerRepository.Update(computer, computer.Id);
+            _uow.Save();
+            return computer.LastSocketResult;
+        }
+
+        public string LastSocketResult(int id)
+        {
+            var computer = _uow.ComputerRepository.GetById(id);
+            if (computer == null) return string.Empty;
+            return computer.LastSocketResult;
         }
 
         public string ArchivedCount()

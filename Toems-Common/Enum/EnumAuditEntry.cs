@@ -26,7 +26,8 @@
             Deploy = 20,
             Upload = 21,
             OndUpload = 22,
-            OndDeploy = 23
+            OndDeploy = 23,
+            RemoteControl = 24
         }
     }
 }

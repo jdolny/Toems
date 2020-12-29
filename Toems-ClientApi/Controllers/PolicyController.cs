@@ -39,6 +39,31 @@ namespace Toems_ClientApi.Controllers
 
         }
 
+        [CertificateAuth]
+        [HttpPost]
+        public DtoActionResult UpdateLastSocketResult(DtoApiStringResponse result)
+        {
+            var clientGuid = RequestContext.Principal.Identity.Name;
+            return new ServiceComputer().UpdateSocketResult(result.Value, clientGuid);
+
+        }
+
+        [CertificateAuth]
+        [HttpGet]
+        public DtoApiStringResponse GetRemotelyInstallArgs()
+        {
+            return new DtoApiStringResponse() { Value = new ServiceRemoteAccess().GetRemotelyInstallArgs() };
+        }
+
+
+        [CertificateAuth]
+        [HttpPost]
+        public DtoActionResult UpdateRemoteAccessId(DtoRemotelyConnectionInfo conInfo)
+        {
+            var clientGuid = RequestContext.Principal.Identity.Name;
+            return new ServiceRemoteAccess().UpdateComputerRemoteAccessId(conInfo, clientGuid);
+        }
+
         [ProvisionAuth]
         [HttpPost]
         public DtoDownloadConnectionResult CreateDownloadConnection(DtoDownloadConRequest conRequest)

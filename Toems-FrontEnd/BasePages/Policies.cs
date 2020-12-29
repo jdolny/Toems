@@ -38,6 +38,13 @@ namespace Toems_FrontEnd.BasePages
 
         }
 
+        protected void PopulateRemoteAccess(DropDownList ddl)
+        {
+            ddl.DataSource = Enum.GetNames(typeof(EnumPolicy.RemoteAccess));
+            ddl.DataBind();
+
+        }
+
         protected void PopulateAutoArchive(DropDownList ddl)
         {
             ddl.DataSource = Enum.GetNames(typeof(EnumPolicy.AutoArchiveType));
