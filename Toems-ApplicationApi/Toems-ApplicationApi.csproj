@@ -209,11 +209,8 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="private\logs\.gitignore" />
     <None Include="packages.config" />
-    <None Include="Properties\PublishProfiles\app.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <None Include="Properties\PublishProfiles\pcman-app.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -223,7 +220,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="private\agent\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Toems-Common\Toems-Common.csproj">
