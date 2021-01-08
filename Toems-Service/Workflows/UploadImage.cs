@@ -42,8 +42,21 @@ namespace Toems_Service.Workflows
             var uploadPort = new ServicePort().GetNextPort(task.ComServerId);
       
             var path = _thisComServer.LocalStoragePath;
-            
-            
+
+
+            try
+            {
+                var dir = Path.Combine(path, "images", imageProfile.Image.Name, $"hd{ hdNumber}");
+                if(!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+            }
+            catch(Exception ex)
+            {
+                log.Error("Could Not Create Directory");
+                log.Error(ex.Message);
+                return "0";
+            }
+
             path = Path.Combine(path, "images", imageProfile.Image.Name, $"hd{hdNumber}", fileName);
             string arguments = " /c \"";
             var receiverPath = Path.Combine(appPath, "udp-receiver.exe");
