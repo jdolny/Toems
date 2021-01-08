@@ -190,7 +190,8 @@ namespace Toems_Service.Workflows
                     ComputerId = computer.Id,
                     Direction = "deploy",
                     MulticastId = _multicastSession.Id,
-                    UserId = _userId
+                    UserId = _userId,
+                    ImageProfileId = _imageProfile.Id
                 };
 
                 if (activeImagingTaskServices.AddActiveImagingTask(activeTask))
