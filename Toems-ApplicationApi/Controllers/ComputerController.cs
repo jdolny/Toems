@@ -161,11 +161,11 @@ namespace Toems_ApplicationApi.Controllers
             return _computerServices.GetPolicyHistory(id);
         }
 
-         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         public DtoApiStringResponse GetEffectivePolicy(int id, EnumPolicy.Trigger trigger, string comServerUrl)
         {
             var result = _computerServices.GetEffectivePolicy(id, trigger, comServerUrl);
-            return new DtoApiStringResponse() {Value = result};
+            return new DtoApiStringResponse() { Value = result };
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
@@ -302,7 +302,7 @@ namespace Toems_ApplicationApi.Controllers
         [HttpPost]
         public DtoApiBoolResponse SendMessage(int id, DtoMessage message)
         {
-            var response = new DtoApiBoolResponse() {Value = _computerServices.SendMessage(id, message)};
+            var response = new DtoApiBoolResponse() { Value = _computerServices.SendMessage(id, message) };
             var computer = _computerServices.GetComputer(id);
             if (computer != null)
             {
@@ -344,6 +344,13 @@ namespace Toems_ApplicationApi.Controllers
         public DtoApiBoolResponse GetStatus(int id)
         {
             return new DtoApiBoolResponse() { Value = _computerServices.GetStatus(id) };
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        [HttpGet]
+        public DtoApiBoolResponse GetServiceLog(int id)
+        {
+            return new DtoApiBoolResponse() { Value = _computerServices.GetServiceLog(id) };
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerReboot)]
@@ -530,6 +537,17 @@ namespace Toems_ApplicationApi.Controllers
         public IEnumerable<EntityComputerLog> GetComputerImagingLogs(int id)
         {
             return _computerServices.GetComputerLogs(id);
+        }
+
+
+        [CustomAuth(Permission = AuthorizationStrings.ComputerUpdate)]
+        [HttpGet]
+        public DtoApiBoolResponse RunModule(int computerId, string moduleGuid)
+        {
+            return new DtoApiBoolResponse
+            {
+                Value = _computerServices.RunModule(computerId, moduleGuid)
+            };
         }
     }
 }

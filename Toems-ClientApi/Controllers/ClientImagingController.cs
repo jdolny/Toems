@@ -531,13 +531,22 @@ namespace Toems_ClientApi.Controllers
 
         [HttpPost]
         [ClientImagingAuth]
+        public HttpResponseMessage SaveImageSchemaPE(DtoUploadSchema schema)
+        {
+            byte[] data = Convert.FromBase64String(schema.schema);
+            string decodedSchema = Encoding.UTF8.GetString(data);
+            _response.Content = new StringContent(
+               new ClientImagingServices().SaveImageSchema(schema.profileId, decodedSchema), Encoding.UTF8, "text/plain");
+            return _response;
+        }
+
+        [HttpPost]
+        [ClientImagingAuth]
         public HttpResponseMessage SaveImageSchema(DtoUploadSchema schema)
         {
             _response.Content = new StringContent(
                new ClientImagingServices().SaveImageSchema(schema.profileId, schema.schema), Encoding.UTF8, "text/plain");
             return _response;
-
-           
         }
 
         [HttpPost]

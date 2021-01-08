@@ -219,6 +219,7 @@
     <Content Include="views\computers\imaging.aspx" />
     <Content Include="views\computers\imaginglogs.aspx" />
     <Content Include="views\computers\message.aspx" />
+    <Content Include="views\computers\modulerunner.aspx" />
     <Content Include="views\computers\policyhistory.aspx" />
     <Content Include="views\computers\processreport.aspx" />
     <Content Include="views\computers\remoteaccess.aspx" />
@@ -1605,6 +1606,13 @@
     </Compile>
     <Compile Include="views\computers\message.aspx.designer.cs">
       <DependentUpon>message.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\computers\modulerunner.aspx.cs">
+      <DependentUpon>modulerunner.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\computers\modulerunner.aspx.designer.cs">
+      <DependentUpon>modulerunner.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\computers\policyhistory.aspx.cs">
       <DependentUpon>policyhistory.aspx</DependentUpon>

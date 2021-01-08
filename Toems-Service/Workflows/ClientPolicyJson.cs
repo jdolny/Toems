@@ -19,6 +19,70 @@ namespace Toems_Service.Workflows
             _policyService = new ServicePolicy();
             _clientPolicy = new DtoClientPolicy();
         }
+        public DtoClientPolicy CreateInstantModule(DtoGuidTypeMapping moduleType)
+        {
+            _clientPolicy.Name = "Instant Module ";
+            _clientPolicy.Guid = Guid.NewGuid().ToString();
+            _clientPolicy.Frequency = EnumPolicy.Frequency.OncePerComputer;
+            _clientPolicy.Trigger = EnumPolicy.Trigger.StartupOrCheckin;
+            _clientPolicy.SubFrequency = 0;
+            _clientPolicy.StartDate = DateTime.Now;
+            _clientPolicy.CompletedAction = EnumPolicy.CompletedAction.DoNothing;
+            _clientPolicy.RemoveInstallCache = true;
+            _clientPolicy.ExecutionType = EnumPolicy.ExecutionType.Install;
+            _clientPolicy.ErrorAction = EnumPolicy.ErrorAction.Continue;
+            _clientPolicy.IsInventory = EnumPolicy.InventoryAction.Disabled;
+            _clientPolicy.RemoteAccess = EnumPolicy.RemoteAccess.NotConfigured;
+            _clientPolicy.IsLoginTracker = false;
+            _clientPolicy.FrequencyMissedAction = EnumPolicy.FrequencyMissedAction.NextOpportunity;
+            _clientPolicy.LogLevel = EnumPolicy.LogLevel.Full;
+            _clientPolicy.SkipServerResult = false;
+            _clientPolicy.IsApplicationMonitor = false;
+            _clientPolicy.StartWindowScheduleId = -1;
+            _clientPolicy.EndWindowScheduleId = -1;
+            _clientPolicy.WuType = EnumPolicy.WuType.Disabled;
+            _clientPolicy.PolicyComCondition = EnumPolicy.PolicyComCondition.Any;
+            //_clientPolicy.Id = _policy.Id;
+            _clientPolicy.ConditionFailedAction = EnumCondition.FailedAction.MarkFailed;
+
+            EntityPolicyModules policyModule = new EntityPolicyModules();
+            policyModule.ConditionId = -1;
+            policyModule.ModuleId = moduleType.moduleId;
+            policyModule.ModuleType = moduleType.moduleType;
+            policyModule.Order = 0;
+
+            if (policyModule.ModuleType == EnumModule.ModuleType.Command)
+            {
+                CommandModule(policyModule);
+            }
+            else if (policyModule.ModuleType == EnumModule.ModuleType.FileCopy)
+            {
+                FileCopyModule(policyModule);
+            }
+            else if (policyModule.ModuleType == EnumModule.ModuleType.Script)
+            {
+                ScriptModule(policyModule);
+            }
+            else if (policyModule.ModuleType == EnumModule.ModuleType.Printer)
+            {
+                PrinterModule(policyModule);
+            }
+            else if (policyModule.ModuleType == EnumModule.ModuleType.Software)
+            {
+                SoftwareModule(policyModule);
+            }
+            else if (policyModule.ModuleType == EnumModule.ModuleType.Wupdate)
+            {
+                WuModule(policyModule);
+            }
+            else if (policyModule.ModuleType == EnumModule.ModuleType.Message)
+            {
+                MessageModule(policyModule);
+            }
+
+
+            return _clientPolicy;
+        }
         public DtoClientPolicy Create(int policyId)
         {
             _policy = _policyService.GetPolicy(policyId);

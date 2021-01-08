@@ -319,7 +319,7 @@ namespace Toems_Service
                 checkIn.TaskArguments = task.Arguments;
                 if (imageProfile.Image.Environment == "winpe")
                 {
-                    checkIn.TaskArguments += " image_server=\"" +
+                    checkIn.TaskArguments += "image_server=\"" +
                                             imageServer.Url + "clientimaging/" + "\"\r\n";
                 }
                 else
@@ -333,7 +333,7 @@ namespace Toems_Service
                     if (!string.IsNullOrEmpty(imageServer.ImagingIp))
                     {
                         if (imageProfile.Image.Environment == "winpe")
-                            checkIn.TaskArguments += " upload_server=\"" +
+                            checkIn.TaskArguments += "upload_server=\"" +
                                            imageServer.ImagingIp + "\"\r\n";
                         else
                             checkIn.TaskArguments += " upload_server=\"" +
@@ -347,7 +347,7 @@ namespace Toems_Service
                         if (urlHasIp.Success)
                         {
                             if (imageProfile.Image.Environment == "winpe")
-                                checkIn.TaskArguments +=  " upload_server=\"" +
+                                checkIn.TaskArguments +=  "upload_server=\"" +
                                                urlHasIp.Captures[0] + "\"\r\n";
                             else
                                 checkIn.TaskArguments += " upload_server=\"" +
@@ -367,7 +367,7 @@ namespace Toems_Service
                             else
                             {
                                 if (imageProfile.Image.Environment == "winpe")
-                                    checkIn.TaskArguments +=  " upload_server=\"" +
+                                    checkIn.TaskArguments +=  "upload_server=\"" +
                                                    ipaddresses.First().ToString() + "\"\r\n";
                                 else
                                     checkIn.TaskArguments += " upload_server=\"" +
@@ -1005,7 +1005,7 @@ namespace Toems_Service
 
             if (imageProfile.Image.Environment == "winpe")
             {
-                arguments += " image_server=\"" + imageServer.Url + "clientimaging/" + "\"\r\n";
+                arguments += "image_server=\"" + imageServer.Url + "clientimaging/" + "\"\r\n";
             }
             else
             {
@@ -1017,7 +1017,7 @@ namespace Toems_Service
                 if (!string.IsNullOrEmpty(imageServer.ImagingIp))
                 {
                     if (imageProfile.Image.Environment == "winpe")
-                        arguments += " upload_server=\"" + imageServer.ImagingIp + "\"\r\n";
+                        arguments += "upload_server=\"" + imageServer.ImagingIp + "\"\r\n";
                     else
                         arguments += " upload_server=\"" + imageServer.ImagingIp + "\"";
                 }
@@ -1029,7 +1029,7 @@ namespace Toems_Service
                     if (urlHasIp.Success)
                     {
                         if (imageProfile.Image.Environment == "winpe")
-                            arguments += " upload_server=\"" + urlHasIp.Captures[0] + "\"\r\n";
+                            arguments += "upload_server=\"" + urlHasIp.Captures[0] + "\"\r\n";
                         else
                             arguments += " upload_server=\"" + urlHasIp.Captures[0] + "\"";
                     }
@@ -1047,7 +1047,7 @@ namespace Toems_Service
                         else
                         {
                             if (imageProfile.Image.Environment == "winpe")
-                                arguments += " upload_server=\"" +
+                                arguments += "upload_server=\"" +
                                                ipaddresses.First().ToString() + "\"\r\n";
                             else
                                 arguments += " upload_server=\"" +

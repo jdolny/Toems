@@ -214,6 +214,20 @@ namespace Toems_ApiCalls
             return false;
         }
 
+        public bool RunModule(int id, string moduleGuid)
+        {
+            Request.Method = Method.GET;
+            Request.AddParameter("computerId", id);
+            Request.AddParameter("moduleGuid", moduleGuid);
+            Request.Resource = string.Format("{0}/RunModule/", Resource);
+            var responseData = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
+            if (responseData != null)
+            {
+                return responseData.Value;
+            }
+            return false;
+        }
+
         public bool CollectInventory(int id)
         {
             Request.Method = Method.GET;
@@ -230,6 +244,18 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.GET;
             Request.Resource = string.Format("{0}/GetStatus/{1}", Resource, id);
+            var responseData = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
+            if (responseData != null)
+            {
+                return responseData.Value;
+            }
+            return false;
+        }
+
+        public bool GetServiceLog(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetServiceLog/{1}", Resource, id);
             var responseData = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
             if (responseData != null)
             {

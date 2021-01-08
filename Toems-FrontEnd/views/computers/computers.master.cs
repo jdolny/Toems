@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text;
+using System.Web;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -368,6 +370,41 @@ namespace Toems_FrontEnd.views.computers
                 Response.Write(redirect);
             }
 
+        }
+
+        protected void btnServiceLog_Click(object sender, EventArgs e)
+        {
+            ComputerBasePage.Call.ComputerApi.ClearLastSocketResult(ComputerEntity.Id);
+            ComputerBasePage.Call.ComputerApi.GetServiceLog(ComputerEntity.Id);
+
+            var counter = 0;
+            var lastSocketResult = "";
+            while (counter < 10)
+            {
+                lastSocketResult = ComputerBasePage.Call.ComputerApi.GetLastSocketResult(ComputerEntity.Id);
+                if (!string.IsNullOrEmpty(lastSocketResult))
+                {
+                    break;
+                }
+                if (counter == 9)
+                {
+                    PageBaseMaster.EndUserMessage = "Could Not Retrieve Log";
+                    return;
+                }
+                System.Threading.Thread.Sleep(1000);
+                counter++;
+            }
+
+            ComputerBasePage.Call.ComputerApi.ClearLastSocketResult(ComputerEntity.Id);
+            if (!string.IsNullOrEmpty(lastSocketResult))
+            {
+                HttpContext.Current.Response.ContentType = "application/octet-stream";
+                HttpContext.Current.Response.AppendHeader("Content-Disposition",
+                    "attachment; filename=service.log");
+
+                HttpContext.Current.Response.Write(lastSocketResult);
+                HttpContext.Current.Response.End();
+            }
         }
     }
 }
