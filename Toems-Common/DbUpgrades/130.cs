@@ -28,7 +28,7 @@ ALTER TABLE `policies`
 ADD COLUMN `policy_remote_access` TINYINT NULL DEFAULT 0 AFTER `condition_failed_action`;
 
 ALTER TABLE `computers` 
-ADD COLUMN `last_socket_result` VARCHAR(200) NULL AFTER `imaging_mac`;
+ADD COLUMN `last_socket_result` LONGTEXT NULL AFTER `imaging_mac`;
 
 
 
