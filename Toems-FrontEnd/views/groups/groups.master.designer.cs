@@ -112,13 +112,40 @@ namespace Toems_FrontEnd.views.groups {
         protected global::System.Web.UI.WebControls.ContentPlaceHolder DropDownActionsSub;
         
         /// <summary>
-        /// btnCheckin control.
+        /// btnDelete control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnCheckin;
+        protected global::System.Web.UI.WebControls.LinkButton btnDelete;
+        
+        /// <summary>
+        /// btnClearImagingId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnClearImagingId;
+        
+        /// <summary>
+        /// btnPin control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnPin;
+        
+        /// <summary>
+        /// btnUnpin control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnUnpin;
         
         /// <summary>
         /// btnMulticast control.
@@ -139,13 +166,22 @@ namespace Toems_FrontEnd.views.groups {
         protected global::System.Web.UI.WebControls.LinkButton btnUnicast;
         
         /// <summary>
-        /// btnDelete control.
+        /// btnCheckin control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnDelete;
+        protected global::System.Web.UI.WebControls.LinkButton btnCheckin;
+        
+        /// <summary>
+        /// btnInventory control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnInventory;
         
         /// <summary>
         /// btnReboot control.
@@ -173,42 +209,6 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnWakeup;
-        
-        /// <summary>
-        /// btnInventory control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnInventory;
-        
-        /// <summary>
-        /// btnPin control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnPin;
-        
-        /// <summary>
-        /// btnUnpin control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnUnpin;
-        
-        /// <summary>
-        /// btnClearImagingId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnClearImagingId;
         
         /// <summary>
         /// SubContent control.

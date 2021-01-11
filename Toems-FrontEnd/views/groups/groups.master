@@ -86,17 +86,22 @@
     <asp:ContentPlaceHolder ID="DropDownActionsSub" runat="server">
     </asp:ContentPlaceHolder>
 
-     <li><asp:LinkButton ID="btnCheckin" runat="server" OnClick="btnCheckin_OnClick" Text="Force Checkin"></asp:LinkButton></li>
-     <li><asp:LinkButton ID="btnMulticast" runat="server" OnClick="btnMulticast_Click" Text="Start Multicast Imaging"></asp:LinkButton></li>
+        <li><asp:LinkButton ID="btnDelete" runat="server" OnClick="btnDelete_OnClick" Text="Delete Group"></asp:LinkButton></li>
+         <li><asp:LinkButton ID="btnClearImagingId" runat="server" OnClick="btnClearImagingId_Click" Text="Clear Imaging Ids"></asp:LinkButton></li>
+        <li> <asp:LinkButton ID="btnPin" runat="server" OnClick="btnPin_OnClick" Text="Pin Group"></asp:LinkButton></li>
+    <li>    <asp:LinkButton ID="btnUnpin" runat="server" OnClick="btnUnpin_OnClick" Text="Unpin Group"></asp:LinkButton></li>
+      <hr />
+         <li><asp:LinkButton ID="btnMulticast" runat="server" OnClick="btnMulticast_Click" Text="Start Multicast Imaging"></asp:LinkButton></li>
       <li><asp:LinkButton ID="btnUnicast" runat="server" OnClick="btnUnicast_Click" Text="Start Unicast Imaging"></asp:LinkButton></li>
-    <li>         <asp:LinkButton ID="btnDelete" runat="server" OnClick="btnDelete_OnClick" Text="Delete Group"></asp:LinkButton></li>
+      <hr />
+    <li><asp:LinkButton ID="btnCheckin" runat="server" OnClick="btnCheckin_OnClick" Text="Force Checkin"></asp:LinkButton></li>
+        <li>      <asp:LinkButton ID="btnInventory" runat="server" OnClick="btnInventory_OnClick" Text="Collect Inventory"></asp:LinkButton></li>
     <li>    <asp:LinkButton ID="btnReboot" runat="server" OnClick="btnReboot_OnClick" Text="Reboot"></asp:LinkButton></li>
     <li>    <asp:LinkButton ID="btnShutdown" runat="server" OnClick="btnShutdown_OnClick" Text="Shutdown"></asp:LinkButton></li>
     <li>      <asp:LinkButton ID="btnWakeup" runat="server" OnClick="btnWakeup_OnClick" Text="Wake Up"></asp:LinkButton></li>
-    <li>      <asp:LinkButton ID="btnInventory" runat="server" OnClick="btnInventory_OnClick" Text="Collect Inventory"></asp:LinkButton></li>
-    <li> <asp:LinkButton ID="btnPin" runat="server" OnClick="btnPin_OnClick" Text="Pin Group"></asp:LinkButton></li>
-    <li>    <asp:LinkButton ID="btnUnpin" runat="server" OnClick="btnUnpin_OnClick" Text="Unpin Group"></asp:LinkButton></li>
-     <li><asp:LinkButton ID="btnClearImagingId" runat="server" OnClick="btnClearImagingId_Click" Text="Clear Imaging Ids"></asp:LinkButton></li>
+
+
+
 
 </asp:Content>
 

@@ -152,7 +152,7 @@
 
         public const string DisabledRegNamePrompt = "Disabled Registration Name Prompt";
 
-        public const int GlobalVersion = 121;
+        public const int GlobalVersion = 130;
 
     }
 }
