@@ -16,23 +16,23 @@ if ([string]::IsNullOrWhiteSpace($MSBuildPath) -or !(Test-Path -Path $MSBuildPat
 
 
 
-#& "$MSBuildPath" "$Root\Toems\Toems-FrontEnd" /t:webpublish /p:WebPublishMethod=FileSystem /p:publishUrl="$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-UI" /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform=x64
-#& "$MSBuildPath" "$Root\Toems\Toems-ApplicationApi" /t:webpublish /p:WebPublishMethod=FileSystem /p:publishUrl="$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API" /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform=x64
-#& "$MSBuildPath" "$Root\Toems\Toems-ClientApi" /t:webpublish /p:WebPublishMethod=FileSystem /p:publishUrl="$DesktopPath\Theopenem Installer\Toems Client API\Program Files\Toec-API" /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform=x64
+& "$MSBuildPath" "$Root\Toems\Toems-FrontEnd" /t:webpublish /p:WebPublishMethod=FileSystem /p:publishUrl="$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-UI" /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform=x64
+& "$MSBuildPath" "$Root\Toems\Toems-ApplicationApi" /t:webpublish /p:WebPublishMethod=FileSystem /p:publishUrl="$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API" /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform=x64
+& "$MSBuildPath" "$Root\Toems\Toems-ClientApi" /t:webpublish /p:WebPublishMethod=FileSystem /p:publishUrl="$DesktopPath\Theopenem Installer\Toems Client API\Program Files\Toec-API" /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform=x64
 
-#Invoke-WebRequest https://github.com/theopenem/Toems-MSI/archive/main.zip -OutFile "$DesktopPath\Theopenem Installer\msisrc.zip"
-#Expand-Archive -Path "$DesktopPath\Theopenem Installer\msisrc.zip" -DestinationPath "$DesktopPath\Theopenem Installer\" -Force
+Invoke-WebRequest https://github.com/theopenem/Toems-MSI/archive/main.zip -OutFile "$DesktopPath\Theopenem Installer\msisrc.zip"
+Expand-Archive -Path "$DesktopPath\Theopenem Installer\msisrc.zip" -DestinationPath "$DesktopPath\Theopenem Installer\" -Force
 
 
-#cd "$DesktopPath\Theopenem Installer\"
-#Copy-Item Toems-MSI-main\* -Destination .\ -Force -Recurse
-#del Toems-MSI-main -Force
-#del msisrc.zip -Force
+cd "$DesktopPath\Theopenem Installer\"
+Copy-Item Toems-MSI-main\* -Destination .\ -Force -Recurse
+del Toems-MSI-main -Force -Recurse
+del msisrc.zip -Force
 
-#mkdir "Toems Application\Program Files\Toems-API\private\logs"
-#mkdir "Toems Application\Program Files\Toems-API\private\agent"
-#mkdir "Toems Application\Program Files\Toems-UI\private\logs"
-#mkdir "Toems Client API\Program Files\Toec-API\private\logs"
+mkdir "Toems Application\Program Files\Toems-API\private\logs"
+mkdir "Toems Application\Program Files\Toems-API\private\agent"
+mkdir "Toems Application\Program Files\Toems-UI\private\logs"
+mkdir "Toems Client API\Program Files\Toec-API\private\logs"
 
 cd "$Root\Toec\Toec-Installer"
 
@@ -121,3 +121,6 @@ cd "$Root\Toec\Toec-Installer"
 -outputsfile obj\Release\Toec-Installer.wixproj.BindOutputsFileListnull.txt `
 -builtoutputsfile obj\Release\Toec-Installer.wixproj.BindBuiltOutputsFileListnull.txt `
 -wixprojectfile C:\Development\Toec\Toec-Installer\Toec-Installer.wixproj obj\Release\Product.wixobj
+
+mv "$DesktopPath\Theopenem Installer\Toec-$Version-x64.msi" "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\private\agent\"
+mv "$DesktopPath\Theopenem Installer\Toec-$Version-x86.msi" "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\private\agent\"
