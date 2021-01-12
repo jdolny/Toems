@@ -195,6 +195,13 @@ namespace Toems_ApplicationApi.Controllers
             return new DtoApiStringResponse() { Value = new ServiceMsiUpdater().GetNameForExport(is64bit) };
         }
 
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpGet]
+        public DtoApiBoolResponse CopyToecUpgrade()
+        {
+            return new DtoApiBoolResponse() { Value = _settingServices.CopyMsiToClientUpdate() };
+        }
+
 
 
         [CustomAuth(Permission = AuthorizationStrings.PxeISOGen)]

@@ -1,10 +1,12 @@
 ﻿$InstallerDir = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer"
 $VsWhere = "$InstallerDir\vswhere.exe"
 $MSBuildPath = (&"$VsWhere" -latest -products * -find "\MSBuild\Current\Bin\MSBuild.exe").Trim()
+$AdvInstallerPath = "C:\Program Files (x86)\Caphyon\Advanced Installer 15.1\bin\x86\"
 $Root = (Get-Item -Path $PSScriptRoot).Parent.FullName
 $DesktopPath = [Environment]::GetFolderPath("Desktop")
 $WixDir = "C:\Program Files (x86)\WiX Toolset v3.11\bin\"
 $Version = "1.3.0.0"
+$versionDisplay = "1.3.0"
 
 if ([string]::IsNullOrWhiteSpace($MSBuildPath) -or !(Test-Path -Path $MSBuildPath)) {
     Write-Host
@@ -15,7 +17,7 @@ if ([string]::IsNullOrWhiteSpace($MSBuildPath) -or !(Test-Path -Path $MSBuildPat
 }
 
 
-
+# Build Application
 & "$MSBuildPath" "$Root\Toems\Toems-FrontEnd" /t:webpublish /p:WebPublishMethod=FileSystem /p:publishUrl="$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-UI" /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform=x64
 & "$MSBuildPath" "$Root\Toems\Toems-ApplicationApi" /t:webpublish /p:WebPublishMethod=FileSystem /p:publishUrl="$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API" /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform=x64
 & "$MSBuildPath" "$Root\Toems\Toems-ClientApi" /t:webpublish /p:WebPublishMethod=FileSystem /p:publishUrl="$DesktopPath\Theopenem Installer\Toems Client API\Program Files\Toec-API" /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform=x64
@@ -33,7 +35,12 @@ mkdir "Toems Application\Program Files\Toems-API\private\logs"
 mkdir "Toems Application\Program Files\Toems-API\private\agent"
 mkdir "Toems Application\Program Files\Toems-UI\private\logs"
 mkdir "Toems Client API\Program Files\Toec-API\private\logs"
+mkdir "Toems Client API\Program Files\tftpboot\pxelinux.cfg"
+mkdir "Toems Client API\Program Files\tftpboot\proxy\bios\pxelinux.cfg"
+mkdir "Toems Client API\Program Files\tftpboot\proxy\efi32\pxelinux.cfg"
+mkdir "Toems Client API\Program Files\tftpboot\proxy\efi64\pxelinux.cfg"
 
+#Build Toec 
 cd "$Root\Toec\Toec-Installer"
 
 & "$MSBuildPath" "$Root\Toec\Toec" /t:build /p:Configuration=Release /p:Platform=x64
@@ -124,3 +131,40 @@ cd "$Root\Toec\Toec-Installer"
 
 mv "$DesktopPath\Theopenem Installer\Toec-$Version-x64.msi" "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\private\agent\"
 mv "$DesktopPath\Theopenem Installer\Toec-$Version-x86.msi" "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\private\agent\"
+
+mv "$DesktopPath\Theopenem Installer\Theopenem.aip" "$DesktopPath\Theopenem Installer\Theopenem-$versionDisplay.aip"
+mv "$DesktopPath\Theopenem Installer\Theopenem Update.aip" "$DesktopPath\Theopenem Installer\Theopenem Update-$versionDisplay.aip"
+# Build Installer MSI
+& "$($AdvInstallerPath)AdvancedInstaller.com" /edit "$DesktopPath\Theopenem Installer\Theopenem-$versionDisplay.aip" /SetVersion $versionDisplay -noprodcode
+& "$($AdvInstallerPath)AdvancedInstaller.com" /edit "$DesktopPath\Theopenem Installer\Theopenem-$versionDisplay.aip" /AddFolder "ProgramFiles64Folder\Theopenem" "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-UI\"
+& "$($AdvInstallerPath)AdvancedInstaller.com" /edit "$DesktopPath\Theopenem Installer\Theopenem-$versionDisplay.aip" /AddFolder "ProgramFiles64Folder\Theopenem" "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\"
+& "$($AdvInstallerPath)AdvancedInstaller.com" /edit "$DesktopPath\Theopenem Installer\Theopenem-$versionDisplay.aip" /AddFolder "ProgramFiles64Folder\Theopenem" "$DesktopPath\Theopenem Installer\Toems Client API\Program Files\Toec-API\"
+& "$($AdvInstallerPath)AdvancedInstaller.com" /edit "$DesktopPath\Theopenem Installer\Theopenem-$versionDisplay.aip" /AddFolder "ProgramFiles64Folder\Theopenem" "$DesktopPath\Theopenem Installer\Toems Client API\Program Files\tftpboot\"
+& "$($AdvInstallerPath)advinst.exe" /build "$DesktopPath\Theopenem Installer\Theopenem-$versionDisplay.aip"
+
+Write-Host "Please Wait...Building Installer MSI"
+$advProc=$(Get-Process advinst)
+Wait-Process $advProc.Id
+Write-Host "Complete"
+
+#remove files that should not be updated
+del "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\Web.config"
+del "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-UI\Web.config"
+del "$DesktopPath\Theopenem Installer\Toems Client API\Program Files\Toec-API\Web.config"
+del "$DesktopPath\Theopenem Installer\Toems Client API\Program Files\tftpboot\pxeboot.0"
+
+
+# Build Update MSI
+& "$($AdvInstallerPath)AdvancedInstaller.com" /edit "$DesktopPath\Theopenem Installer\Theopenem Update-$versionDisplay.aip" /SetVersion $versionDisplay -noprodcode
+& "$($AdvInstallerPath)AdvancedInstaller.com" /edit "$DesktopPath\Theopenem Installer\Theopenem Update-$versionDisplay.aip" /AddFolder "ProgramFiles64Folder\Theopenem" "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-UI\"
+& "$($AdvInstallerPath)AdvancedInstaller.com" /edit "$DesktopPath\Theopenem Installer\Theopenem Update-$versionDisplay.aip" /AddFolder "ProgramFiles64Folder\Theopenem" "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\"
+& "$($AdvInstallerPath)AdvancedInstaller.com" /edit "$DesktopPath\Theopenem Installer\Theopenem Update-$versionDisplay.aip" /AddFolder "ProgramFiles64Folder\Theopenem" "$DesktopPath\Theopenem Installer\Toems Client API\Program Files\Toec-API\"
+& "$($AdvInstallerPath)AdvancedInstaller.com" /edit "$DesktopPath\Theopenem Installer\Theopenem Update-$versionDisplay.aip" /AddFolder "ProgramFiles64Folder\Theopenem" "$DesktopPath\Theopenem Installer\Toems Client API\Program Files\tftpboot\"
+& "$($AdvInstallerPath)advinst.exe" /build "$DesktopPath\Theopenem Installer\Theopenem Update-$versionDisplay.aip"
+
+Write-Host "Please Wait...Building Update MSI"
+$advProc=$(Get-Process advinst)
+Wait-Process $advProc.Id
+Write-Host "Complete"
+
+Write-Host "All Builds Complete"

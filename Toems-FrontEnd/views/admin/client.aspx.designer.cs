@@ -40,6 +40,15 @@ namespace Toems_FrontEnd.views.admin {
         protected global::System.Web.UI.WebControls.LinkButton btnExportMsi32;
         
         /// <summary>
+        /// btnCopyToec control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnCopyToec;
+        
+        /// <summary>
         /// ddlStartupDelay control.
         /// </summary>
         /// <remarks>
@@ -110,15 +119,6 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtShutdownDelay;
-        
-        /// <summary>
-        /// uploadErrorMessage control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField uploadErrorMessage;
         
         /// <summary>
         /// txtArguments control.

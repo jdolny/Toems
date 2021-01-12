@@ -118,6 +118,14 @@
     <div class="size-lbl2 column">
         <asp:Label runat="server" ID="lblRemoteAccessId" ></asp:Label>
     </div>
+    <br class="clear" />
+      <div class="size-lbl column">
+        Remote Access WebRtcStatus:
+    </div>
+    <div class="size-lbl2 column hidden-check">
+           <asp:CheckBox runat="server" id="chkWebRtc" ClientIDMode="Static" AutoPostBack="true" OnCheckedChanged="chkWebRtc_CheckedChanged"/>
+        <label for="chkWebRtc"></label>
+    </div>
 
     
 </asp:Content>

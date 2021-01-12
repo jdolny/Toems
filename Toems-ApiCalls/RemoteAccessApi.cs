@@ -69,6 +69,25 @@ namespace Toems_ApiCalls
             else return null;
         }
 
+        public string IsWebRtcEnabled(string deviceId)
+        {
+            _request.Method = Method.GET;
+            _request.Resource = string.Format("{0}/IsWebRtcEnabled/{1}", _resource, deviceId);
+            var response = new ApiRequest().Execute<DtoApiStringResponse>(_request);
+            if (response != null) return response.Value;
+            else return null;
+        }
+
+        public string UpdateWebRtc(DtoWebRtc webRtc)
+        {
+            _request.Method = Method.POST;
+            _request.Resource = string.Format("{0}/UpdateWebRtc/", _resource);
+            _request.AddJsonBody(webRtc);
+            var response = new ApiRequest().Execute<DtoApiStringResponse>(_request);
+            if (response != null) return response.Value;
+            else return null;
+        }
+
         public string GetRemoteControlUrl(string deviceId)
         {
             _request.Method = Method.GET;
@@ -86,6 +105,15 @@ namespace Toems_ApiCalls
             return new ApiRequest(new Uri(remotelyUrl)).ExecuteRemotely(_request,"");
         }
 
+        public string RemotelyUpdateWebRtc(string remotelyUrl, string deviceId, string rtcMode, string auth)
+        {
+            _request.Method = Method.GET;
+            _request.Resource = $"api/Theopenem/UpdateWebRtc/";
+            _request.AddParameter("deviceID", deviceId);
+            _request.AddParameter("mode", rtcMode);
+            return new ApiRequest(new Uri(remotelyUrl)).ExecuteRemotely(_request, auth);
+        }
+
         public string GetRemoteUrl(string remotelyUrl, string deviceId, string auth)
         {
             _request.Method = Method.GET;
@@ -97,6 +125,14 @@ namespace Toems_ApiCalls
         {
             _request.Method = Method.GET;
             _request.Resource = $"api/Theopenem/IsDeviceOnline/";
+            _request.AddParameter("deviceID", deviceId);
+            return new ApiRequest(new Uri(remotelyUrl)).ExecuteRemotely(_request, auth);
+        }
+
+        public string RemotelyIsWebRtcEnabled(string remotelyUrl, string deviceId, string auth)
+        {
+            _request.Method = Method.GET;
+            _request.Resource = $"api/Theopenem/IsWebRtcEnabled/";
             _request.AddParameter("deviceID", deviceId);
             return new ApiRequest(new Uri(remotelyUrl)).ExecuteRemotely(_request, auth);
         }

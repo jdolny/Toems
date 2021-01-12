@@ -31,6 +31,8 @@ namespace Toems_FrontEnd.views.computers
                 btnInventory.Visible = false;
                 btnDeploy.Visible = false;
                 btnUpload.Visible = false;
+                btnServiceLog.Visible = false;
+                btnRemoteControl.Visible = false;
                 btnClearImagingId.Visible = false;
 
             }
@@ -48,6 +50,8 @@ namespace Toems_FrontEnd.views.computers
                 btnInventory.Visible = true;
                 btnDeploy.Visible = true;
                 btnUpload.Visible = true;
+                btnServiceLog.Visible = true;
+                btnRemoteControl.Visible = true;
 
             }
         }

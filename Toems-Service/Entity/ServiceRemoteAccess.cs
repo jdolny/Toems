@@ -126,6 +126,42 @@ namespace Toems_Service.Entity
             return new DtoActionResult { Success = false, ErrorMessage = "Unknown Error" };
         }
 
+        public string UpdateWebRtc(string deviceId, string rtcMode)
+        {
+            if (string.IsNullOrEmpty(deviceId))
+            {
+                return "Error: This Computer Does Not Have The Remote Control Agent Installed.";
+            }
+            var comServer = _uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
+            if (comServer == null)
+            {
+                return "Error: No Remote Access Com Servers Were Found";
+            }
+            var auth = new EncryptionServices().DecryptText(comServer.RaAuthHeaderEncrypted);
+            var response = new APICall().RemoteAccessApi.RemotelyUpdateWebRtc(comServer.RemoteAccessUrl, deviceId,rtcMode, auth);
+            var result = response.Replace("\"", "");
+            result = result.Replace("\\", "");
+            return result;
+        }
+
+        public string IsWebRtcEnabled(string deviceId)
+        {
+            if (string.IsNullOrEmpty(deviceId))
+            {
+                return "Error: This Computer Does Not Have The Remote Control Agent Installed.";
+            }
+            var comServer = _uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
+            if (comServer == null)
+            {
+                return "Error: No Remote Access Com Servers Were Found";
+            }
+            var auth = new EncryptionServices().DecryptText(comServer.RaAuthHeaderEncrypted);
+            var response = new APICall().RemoteAccessApi.RemotelyIsWebRtcEnabled(comServer.RemoteAccessUrl, deviceId, auth);
+            var result = response.Replace("\"", "");
+            result = result.Replace("\\", "");
+            return result;
+        }
+
         public string IsDeviceOnline(string deviceId)
         {
             if (string.IsNullOrEmpty(deviceId))

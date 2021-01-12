@@ -132,6 +132,7 @@
     <Compile Include="Dto\DtoTaskBootFile.cs" />
     <Compile Include="Dto\DtoTftpServer.cs" />
     <Compile Include="Dto\DtoVersion.cs" />
+    <Compile Include="Dto\DtoWebRtc.cs" />
     <Compile Include="Dto\exports\DtoCommandModuleExport.cs" />
     <Compile Include="Dto\exports\DtoExternalFileExport.cs" />
     <Compile Include="Dto\exports\DtoFileCopyModuleExport.cs" />

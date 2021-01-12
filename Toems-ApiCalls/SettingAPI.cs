@@ -207,7 +207,13 @@ namespace Toems_ApiCalls
             return response != null && response.Value;
         }
 
-      
+        public bool CopyToecUpgrade()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/CopyToecUpgrade/", Resource);
+            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
+            return response != null && response.Value;
+        }
 
         public byte[] GenerateIso(DtoIsoGenOptions isoOptions)
         {

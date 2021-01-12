@@ -44,10 +44,26 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [Authorize]
+        [HttpPost]
+        public DtoApiStringResponse UpdateWebRtc(DtoWebRtc webRtc)
+        {
+            var result = new ServiceRemoteAccess().UpdateWebRtc(webRtc.DeviceId,webRtc.Mode);
+            return new DtoApiStringResponse() { Value = result };
+        }
+
+        [Authorize]
         [HttpGet]
         public DtoApiStringResponse IsDeviceOnline(string id)
         {
             var result = new ServiceRemoteAccess().IsDeviceOnline(id);
+            return new DtoApiStringResponse() { Value = result };
+        }
+
+        [Authorize]
+        [HttpGet]
+        public DtoApiStringResponse IsWebRtcEnabled(string id)
+        {
+            var result = new ServiceRemoteAccess().IsWebRtcEnabled(id);
             return new DtoApiStringResponse() { Value = result };
         }
 

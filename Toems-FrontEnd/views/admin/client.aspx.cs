@@ -10,18 +10,12 @@ namespace Toems_FrontEnd.views.admin
 {
     public partial class client : BasePages.Admin
     {
-        protected string token { get; set; }
-        protected string baseurl { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             RequiresAuthorization(AuthorizationStrings.Administrator);
             if (!IsPostBack)
             {
-                token = Request.Cookies["toemsToken"].Value;
-                baseurl = ConfigurationManager.AppSettings["UploadApiUrl"];
-                if (!baseurl.EndsWith("/"))
-                    baseurl = baseurl + "/";
                 PopulateForm();
                 FillStartupDelays();
             }
@@ -182,6 +176,17 @@ namespace Toems_FrontEnd.views.admin
             Response.Buffer = true;
             ms.WriteTo(Response.OutputStream);
             Response.End();
+        }
+
+        protected void btnCopyToec_Click(object sender, EventArgs e)
+        {
+            var result = Call.SettingApi.CopyToecUpgrade();
+            if (result)
+            {
+                EndUserMessage = "Success.  Clients Will Auto Update At Next Checkin.";
+            }
+            else
+                EndUserMessage = "Failed";
         }
     }
 }

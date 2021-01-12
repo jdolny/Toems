@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
@@ -133,6 +134,45 @@ namespace Toems_Service.Entity
                 default:
                     return string.Empty;
             }
+        }
+
+        public bool CopyMsiToClientUpdate()
+        {
+            foreach (var type in new List<bool> {true,false })
+            {
+                var msi = new ServiceMsiUpdater().UpdateMsis(is64bit:type);
+                var fileName = new ServiceMsiUpdater().GetNameForExport(is64bit:type);
+
+                var destinationDir = Path.Combine(ServiceSetting.GetSettingValue(SettingStrings.StoragePath), "client_versions");
+
+                using (var unc = new UncServices())
+                {
+                    if (unc.NetUseWithCredentials() || unc.LastError == 1219)
+                    {
+                        var directory = new DirectoryInfo(destinationDir);
+                        try
+                        {
+                            if (!directory.Exists)
+                                directory.Create();
+
+                            File.WriteAllBytes(Path.Combine(destinationDir, fileName), msi);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error(ex.Message);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+           
+
+            return true;
         }
     }
 }
