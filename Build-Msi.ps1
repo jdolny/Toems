@@ -22,7 +22,9 @@ if ([string]::IsNullOrWhiteSpace($MSBuildPath) -or !(Test-Path -Path $MSBuildPat
 & "$MSBuildPath" "$Root\Toems\Toems-ApplicationApi" /t:webpublish /p:WebPublishMethod=FileSystem /p:publishUrl="$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API" /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform=x64
 & "$MSBuildPath" "$Root\Toems\Toems-ClientApi" /t:webpublish /p:WebPublishMethod=FileSystem /p:publishUrl="$DesktopPath\Theopenem Installer\Toems Client API\Program Files\Toec-API" /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform=x64
 
-Invoke-WebRequest https://github.com/theopenem/Toems-MSI/archive/main.zip -OutFile "$DesktopPath\Theopenem Installer\msisrc.zip"
+#Invoke-WebRequest https://github.com/theopenem/Toems-MSI/archive/main.zip -OutFile "$DesktopPath\Theopenem Installer\msisrc.zip"
+$client = New-Object System.Net.WebClient
+$client.DownloadFile("https://github.com/theopenem/Toems-MSI/archive/main.zip", "$DesktopPath\Theopenem Installer\msisrc.zip")
 Expand-Archive -Path "$DesktopPath\Theopenem Installer\msisrc.zip" -DestinationPath "$DesktopPath\Theopenem Installer\" -Force
 
 
