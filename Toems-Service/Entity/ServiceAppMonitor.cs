@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_DataModel;
@@ -45,8 +46,8 @@ namespace Toems_Service.Entity
                 var computerProcess = new EntityComputerProcess();
                 computerProcess.ComputerId = computerId;
                 computerProcess.ProcessId = s.Id;
-                computerProcess.StartTimeUtc = Convert.ToDateTime(localApp.StartDateTime);
-                computerProcess.CloseTimeUtc = Convert.ToDateTime(localApp.EndDateTime);
+                computerProcess.StartTimeUtc = Convert.ToDateTime(localApp.StartDateTime, CultureInfo.InvariantCulture);
+                computerProcess.CloseTimeUtc = Convert.ToDateTime(localApp.EndDateTime, CultureInfo.InvariantCulture);
                 computerProcess.Username = localApp.UserName;
                 _uow.ComputerProcessRepository.Insert(computerProcess);
             }
