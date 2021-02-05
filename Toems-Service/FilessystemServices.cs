@@ -684,6 +684,44 @@ namespace Toems_Service
             return filePath;
         }
 
+        public string GetMulticastFileNameWithFullPath(string imageName, string schemaHdNumber, string partitionNumber,
+           string extension, string basePath)
+        {
+
+            var filePath = "";
+
+            using (var unc = new UncServices())
+            {
+
+                if (
+                    unc.NetUseWithCredentials() || unc.LastError == 1219)
+                {
+                    var imagePath = basePath + "images" +
+                                Path.DirectorySeparatorChar + imageName + Path.DirectorySeparatorChar + "hd" +
+                                schemaHdNumber;
+                    try
+                    {
+                        filePath =
+                            Directory.GetFiles(
+                                imagePath + Path.DirectorySeparatorChar, "part" + partitionNumber + "." + extension + ".*")
+                                .FirstOrDefault();
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error(ex.Message);
+                    }
+                }
+                else
+                {
+                    log.Error("Failed to connect to " + basePath + "\r\nLastError = " + unc.LastError);
+                    return "N/A";
+                }
+            }
+
+
+            return filePath;
+        }
+
         public string GetLVMFileNameWithFullPath(string imageName, string schemaHdNumber, string vgName, string lvName,
             string extension)
         {
@@ -727,6 +765,49 @@ namespace Toems_Service
 
 
            
+        }
+
+        public string GetMulticastLVMFileNameWithFullPath(string imageName, string schemaHdNumber, string vgName, string lvName,
+           string extension, string basePath)
+        {
+
+
+            var filePath = "";
+
+            using (var unc = new UncServices())
+            {
+
+                if (
+                    unc.NetUseWithCredentials() || unc.LastError == 1219)
+                {
+                    var imagePath = basePath + "images" +
+                                Path.DirectorySeparatorChar + imageName + Path.DirectorySeparatorChar + "hd" +
+                                schemaHdNumber;
+                    try
+                    {
+                        filePath =
+                            Directory.GetFiles(
+                                imagePath + Path.DirectorySeparatorChar,
+                                vgName + "-" + lvName + "." + extension + ".*")
+                                .FirstOrDefault();
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error(ex.Message);
+                    }
+                }
+                else
+                {
+                    log.Error("Failed to connect to " + basePath + "\r\nLastError = " + unc.LastError);
+                    return "N/A";
+                }
+            }
+
+
+            return filePath;
+
+
+
         }
 
         public List<DtoReplicationProcess> GetRunningSyncProcess()

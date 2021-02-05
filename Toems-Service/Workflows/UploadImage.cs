@@ -61,7 +61,7 @@ namespace Toems_Service.Workflows
             string arguments = " /c \"";
             var receiverPath = Path.Combine(appPath, "udp-receiver.exe");
             arguments += $"{receiverPath}\" --portbase {uploadPort}";
-            arguments += $" --interface {_thisComServer.MulticastInterfaceIp} --file {path}";
+            arguments += $" --interface {_thisComServer.ImagingIp} --file {path}";
 
             var pid = StartReceiver(arguments, imageProfile.Image.Name);
             //use multicast session even though it's not a multicast, uploads still use udpcast

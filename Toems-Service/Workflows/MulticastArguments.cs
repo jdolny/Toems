@@ -58,8 +58,8 @@ namespace Toems_Service.Workflows
                     string imageFile = null;
                     foreach (var ext in new[] { "ntfs", "fat", "extfs", "hfsp", "imager", "winpe", "xfs" })
                     {
-                        imageFile = new FilesystemServices().GetFileNameWithFullPath(mArgs.ImageName,
-                            schemaCounter.ToString(), part.Number, ext);
+                        imageFile = new FilesystemServices().GetMulticastFileNameWithFullPath(mArgs.ImageName,
+                            schemaCounter.ToString(), part.Number, ext,_thisComServer.LocalStoragePath);
 
                         if (!string.IsNullOrEmpty(imageFile)) break;
 
@@ -68,8 +68,8 @@ namespace Toems_Service.Workflows
                         if (part.VolumeGroup.LogicalVolumes == null) continue;
                         foreach (var lv in part.VolumeGroup.LogicalVolumes.Where(lv => lv.Active))
                         {
-                            imageFile = new FilesystemServices().GetLVMFileNameWithFullPath(mArgs.ImageName,
-                                schemaCounter.ToString(), lv.VolumeGroup, lv.Name, ext);
+                            imageFile = new FilesystemServices().GetMulticastLVMFileNameWithFullPath(mArgs.ImageName,
+                                schemaCounter.ToString(), lv.VolumeGroup, lv.Name, ext,_thisComServer.LocalStoragePath);
                         }
                     }
 
