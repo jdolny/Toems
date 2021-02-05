@@ -109,7 +109,7 @@ namespace Toems_Service.Entity
             
 
             var defaultCluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
-            var clusterServers = _uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == defaultCluster.Id);
+            var clusterServers = _uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == defaultCluster.Id && x.IsEndpointManagementServer);
             var comServers = "";
             foreach (var s in clusterServers)
             {
