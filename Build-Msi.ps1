@@ -5,8 +5,9 @@ $AdvInstallerPath = "C:\Program Files (x86)\Caphyon\Advanced Installer 15.1\bin\
 $Root = (Get-Item -Path $PSScriptRoot).Parent.FullName
 $DesktopPath = [Environment]::GetFolderPath("Desktop")
 $WixDir = "C:\Program Files (x86)\WiX Toolset v3.11\bin\"
-$Version = "1.3.0.0"
-$versionDisplay = "1.3.0"
+$Version = "1.3.1.0"
+$versionDisplay = "1.3.1"
+$ToecVersion = "1.3.0"
 
 if ([string]::IsNullOrWhiteSpace($MSBuildPath) -or !(Test-Path -Path $MSBuildPath)) {
     Write-Host
@@ -22,7 +23,7 @@ if ([string]::IsNullOrWhiteSpace($MSBuildPath) -or !(Test-Path -Path $MSBuildPat
 & "$MSBuildPath" "$Root\Toems\Toems-ApplicationApi" /t:webpublish /p:WebPublishMethod=FileSystem /p:publishUrl="$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API" /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform=x64
 & "$MSBuildPath" "$Root\Toems\Toems-ClientApi" /t:webpublish /p:WebPublishMethod=FileSystem /p:publishUrl="$DesktopPath\Theopenem Installer\Toems Client API\Program Files\Toec-API" /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform=x64
 
-#Invoke-WebRequest https://github.com/theopenem/Toems-MSI/archive/main.zip -OutFile "$DesktopPath\Theopenem Installer\msisrc.zip"
+
 $client = New-Object System.Net.WebClient
 $client.DownloadFile("https://github.com/theopenem/Toems-MSI/archive/main.zip", "$DesktopPath\Theopenem Installer\msisrc.zip")
 Expand-Archive -Path "$DesktopPath\Theopenem Installer\msisrc.zip" -DestinationPath "$DesktopPath\Theopenem Installer\" -Force
@@ -69,9 +70,9 @@ cd "$Root\Toec\Toec-Installer"
 -dProjectPath="$Root\Toec\Toec-Installer\Toec-Installer.wixproj" `
 -dTargetDir="$DesktopPath\Theopenem Installer" `
 -dTargetExt=".msi" `
--dTargetFileName="Toec-$Version-x64.msi" `
--dTargetName="Toec-$Version-x64" `
--dTargetPath="$DesktopPath\Theopenem Installer\Toec-$Version-x64.msi" `
+-dTargetFileName="Toec-$ToecVersion-x64.msi" `
+-dTargetName="Toec-$ToecVersion-x64" `
+-dTargetPath="$DesktopPath\Theopenem Installer\Toec-$ToecVersion-x64.msi" `
 -out obj\Release\ `
 -arch x64 `
 -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll" `
@@ -79,7 +80,7 @@ cd "$Root\Toec\Toec-Installer"
 -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUtilExtension.dll" `
 -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixIIsExtension.dll" Product.wxs
 
-& "$WixDir\Light.exe" -out "$DesktopPath\Theopenem Installer\Toec-$Version-x64.msi" `
+& "$WixDir\Light.exe" -out "$DesktopPath\Theopenem Installer\Toec-$ToecVersion-x64.msi" `
 -pdbout C:\Development\Toec\Toec-Installer\bin\x64\Release\Installer.wixpdb `
 -cultures:null `
 -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll" `
@@ -109,9 +110,9 @@ cd "$Root\Toec\Toec-Installer"
 -dProjectPath="$Root\Toec\Toec-Installer\Toec-Installer.wixproj" `
 -dTargetDir="$DesktopPath\Theopenem Installer" `
 -dTargetExt=".msi" `
--dTargetFileName="Toec-$Version-x86.msi" `
--dTargetName="Toec-$Version-x86" `
--dTargetPath="$DesktopPath\Theopenem Installer\Toec-$Version-x86.msi" `
+-dTargetFileName="Toec-$ToecVersion-x86.msi" `
+-dTargetName="Toec-$ToecVersion-x86" `
+-dTargetPath="$DesktopPath\Theopenem Installer\Toec-$ToecVersion-x86.msi" `
 -out obj\Release\ `
 -arch x86 `
 -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll" `
@@ -119,7 +120,7 @@ cd "$Root\Toec\Toec-Installer"
 -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUtilExtension.dll" `
 -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixIIsExtension.dll" Product.wxs
 
-& "$WixDir\Light.exe" -out "$DesktopPath\Theopenem Installer\Toec-$Version-x86.msi" `
+& "$WixDir\Light.exe" -out "$DesktopPath\Theopenem Installer\Toec-$ToecVersion-x86.msi" `
 -pdbout C:\Development\Toec\Toec-Installer\bin\x86\Release\Installer.wixpdb `
 -cultures:null `
 -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll" `
@@ -131,8 +132,8 @@ cd "$Root\Toec\Toec-Installer"
 -builtoutputsfile obj\Release\Toec-Installer.wixproj.BindBuiltOutputsFileListnull.txt `
 -wixprojectfile C:\Development\Toec\Toec-Installer\Toec-Installer.wixproj obj\Release\Product.wixobj
 
-mv "$DesktopPath\Theopenem Installer\Toec-$Version-x64.msi" "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\private\agent\"
-mv "$DesktopPath\Theopenem Installer\Toec-$Version-x86.msi" "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\private\agent\"
+mv "$DesktopPath\Theopenem Installer\Toec-$ToecVersion-x64.msi" "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\private\agent\"
+mv "$DesktopPath\Theopenem Installer\Toec-$ToecVersion-x86.msi" "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\private\agent\"
 
 mv "$DesktopPath\Theopenem Installer\Theopenem.aip" "$DesktopPath\Theopenem Installer\Theopenem-$versionDisplay.aip"
 mv "$DesktopPath\Theopenem Installer\Theopenem Update.aip" "$DesktopPath\Theopenem Installer\Theopenem Update-$versionDisplay.aip"
