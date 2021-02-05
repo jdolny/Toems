@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorizationStrings.cs" />
+    <Compile Include="DbUpgrades\131.cs" />
     <Compile Include="DbUpgrades\130.cs" />
     <Compile Include="DbUpgrades\121.cs" />
     <Compile Include="DbUpgrades\IDbScript.cs" />

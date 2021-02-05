@@ -134,7 +134,7 @@
 
         public const string DefaultKernel32 = "5.6.4";
 
-        public const string DefaultKernel64 = "5.6.4x64";
+        public const string DefaultKernel64 = "5.10.11x64";
 
         public const string IpxeSSL = "iPXE SSL";
 
@@ -152,7 +152,7 @@
 
         public const string DisabledRegNamePrompt = "Disabled Registration Name Prompt";
 
-        public const int GlobalVersion = 130;
+        public const int GlobalVersion = 131;
 
     }
 }
