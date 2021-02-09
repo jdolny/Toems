@@ -12,5 +12,6 @@ namespace Toems_Common.Dto
         public string bootImage { get; set; }
         public string kernel { get; set; }
         public int clusterId { get; set; }
+        public bool useSecureBoot { get; set; }
     }
 }

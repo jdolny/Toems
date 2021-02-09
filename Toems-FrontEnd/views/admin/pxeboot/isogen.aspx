@@ -47,7 +47,16 @@
         <asp:TextBox ID="txtKernelArgs" runat="server" CssClass="textbox">
         </asp:TextBox>
     </div>
+    <div class="size-4 column">
+        Secure Boot Support (Uses older Shim)
+    </div>
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkSecureBoot" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkSecureBoot">Toggle</label>
+        </div>
+    <br class="clear"/>
     </asp:Content>
+
 <asp:Content ID="Content5" ContentPlaceHolderID="subsubHelp" runat="server">
     <p>This page is used to generate an imaging client ISO that can be used to boot a computer to an imaging environment instead of PXE boot.</p>
 </asp:Content>

@@ -24,6 +24,7 @@ namespace Toems_FrontEnd.views.admin.pxeboot
                 ddlBootImage.DataBind();
                 ddlKernel.SelectedValue = SettingStrings.DefaultKernel64;
                 ddlBootImage.SelectedValue = SettingStrings.DefaultInit;
+                chkSecureBoot.Checked = true;
             }
         }
 
@@ -34,6 +35,7 @@ namespace Toems_FrontEnd.views.admin.pxeboot
             isoGenOptions.kernel = ddlKernel.Text;
             isoGenOptions.arguments = txtKernelArgs.Text;
             isoGenOptions.clusterId = Convert.ToInt32(ddlCluster.SelectedValue);
+            isoGenOptions.useSecureBoot = chkSecureBoot.Checked;
             var clientboot = Call.SettingApi.GenerateIso(isoGenOptions);
 
             Response.Clear();

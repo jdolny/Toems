@@ -31,6 +31,7 @@ namespace Toems_Service.Workflows
         private string _globalComputerArgs;
         private string _rootfsPath;
         private string _outputPath;
+        private string _grubPath;
         private string _webPath;
         private string _userToken { get; set; }
         private readonly ILog Logger = LogManager.GetLogger(typeof(IsoGenerator));
@@ -127,6 +128,12 @@ namespace Toems_Service.Workflows
                       Path.DirectorySeparatorChar;
             _rootfsPath = _basePath + "client_iso" + Path.DirectorySeparatorChar + "rootfs" +
                           Path.DirectorySeparatorChar;
+            if(isoOptions.useSecureBoot)
+                _grubPath = _basePath + "client_iso" + Path.DirectorySeparatorChar + "grub_binaries" +
+                          Path.DirectorySeparatorChar + "signed" + Path.DirectorySeparatorChar;
+            else
+                _grubPath = _basePath + "client_iso" + Path.DirectorySeparatorChar + "grub_binaries" +
+                         Path.DirectorySeparatorChar + "unsigned" + Path.DirectorySeparatorChar;
             _buildPath = _basePath + "client_iso" + Path.DirectorySeparatorChar + "build-tmp";
             _outputPath = _basePath + "client_iso" + Path.DirectorySeparatorChar;
             _configOutPath = _basePath + "client_iso" + Path.DirectorySeparatorChar + "config" +
@@ -288,10 +295,6 @@ namespace Toems_Service.Workflows
           
                 CreateSyslinuxMenu();
                 CreateGrubMenu();
-            
-
-
-          
                 StartMkIsofs();
            
 
@@ -340,6 +343,8 @@ namespace Toems_Service.Workflows
             }
             //copy base root path to temporary location
             new FilesystemServices().Copy(_rootfsPath, _buildPath);
+            //copy correct grub binaries to build path
+            new FilesystemServices().Copy(_grubPath, _buildPath + Path.DirectorySeparatorChar + "EFI" + Path.DirectorySeparatorChar + "boot");
             //copy newly generated config files on top of temporary location
             new FilesystemServices().Copy(_configOutPath, _buildPath);
 
