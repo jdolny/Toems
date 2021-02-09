@@ -313,7 +313,7 @@ namespace Toems_Service.Workflows
                             " -log-file \"" + logPath + "\"" +
                             " -graft-points -joliet -R -full-iso9660-filenames -allow-lowercase" +
                             " -b syslinux/isolinux.bin -c syslinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table" +
-                            " -eltorito-alt-boot -e EFI/images/efiboot.img -no-emul-boot " + _buildPath + "\"";
+                            " -eltorito-alt-boot -e EFI/boot/efiboot.img -no-emul-boot " + _buildPath + "\"";
             }
             else
             {
@@ -323,7 +323,7 @@ namespace Toems_Service.Workflows
                             " -log-file \"" + logPath + "\"" +
                             " -graft-points -joliet -R -full-iso9660-filenames -allow-lowercase" +
                             " -b syslinux/isolinux.bin -c syslinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table" +
-                            " -eltorito-alt-boot -eltorito-platform 0xEF -eltorito-boot EFI/images/efiboot.img -no-emul-boot . " +
+                            " -eltorito-alt-boot -eltorito-platform 0xEF -eltorito-boot EFI/boot/efiboot.img -no-emul-boot . " +
                             "\"";
             }
             return arguments;
