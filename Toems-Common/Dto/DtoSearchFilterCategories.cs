@@ -21,5 +21,6 @@ namespace Toems_Common.Dto
         public string CategoryType { get; set; }
         public List<string> Categories { get; set; }
         public string AssetType { get; set; }
+        public bool IncludeOus { get; set; }
     }
 }

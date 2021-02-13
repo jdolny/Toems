@@ -54,6 +54,10 @@ Groups
         </div>
     </div>
     <br class="clear"/>
+     <div class="size-10 column hidden-check">
+         Show AD OUs
+        <asp:CheckBox runat="server" ID="chkLdapGroups" Text="LDAP Groups" AutoPostBack="True" OnCheckedChanged="chkLdapGroups_CheckedChanged"/>
+    </div>
     <br/>
     <select class="categories display-none" name="categories" multiple="True" runat="server"  ID="selectCategory" style="width: 100%;" Visible="False"></select>   
     <br class="clear"/>
@@ -79,6 +83,7 @@ Groups
             <asp:BoundField DataField="Id" HeaderText="computerID" SortExpression="computerID" Visible="False"/>
             <asp:BoundField DataField="Name" HeaderText="Name" SortExpression="Name" ItemStyle-CssClass="width_200"></asp:BoundField>
               <asp:BoundField DataField="Type" HeaderText="Type" SortExpression="Type" ItemStyle-CssClass="width_200"></asp:BoundField>
+             <asp:BoundField DataField="MemberCount" HeaderText="Member Count" SortExpression="MemberCount" ItemStyle-CssClass="width_200"></asp:BoundField>
             <asp:BoundField DataField="Description" HeaderText="Description"  ></asp:BoundField>
         
         

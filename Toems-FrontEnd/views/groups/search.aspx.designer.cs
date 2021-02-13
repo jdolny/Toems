@@ -49,6 +49,15 @@ namespace Toems_FrontEnd.views.groups {
         protected global::System.Web.UI.WebControls.DropDownList ddlCatType;
         
         /// <summary>
+        /// chkLdapGroups control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkLdapGroups;
+        
+        /// <summary>
         /// selectCategory control.
         /// </summary>
         /// <remarks>

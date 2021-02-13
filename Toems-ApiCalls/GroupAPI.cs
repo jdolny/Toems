@@ -15,6 +15,20 @@ namespace Toems_ApiCalls
         {
             
         }
+        public new List<DtoGroupWithCount> Search(DtoSearchFilterCategories filter)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = $"{Resource}/Search";
+            Request.AddJsonBody(filter);
+            return new ApiRequest().Execute<List<DtoGroupWithCount>>(Request);
+        }
+
+        public new List<DtoGroupWithCount> Get()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = $"{Resource}/Get";
+            return new ApiRequest().Execute<List<DtoGroupWithCount>>(Request);
+        }
 
         public IEnumerable<GroupPolicyDetailed> GetAssignedPolicies(int id, DtoSearchFilter filter)
         {

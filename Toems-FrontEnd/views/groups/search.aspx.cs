@@ -15,6 +15,7 @@ namespace Toems_FrontEnd.views.groups
             {
                 PopulateGrid();
                 PopulateCategories();
+                chkLdapGroups.Checked = false;
             }
         }
 
@@ -36,6 +37,7 @@ namespace Toems_FrontEnd.views.groups
             filter.SearchText = txtSearch.Text;
             filter.CategoryType = ddlCatType.Text;
             filter.Categories = SelectedCategories();
+            filter.IncludeOus = chkLdapGroups.Checked;
             var listOfGroups = Call.GroupApi.Search(filter);
             gvGroups.DataSource = listOfGroups;
             gvGroups.DataBind();
@@ -52,7 +54,7 @@ namespace Toems_FrontEnd.views.groups
         {
             PopulateGrid();
 
-            var listModules = (List<EntityGroup>)gvGroups.DataSource;
+            var listModules = (List<DtoGroupWithCount>)gvGroups.DataSource;
             switch (e.SortExpression)
             {
                 case "Name":
@@ -64,6 +66,11 @@ namespace Toems_FrontEnd.views.groups
                     listModules = GetSortDirection(e.SortExpression) == "Desc"
                         ? listModules.OrderByDescending(h => h.Type).ToList()
                         : listModules.OrderBy(h => h.Type).ToList();
+                    break;
+                case "MemberCount":
+                    listModules = GetSortDirection(e.SortExpression) == "Desc"
+                        ? listModules.OrderByDescending(h => h.MemberCount).ToList()
+                        : listModules.OrderBy(h => h.MemberCount).ToList();
                     break;
 
             }
@@ -134,6 +141,11 @@ namespace Toems_FrontEnd.views.groups
         protected void btnDelete_OnClick(object sender, EventArgs e)
         {
            DisplayConfirm();
+        }
+
+        protected void chkLdapGroups_CheckedChanged(object sender, EventArgs e)
+        {
+            PopulateGrid();
         }
     }
 }

@@ -66,7 +66,7 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [CustomAuth(Permission = AuthorizationStrings.GroupRead)]
-        public IEnumerable<EntityGroup> Get()
+        public IEnumerable<DtoGroupWithCount> Get()
         {
             return _groupServices.SearchGroups(new DtoSearchFilterCategories());
         }
@@ -88,7 +88,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.GroupRead)]
         [HttpPost]
-        public IEnumerable<EntityGroup> Search(DtoSearchFilterCategories filter)
+        public IEnumerable<DtoGroupWithCount> Search(DtoSearchFilterCategories filter)
         {
             return _groupServices.SearchGroups(filter);
         }
