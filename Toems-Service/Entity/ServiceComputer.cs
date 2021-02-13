@@ -758,7 +758,7 @@ namespace Toems_Service.Entity
 
         public string TotalActiveCount()
         {
-            return _uow.ComputerRepository.Count(s => s.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && s.ProvisionStatus != EnumProvisionStatus.Status.Archived);
+            return _uow.ComputerRepository.Count(s => s.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && s.ProvisionStatus != EnumProvisionStatus.Status.Archived && s.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved && s.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly);
         }
 
         public string ClearLastSocketResult(int id)
@@ -792,8 +792,6 @@ namespace Toems_Service.Entity
         {
             return _uow.ComputerRepository.Count(x => x.ProvisionStatus == EnumProvisionStatus.Status.PreProvisioned);
         }
-
-      
 
 
         public DtoActionResult UpdateComputer(EntityComputer computer)
