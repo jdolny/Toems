@@ -173,6 +173,7 @@
     <Content Include="views\admin\logs\comserver.aspx" />
     <Content Include="views\admin\logs\frontend.aspx" />
     <Content Include="views\admin\logs\unregimaging.aspx" />
+    <Content Include="views\admin\provisiontasks.aspx" />
     <Content Include="views\admin\pxeboot\chooser.aspx" />
     <Content Include="views\admin\pxeboot\createbootentry.aspx" />
     <Content Include="views\admin\pxeboot\editbootentry.aspx" />
@@ -1228,6 +1229,13 @@
     </Compile>
     <Compile Include="views\admin\logs\unregimaging.aspx.designer.cs">
       <DependentUpon>unregimaging.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\provisiontasks.aspx.cs">
+      <DependentUpon>provisiontasks.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\provisiontasks.aspx.designer.cs">
+      <DependentUpon>provisiontasks.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\admin\pxeboot\chooser.aspx.cs">
       <DependentUpon>chooser.aspx</DependentUpon>

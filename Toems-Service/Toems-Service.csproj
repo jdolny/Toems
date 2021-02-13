@@ -226,6 +226,7 @@
     <Compile Include="Workflows\LdapSync.cs" />
     <Compile Include="Workflows\MulticastArguments.cs" />
     <Compile Include="Workflows\PowerManagement.cs" />
+    <Compile Include="Workflows\ProvisionCompleteTasks.cs" />
     <Compile Include="Workflows\ScheduleRunner.cs" />
     <Compile Include="Workflows\Multicast.cs" />
     <Compile Include="Workflows\SubmitInventory.cs" />

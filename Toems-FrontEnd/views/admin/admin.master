@@ -82,6 +82,12 @@
                 </a>
             </li>
 
+              <li id="provision" runat="server" clientidmode="Static">
+                <a href="<%= ResolveUrl("~/views/admin/provisiontasks.aspx") %>">
+                    <span class="nav-text">Provision Tasks</span>
+                </a>
+            </li>
+
                 <li id="pxe" runat="server" clientidmode="Static">
                 <a href="<%= ResolveUrl("~/views/admin/pxeboot/chooser.aspx?level=2") %>">
                     <span class="nav-text">PXE / Boot Menu</span>

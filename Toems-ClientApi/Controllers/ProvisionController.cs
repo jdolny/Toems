@@ -122,6 +122,7 @@ namespace Toems_ClientApi.Controllers
             if (clientComServers != null)
                 response.ComServers = clientComServers;
             response.ProvisionStatus = EnumProvisionStatus.Status.Provisioned;
+            new ProvisionCompleteTasks().Run(computer);
             return response;
             
         }

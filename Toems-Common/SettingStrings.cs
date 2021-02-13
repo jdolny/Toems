@@ -152,6 +152,10 @@
 
         public const string DisabledRegNamePrompt = "Disabled Registration Name Prompt";
 
+        public const string NewProvisionAdCheck = "NewProvisionADCheck";
+
+        public const string NewProvisionDefaultGroup = "NewProvisonDefaultGroup";
+
         public const int GlobalVersion = 131;
 
     }
