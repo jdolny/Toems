@@ -135,15 +135,21 @@ namespace Toems_DataModel
 
         public List<EntityGroup> GetAllComputerGroups(int computerId)
         {
-            return (from h in _context.GroupMemberships
+            var groups = (from h in _context.GroupMemberships
                     join g in _context.Groups on h.GroupId equals g.Id
                     where h.ComputerId == computerId
                     select g).ToList();
+
+            var allComputersGroup = _context.Groups.Where(x => x.Id == -1).FirstOrDefault();
+            if (allComputersGroup != null)
+                groups.Add(allComputersGroup);
+
+            return groups;
         }
 
         public List<DtoGroupImage> GetAllComputerGroupsWithImage(int computerId)
         {
-            return (from h in _context.GroupMemberships
+            var groups = (from h in _context.GroupMemberships
                     join g in _context.Groups on h.GroupId equals g.Id
                     join i in _context.ImageProfiles on g.ImageProfileId equals i.Id into gi
                     from joinedProfile in gi.DefaultIfEmpty()
@@ -170,6 +176,26 @@ namespace Toems_DataModel
                        ProfileName = x.ProfileName
 
                     }).ToList();
+
+            var allComputersGroup = _context.Groups.Where(x => x.Id == -1).FirstOrDefault();
+            if (allComputersGroup == null) return groups;
+            var allComputersGroupImage = _context.Images.Where(x => x.Id == allComputersGroup.ImageId).FirstOrDefault();
+            var allComputersImageProfile = _context.ImageProfiles.Where(x => x.Id == allComputersGroup.ImageProfileId).FirstOrDefault();
+
+            var groupWithImage = new DtoGroupImage();
+            groupWithImage.GroupId = allComputersGroup.Id;
+            groupWithImage.GroupName = allComputersGroup.Name;
+            groupWithImage.GroupDn = allComputersGroup.Dn;
+            groupWithImage.ImagePriority = allComputersGroup.ImagingPriority;
+            groupWithImage.EmPriority = allComputersGroup.EmPriority;
+            if (allComputersGroupImage != null)
+                groupWithImage.ImageName = allComputersGroupImage.Name;
+            if (allComputersImageProfile != null)
+                groupWithImage.ProfileName = allComputersImageProfile.Name;
+
+            groups.Add(groupWithImage);
+            return groups;
+
         }
 
         public List<DtoModule> GetComputerModules(int computerId)
@@ -179,6 +205,12 @@ namespace Toems_DataModel
                     join j in _context.Policies on i.PolicyId equals j.Id
                     where h.ComputerId == computerId
                     select j).ToList();
+
+            var allComputersGroupPolicies = (from i in _context.GroupPolicies
+                                             join j in _context.Policies on i.PolicyId equals j.Id
+                                             where i.GroupId == -1
+                                             select j).ToList();
+            policies.AddRange(allComputersGroupPolicies);
 
             var policyModules = policies.Select(policy => new PolicyRepository(_context).GetDetailed(policy.Id)).ToList();
 
@@ -256,11 +288,19 @@ namespace Toems_DataModel
 
         public List<EntityPolicy> GetComputerPolicies(int computerId)
         {
-            return (from h in _context.GroupMemberships
+            var policies = (from h in _context.GroupMemberships
                     join i in _context.GroupPolicies on h.GroupId equals i.GroupId
                     join j in _context.Policies on i.PolicyId equals  j.Id
                     where h.ComputerId == computerId
                     select j).ToList();
+
+            var allComputersGroupPolicies = (from i in _context.GroupPolicies
+                                             join j in _context.Policies on i.PolicyId equals j.Id
+                                             where i.GroupId == -1
+                                             select j).ToList();
+            policies.AddRange(allComputersGroupPolicies);
+
+            return policies;
         }
 
       

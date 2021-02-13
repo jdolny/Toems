@@ -56,6 +56,7 @@ namespace Toems_Service.Entity
             var u = GetGroup(groupId);
             if (u == null) return new DtoActionResult {ErrorMessage = "Group Not Found", Id = 0};
             if (u.IsOu) return new DtoActionResult() {ErrorMessage = "Active Directory OU's Cannot Be Deleted."};
+            if (u.Id == -1) return new DtoActionResult() { ErrorMessage = "The Built-In All Computers Group Cannot Be Deleted." };
             _uow.GroupRepository.Delete(groupId);
             _uow.Save();
             var actionResult = new DtoActionResult();
@@ -220,10 +221,15 @@ namespace Toems_Service.Entity
             return _uow.GroupRepository.Get(x => x.Type == "Dynamic").OrderBy(x => x.Name).ToList();
         }
 
-        public List<EntityGroup> SearchGroups(DtoSearchFilterCategories filter)
+        public List<DtoGroupWithCount> SearchGroups(DtoSearchFilterCategories filter)
         {
-            var list = _uow.GroupRepository.Get(s => s.Name.Contains(filter.SearchText) && !s.IsOu).OrderBy(x => x.Name).ToList();
-            if (list.Count == 0) return list;
+            var returnList = new List<DtoGroupWithCount>();
+            var list = new List<EntityGroup>();
+            if(filter.IncludeOus)
+                list = _uow.GroupRepository.Get(s => s.Name.Contains(filter.SearchText)).OrderBy(x => x.Name).ToList();
+            else
+                list = _uow.GroupRepository.Get(s => s.Name.Contains(filter.SearchText) && !s.IsOu).OrderBy(x => x.Name).ToList();
+            if (list.Count == 0) return returnList;
 
             var categoryFilterIds = new List<int>();
             foreach (var catName in filter.Categories)
@@ -235,7 +241,26 @@ namespace Toems_Service.Entity
 
             var toRemove = new List<EntityGroup>();
             if (filter.CategoryType.Equals("Any Category"))
-                return list.Take(filter.Limit).ToList();
+            {
+                foreach(var group in list)
+                {
+                    var groupWithcount = new DtoGroupWithCount();
+                    groupWithcount.Id = group.Id;
+                    if (!group.IsOu)
+                        groupWithcount.Name = group.Name;
+                    else
+                        groupWithcount.Name = group.Dn;
+                    groupWithcount.Type = group.Type;
+                    groupWithcount.Description = group.Description;
+                    if (group.Id == -1)
+                        groupWithcount.MemberCount = new ServiceComputer().TotalActiveCount();
+                    else
+                        groupWithcount.MemberCount = _uow.GroupMembershipRepository.Count(x => x.GroupId == group.Id);
+                    if (groupWithcount.MemberCount == "0" && group.IsOu) continue;
+                    returnList.Add(groupWithcount);
+                }
+                return returnList.Take(filter.Limit).OrderBy(x => x.Name).ToList();
+            }
             else if (filter.CategoryType.Equals("And Category"))
             {
                 foreach (var group in list)
@@ -294,7 +319,24 @@ namespace Toems_Service.Entity
                 list.Remove(p);
             }
 
-            return list.Take(filter.Limit).ToList();
+            foreach (var group in list)
+            {
+                var groupWithcount = new DtoGroupWithCount();
+                groupWithcount.Id = group.Id;
+                if (!group.IsOu)
+                    groupWithcount.Name = group.Name;
+                else
+                    groupWithcount.Name = group.Dn;
+                groupWithcount.Type = group.Type;
+                groupWithcount.Description = group.Description;
+                if (group.Id == -1)
+                    groupWithcount.MemberCount = new ServiceComputer().TotalActiveCount();
+                else
+                    groupWithcount.MemberCount = _uow.GroupMembershipRepository.Count(x => x.GroupId == group.Id);
+                if (groupWithcount.MemberCount == "0" && group.IsOu) continue;
+                returnList.Add(groupWithcount);
+            }
+            return returnList.Take(filter.Limit).OrderBy(x => x.Name).ToList();
         }
 
         public string TotalCount()

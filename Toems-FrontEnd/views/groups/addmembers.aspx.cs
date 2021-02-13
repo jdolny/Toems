@@ -11,7 +11,11 @@ namespace Toems_FrontEnd.views.groups
     {
         protected void btnAddSelected_OnClick(object sender, EventArgs e)
         {
-
+            if(GroupEntity.Id == -1)
+            {
+                EndUserMessage = "Computers Cannot Be Added To The Built-In All Computers Group";
+                return;
+            }
             var memberships = (from GridViewRow row in gvComputers.Rows
                 let cb = (CheckBox) row.FindControl("chkSelector")
                 where cb != null && cb.Checked
