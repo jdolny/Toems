@@ -12,6 +12,12 @@ namespace Toems_FrontEnd.views.images
 {
     public partial class search : Images
     {
+        private void PopulateCategories()
+        {
+            selectCategory.DataSource = Call.CategoryApi.Get().Select(x => x.Name).ToList();
+            selectCategory.DataBind();
+        }
+
         protected void btnHds_Click(object sender, EventArgs e)
         {
             var control = sender as Control;
@@ -106,6 +112,7 @@ namespace Toems_FrontEnd.views.images
         {
             if (IsPostBack) return;
             PopulateGrid();
+            PopulateCategories();
         }
 
         protected void PopulateGrid()
