@@ -17,7 +17,6 @@ INSERT INTO `admin_settings` (`admin_setting_name`, `admin_setting_value`) VALUE
 INSERT INTO `admin_settings` (`admin_setting_name`, `admin_setting_value`) VALUES ('NewProvisonDefaultGroup', '');
 
 INSERT INTO `groups` (`group_id`, `group_name`, `group_description`, `is_ou`, `group_type`, `cluster_id`, `wakeup_schedule_id`, `shutdown_schedule_id`, `prevent_shutdown`, `imaging_priority`, `em_priority`, `image_id`, `image_profile_id`) VALUES ('-1', 'Built-In All Computers', 'Built-In group for all computers.  This group will not display any members.', '0', 'Static', '-1', '-1', '-1', '0', '0', '0', '-1', '-1');
-
 ";
         }
     }
