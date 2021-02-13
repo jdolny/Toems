@@ -66,6 +66,17 @@ namespace Toems_Service.Workflows
         public bool Run()
         {
             Logger.Debug("Starting Active Directory Sync");
+            if (ServiceSetting.GetSettingValue(SettingStrings.LdapEnabled) != "1")
+            {
+                Logger.Debug("LDAP integration is not enabled.  Skipping");
+                return true;
+            }
+            if (string.IsNullOrEmpty(ServiceSetting.GetSettingValue(SettingStrings.LdapServer)))
+            {
+                Logger.Debug("LDAP values not populated.  Skipping");
+                return true;
+            }
+
             _basePath = "LDAP://" + ServiceSetting.GetSettingValue(SettingStrings.LdapServer) + ":" +
                         ServiceSetting.GetSettingValue(SettingStrings.LdapPort) + "/";
             _username = ServiceSetting.GetSettingValue(SettingStrings.LdapBindUsername);
@@ -101,6 +112,8 @@ namespace Toems_Service.Workflows
         {
             Logger.Debug("Enumerating Active Directory Organizational Units");
             var ouDict = new Dictionary<string, string>();
+            //add the base dn
+            ouDict.Add(_baseDn, _baseDn);
             using (DirectoryEntry entry = InitializeEntry())
             {
                 using (DirectorySearcher searcher = new DirectorySearcher(entry))
@@ -111,7 +124,11 @@ namespace Toems_Service.Workflows
                     searcher.SizeLimit = 0;
                     searcher.PageSize = 500;
                     foreach (SearchResult res in searcher.FindAll())
-                        ouDict.Add((string)res.Properties["distinguishedName"][0], (string)res.Properties["ou"][0]);
+                    {
+
+                        if (!ouDict.Keys.Contains((string)res.Properties["distinguishedName"][0]))
+                            ouDict.Add((string)res.Properties["distinguishedName"][0], (string)res.Properties["ou"][0]);
+                    }
                 }
                 using (DirectorySearcher searcher = new DirectorySearcher(entry))
                 {
@@ -121,12 +138,16 @@ namespace Toems_Service.Workflows
                     searcher.SizeLimit = 0;
                     searcher.PageSize = 500;
                     foreach (SearchResult res in searcher.FindAll())
-                        ouDict.Add((string)res.Properties["distinguishedName"][0], (string)res.Properties["cn"][0]);
+                    {
+                        if (!ouDict.Keys.Contains((string)res.Properties["distinguishedName"][0]))
+                            ouDict.Add((string)res.Properties["distinguishedName"][0], (string)res.Properties["cn"][0]);
+                    }
                 }
             }
 
-            //add the base dn
-            ouDict.Add(_baseDn, _baseDn);
+
+            
+                
             return ouDict;
         }
 
