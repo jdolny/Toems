@@ -280,6 +280,9 @@ namespace Toems_Service.Entity
                 imageWithDate.Id = image.Id;
                 imageWithDate.Name = image.Name;
                 imageWithDate.Environment = image.Environment;
+                imageWithDate.Protected = image.Protected;
+                imageWithDate.Enabled = image.Enabled;
+                imageWithDate.IsVisible = image.IsVisible;
                 if(auditLog != null)
                 {
                     if(auditLog.DateTime != null)

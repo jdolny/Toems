@@ -14,7 +14,8 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="SubContent" runat="Server">
   <script type="text/javascript">
-        $(document).ready(function() {
+      $(document).ready(function () {
+             $('.categories').select2();
             $('#search').addClass("nav-current");
             $("[id*=gvImages] td").hover(function() {
                 $("td", $(this).closest("tr")).addClass("hover_row");
@@ -98,6 +99,9 @@
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:BoundField DataField="Environment" HeaderText="Imaging Environment" ItemStyle-CssClass="width_200"></asp:BoundField>
+             <asp:BoundField DataField="Enabled" HeaderText="Enabled" ItemStyle-CssClass="width_50"></asp:BoundField>
+             <asp:BoundField DataField="Protected" HeaderText="Protected" ItemStyle-CssClass="width_50"></asp:BoundField>
+             <asp:BoundField DataField="IsVisible" HeaderText="On-Demand" ItemStyle-CssClass="width_200"></asp:BoundField>
             <asp:BoundField DataField="LastUsed" HeaderText="Last Used" SortExpression="LastUsed" />
 
             <asp:TemplateField>
