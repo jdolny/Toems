@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2050
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toems-FrontEnd", "Toems-FrontEnd\Toems-FrontEnd.csproj", "{CB120C38-1AD9-4D9E-B939-F3FAB2150F95}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -26,6 +26,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toems-Common", "Toems-Common\Toems-Common.csproj", "{6EAD11E1-3464-40A1-B6CD-24D40AD2507A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toems-ClientApi", "Toems-ClientApi\Toems-ClientApi.csproj", "{4D77D3C3-7FC7-48F6-BCB2-269C82B7ACAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToemsUI", "ToemsUI\ToemsUI.csproj", "{E79B4B90-F888-47F3-B265-BFAC3A45AAD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +93,14 @@ Global
 		{4D77D3C3-7FC7-48F6-BCB2-269C82B7ACAB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4D77D3C3-7FC7-48F6-BCB2-269C82B7ACAB}.Release|x64.ActiveCfg = Release|x64
 		{4D77D3C3-7FC7-48F6-BCB2-269C82B7ACAB}.Release|x64.Build.0 = Release|x64
+		{E79B4B90-F888-47F3-B265-BFAC3A45AAD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E79B4B90-F888-47F3-B265-BFAC3A45AAD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E79B4B90-F888-47F3-B265-BFAC3A45AAD5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E79B4B90-F888-47F3-B265-BFAC3A45AAD5}.Debug|x64.Build.0 = Debug|Any CPU
+		{E79B4B90-F888-47F3-B265-BFAC3A45AAD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E79B4B90-F888-47F3-B265-BFAC3A45AAD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E79B4B90-F888-47F3-B265-BFAC3A45AAD5}.Release|x64.ActiveCfg = Release|Any CPU
+		{E79B4B90-F888-47F3-B265-BFAC3A45AAD5}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
