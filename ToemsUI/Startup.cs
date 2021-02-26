@@ -1,5 +1,7 @@
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,14 +11,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ToemsUI.Data;
+using ToemsUI.Services;
 
 namespace ToemsUI
 {
     public class Startup
     {
+        private readonly string URL;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            URL = Configuration["Toems-API"];
         }
 
         public IConfiguration Configuration { get; }
@@ -28,6 +33,14 @@ namespace ToemsUI
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+            services.AddBlazoredLocalStorage();
+            services.AddOptions();
+            services.AddAuthorizationCore();
+            services.AddScoped<AuthenticationStateProvider, LocalAuthenticationStateProvider>();
+            services.AddScoped<Authentication>(services =>
+            {
+                return new Authentication(URL);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

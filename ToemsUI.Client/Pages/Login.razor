@@ -1,0 +1,58 @@
+﻿@page "/login"
+@layout AuthLayout
+
+@inject Authentication authService
+@inject NavigationManager navigationManager
+@inject ILocalStorageService storage
+@inject AuthenticationStateProvider authenticationStateProvider
+
+
+<div class="row">
+    <div class="col-12">
+        <h2>Login</h2>
+        <EditForm Model="loginRequest" OnValidSubmit="LoginUser">
+            <RadzenCard>
+                <ToemsAlertMessage Message="@message" MessageType="@messageType"></ToemsAlertMessage>
+                <DataAnnotationsValidator />
+                <Microsoft.AspNetCore.Components.Forms.ValidationSummary />
+
+                <label>Username</label>
+                <RadzenTextBox @bind-Value="loginRequest.Username"></RadzenTextBox>
+                <label>Password</label>
+                <RadzenPassword @bind-Value="loginRequest.Password"></RadzenPassword>
+                <hr />
+                <RadzenButton ButtonType="Radzen.ButtonType.Submit" Text="Login"
+                              ButtonStyle="Radzen.ButtonStyle.Primary" class="btn-block mr-2"></RadzenButton>
+
+            </RadzenCard>
+        </EditForm>
+    </div>
+
+</div>
+@code {
+    DtoLoginRequest loginRequest = new DtoLoginRequest();
+    string message = string.Empty;
+    AlertMessageType messageType = AlertMessageType.Success;
+
+    public async Task LoginUser()
+    {
+        var result = await authService.LoginUserAsync(loginRequest);
+        if (result == null)
+        {
+            message = "Could Not Get Login Token";
+            messageType = AlertMessageType.Error;
+        }
+        else if (!string.IsNullOrEmpty(result.error_description))
+        {
+            message = result.error_description;
+            messageType = AlertMessageType.Error;
+        }
+        else if (result.is_validated.Equals("true"))
+        {
+            await storage.SetItemAsync<DtoToken>("User", result);
+            await authenticationStateProvider.GetAuthenticationStateAsync();
+            navigationManager.NavigateTo("/");
+        }
+    }
+
+}

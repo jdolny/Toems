@@ -1,0 +1,44 @@
+﻿@if (!string.IsNullOrWhiteSpace(Message))
+{
+    <span style="cursor:default" @onclick="HideMessage">
+        <div class="alert @alertClass">@Message</div>
+    </span>
+}
+
+@code {
+    [Parameter]
+    public string Message { get; set; }
+
+    private AlertMessageType messageType;
+
+    [Parameter]
+    public AlertMessageType MessageType
+    {
+        get => messageType;
+        set
+        {
+            messageType = value;
+            switch (messageType)
+            {
+                case AlertMessageType.Error:
+                    alertClass = "alert-danger";
+                    break;
+                case AlertMessageType.Warning:
+                    alertClass = "alert-warning";
+                    break;
+                case AlertMessageType.Success:
+                    alertClass = "alert-success";
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    string alertClass = "alert-info";
+
+    void HideMessage()
+    {
+        Message = string.Empty;
+    }
+}

@@ -1,0 +1,58 @@
+﻿@inject DefaultNavigationService navService
+
+
+<div style="padding: 1rem">
+    <input placeholder="Search " class="rz-textbox" type="search" @oninput="@FilterPanelMenu" style="width: 100%" />
+</div>
+
+<RadzenPanelMenu>
+
+    @foreach (var category in navItems)
+    {
+        if (category.Name == "Computers")
+            category.Expanded = true;
+    <RadzenPanelMenuItem @bind-Expanded="@category.Expanded" Text="@category.Name" Path="@category.Path" Icon="@category.Icon">
+        @if (category.Children != null)
+        {
+            if (category.Children.Any(x => x.RequiresId))
+            {
+        <RadzenPanelMenuItem Text="@Id" Expanded="true">
+            @foreach (var example in category.Children.Where(x => x.RequiresId))
+            {
+                <RadzenPanelMenuItem @bind-Expanded="@example.Expanded" Text="@example.Name" Path="@example.Path" Icon="@example.Icon">
+
+                </RadzenPanelMenuItem>
+            }
+        </RadzenPanelMenuItem>
+            }
+
+            @foreach (var example in category.Children.Where(x => !x.RequiresId))
+            {
+                <RadzenPanelMenuItem @bind-Expanded="@example.Expanded" Text="@example.Name" Path="@example.Path" Icon="@example.Icon">
+
+                </RadzenPanelMenuItem>
+            }
+        }
+    </RadzenPanelMenuItem>
+    }
+</RadzenPanelMenu>
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    IEnumerable<NavItem> navItems;
+
+    protected override void OnInitialized()
+    {
+        navItems = navService.NavItems;
+    }
+
+    void FilterPanelMenu(ChangeEventArgs args)
+    {
+        var term = args.Value.ToString();
+
+        navItems = navService.Filter(term);
+    }
+}

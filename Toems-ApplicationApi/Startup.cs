@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using Hangfire;
 using Hangfire.MySql;
 using Hangfire.SqlServer;
 using Microsoft.Owin;
+using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
@@ -38,9 +40,18 @@ namespace Toems_ApplicationApi
 
     public class SimpleAuthorizationServerProvider : OAuthAuthorizationServerProvider
     {
+        public override Task TokenEndpoint(OAuthTokenEndpointContext context)
+        {
+            foreach (KeyValuePair<string, string> property in context.Properties.Dictionary)
+            {
+                context.AdditionalResponseParameters.Add(property.Key, property.Value);
+            }
+
+            return Task.FromResult<object>(null);
+        }
         public override Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] {"*"});
+            context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
             var auth = new AuthenticationServices();
 
             var validationResult = auth.GlobalLogin(context.UserName, context.Password, "Web");
@@ -50,10 +61,26 @@ namespace Toems_ApplicationApi
                 context.Validated(oAuthIdentity);
                 var user = new ServiceUser().GetUser(context.UserName);
                 oAuthIdentity.AddClaim(new Claim("user_id", user.Id.ToString()));
+                var authProperties = new AuthenticationProperties(new Dictionary<string, string>
+                {
+                    {
+                        "username", user.Name
+                    },
+                    {
+                        "membership", user.Membership
+                    },
+                    {
+                        "theme", user.Theme
+                    },
+                    {
+                        "is_validated", "true"
+                    }
+                });
+                var ticket = new AuthenticationTicket(oAuthIdentity, authProperties);
                 //set different time spans here
                 //if (user.Membership == "Administrator")
                 //    context.Options.AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(20);
-                context.Validated(oAuthIdentity);
+                context.Validated(ticket);
             }
             else
             {

@@ -1,0 +1,44 @@
+﻿@page "/Computers"
+@inject ToemsApiService apiService
+@inject NavigationManager navigationManager
+
+<RadzenButton Text="Submit" Click="GetSelected"/>
+<RadzenGrid   SelectionMode="DataGridSelectionMode.Multiple" @bind-Value=@multipleValues
+            AllowSorting="true" Data="@computers" TItem="EntityComputer" ColumnWidth="200px">
+    <Columns>
+        <RadzenGridColumn TItem="EntityComputer" Width="40px" Sortable="false" Filterable="false">
+            <HeaderTemplate>
+                <RadzenCheckBox TriState="false" TValue="bool" 
+                                Change="@(args => multipleValues = args ? computers : null)" />
+            </HeaderTemplate>
+            <Template Context="computer">
+                <RadzenCheckBox TriState="false" Value="@(multipleValues != null && (multipleValues as IEnumerable<EntityComputer>).Contains(computer))" />
+            </Template>
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="EntityComputer" Width="50px">
+            <Template Context="computer">
+                <RadzenButton ButtonStyle="Radzen.ButtonStyle.Light" Text="Edit"
+                              Click='() => navigationManager.NavigateTo($"/Computers/Details/{computer.Id}")'
+                              class="btn-block" />
+            </Template>
+
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="EntityComputer" Property="Id" Title="Computer Id" Width="30px" />
+        <RadzenGridColumn TItem="EntityComputer" Property="Name" Title="Name" />
+
+    </Columns>
+</RadzenGrid>
+@code {
+    IEnumerable<EntityComputer> computers;
+    object multipleValues;
+
+    protected override async Task OnInitializedAsync()
+    {
+        computers = await apiService.ComputerService.Get();
+    }
+
+    public void GetSelected()
+    {
+        var a = multipleValues as IEnumerable<EntityComputer>;
+    }
+}

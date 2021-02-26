@@ -1,0 +1,27 @@
+﻿@inherits LayoutComponentBase
+@inject ToemsApiService apiService
+@inject UserState state
+
+<div class="page">
+    <div class="sidebar">
+        <DefaultNav />
+    </div>
+
+    <div class="main">
+        <div class="top-row px-4">
+            <UserStatus />
+        </div>
+
+        <div class="content px-4">
+            @Body
+        </div>
+    </div>
+</div>
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        await state.SetAccessToken();
+    }
+}

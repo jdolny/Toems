@@ -1,0 +1,75 @@
+﻿@inject DefaultNavigationService navService
+
+
+<div style="padding: 1rem">
+    <input placeholder="Search " class="rz-textbox" type="search" @oninput="@FilterPanelMenu" style="width: 100%" />
+</div>
+
+<RadzenTabs>
+    <Tabs>
+        <RadzenTabsItem @ref="MainTab" Text="Main" Selected="false">
+            <RadzenPanelMenu>
+                @foreach (var category in navItems)
+                {
+                    <RadzenPanelMenuItem @bind-Expanded="@category.Expanded" Text="@category.Name" Path="@category.Path" Icon="@category.Icon">
+                        @if (category.Children != null)
+                        {
+                            @foreach (var example in category.Children.Where(x => !x.RequiresId))
+                            {
+                                <RadzenPanelMenuItem @bind-Expanded="@example.Expanded" Text="@example.Name" Path="@example.Path" Icon="@example.Icon">
+                                    @if (example.Children != null)
+                                    {
+                                        @foreach (var sub in example.Children)
+                                        {
+                                            <RadzenPanelMenuItem Text="@sub.Name" Path="@sub.Path" Icon="@sub.Icon" />
+                                        }
+                                    }
+                                </RadzenPanelMenuItem>
+                            }
+                        }
+                    </RadzenPanelMenuItem>
+                }
+            </RadzenPanelMenu>
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Current" Selected="true">
+            <RadzenPanelMenu>
+                @foreach (var category in navItems.Where(x => x.Name.Equals(Resource)))
+                {
+                        @if (category.Children != null)
+                        {
+                            @foreach (var example in category.Children.Where(x => x.RequiresId))
+                            {
+                                <RadzenPanelMenuItem @bind-Expanded="@example.Expanded" Text="@example.Name" Path="@example.Path" Icon="@example.Icon"/>
+                                   
+                            }
+                        }
+                }
+            </RadzenPanelMenu>
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    [Parameter]
+    public string Resource { get; set; }
+
+    RadzenTabsItem MainTab;
+
+    IEnumerable<NavItem> navItems;
+
+    protected override void OnInitialized()
+    {
+        navItems = navService.NavItems;
+    }
+
+
+    void FilterPanelMenu(ChangeEventArgs args)
+    {
+        var term = args.Value.ToString();
+
+        navItems = navService.Filter(term);
+    }
+}

@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using Newtonsoft.Json;
 using Toems_ApplicationApi.Controllers.Authorization;
 using Toems_Common;
@@ -16,6 +17,7 @@ using Toems_Service.Workflows;
 
 namespace Toems_ApplicationApi.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class ComputerController : ApiController
     {
         private readonly ServiceComputer _computerServices;

@@ -1,0 +1,129 @@
+﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+
+html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+a, .btn-link {
+    color: #0366d6;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.content {
+    padding-top: 1.1rem;
+}
+
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
+
+.invalid {
+    outline: 1px solid red;
+}
+
+.validation-message {
+    color: red;
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+
+.middle-box {
+    margin-top: 150px;
+    margin: auto;
+    width: 450px;
+    box-shadow: 5px 10px 18px #888;
+    border-radius: 20px;
+    margin-top: 150px;
+    padding: 30px;
+}
+
+
+@font-face {
+    font-family: 'icomoon';
+    font-style: normal;
+    font-weight: normal;
+    src: url('../fonts/icomoon.eot?-txmuxo');
+    src: url('../fonts/icomoon.eot?#iefix-txmuxo') format('embedded-opentype'), url('../fonts/icomoon.ttf?-txmuxo') format('truetype'), url('../fonts/icomoon.woff?-txmuxo') format('woff'), url('../fonts/icomoon.svg?-txmuxo#icomoon') format('svg');
+}
+
+
+@font-face {
+    font-family: "Flaticon";
+    font-style: normal;
+    font-weight: normal;
+    src: url("../fonts/flaticon.eot");
+    src: url("../fonts/flaticon.eot#iefix") format("embedded-opentype"), url("../fonts/flaticon.ttf") format("truetype"), url("../fonts/flaticon.svg") format("svg");
+}
+
+
+.header {
+    background-color: #3D6889;
+}
+
+.rz-panel-menu .rz-navigation-menu .rz-navigation-item .rz-navigation-item-link {
+    padding-left:1rem;
+}
+.rz-panel-menu .rz-navigation-menu .rz-navigation-item-wrapper {
+    background-color: #3D6889;
+    padding: .75rem 0;
+}
+
+.rz-tabview-panel{
+    padding:0;
+}
+
+.rz-tabview-panels{
+    border:0;
+}
+
+
+/*.rz-menu:not(.rz-profile-menu) .rz-navigation-item-link {
+    border: 3px solid #a7d1ec;
+    border-radius: 5px;
+    padding: 7px;
+}*/
+
+.content-header {
+    height: 50px;
+    background: #2b2b2b;
+}
+
+.rz-menu:not(.rz-profile-menu) .rz-navigation-menu {
+    z-index:999;
+}
+
+.limit-dropdown-con {
+    float:right
+}
+
+.clear {
+    clear: both;
+    display: block;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    width: 0;
+}
+

@@ -86,6 +86,7 @@
     <Compile Include="Dto\DtoImageSchemaRequest.cs" />
     <Compile Include="Dto\DtoIsoGenOptions.cs" />
     <Compile Include="Dto\DtoLogContentRequest.cs" />
+    <Compile Include="Dto\DtoLoginRequest.cs" />
     <Compile Include="Dto\DtoMulticastArgs.cs" />
     <Compile Include="Dto\DtoOnlineKernel.cs" />
     <Compile Include="Dto\DtoProxyReservation.cs" />
@@ -324,6 +325,7 @@
     <Compile Include="Entity\EntityUserLockout.cs" />
     <Compile Include="Entity\EntityUserRight.cs" />
     <Compile Include="Entity\EntityVersion.cs" />
+    <Compile Include="Enum\AlertMessageType.cs" />
     <Compile Include="Enum\EnumCondition.cs" />
     <Compile Include="Enum\EnumCustomAttribute.cs" />
     <Compile Include="Enum\EnumFileDownloader.cs" />

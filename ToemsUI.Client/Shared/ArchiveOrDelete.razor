@@ -1,0 +1,42 @@
+﻿@inject DialogService dialogService
+
+<RadzenMenu Click="@(args => Select(args))">
+    <RadzenMenuItem Text="Module Actions" Icon="line_weight" Value="-1">
+        <RadzenMenuItem Text="Archive Selected" Value="0"></RadzenMenuItem>
+        <RadzenMenuItem Text="Delete Selected" Value="1"></RadzenMenuItem>
+    </RadzenMenuItem>
+</RadzenMenu>
+
+@code {
+    [Parameter]
+    public string Resource { get; set; }
+
+    [Parameter] public EventCallback<ArchiveDeleteDialogDto> OnDialogAction { get; set; }
+
+    private ArchiveDeleteDialogDto dialogResult = new ArchiveDeleteDialogDto();
+
+    protected override void OnInitialized()
+    {
+        dialogService.OnClose += Close;
+    }
+
+    void Close(dynamic result)
+    {
+        dialogResult.IsYes = Convert.ToBoolean(result);
+        OnDialogAction.InvokeAsync(dialogResult);
+    }
+
+    private void Select(MenuItemEventArgs e)
+    {
+        if ((int)e.Value == 0)
+        {
+            dialogResult.ActionType = ActionType.Archive;
+            dialogService.Confirm("Archive the Selected ?", "", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
+        }
+        else if ((int)e.Value == 1)
+        {
+            dialogResult.ActionType = ActionType.Delete;
+            dialogService.Confirm("Delete the Selected ?", "", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
+        }
+    }
+}
