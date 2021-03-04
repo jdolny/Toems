@@ -2,13 +2,14 @@
 @inject ToemsApiService apiService
 @inject NavigationManager navigationManager
 
-<RadzenButton Text="Submit" Click="GetSelected"/>
-<RadzenGrid   SelectionMode="DataGridSelectionMode.Multiple" @bind-Value=@multipleValues
+
+<RadzenButton Text="Submit" Click="GetSelected" />
+<RadzenGrid SelectionMode="DataGridSelectionMode.Multiple" @bind-Value=@multipleValues
             AllowSorting="true" Data="@computers" TItem="EntityComputer" ColumnWidth="200px">
     <Columns>
         <RadzenGridColumn TItem="EntityComputer" Width="40px" Sortable="false" Filterable="false">
             <HeaderTemplate>
-                <RadzenCheckBox TriState="false" TValue="bool" 
+                <RadzenCheckBox TriState="false" TValue="bool" Value="@(computers.Any(i => multipleValues != null && (multipleValues as IEnumerable<EntityComputer>).Contains(i)))"
                                 Change="@(args => multipleValues = args ? computers : null)" />
             </HeaderTemplate>
             <Template Context="computer">
@@ -28,8 +29,9 @@
 
     </Columns>
 </RadzenGrid>
+
 @code {
-    IEnumerable<EntityComputer> computers;
+    IEnumerable<EntityComputer> computers = new List<EntityComputer>();
     object multipleValues;
 
     protected override async Task OnInitializedAsync()

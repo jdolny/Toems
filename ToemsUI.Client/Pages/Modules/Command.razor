@@ -2,26 +2,23 @@
 
 @inject NavigationManager navigationManager
 @inject ToemsApiService apiService
-@inject DialogService dialogService
-@using System.Linq
 
-<ToemsAlertMessage Message="@message" MessageType="@messageType"></ToemsAlertMessage>
+<ArchiveOrDelete Resource="Command Module" SelectedItems="@selectedModules" OnDialogAction="OnDialogAction" />
 
-<ArchiveOrDelete Resource="Command Module" OnDialogAction="OnDialogAction" />
-<br class="clear" />
-<FilterLimit OnChange="OnFilterChange" />
-<br class="clear" />
-<RadzenTextBox Placeholder="Search"/>
-<RadzenGrid SelectionMode="DataGridSelectionMode.Multiple" @bind-Value=@selectedValues Row
-            AllowSorting="true" Data="@modules" TItem="EntityCommandModule"  FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+<ToemsAlertMessage Message="@_message" OnMessageClosed="@(args => _message = string.Empty)" />
+
+<FilterGrid OnFilterUpdate="OnFilterUpdate" />
+
+<RadzenGrid SelectionMode="DataGridSelectionMode.Multiple" @bind-Value=@selectedModules
+            AllowSorting="true" Data="@modules" TItem="EntityCommandModule" RowSelect="StateHasChanged">
     <Columns>
         <RadzenGridColumn TItem="EntityCommandModule" Width="50px" Sortable="false">
             <HeaderTemplate>
                 <RadzenCheckBox TriState="false" TValue="bool"
-                                Change="@(args => selectedValues = args ? modules : null)" />
+                                Change="@(args => selectedModules = args ? modules : null)" />
             </HeaderTemplate>
             <Template Context="module">
-                <RadzenCheckBox TriState="false" Value="@(selectedValues != null && (selectedValues as IEnumerable<EntityCommandModule>).Contains(module))" />
+                <RadzenCheckBox TriState="false" Value="@(selectedModules != null && (selectedModules as IEnumerable<EntityCommandModule>).Contains(module))" />
             </Template>
         </RadzenGridColumn>
         <RadzenGridColumn TItem="EntityCommandModule" Width="150px" Sortable="false">
@@ -30,11 +27,9 @@
                               Click='() => navigationManager.NavigateTo($"/Modules/Command/Details/{module.Id}")'
                               class="btn-block" />
             </Template>
-
         </RadzenGridColumn>
         <RadzenGridColumn TItem="EntityCommandModule" Property="Name" Title="Name" Width="200px" />
         <RadzenGridColumn TItem="EntityCommandModule" Property="Command" Title="Command" />
-
     </Columns>
 </RadzenGrid>
 
@@ -42,46 +37,32 @@
 
 @code {
     IEnumerable<EntityCommandModule> modules;
-    object selectedValues;
+    object selectedModules;
 
-    private string message;
-    private AlertMessageType messageType = AlertMessageType.Success;
+    DtoSearchFilterCategories Filter = new DtoSearchFilterCategories();
 
-    private async Task OnDialogAction(ArchiveDeleteDialogDto dialogResult)
+    private string _message;
+
+    private async Task OnDialogAction(string message)
     {
-        if (dialogResult.IsYes)
-        {
-            var selected = (selectedValues as IEnumerable<EntityCommandModule>).Cast<EntityCommandModule>().ToList();
-            if (dialogResult.ActionType == ActionType.Archive)
-                await apiService.CommandModuleService.Get();
-            else if (dialogResult.ActionType == ActionType.Delete)
-            {
-                foreach (var module in selected)
-                {
-                    var res = await apiService.CommandModuleService.Delete(module.Id);
-                    if (res.Success)
-                    {
-                        message = "Successfully deleted the selected modules.";
-                    }
-                    else
-                    {
-                        message = "Could not delete the selected modules";
-                        messageType = AlertMessageType.Error;
-                    }
-                }
-            }
-            modules = await apiService.CommandModuleService.Get();
-        }
+        _message = message;
+        await BindGrid();
     }
 
-    private async Task OnFilterChange(string limit)
+    public async Task OnFilterUpdate(DtoSearchFilterCategories filter)
     {
-
+        Filter = filter;
+        await BindGrid();
     }
 
     protected override async Task OnInitializedAsync()
     {
-        modules = await apiService.CommandModuleService.Get();
+        await BindGrid();
+    }
+
+    private async Task BindGrid()
+    {
+        modules = await apiService.CommandModuleService.Search(Filter);
     }
 
 }

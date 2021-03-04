@@ -43,16 +43,41 @@ namespace ToemsUI.Client.Services
                         {
                             new NavItem()
                             {
-                                Name = "Search",
+                                Name = "View Command Modules",
                                 Path = "/Modules/Command"
 
                             },
                             new NavItem()
                             {
-                                Name = "Create",
+                                Name = "New Command Module",
                                 Path = "/Modules/Command/Create"
-
                             },
+                            new NavItem()
+                            {
+                                Name = "Details",
+                                RequiresId = true,
+                                Path = "/Modules/Command/Details"
+                            },
+                            new NavItem()
+                            {
+                                Name = "Files",
+                                RequiresId = true
+                            },
+                            new NavItem()
+                            {
+                                Name = "Usages",
+                                RequiresId = true
+                            },
+                            new NavItem()
+                            {
+                                Name = "Categories",
+                                RequiresId = true
+                            },
+                            new NavItem()
+                            {
+                                Name = "External Files",
+                                RequiresId = true
+                            }
 
 
                         }

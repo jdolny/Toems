@@ -32,7 +32,7 @@
     </ChildContent>
 </RadzenHeader>
 <div style="width:100%">
-    <RadzenBody @ref="@body0" @bind-Expanded="@bodyExpanded">
+    <RadzenBody @ref="@body0" @bind-Expanded="@bodyExpanded" class="main-content" >
         <ChildContent>
             <RadzenContentContainer Name="main">
                 @Body
@@ -42,14 +42,10 @@
 </div>
 <RadzenSidebar @ref="@sidebar0" @bind-Expanded="@sidebarExpanded">
     <ChildContent>
-        <DefaultNav />
+        <DefaultNav/>
     </ChildContent>
 </RadzenSidebar>
-<RadzenFooter>
-    <ChildContent>
-       
-    </ChildContent>
-</RadzenFooter>
+
 @code {
 
     RadzenSidebar sidebar0;
@@ -57,8 +53,9 @@
     bool sidebarExpanded = true;
     bool bodyExpanded = false;
 
+
     dynamic themes = new[]
-    {
+{
         new { Text = "Default", Value = "default"},
         new { Text = "Dark", Value="dark" },
         new { Text = "Software", Value = "software"},
@@ -84,4 +81,6 @@
     {
         await state.SetAccessToken();
     }
+
+  
 }

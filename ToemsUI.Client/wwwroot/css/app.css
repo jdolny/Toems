@@ -2,6 +2,7 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #EEF1F7;
 }
 
 a, .btn-link {
@@ -79,7 +80,9 @@ a, .btn-link {
 
 
 .header {
-    background-color: #3D6889;
+    background-color: #2A3541;
+    height: 51px;
+    border-bottom:0;
 }
 
 .rz-panel-menu .rz-navigation-menu .rz-navigation-item .rz-navigation-item-link {
@@ -125,5 +128,71 @@ a, .btn-link {
     overflow: hidden;
     visibility: hidden;
     width: 0;
+}
+
+.sidebar-toggle {
+    border-right: 0;
+    background-color: #2A3541;
+    color: #939EAD;
+}
+.nav-filter {
+    background-color: #35414F;
+    border: none;
+    border-bottom: 1px solid #a6b7da;
+    color: #e4e5e6;
+    display: block;
+    font-size: 14px;
+    margin: auto;
+    outline: none;
+    padding: 6px 4px;
+    width: 80%;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.main-content{
+    margin-left:220px !important;
+}
+
+.actions-bar{
+    margin-left: -16px;
+    margin-top: -16px;
+    margin-right: -16px;
+    background-color:#ffffff;
+    position:fixed;
+    width:100%;
+    z-index:99999;
+}
+
+.actions-menu{
+    width:100px;
+}
+
+.filter-menu{
+    margin-top:50px;
+}
+
+.filter-left{
+    margin-top:35px;
+}
+
+.alert{
+    margin-top: 50px !important;
+}
+
+.form{
+    margin-top: 50px;
+}
+
+.form-textbox{
+    width:100%;
+}
+
+.form-label{
+    margin:0 !important;
+}
+
+.row {
+    margin-bottom:10px;
 }
 

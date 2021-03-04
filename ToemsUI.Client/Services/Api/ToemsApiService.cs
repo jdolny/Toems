@@ -25,5 +25,15 @@ namespace ToemsUI.Client.Services.Api
         {
             get { return new CommandModuleService($"{_baseUrl}/CommandModule", AccessToken); }
         }
+
+        public ModuleService ModuleService
+        {
+            get { return new ModuleService($"{_baseUrl}/Module", AccessToken); }
+        }
+
+        public CategoryService CategoryService
+        {
+            get { return new CategoryService($"{_baseUrl}/Category", AccessToken); }
+        }
     }
 }

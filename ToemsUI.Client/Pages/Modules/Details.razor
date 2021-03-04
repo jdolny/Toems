@@ -1,0 +1,128 @@
+﻿@page "/Modules/Command/Details/{CommandModuleId}"
+@inject ToemsApiService apiService
+@layout DetailsLayout
+
+<ModuleActions Resource="Command Module" Module="@CommandModule" OnDialogAction="OnDialogAction" />
+
+<ToemsAlertMessage Message="@_message" OnMessageClosed="@(args => _message = string.Empty)" />
+
+<EditForm Model="CommandModule" class="form">
+    <RadzenCard>
+        <div class="row">
+            <div class="col-md-6">
+                <RadzenFieldset Text="General">
+                    <div class="row">
+                        <div class="col-md-3 align-items-center d-flex">
+                            <RadzenLabel Text="Display Name" class="form-label" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox Placeholder="Name" @bind-Value="CommandModule.Name" class="form-textbox" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 align-items-center d-flex">
+                            <RadzenLabel Text="GUID" class="form-label" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox Placeholder="GUID" @bind-Value="CommandModule.Guid" class="form-textbox" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 align-items-center d-flex">
+                            <RadzenLabel Text="Description" class="form-label" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextArea Placeholder="Description" @bind-Value="CommandModule.Description" class="form-textbox" />
+                        </div>
+                    </div>
+                </RadzenFieldset>
+            </div>
+
+
+            <div class="col-md-6">
+                <RadzenFieldset Text="Module">
+                    <div class="row">
+                        <div class="col-md-2 align-items-center d-flex">
+                            <RadzenLabel Text="Command" />
+                        </div>
+                        <div class="col-md-10">
+                            <RadzenTextBox Placeholder="Command" @bind-Value="CommandModule.Command" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 align-items-center d-flex">
+                            <RadzenLabel Text="Arguments" />
+                        </div>
+                        <div class="col-md-10">
+                            <RadzenTextBox Placeholder="Arguments" @bind-Value="CommandModule.Arguments" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 align-items-center d-flex">
+                            <RadzenLabel Text="Success Codes" />
+                        </div>
+                        <div class="col-md-10">
+                            <RadzenTextBox Placeholder="Success Codes" @bind-Value="CommandModule.SuccessCodes" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 align-items-center d-flex">
+                            <RadzenLabel Text="Working Directory" />
+                        </div>
+                        <div class="col-md-10">
+                            <RadzenTextBox Placeholder="Working Directory" @bind-Value="CommandModule.WorkingDirectory" />
+                        </div>
+                    </div>
+                </RadzenFieldset>
+            </div>
+
+
+            <RadzenFieldset Text="General">
+                <div class="row">
+                    <div class="col-md-3 align-items-center d-flex">
+                        <RadzenLabel Text="Timeout (Minutes)" class="form-label" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenNumeric TValue="int" @bind-value="CommandModule.Timeout" class="form-textbox" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 align-items-center d-flex">
+                        <RadzenLabel Text="Log Standard Output" class="form-label" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenCheckBox  @bind-Value="CommandModule.RedirectStdOut" class="form-textbox" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 align-items-center d-flex">
+                        <RadzenLabel Text="Log Standard Error" class="form-label" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenCheckBox @bind-Value="CommandModule.RedirectStdError" class="form-textbox" />
+                    </div>
+                </div>
+            </RadzenFieldset>
+
+        </div>
+    </RadzenCard>
+</EditForm>
+
+@code {
+    [Parameter]
+    public string CommandModuleId { get; set; }
+
+    public EntityCommandModule CommandModule { get; set; }
+
+    private string _message;
+
+    private void OnDialogAction(string message)
+    {
+        _message = message;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        CommandModule = await apiService.CommandModuleService.Get(CommandModuleId);
+    }
+}

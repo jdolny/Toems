@@ -33,5 +33,10 @@ namespace ToemsUI.Client.Services.Api
         {
             return await _apiClient.DeleteProtectedAsync($"{_resource}/Delete/{id}");
         }
+
+        public async Task<List<EntityCommandModule>> Search(DtoSearchFilterCategories filter)
+        {
+            return await _apiClient.PostProtectedAsync<List<EntityCommandModule>>($"{_resource}/Search", filter);
+        }
     }
 }

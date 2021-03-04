@@ -9,6 +9,8 @@
     [Parameter]
     public string Message { get; set; }
 
+    [Parameter] public EventCallback OnMessageClosed { get; set; }
+
     private AlertMessageType messageType;
 
     [Parameter]
@@ -40,5 +42,6 @@
     void HideMessage()
     {
         Message = string.Empty;
+        OnMessageClosed.InvokeAsync();
     }
 }

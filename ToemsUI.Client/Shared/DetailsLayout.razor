@@ -9,7 +9,7 @@
 {
     <link href="_content/Radzen.Blazor/css/@(Theme)" rel="stylesheet" />
 }
-
+<RadzenDialog />
 <RadzenHeader>
     <ChildContent>
         <div class="row justify-content-start align-items-center">
@@ -32,7 +32,7 @@
 <div style="width:100%">
 
 
-    <RadzenBody @ref="@body0" @bind-Expanded="@bodyExpanded">
+    <RadzenBody @ref="@body0" @bind-Expanded="@bodyExpanded" class="main-content">
         <ChildContent>
             <RadzenContentContainer Name="main">
                 @Body
@@ -42,14 +42,10 @@
 </div>
 <RadzenSidebar @ref="@sidebar0" @bind-Expanded="@sidebarExpanded">
     <ChildContent>
-        <DetailsNav Id="@Id" Resource="@Resource" />
+        <DetailsNav Id="@Id" Resource="@Resource" SubResource="@SubResource" />
     </ChildContent>
 </RadzenSidebar>
-<RadzenFooter>
-    <ChildContent>
-      
-    </ChildContent>
-</RadzenFooter>
+
 @code {
 
     RadzenSidebar sidebar0;
@@ -58,6 +54,7 @@
     bool bodyExpanded = false;
     public string Id { get; set; }
     public string Resource { get; set; }
+    public string SubResource { get; set; }
 
     dynamic themes = new[]
 {
@@ -91,8 +88,12 @@
             Resource = "Computers";
             return;
         }
-
-
-
+        if ((this.Body.Target as RouteView)?.RouteData.RouteValues?.TryGetValue("CommandModuleId", out id) == true)
+        {
+            Id = id?.ToString();
+            Resource = "Modules";
+            SubResource = "Command Modules";
+            return;
+        }
     }
 }

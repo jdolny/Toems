@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using Toems_ApplicationApi.Controllers.Authorization;
 using Toems_Common;
 using Toems_Common.Dto;
@@ -10,6 +11,7 @@ using Toems_Service.Entity;
 
 namespace Toems_ApplicationApi.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CategoryController : ApiController
     {
         private readonly ServiceCategory _categoryService;

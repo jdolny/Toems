@@ -35,14 +35,28 @@
             <RadzenPanelMenu>
                 @foreach (var category in navItems.Where(x => x.Name.Equals(Resource)))
                 {
-                        @if (category.Children != null)
+                    @if (category.Children != null)
+                    {
+                        if (string.IsNullOrEmpty(SubResource))
                         {
                             @foreach (var example in category.Children.Where(x => x.RequiresId))
                             {
-                                <RadzenPanelMenuItem @bind-Expanded="@example.Expanded" Text="@example.Name" Path="@example.Path" Icon="@example.Icon"/>
-                                   
+                                <RadzenPanelMenuItem @bind-Expanded="@example.Expanded" Text="@example.Name" Path="@example.Path" Icon="@example.Icon" />
+
                             }
                         }
+                        else
+                        {
+                            @foreach (var example in category.Children.Where(x => x.Name.Equals(SubResource)))
+                            {
+                                @foreach (var sub in example.Children.Where(x => x.RequiresId))
+                                {
+                                    var Path = $"{sub.Path}/{Id}";
+                                    <RadzenPanelMenuItem Text="@sub.Name" Path="@Path" />
+                                }
+                            }
+                        }
+                    }
                 }
             </RadzenPanelMenu>
         </RadzenTabsItem>
@@ -55,6 +69,9 @@
 
     [Parameter]
     public string Resource { get; set; }
+
+    [Parameter]
+    public string SubResource { get; set; }
 
     RadzenTabsItem MainTab;
 

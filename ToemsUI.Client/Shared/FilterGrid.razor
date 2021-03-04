@@ -1,0 +1,90 @@
+﻿@inject ToemsApiService apiService
+
+
+<div class="filter-menu">
+
+    <div class="limit-dropdown-con">
+        <RadzenSelectBar @bind-Value=@categoryType TValue="string" Change="OnCategoryTypeChanged" Style="float:right;">
+            <Items>
+                <RadzenSelectBarItem Text="And" Value="@And" />
+                <RadzenSelectBarItem Text="Or" Value="@Or" />
+            </Items>
+        </RadzenSelectBar>
+        <br class="clear" />
+        <RadzenDropDown @ref="limitDropDown" TValue="string" Change="OnLimitChanged" Placeholder="Filter Limit"
+                        Data=@Limits />
+
+
+
+        <RadzenDropDown AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        @bind-Value=@selectedCategories Multiple="true" Placeholder="Any Category" Data=@Categories TextProperty="Name"
+                        Change=OnCategoryChanged />
+
+        <br class="clear" />
+
+    </div>
+    <div class="filter-left">
+        <RadzenTextBox Placeholder="Search" Change=@(args => OnSearchChange(args)) />
+    </div>
+</div>
+    <br class="clear" />
+
+
+
+
+    @code {
+        [Parameter]
+        public EventCallback<DtoSearchFilterCategories> OnFilterUpdate { get; set; }
+
+        public IEnumerable<EntityCategory> Categories;
+
+        IEnumerable<EntityCategory> selectedCategories;
+
+        string categoryType;
+
+        public List<string> Limits;
+
+        RadzenDropDown<string> limitDropDown;
+
+        private string And = "And Category";
+
+        private string Or = "Or Category";
+
+        public DtoSearchFilterCategories Filter = new DtoSearchFilterCategories();
+
+        protected void OnLimitChanged()
+        {
+            var limit = limitDropDown.SelectedItem.ToString();
+            Filter.Limit = limit == "All" ? int.MaxValue : Convert.ToInt32(limit);
+            OnFilterUpdate.InvokeAsync(Filter);
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            Limits = new List<string> { "25", "100", "250", "500", "1000", "5000", "All" };
+            Categories = await apiService.CategoryService.Get();
+        }
+
+        void OnCategoryChanged()
+        {
+            foreach (var cat in selectedCategories)
+            {
+                Filter.Categories.Add(cat.Name);
+            }
+            OnFilterUpdate.InvokeAsync(Filter);
+        }
+
+        private void OnCategoryTypeChanged()
+        {
+            Filter.CategoryType = categoryType;
+            OnFilterUpdate.InvokeAsync(Filter);
+        }
+
+        private void OnSearchChange(string searchText)
+        {
+            Filter.SearchText = searchText;
+            OnFilterUpdate.InvokeAsync(Filter);
+        }
+
+
+    }

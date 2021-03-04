@@ -1,50 +1,47 @@
 ﻿@inject DefaultNavigationService navService
 
 
-<div style="padding: 1rem">
-    <input placeholder="Search " class="rz-textbox" type="search" @oninput="@FilterPanelMenu" style="width: 100%" />
-</div>
+<input placeholder="Search " class="nav-filter" type="search" @oninput="@FilterPanelMenu" />
+
 
 <RadzenTabs>
     <Tabs>
         <RadzenTabsItem Text="Main" Selected="true">
             <RadzenPanelMenu>
                 @foreach (var category in navItems)
-    {
-                <RadzenPanelMenuItem @bind-Expanded="@category.Expanded" Text="@category.Name" Path="@category.Path" Icon="@category.Icon">
-                    @if (category.Children != null)
-            {
-                    @foreach (var example in category.Children.Where(x => !x.RequiresId))
                 {
-                    <RadzenPanelMenuItem @bind-Expanded="@example.Expanded" Text="@example.Name" Path="@example.Path" Icon="@example.Icon">
-                        @if (example.Children != null)
+                    <RadzenPanelMenuItem @bind-Expanded="@category.Expanded" Text="@category.Name" Path="@category.Path" Icon="@category.Icon">
+                        @if (category.Children != null)
                         {
-                        @foreach (var sub in example.Children)
+                            @foreach (var example in category.Children.Where(x => !x.RequiresId))
                             {
-                        <RadzenPanelMenuItem Text="@sub.Name" Path="@sub.Path" Icon="@sub.Icon"/>
+                                <RadzenPanelMenuItem @bind-Expanded="@example.Expanded" Text="@example.Name" Path="@example.Path" Icon="@example.Icon">
+                                    @if (example.Children != null)
+                                    {
+                                        @foreach (var sub in example.Children.Where(x => !x.RequiresId))
+                                        {
+                                            <RadzenPanelMenuItem Text="@sub.Name" Path="@sub.Path" Icon="@sub.Icon" />
+                                        }
+                                    }
+                                </RadzenPanelMenuItem>
                             }
                         }
                     </RadzenPanelMenuItem>
                 }
-            }
-                </RadzenPanelMenuItem>
-    }
             </RadzenPanelMenu>
         </RadzenTabsItem>
-        <RadzenTabsItem Text="Selected Item" Selected="false">
-        </RadzenTabsItem>
+       
     </Tabs>
 </RadzenTabs>
 
 @code {
+
     IEnumerable<NavItem> navItems;
 
     protected override void OnInitialized()
     {
-
-        navItems = navService.NavItems;
+        navItems = navService.NavItems; 
     }
-
 
     void FilterPanelMenu(ChangeEventArgs args)
     {
@@ -52,8 +49,5 @@
 
         navItems = navService.Filter(term);
     }
-
-    public string ID { get; set; }
-
 
 }

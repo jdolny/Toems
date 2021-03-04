@@ -1,7 +1,7 @@
 ﻿.rz-panel-menu .rz-navigation-item-icon {
     -webkit-font-smoothing: antialiased;
     font-family: icomoon,Flaticon;
-    font-size: 2em;
+    font-size: 1.5em;
     font-style: normal;
     font-weight: normal;
     height: 100%;
@@ -10,15 +10,26 @@
     speak: none;
     text-indent: 0;
     top: 0px;
+    color: #939EAD;
 }
 
-.sidebar {
+.rz-sidebar {
     border-bottom: 0;
     float: left;
-    background: #2b2b2b !important;
+    background: #35414F !important;
     height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
-    width: 65px;
+    width: 220px !important;
     border-right: 1px solid #252424;
+}
+
+.rz-panel-menu {
+    background-color: #35414F;
+    color: #939EAD;
+    
+}
+
+body:not(.rz-default-scrollbars) ::-webkit-scrollbar {
+    background-color: #35414F;
 }

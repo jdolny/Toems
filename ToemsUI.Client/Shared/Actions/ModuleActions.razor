@@ -1,0 +1,94 @@
+﻿@inject DialogService dialogService
+@inject ToemsApiService apiService
+
+<div class="actions-bar">
+    <RadzenMenu Click="@(args => Select(args))" class="actions-menu">
+        <RadzenMenuItem Text="Actions" Value="-1">
+            <RadzenMenuItem Text="Update Module" Value="0"></RadzenMenuItem>
+            <RadzenMenuItem Text="Archive Module" Value="1"></RadzenMenuItem>
+            <RadzenMenuItem Text="Delete Module" Value="2"></RadzenMenuItem>
+        </RadzenMenuItem>
+    </RadzenMenu>
+</div>
+@code {
+        [Parameter]
+        public string Resource { get; set; }
+
+        [Parameter] public EventCallback<string> OnDialogAction { get; set; }
+
+        [Parameter] public object Module { get; set; }
+
+    private ActionType actionType { get; set; }
+    private string message;
+
+
+    protected override void OnInitialized()
+    {
+        dialogService.OnClose += Close;
+    }
+
+    async void Close(dynamic result)
+    {
+        var isConfirmed = Convert.ToBoolean(result);
+        if (!isConfirmed) return;
+
+        switch (Resource)
+        {
+            case "Command Module":
+                await CommandModuleAction();
+                break;
+        }
+
+
+        await OnDialogAction.InvokeAsync(message);
+    }
+
+    private async Task CommandModuleAction()
+    {
+        var module = Module as EntityCommandModule;
+
+        if (actionType == ActionType.Archive)
+        {
+
+            var res = await apiService.ModuleService.Archive(module.Id, EnumModule.ModuleType.Command);
+            if (res.Success)
+            {
+                message = "Successfully archived the selected modules.";
+            }
+            else
+            {
+                message = $"Error: {res.ErrorMessage}";
+
+            }
+
+        }
+        else if (actionType == ActionType.Delete)
+        {
+
+            var res = await apiService.CommandModuleService.Delete(module.Id);
+            if (res.Success)
+            {
+                message = "Successfully deleted the selected modules.";
+            }
+            else
+            {
+                message = $"Error: {res.ErrorMessage}";
+            }
+
+        }
+    }
+
+    private void Select(MenuItemEventArgs e)
+    {
+        if ((int)e.Value == 1)
+        {
+            actionType = ActionType.Archive;
+            dialogService.Confirm("Archive the Selected ?", "", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
+        }
+        else if ((int)e.Value == 2)
+        {
+            actionType = ActionType.Delete;
+            dialogService.Confirm("Delete the Selected ?", "", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
+        }
+    }
+}
