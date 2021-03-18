@@ -2,11 +2,13 @@
 @inject ToemsApiService apiService
 @layout DetailsLayout
 
-<ModuleActions Resource="Command Module" Module="@CommandModule" OnDialogAction="OnDialogAction" />
+<ModuleActions Resource="Command Module" Module="@CommandModule" OnAction="OnAction" />
 
 <ToemsAlertMessage Message="@_message" OnMessageClosed="@(args => _message = string.Empty)" />
 
 <EditForm Model="CommandModule" class="form">
+   
+
     <RadzenCard>
         <div class="row">
             <div class="col-md-6">
@@ -38,9 +40,41 @@
                 </RadzenFieldset>
             </div>
 
-
             <div class="col-md-6">
-                <RadzenFieldset Text="Module">
+                <RadzenFieldset Text="Sec 1">
+                    <div class="row">
+                        <div class="col-md-3 align-items-center d-flex">
+                            <RadzenLabel Text="Timeout (Minutes)" class="form-label" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenNumeric TValue="int" @bind-value="CommandModule.Timeout" class="form-textbox" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 align-items-center d-flex">
+                            <RadzenLabel Text="Log Standard Output" class="form-label" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenCheckBox @bind-Value="CommandModule.RedirectStdOut" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 align-items-center d-flex">
+                            <RadzenLabel Text="Log Standard Error" class="form-label" />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenCheckBox @bind-Value="CommandModule.RedirectStdError" />
+                        </div>
+                    </div>
+                </RadzenFieldset>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <RadzenFieldset Text="">
                     <div class="row">
                         <div class="col-md-2 align-items-center d-flex">
                             <RadzenLabel Text="Command" />
@@ -75,35 +109,6 @@
                     </div>
                 </RadzenFieldset>
             </div>
-
-
-            <RadzenFieldset Text="General">
-                <div class="row">
-                    <div class="col-md-3 align-items-center d-flex">
-                        <RadzenLabel Text="Timeout (Minutes)" class="form-label" />
-                    </div>
-                    <div class="col-md-8">
-                        <RadzenNumeric TValue="int" @bind-value="CommandModule.Timeout" class="form-textbox" />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-3 align-items-center d-flex">
-                        <RadzenLabel Text="Log Standard Output" class="form-label" />
-                    </div>
-                    <div class="col-md-8">
-                        <RadzenCheckBox  @bind-Value="CommandModule.RedirectStdOut" class="form-textbox" />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-3 align-items-center d-flex">
-                        <RadzenLabel Text="Log Standard Error" class="form-label" />
-                    </div>
-                    <div class="col-md-8">
-                        <RadzenCheckBox @bind-Value="CommandModule.RedirectStdError" class="form-textbox" />
-                    </div>
-                </div>
-            </RadzenFieldset>
-
         </div>
     </RadzenCard>
 </EditForm>
@@ -112,11 +117,11 @@
     [Parameter]
     public string CommandModuleId { get; set; }
 
-    public EntityCommandModule CommandModule { get; set; }
+    public EntityCommandModule CommandModule = new EntityCommandModule();
 
     private string _message;
 
-    private void OnDialogAction(string message)
+    private void OnAction(string message)
     {
         _message = message;
     }

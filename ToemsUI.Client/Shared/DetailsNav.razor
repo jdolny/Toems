@@ -19,7 +19,7 @@
                                 <RadzenPanelMenuItem @bind-Expanded="@example.Expanded" Text="@example.Name" Path="@example.Path" Icon="@example.Icon">
                                     @if (example.Children != null)
                                     {
-                                        @foreach (var sub in example.Children)
+                                        @foreach (var sub in example.Children.Where(x => !x.RequiresId))
                                         {
                                             <RadzenPanelMenuItem Text="@sub.Name" Path="@sub.Path" Icon="@sub.Icon" />
                                         }

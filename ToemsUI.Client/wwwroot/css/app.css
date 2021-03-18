@@ -166,6 +166,7 @@ a, .btn-link {
 
 .actions-menu{
     width:100px;
+    margin-left:15px !important;
 }
 
 .filter-menu{
@@ -178,6 +179,7 @@ a, .btn-link {
 
 .alert{
     margin-top: 50px !important;
+    margin-bottom:-50px !important;
 }
 
 .form{

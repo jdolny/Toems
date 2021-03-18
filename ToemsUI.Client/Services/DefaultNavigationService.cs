@@ -61,7 +61,8 @@ namespace ToemsUI.Client.Services
                             new NavItem()
                             {
                                 Name = "Files",
-                                RequiresId = true
+                                RequiresId = true,
+                                Path = "/Modules/Command/Files"
                             },
                             new NavItem()
                             {

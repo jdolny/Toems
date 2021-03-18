@@ -1,0 +1,70 @@
+﻿@inject ToemsApiService apiService
+@inject IJSRuntime JSRuntime
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+
+<div id="uploader" style="margin-top:50px;"></div>
+
+@code {
+    [Parameter]
+    public string Resource { get; set; }
+
+    [Parameter] public object Module { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
+    [Parameter] public EventCallback<string> OnUploadComplete { get; set; }
+
+    private static Action<string> action;
+
+    private string _moduleGuid;
+
+    private int _moduleId;
+
+    private EnumModule.ModuleType _enumModule;
+
+    protected override void OnInitialized()
+    {
+        action = UpdateMessage;
+    }
+
+    private void UpdateMessage(string message)
+    {
+        if(!string.IsNullOrEmpty(message))
+            OnUploadComplete.InvokeAsync(message);
+        else
+            OnUploadComplete.InvokeAsync("Successfully Uploaded Files");
+    }
+
+
+    private void ResourceSelector()
+    {
+        switch (Resource)
+        {
+            case "Command Module":
+                var module = Module as EntityCommandModule;
+                _moduleGuid = module.Guid;
+                _moduleId = module.Id;
+                _enumModule = EnumModule.ModuleType.Command;
+                break;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        ResourceSelector();
+
+        var userState = authenticationState.Result;
+        var token = userState.User.FindFirst("AccessToken").Value;
+
+        await JSRuntime.InvokeAsync<object>("FineUploader", new object[] { token, Configuration["Toems-API"], _moduleGuid, _moduleId, _enumModule });
+    }
+
+    [JSInvokable]
+    public static void OnUploadSuccess()
+    {
+        action.Invoke("");
+    }
+}

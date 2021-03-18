@@ -1,0 +1,41 @@
+﻿@page "/Modules/Command/Files/{CommandModuleId}"
+@inject ToemsApiService apiService
+@layout DetailsLayout
+
+
+@if (CommandModule != null)
+{
+<ModuleActions Resource="Command Module" Module="@CommandModule" OnAction="OnAction" />
+
+<ToemsAlertMessage Message="@_message" OnMessageClosed="@(args => _message = string.Empty)" />
+
+<FileUploader Resource="Command Module" Module="@CommandModule" OnUploadComplete="OnUploadComplete"></FileUploader>
+}
+
+@code {
+    [Parameter]
+    public string CommandModuleId { get; set; }
+
+    public EntityCommandModule CommandModule;
+
+    private string _message;
+
+    private void OnAction(string message)
+    {
+        _message = message;
+    }
+
+    private void OnUploadComplete(string message)
+    {
+        _message = message;
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        CommandModule = await apiService.CommandModuleService.Get(CommandModuleId);
+        StateHasChanged();
+    }
+
+
+}

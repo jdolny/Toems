@@ -1,7 +1,6 @@
 ﻿@page "/Computers/Details/{ComputerId}/"
 @inject ToemsApiService apiService
 @layout DetailsLayout
-<ComputerActions Id="@ComputerId" />
 
 
 <EditForm Model="computer" OnInvalidSubmit="editComputerAsync">

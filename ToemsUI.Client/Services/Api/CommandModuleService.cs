@@ -38,5 +38,14 @@ namespace ToemsUI.Client.Services.Api
         {
             return await _apiClient.PostProtectedAsync<List<EntityCommandModule>>($"{_resource}/Search", filter);
         }
+
+        public async Task<DtoActionResult> Post(EntityCommandModule module)
+        {
+            return await _apiClient.PostProtectedAsync<DtoActionResult>($"{_resource}/Post", module);
+        }
+        public async Task<DtoActionResult> Put(EntityCommandModule module)
+        {
+            return await _apiClient.PutProtectedAsync<DtoActionResult>($"{_resource}/Put/{module.Id}", module);
+        }
     }
 }

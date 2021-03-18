@@ -2,7 +2,7 @@
 @inject ToemsApiService apiService
 
 <div class="actions-bar">
-    <RadzenMenu Click="@(args => Select(args))" class="actions-menu">
+    <RadzenMenu Click="@(args => SelectAction(args))" class="actions-menu">
         <RadzenMenuItem Text="Actions" Value="-1">
             <RadzenMenuItem Text="Update Module" Value="0"></RadzenMenuItem>
             <RadzenMenuItem Text="Archive Module" Value="1"></RadzenMenuItem>
@@ -10,17 +10,18 @@
         </RadzenMenuItem>
     </RadzenMenu>
 </div>
+
 @code {
-        [Parameter]
-        public string Resource { get; set; }
+    [Parameter]
+    public string Resource { get; set; }
 
-        [Parameter] public EventCallback<string> OnDialogAction { get; set; }
+    [Parameter] public EventCallback<string> OnAction { get; set; }
 
-        [Parameter] public object Module { get; set; }
+    [Parameter] public object Module { get; set; }
 
     private ActionType actionType { get; set; }
-    private string message;
 
+    private string message;
 
     protected override void OnInitialized()
     {
@@ -31,16 +32,18 @@
     {
         var isConfirmed = Convert.ToBoolean(result);
         if (!isConfirmed) return;
+        await ResourceSelector();
 
+    }
+
+    private async Task ResourceSelector()
+    {
         switch (Resource)
         {
             case "Command Module":
                 await CommandModuleAction();
                 break;
         }
-
-
-        await OnDialogAction.InvokeAsync(message);
     }
 
     private async Task CommandModuleAction()
@@ -76,19 +79,42 @@
             }
 
         }
+        else if (actionType == ActionType.Update)
+        {
+
+            var res = await apiService.CommandModuleService.Put(module);
+            if (res.Success)
+            {
+                message = "Successfully updated module";
+            }
+            else
+            {
+                message = $"Error: {res.ErrorMessage}";
+            }
+
+        }
     }
 
-    private void Select(MenuItemEventArgs e)
+    private async Task SelectAction(MenuItemEventArgs e)
     {
-        if ((int)e.Value == 1)
+        message = string.Empty;
+
+        if ((int)e.Value == 0)
+        {
+            actionType = ActionType.Update;
+            await ResourceSelector();
+        }
+        else if ((int)e.Value == 1)
         {
             actionType = ActionType.Archive;
-            dialogService.Confirm("Archive the Selected ?", "", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
+            await dialogService.Confirm("Archive the Selected ?", "", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
         }
         else if ((int)e.Value == 2)
         {
             actionType = ActionType.Delete;
-            dialogService.Confirm("Delete the Selected ?", "", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
+            await dialogService.Confirm("Delete the Selected ?", "", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
         }
+
+        await OnAction.InvokeAsync(message);
     }
 }
