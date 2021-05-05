@@ -156,6 +156,8 @@
 
         public const string NewProvisionDefaultGroup = "NewProvisonDefaultGroup";
 
+        public const string ImageDirectSmb = "Image Direct SMB";
+
         public const int GlobalVersion = 133;
 
     }

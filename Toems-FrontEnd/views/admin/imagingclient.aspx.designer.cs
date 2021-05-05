@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.admin {
-    
-    
-    public partial class ImagingClient {
-        
+namespace Toems_FrontEnd.views.admin
+{
+
+
+    public partial class ImagingClient
+    {
+
         /// <summary>
         /// btnUpdateSettings control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnUpdateSettings;
-        
+
         /// <summary>
         /// txtArguments control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtArguments;
-        
+
         /// <summary>
         /// chkIpxeSsl control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkIpxeSsl;
-        
+
         /// <summary>
         /// txtPort control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtPort;
-        
+
         /// <summary>
         /// txtImagingTimeout control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtImagingTimeout;
-        
+
         /// <summary>
         /// ddlRegistration control.
         /// </summary>
@@ -65,7 +67,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlRegistration;
-        
+
         /// <summary>
         /// ddlKeepNamePrompt control.
         /// </summary>
@@ -74,5 +76,14 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlKeepNamePrompt;
+
+        /// <summary>
+        /// chkDirectSMB control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkDirectSMB;
     }
 }

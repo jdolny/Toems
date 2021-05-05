@@ -16,6 +16,17 @@ namespace Toems_FrontEnd.views.admin
 
         protected void btnUpdateSettings_OnClick(object sender, EventArgs e)
         {
+            if(chkDirectSMB.Checked)
+            {
+                var storageType = GetSetting(SettingStrings.StorageType);
+                if(storageType.Equals("Local"))
+                {
+                    EndUserMessage = "Direct SMB Imaging Cannot Be Used When The Global Storage Type Is Set To Local.  You Must First Change Your Storage Type.";
+                    return;
+                }
+
+            }
+
             var listSettings = new List<EntitySetting>
             {
                 new EntitySetting
@@ -53,9 +64,14 @@ namespace Toems_FrontEnd.views.admin
                 Name = SettingStrings.DisabledRegNamePrompt,
                 Value = ddlKeepNamePrompt.Text,
                 Id = Call.SettingApi.GetSetting(SettingStrings.DisabledRegNamePrompt).Id
-            }
+                    },
 
-
+                new EntitySetting
+            {
+                Name = SettingStrings.ImageDirectSmb,
+                Value = chkDirectSMB.Checked.ToString(),
+                Id = Call.SettingApi.GetSetting(SettingStrings.ImageDirectSmb).Id
+                    },
             };
 
             EndUserMessage = Call.SettingApi.UpdateSettings(listSettings)
@@ -65,6 +81,7 @@ namespace Toems_FrontEnd.views.admin
 
         protected void Page_Load(object sender, EventArgs e)
         {
+
             RequiresAuthorization(AuthorizationStrings.Administrator);
             if (IsPostBack) return;
             txtArguments.Text = GetSetting(SettingStrings.GlobalImagingArguments);
@@ -74,6 +91,8 @@ namespace Toems_FrontEnd.views.admin
                 chkIpxeSsl.Checked = true;
             ddlRegistration.Text = GetSetting(SettingStrings.RegistrationEnabled);
             ddlKeepNamePrompt.Text = GetSetting(SettingStrings.DisabledRegNamePrompt);
+            if (GetSetting(SettingStrings.ImageDirectSmb) == "True")
+                chkDirectSMB.Checked = true;
         }
     }
 }

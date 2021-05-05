@@ -36,7 +36,16 @@ namespace Toems_Service.Workflows
             var uow = new UnitOfWork();
             var imagesToReplicate = new List<EntityImage>();
             Logger.Info("Starting Image Replication To Com Servers");
-            if (!ServiceSetting.GetSettingValue(SettingStrings.StorageType).Equals("SMB")) return true;
+            if (!ServiceSetting.GetSettingValue(SettingStrings.StorageType).Equals("SMB")) 
+            {
+                Logger.Info("Image replication is not used when storage type is set to local.");
+                return true;
+            }
+            if (ServiceSetting.GetSettingValue(SettingStrings.ImageDirectSmb).Equals("True"))
+            {
+                Logger.Info("Image replication is not used when direct smb imaging is enabled.");
+                return true; //Don't need to sync images when direct to smb is used.
+            }
 
             //find all images that need copied from SMB share to com servers
             var completedImages = uow.ImageRepository.Get(x => !string.IsNullOrEmpty(x.LastUploadGuid));

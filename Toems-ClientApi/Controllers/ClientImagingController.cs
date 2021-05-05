@@ -441,6 +441,15 @@ namespace Toems_ClientApi.Controllers
             return _response;
         }
 
+
+        [HttpGet]
+        [ClientImagingAuth]
+        public HttpResponseMessage GetSmbShare()
+        {
+            _response.Content = new StringContent(new ClientImagingServices().GetSmbShare(), Encoding.UTF8, "text/plain");
+            return _response;
+        }
+        
         [HttpPost]
         [ClientImagingAuth]
         public HttpResponseMessage UpdateLegacyBcd()

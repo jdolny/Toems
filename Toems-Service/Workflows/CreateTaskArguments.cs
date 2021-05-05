@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
@@ -90,6 +91,9 @@ namespace Toems_Service.Workflows
             if (Convert.ToBoolean(_imageProfile.WebCancel))
                 AppendString("web_cancel=true");
             AppendString("task_completed_action=" + "\"" + _imageProfile.TaskCompletedAction + "\"");
+
+            if (ServiceSetting.GetSettingValue(SettingStrings.ImageDirectSmb).Equals("True"))
+                AppendString("direct_smb=true");
 
             if (_direction.Contains("upload"))
             {

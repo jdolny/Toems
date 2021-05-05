@@ -1295,6 +1295,17 @@ namespace Toems_Service
 
         }
 
+        public string GetSmbShare()
+        {
+            var smb = new SMB();
+            smb.Username = ServiceSetting.GetSettingValue(SettingStrings.StorageUsername);
+            smb.Domain = ServiceSetting.GetSettingValue(SettingStrings.StorageDomain);
+            smb.SharePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);
+            smb.Password = new EncryptionServices().DecryptText(ServiceSetting.GetSettingValue(SettingStrings.StoragePassword));
+
+            smb.SharePath = smb.SharePath.Replace(@"\", "/").TrimEnd('/');
+            return JsonConvert.SerializeObject(smb);
+        }
         public void CloseUpload(int taskId, int port)
         {
             var activeUploadSession = new ServiceActiveMulticastSession().GetAll().Where(x => x.UploadTaskId == taskId && x.Port == port).FirstOrDefault();

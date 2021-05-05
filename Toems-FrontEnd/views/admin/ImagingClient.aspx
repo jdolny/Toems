@@ -65,6 +65,14 @@
             <asp:ListItem>No</asp:ListItem>
         </asp:DropDownList>
     </div>
+
+     <div class="size-4 column">
+        Upload / Deploy Direct to SMB:
+    </div>
+      <div class="size-setting column hidden-check">
+        <asp:CheckBox ID="chkDirectSMB" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkDirectSMB"></label>
+    </div>
   
   
 
