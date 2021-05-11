@@ -59,7 +59,7 @@ Groups
         <label for="chkPreventShutdown">Toggle</label>
     </div>
     <br class="clear"/>
-   
+
    
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">

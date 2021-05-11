@@ -87,6 +87,7 @@
     <div class="size-5 column">
         <asp:TextBox ID="txtPriority" runat="server" CssClass="textbox"></asp:TextBox>
     </div>
+
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
     <h1><strong>Actions Menu</strong></h1>

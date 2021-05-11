@@ -64,6 +64,9 @@ namespace Toems_FrontEnd.views.policies
             policy.CompletedAction = (EnumPolicy.CompletedAction)Enum.Parse(typeof(EnumPolicy.CompletedAction), ddlCompletedAction.SelectedValue);
             policy.RunInventory = (EnumPolicy.InventoryAction)Enum.Parse(typeof(EnumPolicy.InventoryAction), ddlInventory.SelectedValue);
             policy.RunLoginTracker = chkLoginTracker.Checked;
+            policy.JoinDomain = chkJoinDomain.Checked;
+            policy.DomainOU = txtDomainOU.Text;
+            policy.ImagePrepCleanup = chkImagePrepCleanup.Checked;
             policy.RemoveInstallCache = chkDeleteCache.Checked;
             policy.RemoteAccess = (EnumPolicy.RemoteAccess)Enum.Parse(typeof(EnumPolicy.RemoteAccess), ddlRemoteAccess.SelectedValue);
             policy.MissedAction = (EnumPolicy.FrequencyMissedAction)Enum.Parse(typeof(EnumPolicy.FrequencyMissedAction), ddlMissed.SelectedValue);

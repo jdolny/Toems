@@ -74,6 +74,28 @@
 
         <br class="clear"/>
        
+    <div class="size-4 column">
+            Domain Name:
+        </div>
+        <div class="size-5 column">
+            <asp:TextBox ID="txtDomainName" runat="server" CssClass="textbox"></asp:TextBox>
+        </div>
+        <br class="clear"/>
+
+          <div class="size-4 column">
+            Domain Join Username (NetBIOS Format):
+        </div>
+        <div class="size-5 column">
+            <asp:TextBox ID="txtDomainUsername" runat="server" CssClass="textbox"></asp:TextBox>
+        </div>
+        <br class="clear"/>
+     <div class="size-4 column">
+            Domain Join Password:
+        </div>
+        <div class="size-5 column">
+            <asp:TextBox ID="txtDomainPassword" runat="server" CssClass="textbox password" TextMode="Password"></asp:TextBox>
+        </div>
+        <br class="clear"/>
     
         <div class="size-4 column">
             Client MSI Arguments:

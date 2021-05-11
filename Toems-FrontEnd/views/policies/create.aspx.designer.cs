@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.policies {
-    
-    
-    public partial class create {
-        
+namespace Toems_FrontEnd.views.policies
+{
+
+
+    public partial class create
+    {
+
         /// <summary>
         /// btnSubmit control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnSubmit;
-        
+
         /// <summary>
         /// txtName control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtName;
-        
+
         /// <summary>
         /// txtDescription control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtDescription;
-        
+
         /// <summary>
         /// ddlCondition control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlCondition;
-        
+
         /// <summary>
         /// ddlConditionFailedAction control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlConditionFailedAction;
-        
+
         /// <summary>
         /// ddlTrigger control.
         /// </summary>
@@ -65,7 +67,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlTrigger;
-        
+
         /// <summary>
         /// ddlFrequency control.
         /// </summary>
@@ -74,7 +76,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlFrequency;
-        
+
         /// <summary>
         /// divMissed control.
         /// </summary>
@@ -83,7 +85,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divMissed;
-        
+
         /// <summary>
         /// ddlMissed control.
         /// </summary>
@@ -92,7 +94,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlMissed;
-        
+
         /// <summary>
         /// divWeekly control.
         /// </summary>
@@ -101,7 +103,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divWeekly;
-        
+
         /// <summary>
         /// ddlWeekDay control.
         /// </summary>
@@ -110,7 +112,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlWeekDay;
-        
+
         /// <summary>
         /// divMonthly control.
         /// </summary>
@@ -119,7 +121,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divMonthly;
-        
+
         /// <summary>
         /// ddlMonthDay control.
         /// </summary>
@@ -128,7 +130,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlMonthDay;
-        
+
         /// <summary>
         /// divXHours control.
         /// </summary>
@@ -137,7 +139,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divXHours;
-        
+
         /// <summary>
         /// txtHours control.
         /// </summary>
@@ -146,7 +148,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtHours;
-        
+
         /// <summary>
         /// divXDays control.
         /// </summary>
@@ -155,7 +157,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divXDays;
-        
+
         /// <summary>
         /// txtDays control.
         /// </summary>
@@ -164,7 +166,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtDays;
-        
+
         /// <summary>
         /// ddlScheduleStart control.
         /// </summary>
@@ -173,7 +175,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlScheduleStart;
-        
+
         /// <summary>
         /// ddlScheduleEnd control.
         /// </summary>
@@ -182,7 +184,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlScheduleEnd;
-        
+
         /// <summary>
         /// txtStartDate control.
         /// </summary>
@@ -191,7 +193,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtStartDate;
-        
+
         /// <summary>
         /// ddlCompletedAction control.
         /// </summary>
@@ -200,7 +202,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlCompletedAction;
-        
+
         /// <summary>
         /// ddlInventory control.
         /// </summary>
@@ -209,7 +211,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlInventory;
-        
+
         /// <summary>
         /// chkLoginTracker control.
         /// </summary>
@@ -218,7 +220,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkLoginTracker;
-        
+
         /// <summary>
         /// chkApplicationMonitor control.
         /// </summary>
@@ -227,7 +229,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkApplicationMonitor;
-        
+
         /// <summary>
         /// ddlRemoteAccess control.
         /// </summary>
@@ -236,7 +238,34 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlRemoteAccess;
-        
+
+        /// <summary>
+        /// chkJoinDomain control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkJoinDomain;
+
+        /// <summary>
+        /// txtDomainOU control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtDomainOU;
+
+        /// <summary>
+        /// chkImagePrepCleanup control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkImagePrepCleanup;
+
         /// <summary>
         /// ddlWinUpdates control.
         /// </summary>
@@ -245,7 +274,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlWinUpdates;
-        
+
         /// <summary>
         /// ddlExecType control.
         /// </summary>
@@ -254,7 +283,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlExecType;
-        
+
         /// <summary>
         /// ddlErrorAction control.
         /// </summary>
@@ -263,7 +292,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlErrorAction;
-        
+
         /// <summary>
         /// chkDeleteCache control.
         /// </summary>
@@ -272,7 +301,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkDeleteCache;
-        
+
         /// <summary>
         /// ddlLogLevel control.
         /// </summary>
@@ -281,7 +310,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlLogLevel;
-        
+
         /// <summary>
         /// ddlAutoArchive control.
         /// </summary>
@@ -290,7 +319,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlAutoArchive;
-        
+
         /// <summary>
         /// divArchiveDays control.
         /// </summary>
@@ -299,7 +328,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divArchiveDays;
-        
+
         /// <summary>
         /// txtAutoArchiveDays control.
         /// </summary>
@@ -308,7 +337,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtAutoArchiveDays;
-        
+
         /// <summary>
         /// chkSkipResult control.
         /// </summary>
@@ -317,7 +346,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkSkipResult;
-        
+
         /// <summary>
         /// ddlComCondition control.
         /// </summary>
@@ -326,7 +355,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlComCondition;
-        
+
         /// <summary>
         /// divComServers control.
         /// </summary>
@@ -335,7 +364,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divComServers;
-        
+
         /// <summary>
         /// gvServers control.
         /// </summary>

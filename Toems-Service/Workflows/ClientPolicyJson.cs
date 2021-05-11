@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Dto.client;
 using Toems_Common.Entity;
@@ -147,6 +148,8 @@ namespace Toems_Service.Workflows
             _clientPolicy.IsInventory = _policy.RunInventory;
             _clientPolicy.RemoteAccess = _policy.RemoteAccess;
             _clientPolicy.IsLoginTracker = _policy.RunLoginTracker;
+            _clientPolicy.JoinDomain = _policy.JoinDomain;
+            _clientPolicy.ImagePrepCleanup = _policy.ImagePrepCleanup;
             _clientPolicy.FrequencyMissedAction = _policy.MissedAction;
             _clientPolicy.LogLevel = _policy.LogLevel;
             _clientPolicy.SkipServerResult = _policy.SkipServerResult;
@@ -180,6 +183,22 @@ namespace Toems_Service.Workflows
                     _clientPolicy.Condition.WorkingDirectory = conditionScript.WorkingDirectory;
                 }
 
+            }
+            if(_policy.JoinDomain)
+            {
+                //get domain join creds
+                _clientPolicy.DomainUser = ServiceSetting.GetSettingValue(SettingStrings.DomainJoinUser);
+                _clientPolicy.DomainOU = _policy.DomainOU;
+                _clientPolicy.DomainName = ServiceSetting.GetSettingValue(SettingStrings.DomainJoinName);
+
+                try
+                {
+                    _clientPolicy.DomainPassword = new EncryptionServices().DecryptText(ServiceSetting.GetSettingValue(SettingStrings.DomainJoinPasswordEncrypted));
+                }
+                catch
+                {
+                    //ignored
+                }
             }
         }
 

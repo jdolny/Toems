@@ -100,6 +100,15 @@ namespace Toems_Common.Entity
 
         [Column("policy_remote_access")]
         public EnumPolicy.RemoteAccess RemoteAccess { get; set; }
+
+        [Column("join_domain")]
+        public bool JoinDomain { get; set; }
+
+        [Column("image_prep_cleanup")]
+        public bool ImagePrepCleanup { get; set; }
+
+        [Column("domain_ou")]
+        public string DomainOU { get; set; }
     }
 
     [NotMapped]

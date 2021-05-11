@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.groups {
-    
-    
-    public partial class create {
-        
+namespace Toems_FrontEnd.views.groups
+{
+
+
+    public partial class create
+    {
+
         /// <summary>
         /// btnSubmit control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnSubmit;
-        
+
         /// <summary>
         /// txtName control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtName;
-        
+
         /// <summary>
         /// ddlGroupType control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlGroupType;
-        
+
         /// <summary>
         /// txtDescription control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtDescription;
-        
+
         /// <summary>
         /// ddlCluster control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlCluster;
-        
+
         /// <summary>
         /// chkPreventShutdown control.
         /// </summary>

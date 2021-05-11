@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.groups {
-    
-    
-    public partial class general {
-        
+namespace Toems_FrontEnd.views.groups
+{
+
+
+    public partial class general
+    {
+
         /// <summary>
         /// buttonUpdate control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton buttonUpdate;
-        
+
         /// <summary>
         /// txtName control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtName;
-        
+
         /// <summary>
         /// ddlGroupType control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlGroupType;
-        
+
         /// <summary>
         /// txtDescription control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtDescription;
-        
+
         /// <summary>
         /// ddlCluster control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlCluster;
-        
+
         /// <summary>
         /// ddlWakeup control.
         /// </summary>
@@ -65,7 +67,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlWakeup;
-        
+
         /// <summary>
         /// ddlShutdown control.
         /// </summary>
@@ -74,7 +76,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlShutdown;
-        
+
         /// <summary>
         /// chkPreventShutdown control.
         /// </summary>
@@ -83,7 +85,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkPreventShutdown;
-        
+
         /// <summary>
         /// txtPriority control.
         /// </summary>

@@ -46,6 +46,8 @@ namespace Toems_FrontEnd.views.admin
 
             txtArguments.Text = Call.SettingApi.GetClientInstallArgs();
             txtShutdownDelay.Text = Call.SettingApi.GetSetting(SettingStrings.ShutdownDelay).Value;
+            txtDomainUsername.Text = Call.SettingApi.GetSetting(SettingStrings.DomainJoinUser).Value;
+            txtDomainName.Text = Call.SettingApi.GetSetting(SettingStrings.DomainJoinName).Value;
         }
       
 
@@ -107,8 +109,27 @@ namespace Toems_FrontEnd.views.admin
                     Name = SettingStrings.ShutdownDelay,
                     Value = txtShutdownDelay.Text,
                     Id = Call.SettingApi.GetSetting(SettingStrings.ShutdownDelay).Id
-                }
-              
+                },
+                 new EntitySetting
+                {
+                    Name = SettingStrings.DomainJoinUser,
+                    Value = txtDomainUsername.Text,
+                    Id = Call.SettingApi.GetSetting(SettingStrings.DomainJoinUser).Id
+                },
+                  new EntitySetting
+                {
+                    Name = SettingStrings.DomainJoinPasswordEncrypted,
+                    Value = txtDomainPassword.Text,
+                    Id = Call.SettingApi.GetSetting(SettingStrings.DomainJoinPasswordEncrypted).Id
+                },
+                   new EntitySetting
+                {
+                    Name = SettingStrings.DomainJoinName,
+                    Value = txtDomainName.Text,
+                    Id = Call.SettingApi.GetSetting(SettingStrings.DomainJoinName).Id
+                },
+
+
             };
 
 

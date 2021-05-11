@@ -158,6 +158,12 @@
 
         public const string ImageDirectSmb = "Image Direct SMB";
 
+        public const string DomainJoinUser = "Domain Join User";
+
+        public const string DomainJoinPasswordEncrypted = "Domain Join Password Encrypted";
+
+        public const string DomainJoinName = "Domain Join Name";
+
         public const int GlobalVersion = 133;
 
     }

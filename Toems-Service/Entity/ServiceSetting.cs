@@ -57,7 +57,7 @@ namespace Toems_Service.Entity
                 if (setting.Name == SettingStrings.StoragePassword || setting.Name == SettingStrings.SmtpPassword ||
                     setting.Name == SettingStrings.LdapBindPassword ||
                      setting.Name == SettingStrings.ProvisionKeyEncrypted || setting.Name == SettingStrings.IntercomKeyEncrypted || setting.Name == SettingStrings.RemoteAccessAdminPasswordEncrypted
-                    || setting.Name == SettingStrings.RemoteAccessControlPasswordEncrypted || setting.Name == SettingStrings.RemoteAccessViewPasswordEncrypted)
+                    || setting.Name == SettingStrings.RemoteAccessControlPasswordEncrypted || setting.Name == SettingStrings.RemoteAccessViewPasswordEncrypted || setting.Name == SettingStrings.DomainJoinPasswordEncrypted)
                 {
                     if (setting.Name == SettingStrings.ProvisionKeyEncrypted && string.IsNullOrEmpty(setting.Value))
                         continue;

@@ -1151,24 +1151,38 @@ namespace Toems_Service
             imageServices.Update(image);
 
             var basePath = thisComServer.LocalStoragePath;
+            if (ServiceSetting.GetSettingValue(SettingStrings.ImageDirectSmb).Equals("True"))
+            {
+                basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath); //if image direct smb, save guid to smb share not local com server
+            }
             var path = Path.Combine(basePath, "images", image.Name);
 
-
-            try
+            using (var unc = new UncServices())
             {
-                Directory.CreateDirectory(path);
-                using (var file = new StreamWriter(Path.Combine(path, "guid")))
+                if (unc.NetUseWithCredentials() || unc.LastError == 1219)
                 {
-                    file.WriteLine(guid);
+                    try
+                    {
+                        Directory.CreateDirectory(path);
+                        using (var file = new StreamWriter(Path.Combine(path, "guid")))
+                        {
+                            file.WriteLine(guid);
+                        }
+                        return "true";
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error("Could Not Create Image Guid");
+                        log.Error(ex.Message);
+                        return "false";
+                    }
                 }
-                return "true";
+                else
+                {
+                    return "false";
+                }
             }
-            catch (Exception ex)
-            {
-                log.Error("Could Not Create Image Guid");
-                log.Error(ex.Message);
-                return "false";
-            }
+
         }
 
         public void UpdateProgress(int taskId, string progress, string progressType)

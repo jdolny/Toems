@@ -229,6 +229,33 @@ namespace Toems_Service.Workflows
                     if(comServer == null) return "The Policy's Selected Com Servers Are Not Valid.  A Specified Com Server Does Not Exist";
                 }
             }
+
+            if(_policy.JoinDomain)
+            {
+                //get domain join creds
+                var domainUser = ServiceSetting.GetSettingValue(SettingStrings.DomainJoinUser);
+                if (string.IsNullOrEmpty(domainUser))
+                    return $"The Policy {_policy.Name} Cannot Use Join Domain.  The Domain User Is Not Set.";
+                if (!domainUser.Contains("\\"))
+                    return $"The Policy {_policy.Name} Cannot Use Join Domain.  The Domain User Must Be in NetBIOS Format.  Domain\\User";
+
+                var domainName = ServiceSetting.GetSettingValue(SettingStrings.DomainJoinName);
+                if (string.IsNullOrEmpty(domainName))
+                    return $"The Policy {_policy.Name} Cannot Use Join Domain.  The Domain Name Is Not Set.";
+
+                try
+                {
+                    var domainPassword = new EncryptionServices().DecryptText(ServiceSetting.GetSettingValue(SettingStrings.DomainJoinPasswordEncrypted));
+                    if(string.IsNullOrEmpty(domainPassword))
+                        return $"The Policy {_policy.Name} Cannot Use Join Domain.  The Domain User Password Is Not Set.";
+                }
+                catch(Exception ex)
+                {
+                    Logger.Error(ex.Message);
+                    return $"The Policy {_policy.Name} Cannot Use Join Domain.  The Domain User Password Could Not Be Decrypted.";
+                }
+            }
+
             if (_policy.ConditionId != -1) // -1 = disabled
             {
                 var conditionScript = new ServiceScriptModule().GetModule(_policy.ConditionId);

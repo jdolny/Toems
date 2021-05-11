@@ -122,6 +122,9 @@ namespace Toems_FrontEnd.views.policies
             ddlRemoteAccess.SelectedValue = Policy.RemoteAccess.ToString();
             chkLoginTracker.Checked = Policy.RunLoginTracker;
             chkApplicationMonitor.Checked = Policy.RunApplicationMonitor;
+            chkJoinDomain.Checked = Policy.JoinDomain;
+            txtDomainOU.Text = Policy.DomainOU;
+            chkImagePrepCleanup.Checked = Policy.ImagePrepCleanup;
             chkDeleteCache.Checked = Policy.RemoveInstallCache;
             ddlExecType.SelectedValue = Policy.ExecutionType.ToString();
             ddlErrorAction.SelectedValue = Policy.ErrorAction.ToString();
@@ -216,6 +219,9 @@ namespace Toems_FrontEnd.views.policies
             Policy.RemoteAccess = (EnumPolicy.RemoteAccess)Enum.Parse(typeof(EnumPolicy.RemoteAccess), ddlRemoteAccess.SelectedValue);
             Policy.RunLoginTracker = chkLoginTracker.Checked;
             Policy.RemoveInstallCache = chkDeleteCache.Checked;
+            Policy.JoinDomain = chkJoinDomain.Checked;
+            Policy.DomainOU = txtDomainOU.Text;
+            Policy.ImagePrepCleanup = chkImagePrepCleanup.Checked;
             Policy.WuType = (EnumPolicy.WuType)Enum.Parse(typeof(EnumPolicy.WuType), ddlWinUpdates.SelectedValue);
             Policy.ExecutionType = (EnumPolicy.ExecutionType)Enum.Parse(typeof(EnumPolicy.ExecutionType), ddlExecType.SelectedValue);
             Policy.ErrorAction = (EnumPolicy.ErrorAction)Enum.Parse(typeof(EnumPolicy.ErrorAction), ddlErrorAction.SelectedValue);

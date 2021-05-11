@@ -185,6 +185,30 @@
             <asp:DropDownList ID="ddlRemoteAccess" runat="server" CssClass="ddlist"></asp:DropDownList>
         </div>
      <br class="clear"/>
+       <div class="size-4 column">
+        Join Domain:
+    </div>
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkJoinDomain" runat="server" ClientIDMode="Static"></asp:CheckBox>
+          <label for="chkJoinDomain">Toggle</label>
+        </div>
+     <br class="clear"/>
+     <div class="size-4 column">
+        Domain OU:
+    </div>
+    <div class="size-5 column">
+        <asp:TextBox ID="txtDomainOU" runat="server" CssClass="textbox"></asp:TextBox>
+    </div>
+    <br class="clear"/>
+      <div class="size-4 column">
+        Image Prep Cleanup:
+    </div>
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkImagePrepCleanup" runat="server" ClientIDMode="Static"></asp:CheckBox>
+          <label for="chkImagePrepCleanup">Toggle</label>
+        </div>
+     <br class="clear"/>
+
     
 <div class="size-4 column">
     Install Available Windows Updates:

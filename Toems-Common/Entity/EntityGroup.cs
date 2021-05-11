@@ -66,7 +66,6 @@ namespace Toems_Common.Entity
 
         [Column ("em_priority")]
         public int EmPriority { get; set; }
-
     }
 
    
