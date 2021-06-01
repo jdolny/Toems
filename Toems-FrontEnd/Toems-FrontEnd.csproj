@@ -150,6 +150,7 @@
     <Content Include="views\admin\client.aspx" />
     <Content Include="views\admin\comservers\addcomserver.aspx" />
     <Content Include="views\admin\comservers\addcomservercluster.aspx" />
+    <Content Include="views\admin\comservers\bootmenueditor.aspx" />
     <Content Include="views\admin\comservers\comservercluster.aspx" />
     <Content Include="views\admin\comservers\comservers.aspx" />
     <Content Include="views\admin\comservers\editcomserver.aspx" />
@@ -1033,6 +1034,13 @@
     </Compile>
     <Compile Include="views\admin\comservers\addcomservercluster.aspx.designer.cs">
       <DependentUpon>addcomservercluster.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\comservers\bootmenueditor.aspx.cs">
+      <DependentUpon>bootmenueditor.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\comservers\bootmenueditor.aspx.designer.cs">
+      <DependentUpon>bootmenueditor.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\admin\comservers\comservercluster.aspx.cs">
       <DependentUpon>comservercluster.aspx</DependentUpon>

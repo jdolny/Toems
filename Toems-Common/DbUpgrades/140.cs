@@ -23,6 +23,8 @@ ADD COLUMN `join_domain` TINYINT(4) NULL DEFAULT 0 AFTER `policy_remote_access`,
 ADD COLUMN `image_prep_cleanup` TINYINT(4) NULL DEFAULT 0 AFTER `join_domain`,
 ADD COLUMN `domain_ou` VARCHAR(255) NULL AFTER `image_prep_cleanup`;
 
+INSERT INTO `groups` (`group_id`, `group_name`, `group_description`, `is_ou`, `group_type`, `cluster_id`, `wakeup_schedule_id`, `shutdown_schedule_id`, `prevent_shutdown`, `imaging_priority`, `em_priority`, `image_id`, `image_profile_id`) VALUES ('-2', 'Built-In Image First Run', 'Built-In group for computers that have finished imaging.  This group will not display any members.', '0', 'Static', '-1', '-1', '-1', '0', '0', '0', '-1', '-1');
+
 
 "
             ;

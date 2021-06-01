@@ -71,6 +71,10 @@
                    <a href="<%= ResolveUrl("~/views/admin/comservers/remoteaccess.aspx") %>?level=2&serverId=<%=ComServer.Id %>">
             <span class="sub-nav-text">Remote Access Settings</span></a>
                         </li>
+                    <li id="bootmenu">
+                   <a href="<%= ResolveUrl("~/views/admin/comservers/bootmenueditor.aspx") %>?level=2&serverId=<%=ComServer.Id %>">
+            <span class="sub-nav-text">Boot Menu Editor</span></a>
+                        </li>
                 </div>
 
               <div id="divCluster" runat="server">
