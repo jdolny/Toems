@@ -5,6 +5,7 @@ using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using log4net;
 using Toems_Common;
+using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_DataModel;
@@ -33,6 +34,15 @@ namespace Toems_Service.Entity
             return setting != null ? setting.Value : string.Empty;
         }
 
+        public DtoDomainJoinCredentials GetDomainJoinCredentials()
+        {
+            var creds = new DtoDomainJoinCredentials();
+            //get domain join creds
+            creds.Username = GetSettingValue(SettingStrings.DomainJoinUser);
+            creds.Domain = GetSettingValue(SettingStrings.DomainJoinName);
+            creds.Password = new EncryptionServices().DecryptText(GetSettingValue(SettingStrings.DomainJoinPasswordEncrypted));
+            return creds;
+        }
         public bool UpdatePxeSetting(List<EntitySetting> listSettings)
         {
 

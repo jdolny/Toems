@@ -57,6 +57,7 @@ namespace Toems_Service.Entity
             if (u == null) return new DtoActionResult {ErrorMessage = "Group Not Found", Id = 0};
             if (u.IsOu) return new DtoActionResult() {ErrorMessage = "Active Directory OU's Cannot Be Deleted."};
             if (u.Id == -1) return new DtoActionResult() { ErrorMessage = "The Built-In All Computers Group Cannot Be Deleted." };
+            if (u.Id == -2) return new DtoActionResult() { ErrorMessage = "The Built-In Image First Run Group Cannot Be Deleted." };
             _uow.GroupRepository.Delete(groupId);
             _uow.Save();
             var actionResult = new DtoActionResult();

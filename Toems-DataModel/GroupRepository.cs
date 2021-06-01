@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Toems_Common.Dto;
 using Toems_Common.Entity;
 
 namespace Toems_DataModel
@@ -14,6 +15,29 @@ namespace Toems_DataModel
             _context = context;
         }
 
+        public List<DtoOrderedGroup> GetMembershipsForClientPolicy(int computerId)
+        {
+            var allComputersGroup = (from a in _context.Groups where a.Id == -1 select a).FirstOrDefault();
+
+            var groups = (from h in _context.Groups
+                    join g in _context.GroupMemberships on h.Id equals g.GroupId
+                    where g.ComputerId == computerId
+                    select new
+                    {
+                        groupId = h.Id,
+                        priority = h.EmPriority,
+                    }).AsEnumerable().Select(x => new DtoOrderedGroup
+                    {
+                        GroupId = x.groupId,
+                        Priority = x.priority
+                    }).ToList();
+
+            if (allComputersGroup != null)
+                groups.Add(new DtoOrderedGroup { GroupId = allComputersGroup.Id, Priority = allComputersGroup.EmPriority });
+
+            return groups.OrderBy(x => x.Priority).ToList();
+                   
+        }
         public List<EntityComputer> GetGroupMembers(int searchGroupId, string searchString)
         {
             return (from h in _context.Computers

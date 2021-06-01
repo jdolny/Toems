@@ -35,10 +35,7 @@ namespace Toems_Common.Dto
         public bool IsLoginTracker { get; set; }
         public bool IsApplicationMonitor { get; set; }
         public bool JoinDomain { get; set; }
-        public string DomainUser { get; set; }
-        public string DomainPassword { get; set; }
         public string DomainOU { get; set; }
-        public string DomainName { get; set; }
         public bool ImagePrepCleanup { get; set; }
         public int Order { get; set; }
         public EnumPolicy.FrequencyMissedAction FrequencyMissedAction { get; set; }

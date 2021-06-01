@@ -116,12 +116,7 @@ namespace Toems_FrontEnd.views.admin
                     Value = txtDomainUsername.Text,
                     Id = Call.SettingApi.GetSetting(SettingStrings.DomainJoinUser).Id
                 },
-                  new EntitySetting
-                {
-                    Name = SettingStrings.DomainJoinPasswordEncrypted,
-                    Value = txtDomainPassword.Text,
-                    Id = Call.SettingApi.GetSetting(SettingStrings.DomainJoinPasswordEncrypted).Id
-                },
+
                    new EntitySetting
                 {
                     Name = SettingStrings.DomainJoinName,
@@ -131,6 +126,16 @@ namespace Toems_FrontEnd.views.admin
 
 
             };
+
+            if (!string.IsNullOrEmpty(txtDomainPassword.Text))
+            {
+                listSettings.Add(new EntitySetting()
+                {
+                    Name = SettingStrings.DomainJoinPasswordEncrypted,
+                    Value = txtDomainPassword.Text,
+                    Id = Call.SettingApi.GetSetting(SettingStrings.DomainJoinPasswordEncrypted).Id
+                });
+            }
 
 
             if (Call.SettingApi.UpdateSettings(listSettings))

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Net;
@@ -229,6 +230,48 @@ namespace Toems_ClientApi.Controllers
         {
             var script = new ServiceScriptModule().GetModuleByGuid(moduleGuid);
             return new DtoApiStringResponse() { Value = script.ScriptContents };
+
+        }
+
+        [CertificateAuth]
+        [HttpGet]
+        public DtoApiBoolResponse AddToFirstRunGroup()
+        {
+            var clientGuid = RequestContext.Principal.Identity.Name;
+            var client = new ServiceComputer().GetByGuid(clientGuid);
+            if (client == null)
+                return new DtoApiBoolResponse() { Value = false };
+            var membership = new EntityGroupMembership();
+            membership.ComputerId = client.Id;
+            membership.GroupId = -2;
+
+            new ServiceGroupMembership().AddMembership(new List<EntityGroupMembership>() { membership });
+            return new DtoApiBoolResponse() { Value = true };
+        }
+
+        [CertificateAuth]
+        [HttpGet]
+        public DtoApiBoolResponse RemoveFromFirstRunGroup()
+        {
+            var clientGuid = RequestContext.Principal.Identity.Name;
+            var client = new ServiceComputer().GetByGuid(clientGuid);
+            if (client == null)
+                return new DtoApiBoolResponse() { Value = false };
+
+            new ServiceGroup().DeleteMembership(client.Id, -2);
+            return new DtoApiBoolResponse() { Value = true };
+        }
+
+        [CertificateAuth]
+        public DtoDomainJoinCredentials GetDomainJoinCredentials()
+        {
+            var enableImpersonationAccess = ConfigurationManager.AppSettings["EnableImpersonationAccess"];
+            if (!enableImpersonationAccess.ToLower().Equals("true"))
+            {
+                Logger.Debug("Retrieving Domain Credentials For This Com Server Is Disabled");
+                throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.Forbidden));
+            }
+            return new ServiceSetting().GetDomainJoinCredentials();
 
         }
 

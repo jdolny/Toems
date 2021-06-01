@@ -46,8 +46,7 @@ namespace Toems_Service.Workflows
                 new ServiceComputer().UpdateComputer(computer);
             }
 
-            var groupMemberships = _uow.GroupMembershipRepository.Get(x => x.ComputerId == computer.Id);
-            groupMemberships.Add(new Toems_Common.Entity.EntityGroupMembership { ComputerId = computer.Id, GroupId = -1 }); //add the built-in all computers group
+            var groupMemberships = _uow.GroupRepository.GetMembershipsForClientPolicy(computer.Id);
             if (policyRequest.UserLogins != null)
             {
                 var userLoginsResult = new ServiceUserLogins().AddOrUpdate(policyRequest.UserLogins, computer.Id);

@@ -186,19 +186,7 @@ namespace Toems_Service.Workflows
             }
             if(_policy.JoinDomain)
             {
-                //get domain join creds
-                _clientPolicy.DomainUser = ServiceSetting.GetSettingValue(SettingStrings.DomainJoinUser);
                 _clientPolicy.DomainOU = _policy.DomainOU;
-                _clientPolicy.DomainName = ServiceSetting.GetSettingValue(SettingStrings.DomainJoinName);
-
-                try
-                {
-                    _clientPolicy.DomainPassword = new EncryptionServices().DecryptText(ServiceSetting.GetSettingValue(SettingStrings.DomainJoinPasswordEncrypted));
-                }
-                catch
-                {
-                    //ignored
-                }
             }
         }
 
