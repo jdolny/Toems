@@ -82,7 +82,7 @@ namespace Toems_Service.Workflows
             // the com server assigned.  Instead use this server if it's an imaging server, otherwise use the default cluster.
             if (_thisComServer.IsImagingServer)
             {
-                _webPath = _thisComServer.Url + "clientimaging/ ";
+                _webPath += _thisComServer.Url + "clientimaging/ ";
             }
             else
             {
