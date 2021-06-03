@@ -164,7 +164,7 @@
 
         public const string DomainJoinName = "Domain Join Name";
 
-        public const int GlobalVersion = 133;
+        public const int GlobalVersion = 140;
 
     }
 }
