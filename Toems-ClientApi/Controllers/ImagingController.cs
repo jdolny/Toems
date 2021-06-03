@@ -149,6 +149,26 @@ namespace Toems_ClientApi.Controllers
             return result;
         }
 
+        [InterComAuth]
+        [HttpPost]
+        public DtoApiBoolResponse EditDefaultBootMenu(DtoCoreScript script)
+        {
+            return new DtoApiBoolResponse
+            {
+                Value = new FilesystemServices().EditDefaultBootMenu(script)
+            };
+        }
+
+        [HttpPost]
+        [InterComAuth]
+        public DtoApiStringResponse ReadFileText(DtoReadFileText dto)
+        {
+            return new DtoApiStringResponse
+            {
+                Value = new FilesystemServices().ReadAllText(dto.Path)
+            };
+        }
+
 
     }
 

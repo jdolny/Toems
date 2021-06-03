@@ -13,6 +13,7 @@ using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
+using Toems_Service;
 using Toems_Service.Entity;
 
 namespace Toems_ApplicationApi.Controllers
@@ -52,6 +53,36 @@ namespace Toems_ApplicationApi.Controllers
             }
             return result;
         }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        public DtoApiStringResponse GetDefaultBootFilePath(string type, int id)
+        {
+            var result = new FilesystemServices().GetDefaultBootMenuPath(type, id);
+            return new DtoApiStringResponse() { Value = result };
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpPost]
+        public DtoApiBoolResponse EditDefaultBootMenu(DtoCoreScript script)
+        {
+            return new DtoApiBoolResponse
+            {
+                Value = _clientComService.EditBootFileText(script)
+            };
+        }
+
+        [HttpGet]
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        public DtoApiStringResponse ReadFileText(string path, int comServerId)
+        {
+
+
+            return new DtoApiStringResponse
+            {
+                Value = _clientComService.GetBootFileText(path,comServerId)
+            };
+        }
+
 
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public EntityClientComServer Get(int id)

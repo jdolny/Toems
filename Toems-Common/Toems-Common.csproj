@@ -82,6 +82,7 @@
     <Compile Include="Dto\DtoActionResult.cs" />
     <Compile Include="Dto\DtoBootMenuGenOptions.cs" />
     <Compile Include="Dto\DtoComPid.cs" />
+    <Compile Include="Dto\DtoCoreScript.cs" />
     <Compile Include="Dto\DtoGroupImage.cs" />
     <Compile Include="Dto\DtoGroupWithCount.cs" />
     <Compile Include="Dto\DtoImageFileInfo.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Dto\DtoOnlineKernel.cs" />
     <Compile Include="Dto\DtoOrderedGroup.cs" />
     <Compile Include="Dto\DtoProxyReservation.cs" />
+    <Compile Include="Dto\DtoReadFileText.cs" />
     <Compile Include="Dto\DtoRemotelyConnectionInfo.cs" />
     <Compile Include="Dto\DtoRemotelyInfo.cs" />
     <Compile Include="Dto\DtoRemotelyUser.cs" />

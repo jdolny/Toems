@@ -1,24 +1,36 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Toems_Common;
+using Toems_Common.Dto;
 
 namespace Toems_FrontEnd.views.admin.comservers
 {
     public partial class bootmenueditor : BasePages.Admin
     {
-       /* protected void Page_Load(object sender, EventArgs e)
+        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack) PopulateForm();
         }
 
+        protected void ddlComServer_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            PopulateForm();
+        }
         protected void PopulateForm()
         {
-            var path = Call.FilesystemApi.GetDefaultBootFilePath(ddlEditProxyType.Text);
+            if(!IsPostBack)
+            PopulateComServers(ddlComServer);
 
-            var proxyDhcp = GetSetting(SettingStrings.ProxyDhcp);
+            var comServerId = Convert.ToInt32(ddlComServer.SelectedValue);
+            var path = Call.ClientComServerApi.GetDefaultBootFilePath(ddlEditProxyType.Text,comServerId);
+
+            var proxyDhcp = GetSetting(SettingStrings.ProxyDhcpEnabled);
 
             if (proxyDhcp == "Yes")
             {
@@ -26,9 +38,9 @@ namespace Toems_FrontEnd.views.admin.comservers
 
                 srvEdit.Visible = true;
 
-                var biosFile = GetSetting(SettingStrings.ProxyBiosFile);
-                var efi32File = GetSetting(SettingStrings.ProxyEfi32File);
-                var efi64File = GetSetting(SettingStrings.ProxyEfi64File);
+                var biosFile = GetSetting(SettingStrings.ProxyBiosBootloader);
+                var efi32File = GetSetting(SettingStrings.ProxyEfi32Bootloader);
+                var efi64File = GetSetting(SettingStrings.ProxyEfi64Bootloader);
                 proxyEditor.Visible = true;
                 if (ddlEditProxyType.Text == "bios")
                 {
@@ -68,7 +80,7 @@ namespace Toems_FrontEnd.views.admin.comservers
             }
             else
             {
-                var mode = GetSetting(SettingStrings.PxeMode);
+                var mode = GetSetting(SettingStrings.PxeBootloader);
                 proxyEditor.Visible = false;
                 if (mode.Contains("winpe"))
                 {
@@ -83,18 +95,19 @@ namespace Toems_FrontEnd.views.admin.comservers
             lblFileName1.Text = path;
             try
             {
-                if (path != null) scriptEditorText.Value = Call.FilesystemApi.ReadFileText(path);
+                if (path != null) scriptEditorText.Value = Call.ClientComServerApi.ReadFileText(path,comServerId);
             }
             catch (Exception ex)
             {
-                log.Error(ex.Message);
+                Logger.Error(ex.Message);
             }
         }
 
         protected void EditProxy_Changed(object sender, EventArgs e)
         {
-            var path = Call.FilesystemApi.GetDefaultBootFilePath(ddlEditProxyType.Text);
-            var proxyDhcp = GetSetting(SettingStrings.ProxyDhcp);
+            var comServerId = Convert.ToInt32(ddlComServer.SelectedValue);
+            var path = Call.ClientComServerApi.GetDefaultBootFilePath(ddlEditProxyType.Text, comServerId);
+            var proxyDhcp = GetSetting(SettingStrings.ProxyDhcpEnabled);
 
             if (proxyDhcp == "Yes")
             {
@@ -102,9 +115,9 @@ namespace Toems_FrontEnd.views.admin.comservers
 
                 srvEdit.Visible = true;
 
-                var biosFile = GetSetting(SettingStrings.ProxyBiosFile);
-                var efi32File = GetSetting(SettingStrings.ProxyEfi32File);
-                var efi64File = GetSetting(SettingStrings.ProxyEfi64File);
+                var biosFile = GetSetting(SettingStrings.ProxyBiosBootloader);
+                var efi32File = GetSetting(SettingStrings.ProxyEfi32Bootloader);
+                var efi64File = GetSetting(SettingStrings.ProxyEfi64Bootloader);
                 proxyEditor.Visible = true;
                 if (ddlEditProxyType.Text == "bios")
                 {
@@ -149,12 +162,21 @@ namespace Toems_FrontEnd.views.admin.comservers
             lblFileName1.Text = path;
             try
             {
-                if (path != null) scriptEditorText.Value = Call.FilesystemApi.ReadFileText(path);
+                if (path != null) scriptEditorText.Value = Call.ClientComServerApi.ReadFileText(path,comServerId);
             }
             catch (Exception ex)
             {
-                log.Error(ex.Message);
+                Logger.Error(ex.Message);
             }
-        }*/
+        }
+
+        protected void saveEditor_Click(object sender, EventArgs e)
+        {
+            var menu = new DtoCoreScript();
+            menu.Name = ddlEditProxyType.Text;
+            menu.Contents = scriptEditorText.Value;
+            menu.ComServerId = Convert.ToInt32(ddlComServer.SelectedValue);
+            EndUserMessage = Call.ClientComServerApi.EditDefaultBootMenu(menu) ? "Success" : "Could Not Save Boot Menu";
+        }
     }
 }

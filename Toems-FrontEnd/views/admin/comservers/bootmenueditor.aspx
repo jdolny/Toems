@@ -22,6 +22,14 @@
       
     </script>
 
+    <div class="size-4 column">
+        Com Server:
+    </div>
+    <div class="size-5 column">
+        <asp:DropDownList ID="ddlComServer" runat="server" CssClass="ddlist" AutoPostBack="true" OnSelectedIndexChanged="ddlComServer_SelectedIndexChanged"/>
+    </div>
+    <br class="clear" />
+
 
      <div id="proxyEditor" runat="server" visible="false">
         <div class="size-4 column">
@@ -37,7 +45,7 @@
         <br class="clear"/>
     </div>
     
-
+    <br /><br />
 
     <asp:Label ID="lblFileName1" runat="server"></asp:Label>
 

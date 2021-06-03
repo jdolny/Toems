@@ -840,5 +840,111 @@ namespace Toems_Service
             }
             return true;
         }
+
+        public string GetDefaultBootMenuPath(string type,int comServerId)
+        {
+            string path = null;
+            var comServer = new ServiceClientComServer().GetServer(comServerId);
+            var tftpPath = comServer.TftpPath;
+            var mode = ServiceSetting.GetSettingValue(SettingStrings.PxeBootloader);
+            var proxyDhcp = ServiceSetting.GetSettingValue(SettingStrings.ProxyDhcpEnabled);
+
+            if (proxyDhcp == "Yes")
+            {
+                var biosFile = ServiceSetting.GetSettingValue(SettingStrings.ProxyBiosBootloader);
+                var efi32File = ServiceSetting.GetSettingValue(SettingStrings.ProxyEfi32Bootloader);
+                var efi64File = ServiceSetting.GetSettingValue(SettingStrings.ProxyEfi64Bootloader);
+
+                if (type == "bios")
+                {
+                    if (biosFile.Contains("ipxe"))
+                        path = tftpPath + "proxy" + Path.DirectorySeparatorChar +
+                               type + Path.DirectorySeparatorChar + "pxelinux.cfg" +
+                               Path.DirectorySeparatorChar + "default.ipxe";
+                    else
+                        path = tftpPath + "proxy" + Path.DirectorySeparatorChar +
+                               type + Path.DirectorySeparatorChar + "pxelinux.cfg" +
+                               Path.DirectorySeparatorChar + "default";
+                }
+
+                if (type == "efi32")
+                {
+                    if (efi32File.Contains("ipxe"))
+                        path = tftpPath + "proxy" + Path.DirectorySeparatorChar +
+                               type + Path.DirectorySeparatorChar + "pxelinux.cfg" +
+                               Path.DirectorySeparatorChar + "default.ipxe";
+                    else
+                        path = tftpPath + "proxy" + Path.DirectorySeparatorChar +
+                               type + Path.DirectorySeparatorChar + "pxelinux.cfg" +
+                               Path.DirectorySeparatorChar + "default";
+                }
+
+                if (type == "efi64")
+                {
+                    if (efi64File.Contains("ipxe"))
+                        path = tftpPath + "proxy" + Path.DirectorySeparatorChar +
+                               type + Path.DirectorySeparatorChar + "pxelinux.cfg" +
+                               Path.DirectorySeparatorChar + "default.ipxe";
+                    else if (efi64File.Contains("grub"))
+                        path = tftpPath + "grub" + Path.DirectorySeparatorChar + "grub.cfg";
+                    else
+                        path = tftpPath + "proxy" + Path.DirectorySeparatorChar +
+                               type + Path.DirectorySeparatorChar + "pxelinux.cfg" +
+                               Path.DirectorySeparatorChar + "default";
+                }
+            }
+            else
+            {
+                if (mode.Contains("ipxe"))
+                    path = tftpPath + "pxelinux.cfg" + Path.DirectorySeparatorChar +
+                           "default.ipxe";
+                else if (mode.Contains("grub"))
+                {
+                    path = tftpPath + "grub" + Path.DirectorySeparatorChar + "grub.cfg";
+                }
+                else
+                    path = tftpPath + "pxelinux.cfg" + Path.DirectorySeparatorChar + "default";
+            }
+            return path;
+        }
+
+        
+        public string ReadAllText(string path)
+        {
+            string fileText = null;
+
+            try
+            {
+                fileText = File.ReadAllText(path);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                fileText = "Could Not Read File";
+            }
+
+            return fileText;
+        }
+
+        public bool EditDefaultBootMenu(DtoCoreScript script)
+        {
+            try
+            {
+                var path = GetDefaultBootMenuPath(script.Name, script.ComServerId);
+                using (var file = new StreamWriter(path))
+                {
+                    file.WriteLine(script.Contents);
+                }
+
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                return false;
+            }
+        }
+
     }
 }

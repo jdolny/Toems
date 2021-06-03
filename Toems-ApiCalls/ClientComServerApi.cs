@@ -15,7 +15,18 @@ namespace Toems_ApiCalls
         {
            
         }
-
+        public string GetDefaultBootFilePath(string type, int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetDefaultBootFilePath/", Resource);
+            Request.AddParameter("type", type);
+            Request.AddParameter("id", id);
+            var responseData = new ApiRequest().Execute<DtoApiStringResponse>(Request);
+            if (responseData == null)
+                return "";
+            else
+                return responseData.Value;
+        }
         public List<DtoReplicationProcess> GetReplicationProcesses(int id)
         {
             Request.Method = Method.POST;
@@ -267,6 +278,47 @@ namespace Toems_ApiCalls
             return responseData != null && responseData.Value;
         }
 
+        public string ReadBootFileText(string url, string serverName, string interComKey, string path)
+        {
+            var dto = new DtoReadFileText();
+            dto.Path = path;
+            Request.Method = Method.POST;
+            Request.Resource = "Imaging/ReadFileText";
+            Request.AddJsonBody(dto);
+            var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiStringResponse>(Request, serverName, interComKey);
+
+            return responseData.Value;
+        }
+
+        public bool EditBootFileText(string url, string serverName, string interComKey, DtoCoreScript script)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = "Imaging/EditDefaultBootMenu";
+            Request.AddJsonBody(script);
+            var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
+            return responseData != null && responseData.Value;
+        }
+
+        public string ReadFileText(string path, int comServerId)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/ReadFileText/", Resource);
+            Request.AddParameter("path", path);
+            Request.AddParameter("comServerId", comServerId);
+            var response = new ApiRequest().Execute<DtoApiStringResponse>(Request);
+
+            return response.Value;
+        }
+
+        public bool EditDefaultBootMenu(DtoCoreScript script)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = string.Format("{0}/EditDefaultBootMenu/", Resource);
+            Request.AddJsonBody(script);
+            var response = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
+
+            return response.Value;
+        }
 
     }
 }

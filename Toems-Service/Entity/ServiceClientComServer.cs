@@ -302,7 +302,23 @@ namespace Toems_Service.Entity
 
         }
 
-     
+        public string GetBootFileText(string path, int comServerId)
+        {
+            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+            var comServer = new ServiceClientComServer().GetServer(comServerId);
+            return new APICall().ClientComServerApi.ReadBootFileText(comServer.Url, "", decryptedKey,path);
+        }
+
+        public bool EditBootFileText(DtoCoreScript script)
+        {
+            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+            var comServer = new ServiceClientComServer().GetServer(script.ComServerId);
+            return new APICall().ClientComServerApi.EditBootFileText(comServer.Url, "", decryptedKey,script);
+        }
+
+
 
 
     }
