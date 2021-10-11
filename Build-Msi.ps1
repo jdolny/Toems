@@ -25,7 +25,7 @@ if ([string]::IsNullOrWhiteSpace($MSBuildPath) -or !(Test-Path -Path $MSBuildPat
 
 
 $client = New-Object System.Net.WebClient
-$client.DownloadFile("https://github.com/theopenem/Toems-MSI/archive/main.zip", "$DesktopPath\Theopenem Installer\msisrc.zip")
+$client.DownloadFile("https://github.com/theopenem/Toems-MSI/archive/refs/heads/main.zip", "$DesktopPath\Theopenem Installer\msisrc.zip")
 Expand-Archive -Path "$DesktopPath\Theopenem Installer\msisrc.zip" -DestinationPath "$DesktopPath\Theopenem Installer\" -Force
 
 
