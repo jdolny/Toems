@@ -3,3 +3,5 @@
 *.sdf
 bin/
 obj/
+private/
+
