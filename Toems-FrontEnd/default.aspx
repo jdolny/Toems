@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
     <title>Log In</title>
     <link href="~/content/css/login.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/jquery-3.2.1.min.js") %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/content/js/jquery-3.6.0.min.js") %>"></script>
     <script type="text/javascript" src="<%= ResolveUrl("~/content/js/jquery.watermark.min.js") %>"></script>
 </head>
 <body>
