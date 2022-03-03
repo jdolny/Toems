@@ -109,7 +109,7 @@
     <Content Include="content\js\fineuploader\templates\gallery.html" />
     <Content Include="content\js\fineuploader\templates\simple-thumbnails.html" />
     <Content Include="content\js\fineuploader\trash.gif" />
-    <Content Include="content\js\jquery-3.2.1.min.js" />
+    <Content Include="content\js\jquery-3.6.0.min.js" />
     <Content Include="content\js\jquery-labelauty.css" />
     <Content Include="content\js\jquery-labelauty.js" />
     <Content Include="content\js\meshdesktop.js" />
