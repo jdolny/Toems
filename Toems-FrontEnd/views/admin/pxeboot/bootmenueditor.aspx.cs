@@ -8,7 +8,7 @@ using System.Web.UI.WebControls;
 using Toems_Common;
 using Toems_Common.Dto;
 
-namespace Toems_FrontEnd.views.admin.comservers
+namespace Toems_FrontEnd.views.admin.pxeboot
 {
     public partial class bootmenueditor : BasePages.Admin
     {
@@ -24,11 +24,11 @@ namespace Toems_FrontEnd.views.admin.comservers
         }
         protected void PopulateForm()
         {
-            if(!IsPostBack)
-            PopulateComServers(ddlComServer);
+            if (!IsPostBack)
+                PopulateComServers(ddlComServer);
 
             var comServerId = Convert.ToInt32(ddlComServer.SelectedValue);
-            var path = Call.ClientComServerApi.GetDefaultBootFilePath(ddlEditProxyType.Text,comServerId);
+            var path = Call.ClientComServerApi.GetDefaultBootFilePath(ddlEditProxyType.Text, comServerId);
 
             var proxyDhcp = GetSetting(SettingStrings.ProxyDhcpEnabled);
 
@@ -90,12 +90,12 @@ namespace Toems_FrontEnd.views.admin.comservers
                     srvEdit.Visible = false;
                     return;
                 }
-             
+
             }
             lblFileName1.Text = path;
             try
             {
-                if (path != null) scriptEditorText.Value = Call.ClientComServerApi.ReadFileText(path,comServerId);
+                if (path != null) scriptEditorText.Value = Call.ClientComServerApi.ReadFileText(path, comServerId);
             }
             catch (Exception ex)
             {
@@ -162,7 +162,7 @@ namespace Toems_FrontEnd.views.admin.comservers
             lblFileName1.Text = path;
             try
             {
-                if (path != null) scriptEditorText.Value = Call.ClientComServerApi.ReadFileText(path,comServerId);
+                if (path != null) scriptEditorText.Value = Call.ClientComServerApi.ReadFileText(path, comServerId);
             }
             catch (Exception ex)
             {

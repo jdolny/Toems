@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.admin.comservers
+namespace Toems_FrontEnd.views.admin.pxeboot
 {
 
 

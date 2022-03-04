@@ -1,10 +1,9 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/admin/comservers/comservers.master" AutoEventWireup="true" CodeBehind="bootmenueditor.aspx.cs" Inherits="Toems_FrontEnd.views.admin.comservers.bootmenueditor" %>
-<asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub2">
-    <li><a href="<%= ResolveUrl("~/views/admin/comservers/comservers.aspx") %>?level=2">Com Servers</a></li>
-    <li><%=ComServer.DisplayName %></li>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/admin/pxeboot/pxeboot.master" AutoEventWireup="true" CodeBehind="bootmenueditor.aspx.cs" Inherits="Toems_FrontEnd.views.admin.pxeboot.bootmenueditor" %>
+<asp:Content ID="Content3" ContentPlaceHolderID="TopBreadCrumbSub2" runat="server">
+    <li><a href="<%= ResolveUrl("~/views/admin/pxeboot/bootmenueditor.aspx") %>?level=2">PXE Boot Menu Editor</a></li>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub2">
-<%=ComServer.DisplayName %>
+
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub2" Runat="Server">
      <li><asp:LinkButton ID="btnSaveEditor" runat="server" Text="Save Changes" OnClick="saveEditor_Click" OnClientClick="update_click()" CssClass="main-action"/></li>
@@ -17,7 +16,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="SubContent2" Runat="Server">
     <script type="text/javascript">
         $(document).ready(function() {
-            $('#bootmenu').addClass("nav-current");
+            $('#bootmenueditor').addClass("nav-current");
         });
       
     </script>
@@ -74,4 +73,5 @@
 <asp:Content runat="server" ContentPlaceHolderID="subsubHelp">
 
 </asp:Content>
+
 
