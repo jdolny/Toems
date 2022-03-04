@@ -361,7 +361,7 @@ namespace Toems_Service.Entity
         {
             var validationResult = new DtoValidationResult { Success = true };
 
-            if (string.IsNullOrEmpty(image.Name) || !image.Name.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '-' || c == ' '))
+            if (string.IsNullOrEmpty(image.Name) || !image.Name.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '-' ))
             {
                 validationResult.Success = false;
                 validationResult.ErrorMessage = "Image Name Is Not Valid";
