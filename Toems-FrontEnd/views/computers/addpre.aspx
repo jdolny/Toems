@@ -25,7 +25,7 @@
 
     </script>
 
-  <asp:TextBox ID="txtPre" runat="server" TextMode="MultiLine" Height="500" Width="400" CssClass="descbox border" ></asp:TextBox>
+  <asp:TextBox ID="txtPre" runat="server" TextMode="MultiLine" Height="500" Width="400" CssClass="descbox border pad2" ></asp:TextBox>
   
    
 </asp:Content>

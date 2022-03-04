@@ -30,6 +30,10 @@
                 <a href="<%= ResolveUrl("~/views/computers/addpre.aspx") %>">
                     <span class="sub-nav-text">Create Pre-Provision</span></a>
             </li>
+             <li id="createimageonly">
+                <a href="<%= ResolveUrl("~/views/computers/addimageonly.aspx") %>">
+                    <span class="sub-nav-text">Create Image Only</span></a>
+            </li>
               <li id="approval">
                 <a href="<%= ResolveUrl("~/views/computers/approvalrequests.aspx") %>">
                     <span class="sub-nav-text">Approval Requests</span></a>
