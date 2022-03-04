@@ -164,7 +164,9 @@
 
         public const string DomainJoinName = "Domain Join Name";
 
-        public const int GlobalVersion = 144;
+        public const string DefaultComputerView = "Default Computer View";
+
+        public const int GlobalVersion = 145;
 
     }
 }

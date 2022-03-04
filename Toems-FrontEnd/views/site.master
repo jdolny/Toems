@@ -66,7 +66,7 @@
                                 <a href="<%= ResolveUrl("~/views/groups/search.aspx") %>"  title="Groups">Groups</a>
                             </li>
                             <li class="li-mobile" >
-                                <a href="<%= ResolveUrl("~/views/computers/search.aspx") %>"  title="Computers">Computers</a>
+                                <a href="<%= ResolveUrl("~/views/computers/computerviewselector.aspx") %>"  title="Computers">Computers</a>
                             </li>
                                <li class="li-mobile">
                                 <a href="<%= ResolveUrl("~/views/images/search.aspx") %>"  title="Images">Images</a>
@@ -143,7 +143,7 @@
                                 <a href="<%= ResolveUrl("~/views/groups/search.aspx") %>" class="icon-group tooltip" title="Groups"></a>
                             </li>
                             <li id="nav-hosts">
-                                <a href="<%= ResolveUrl("~/views/computers/search.aspx") %>" class="icon-computer tooltip" title="Computers"></a>
+                                <a href="<%= ResolveUrl("~/views/computers/computerviewselector.aspx") %>" class="icon-computer tooltip" title="Computers"></a>
                             </li>
                              <li id="nav-images">
                                 <a href="<%= ResolveUrl("~/views/images/search.aspx") %>" class="icon-image tooltip" title="Images"></a>

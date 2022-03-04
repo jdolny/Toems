@@ -150,7 +150,6 @@
     <Content Include="views\admin\client.aspx" />
     <Content Include="views\admin\comservers\addcomserver.aspx" />
     <Content Include="views\admin\comservers\addcomservercluster.aspx" />
-    <Content Include="views\admin\comservers\bootmenueditor.aspx" />
     <Content Include="views\admin\comservers\comservercluster.aspx" />
     <Content Include="views\admin\comservers\comservers.aspx" />
     <Content Include="views\admin\comservers\editcomserver.aspx" />
@@ -209,12 +208,14 @@
     <Content Include="views\assets\customassets\edit.aspx" />
     <Content Include="views\assets\customassets\search.aspx" />
     <Content Include="views\assets\customassets\softwareassetcomputers.aspx" />
+    <Content Include="views\computers\addimageonly.aspx" />
     <Content Include="views\computers\addpre.aspx" />
     <Content Include="views\computers\all.aspx" />
     <Content Include="views\computers\approvalrequests.aspx" />
     <Content Include="views\computers\attachments.aspx" />
     <Content Include="views\computers\certificates.aspx" />
     <Content Include="views\computers\comments.aspx" />
+    <Content Include="views\computers\computerviewselector.aspx" />
     <Content Include="views\computers\customattributes.aspx" />
     <Content Include="views\computers\custominventory.aspx" />
     <Content Include="views\computers\effective.aspx" />
@@ -1036,13 +1037,6 @@
     <Compile Include="views\admin\comservers\addcomservercluster.aspx.designer.cs">
       <DependentUpon>addcomservercluster.aspx</DependentUpon>
     </Compile>
-    <Compile Include="views\admin\comservers\bootmenueditor.aspx.cs">
-      <DependentUpon>bootmenueditor.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="views\admin\comservers\bootmenueditor.aspx.designer.cs">
-      <DependentUpon>bootmenueditor.aspx</DependentUpon>
-    </Compile>
     <Compile Include="views\admin\comservers\comservercluster.aspx.cs">
       <DependentUpon>comservercluster.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1533,6 +1527,13 @@
     <Compile Include="views\assets\customassets\softwareassetcomputers.aspx.designer.cs">
       <DependentUpon>softwareassetcomputers.aspx</DependentUpon>
     </Compile>
+    <Compile Include="views\computers\addimageonly.aspx.cs">
+      <DependentUpon>addimageonly.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\computers\addimageonly.aspx.designer.cs">
+      <DependentUpon>addimageonly.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\computers\addpre.aspx.cs">
       <DependentUpon>addpre.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1581,6 +1582,13 @@
     </Compile>
     <Compile Include="views\computers\computers.master.designer.cs">
       <DependentUpon>computers.master</DependentUpon>
+    </Compile>
+    <Compile Include="views\computers\computerviewselector.aspx.cs">
+      <DependentUpon>computerviewselector.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\computers\computerviewselector.aspx.designer.cs">
+      <DependentUpon>computerviewselector.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\computers\customattributes.aspx.cs">
       <DependentUpon>customattributes.aspx</DependentUpon>

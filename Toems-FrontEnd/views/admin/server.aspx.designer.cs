@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.admin {
-    
-    
-    public partial class server {
-        
+namespace Toems_FrontEnd.views.admin
+{
+
+
+    public partial class server
+    {
+
         /// <summary>
         /// btnUpdateSettings control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnUpdateSettings;
-        
+
         /// <summary>
         /// txtOrganization control.
         /// </summary>
@@ -29,5 +31,14 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtOrganization;
+
+        /// <summary>
+        /// ddlComputerView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlComputerView;
     }
 }

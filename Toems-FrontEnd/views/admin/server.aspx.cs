@@ -21,10 +21,7 @@ namespace Toems_FrontEnd.views.admin
         private void PopulateForm()
         {
             txtOrganization.Text = Call.SettingApi.GetSetting(SettingStrings.CertificateOrganization).Value;
-        
-
-
-
+            ddlComputerView.Text = GetSetting(SettingStrings.DefaultComputerView);
         }
 
         protected void btnUpdateSettings_OnClick(object sender, EventArgs e)
@@ -48,7 +45,16 @@ namespace Toems_FrontEnd.views.admin
                     Value = txtOrganization.Text,
                     Id = Call.SettingApi.GetSetting(SettingStrings.CertificateOrganization).Id
                 },
-            
+
+                new EntitySetting
+                {
+                    Name = SettingStrings.DefaultComputerView,
+                    Value = ddlComputerView.Text,
+                    Id = Call.SettingApi.GetSetting(SettingStrings.DefaultComputerView).Id
+                },
+
+
+
 
 
             };

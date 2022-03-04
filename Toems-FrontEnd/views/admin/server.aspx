@@ -22,6 +22,18 @@
         <asp:TextBox ID="txtOrganization" runat="server" CssClass="textbox"></asp:TextBox>
     </div>
     <br class="clear"/>
+
+    <div class="size-4 column">
+            Default Computers Page:
+        </div>
+        <div class="size-5 column">
+            <asp:DropDownList ID="ddlComputerView" runat="server" CssClass="ddlist">
+                <asp:ListItem>Active</asp:ListItem>
+                <asp:ListItem>Image Only</asp:ListItem>
+                <asp:ListItem>All</asp:ListItem>
+            </asp:DropDownList>
+        </div>
+        <br class="clear"/>
   
   
 
