@@ -319,7 +319,7 @@ namespace Toems_Service.Workflows
             if (ServiceSetting.GetSettingValue(SettingStrings.IpxeRequiresLogin) == "True")
             {
                 ipxeMenu.Append(":bootLocal" + NewLineChar);
-                ipxeMenu.Append("exit" + NewLineChar);
+                ipxeMenu.Append("exit 1" + NewLineChar);
                 ipxeMenu.Append("" + NewLineChar);
 
                 ipxeMenu.Append(":console" + NewLineChar);
@@ -351,7 +351,7 @@ namespace Toems_Service.Workflows
             else
             {
                 ipxeMenu.Append(":bootLocal" + NewLineChar);
-                ipxeMenu.Append("exit" + NewLineChar);
+                ipxeMenu.Append("exit 1" + NewLineChar);
                 ipxeMenu.Append("" + NewLineChar);
 
                 ipxeMenu.Append(":theopenem" + NewLineChar);
