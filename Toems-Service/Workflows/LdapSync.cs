@@ -82,7 +82,8 @@ namespace Toems_Service.Workflows
             _username = ServiceSetting.GetSettingValue(SettingStrings.LdapBindUsername);
             _password =
                 new EncryptionServices().DecryptText(ServiceSetting.GetSettingValue(SettingStrings.LdapBindPassword));
-            _baseDn = ServiceSetting.GetSettingValue(SettingStrings.LdapBaseDN);
+            _baseDn = ServiceSetting.GetSettingValue(SettingStrings.LdapGroupFilter) + "," + ServiceSetting.GetSettingValue(SettingStrings.LdapBaseDN);
+            
 
             var ous = GetOUs();
             var parents = GetParentOU(ous);

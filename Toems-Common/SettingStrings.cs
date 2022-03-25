@@ -10,6 +10,8 @@
 
         public const string LdapBaseDN = "Ldap Base DN";
 
+        public const string LdapGroupFilter = "Ldap Group Filter";
+
         public const string LdapEnabled = "Ldap Enabled";
 
         public const string LdapPort = "Ldap Port";

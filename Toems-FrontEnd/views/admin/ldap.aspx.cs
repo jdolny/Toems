@@ -46,6 +46,12 @@ namespace Toems_FrontEnd.views.admin
                 },
                 new EntitySetting
                 {
+                    Name = "Ldap Group Filter",
+                    Value = txtldapgroupfilter.Text,
+                    Id = Call.SettingApi.GetSetting("Ldap Group Filter").Id
+                },
+                new EntitySetting
+                {
                     Name = SettingStrings.LdapBindUsername,
                     Value = txtLdapUsername.Text,
                     Id = Call.SettingApi.GetSetting(SettingStrings.LdapBindUsername).Id
@@ -93,6 +99,7 @@ namespace Toems_FrontEnd.views.admin
             txtldapAuthAttribute.Text = GetSetting(SettingStrings.LdapAuthAttribute);
             txtldapbasedn.Text = GetSetting(SettingStrings.LdapBaseDN);
             ddlldapAuthType.Text = GetSetting(SettingStrings.LdapAuthType);
+            txtldapgroupfilter.Text = GetSetting(SettingStrings.LdapGroupFilter);
             txtLdapUsername.Text = GetSetting(SettingStrings.LdapBindUsername);
 
         }
