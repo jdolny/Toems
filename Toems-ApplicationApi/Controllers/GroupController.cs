@@ -188,7 +188,7 @@ namespace Toems_ApplicationApi.Controllers
         [HttpGet]
         public DtoApiBoolResponse CollectInventory(int id)
         {
-            return new DtoApiBoolResponse() { Value = _groupServices.ForceCheckin(id) };
+            return new DtoApiBoolResponse() { Value = _groupServices.CollectInventory(id) };
         }
 
         [CustomAuth(Permission = AuthorizationStrings.GroupUpdate)]
