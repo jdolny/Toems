@@ -39,6 +39,10 @@ namespace Toems_FrontEnd.views.computers
             ddlComputerImage.SelectedValue = ComputerEntity.ImageId.ToString();
             PopulateProfiles();
             ddlImageProfile.SelectedValue = ComputerEntity.ImageProfileId.ToString();
+            txtIpAddress.Text = ComputerEntity.PxeIpAddress;
+            txtNetMask.Text = ComputerEntity.PxeNetmask;
+            txtGateway.Text = ComputerEntity.PxeGateway;
+            txtDns.Text = ComputerEntity.PxeDns;
 
             try
             {
@@ -63,7 +67,10 @@ namespace Toems_FrontEnd.views.computers
                     ? -1
                     : Convert.ToInt32(ddlImageProfile.SelectedValue);
 
-
+            ComputerEntity.PxeIpAddress = txtIpAddress.Text;
+            ComputerEntity.PxeNetmask = txtNetMask.Text;
+            ComputerEntity.PxeGateway = txtGateway.Text;
+            ComputerEntity.PxeDns = txtDns.Text;
 
             var result = Call.ComputerApi.Put(ComputerEntity.Id, ComputerEntity);
             EndUserMessage = result.Success ? String.Format("Successfully Updated Computer {0}", ComputerEntity.Name) : result.ErrorMessage;

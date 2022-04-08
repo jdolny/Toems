@@ -8,7 +8,7 @@
 </asp:Content>
 
 <asp:Content runat="server" ContentPlaceHolderID="DropDownActionsSub">
-    <li><asp:LinkButton ID="buttonUpdate" runat="server" OnClick="btnUpdate_Click" Text="Update Image" CssClass="main-action" /></li>
+    <li><asp:LinkButton ID="buttonUpdate" runat="server" OnClick="btnUpdate_Click" Text="Update Computer" CssClass="main-action" /></li>
 
 </asp:Content>
 
@@ -49,6 +49,37 @@
     </div>
     <div class="size-5 column">
         <asp:Label ID="lblImageProfile" runat="server"/>
+    </div>
+    <br class="clear"/>
+    <br class="clear" />
+     <br class="clear" />
+    <h2>LIE PXE Static Ip Settings</h2>
+    <div class="size-4 column">
+        Ip Address:
+    </div>
+    <div class="size-5 column">
+        <asp:TextBox ID="txtIpAddress" runat="server" CssClass="textbox"></asp:TextBox>
+    </div>
+    <br class="clear"/>
+     <div class="size-4 column">
+        Netmask:
+    </div>
+    <div class="size-5 column">
+        <asp:TextBox ID="txtNetMask" runat="server" CssClass="textbox"></asp:TextBox>
+    </div>
+    <br class="clear"/>
+     <div class="size-4 column">
+        Gateway:
+    </div>
+    <div class="size-5 column">
+        <asp:TextBox ID="txtGateway" runat="server" CssClass="textbox"></asp:TextBox>
+    </div>
+    <br class="clear"/>
+     <div class="size-4 column">
+        Dns:
+    </div>
+    <div class="size-5 column">
+        <asp:TextBox ID="txtDns" runat="server" CssClass="textbox"></asp:TextBox>
     </div>
     <br class="clear"/>
     

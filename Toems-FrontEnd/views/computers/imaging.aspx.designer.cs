@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.computers {
-    
-    
-    public partial class imaging {
-        
+namespace Toems_FrontEnd.views.computers
+{
+
+
+    public partial class imaging
+    {
+
         /// <summary>
         /// buttonUpdate control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton buttonUpdate;
-        
+
         /// <summary>
         /// ddlComputerImage control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlComputerImage;
-        
+
         /// <summary>
         /// ddlImageProfile control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlImageProfile;
-        
+
         /// <summary>
         /// lblImage control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblImage;
-        
+
         /// <summary>
         /// lblImageProfile control.
         /// </summary>
@@ -56,5 +58,41 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblImageProfile;
+
+        /// <summary>
+        /// txtIpAddress control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtIpAddress;
+
+        /// <summary>
+        /// txtNetMask control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtNetMask;
+
+        /// <summary>
+        /// txtGateway control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtGateway;
+
+        /// <summary>
+        /// txtDns control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtDns;
     }
 }

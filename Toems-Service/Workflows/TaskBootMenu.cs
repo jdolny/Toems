@@ -124,6 +124,10 @@ namespace Toems_Service.Workflows
 
             var globalComputerArgs = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingArguments);
 
+            //add static ip info if populated
+            if(computer.PxeIpAddress != null)
+                globalComputerArgs += $" cd_net_ip={computer.PxeIpAddress} cd_net_netmask={computer.PxeNetmask} cd_net_gateway={computer.PxeGateway} cd_net_dns={computer.PxeDns} ";
+            
             var compTftpServers = new Workflows.GetCompTftpServers().Run(computer.Id);
 
             if (compTftpServers == null)
