@@ -1,4 +1,5 @@
 ﻿using System;
+using Toems_Common;
 using Toems_Common.Dto;
 
 namespace Toems_FrontEnd.views.computers
@@ -13,9 +14,28 @@ namespace Toems_FrontEnd.views.computers
             }
         }
 
+        protected void btnUpdate_Click(object sender, EventArgs e)
+        {
+            if(ComputerEntity.ProvisionStatus != Toems_Common.Enum.EnumProvisionStatus.Status.ImageOnly)
+            {
+                EndUserMessage = "Only Image Only Computer Computers Can Have Their Name Or Mac Updated.";
+                return;
+            }
+
+
+            ComputerEntity.Name = txtName.Text;
+            ComputerEntity.ImagingMac = Utility.FixMac(txtImagingMac.Text);
+            ComputerEntity.ImagingClientId = Utility.FixMac(txtImagingId.Text);
+
+            var result = Call.ComputerApi.Put(ComputerEntity.Id, ComputerEntity);
+            EndUserMessage = result.Success ? String.Format("Successfully Updated Computer {0}", ComputerEntity.Name) : result.ErrorMessage;
+
+            PopulateForm();
+        }
+
         protected void PopulateForm()
         {
-            lblName.Text = ComputerEntity.Name;
+            txtName.Text = ComputerEntity.Name;
             lblAdSync.Text = ComputerEntity.IsAdSync.ToString();
             lblClientVersion.Text = ComputerEntity.ClientVersion;
             lblIdentifier.Text = ComputerEntity.Guid;
@@ -40,6 +60,9 @@ namespace Toems_FrontEnd.views.computers
                         chkWebRtc.Checked = false;
                 }
             }
+            txtImagingId.Text = ComputerEntity.ImagingClientId;
+            txtImagingMac.Text = ComputerEntity.ImagingMac;
+
 
         }
 

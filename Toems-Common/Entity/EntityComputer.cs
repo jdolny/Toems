@@ -83,6 +83,18 @@ namespace Toems_Common.Entity
         [Column("last_socket_result")]
         public string LastSocketResult { get; set; }
 
+        [Column("pxe_ip_address")]
+        public string PxeIpAddress { get; set; }
+
+        [Column("pxe_netmask")]
+        public string PxeNetmask { get; set; }
+
+        [Column("pxe_gateway")]
+        public string PxeGateway { get; set; }
+
+        [Column("pxe_dns")]
+        public string PxeDns { get; set; }
+
     }
 
     [NotMapped]

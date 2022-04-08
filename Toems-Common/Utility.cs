@@ -62,5 +62,24 @@ namespace Toems_Common
             }
             return r;
         }
+
+        public static string FixMac(string mac)
+        {
+            if (mac.Length == 12)
+            {
+                var sb = new StringBuilder();
+                for (var i = 0; i < mac.Length; i++)
+                {
+                    if (i % 2 == 0 && i != 0)
+                        sb.Append(':');
+                    sb.Append(mac[i]);
+                }
+                mac = sb.ToString();
+            }
+            else
+                mac = mac.Replace('-', ':');
+
+            return mac.ToUpper();
+        }
     }
 }

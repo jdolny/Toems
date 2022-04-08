@@ -7,20 +7,31 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.computers {
-    
-    
-    public partial class general {
-        
+namespace Toems_FrontEnd.views.computers
+{
+
+
+    public partial class general
+    {
+
         /// <summary>
-        /// lblName control.
+        /// buttonUpdate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblName;
-        
+        protected global::System.Web.UI.WebControls.LinkButton buttonUpdate;
+
+        /// <summary>
+        /// txtName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtName;
+
         /// <summary>
         /// lblIdentifier control.
         /// </summary>
@@ -29,7 +40,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblIdentifier;
-        
+
         /// <summary>
         /// lblAdSync control.
         /// </summary>
@@ -38,7 +49,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblAdSync;
-        
+
         /// <summary>
         /// lblAdGuid control.
         /// </summary>
@@ -47,7 +58,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblAdGuid;
-        
+
         /// <summary>
         /// lblAdDisabled control.
         /// </summary>
@@ -56,7 +67,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblAdDisabled;
-        
+
         /// <summary>
         /// lblInstallId control.
         /// </summary>
@@ -65,7 +76,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblInstallId;
-        
+
         /// <summary>
         /// lblHardwareUuid control.
         /// </summary>
@@ -74,7 +85,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblHardwareUuid;
-        
+
         /// <summary>
         /// lblStatus control.
         /// </summary>
@@ -83,7 +94,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblStatus;
-        
+
         /// <summary>
         /// lblProvisionDate control.
         /// </summary>
@@ -92,7 +103,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblProvisionDate;
-        
+
         /// <summary>
         /// lblLastCheckin control.
         /// </summary>
@@ -101,7 +112,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLastCheckin;
-        
+
         /// <summary>
         /// lblLastIp control.
         /// </summary>
@@ -110,7 +121,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLastIp;
-        
+
         /// <summary>
         /// lblClientVersion control.
         /// </summary>
@@ -119,7 +130,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblClientVersion;
-        
+
         /// <summary>
         /// lblInventoryTime control.
         /// </summary>
@@ -128,7 +139,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblInventoryTime;
-        
+
         /// <summary>
         /// lblRemoteAccessId control.
         /// </summary>
@@ -137,7 +148,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblRemoteAccessId;
-        
+
         /// <summary>
         /// chkWebRtc control.
         /// </summary>
@@ -146,5 +157,23 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkWebRtc;
+
+        /// <summary>
+        /// txtImagingMac control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtImagingMac;
+
+        /// <summary>
+        /// txtImagingId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtImagingId;
     }
 }

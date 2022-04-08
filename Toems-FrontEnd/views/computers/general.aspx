@@ -8,6 +8,7 @@
 </asp:Content>
 
 <asp:Content runat="server" ContentPlaceHolderID="DropDownActionsSub">
+    <li><asp:LinkButton ID="buttonUpdate" runat="server" OnClick="btnUpdate_Click" Text="Update Computer" CssClass="main-action" /></li>
 
 </asp:Content>
 
@@ -23,7 +24,7 @@
         Name:
     </div>
     <div class="size-lbl2 column">
-        <asp:Label runat="server" ID="lblName" ></asp:Label>
+        <asp:Textbox runat="server" ID="txtName" CssClass="textbox" ></asp:Textbox>
     </div>
     <br class="clear"/>
        <div class="size-lbl column">
@@ -126,6 +127,24 @@
            <asp:CheckBox runat="server" id="chkWebRtc" ClientIDMode="Static" AutoPostBack="true" OnCheckedChanged="chkWebRtc_CheckedChanged"/>
         <label for="chkWebRtc"></label>
     </div>
+
+      <br class="clear"/>
+       <div class="size-lbl column">
+        Primary Imaging Mac:
+    </div>
+    <div class="size-lbl2 column">
+        <asp:Textbox runat="server" ID="txtImagingMac" CssClass="textbox"></asp:Textbox>
+    </div>
+
+     <br class="clear"/>
+       <div class="size-lbl column">
+        Imaging Client Id:
+    </div>
+    <div class="size-5 column">
+        <asp:Textbox runat="server" ID="txtImagingId" CssClass="textbox"></asp:Textbox>
+    </div>
+
+    
 
     
 </asp:Content>

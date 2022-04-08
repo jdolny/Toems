@@ -26,14 +26,6 @@
                 <a href="<%= ResolveUrl("~/views/computers/all.aspx") %>">
                     <span class="sub-nav-text">Search All</span></a>
             </li>
-              <li id="preprovision">
-                <a href="<%= ResolveUrl("~/views/computers/addpre.aspx") %>">
-                    <span class="sub-nav-text">Create Pre-Provision</span></a>
-            </li>
-             <li id="createimageonly">
-                <a href="<%= ResolveUrl("~/views/computers/addimageonly.aspx") %>">
-                    <span class="sub-nav-text">Create Image Only</span></a>
-            </li>
               <li id="approval">
                 <a href="<%= ResolveUrl("~/views/computers/approvalrequests.aspx") %>">
                     <span class="sub-nav-text">Approval Requests</span></a>
@@ -41,6 +33,15 @@
               <li id="reset">
                 <a href="<%= ResolveUrl("~/views/computers/resetrequests.aspx") %>">
                     <span class="sub-nav-text">Reset Requests</span></a>
+            </li>
+            <hr />
+              <li id="preprovision">
+                <a href="<%= ResolveUrl("~/views/computers/addpre.aspx") %>">
+                    <span class="sub-nav-text">Create Pre-Provision</span></a>
+            </li>
+             <li id="createimageonly">
+                <a href="<%= ResolveUrl("~/views/computers/addimageonly.aspx") %>">
+                    <span class="sub-nav-text">Create Image Only</span></a>
             </li>
             
         </ul>
