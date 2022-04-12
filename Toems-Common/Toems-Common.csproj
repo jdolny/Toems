@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorizationStrings.cs" />
+    <Compile Include="DbUpgrades\147.cs" />
     <Compile Include="DbUpgrades\146.cs" />
     <Compile Include="DbUpgrades\145.cs" />
     <Compile Include="DbUpgrades\144.cs" />
@@ -282,6 +283,8 @@
     <Compile Include="Entity\EntityProcessInventory.cs" />
     <Compile Include="Entity\EntityCertificateInventory.cs" />
     <Compile Include="Entity\EntityMessageModule.cs" />
+    <Compile Include="Entity\EntitySetupCompleteFile.cs" />
+    <Compile Include="Entity\EntitySysprepAnswerfile.cs" />
     <Compile Include="Entity\EntitySysprepModule.cs" />
     <Compile Include="Entity\EntityWuModule.cs" />
     <Compile Include="Entity\EntityWolRelay.cs" />
