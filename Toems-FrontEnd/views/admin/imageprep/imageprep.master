@@ -1,0 +1,60 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/views/admin/admin.master" AutoEventWireup="true" CodeBehind="imageprep.master.cs" Inherits="Toems_FrontEnd.views.admin.imageprep.imageprep" %>
+<asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub1">
+
+    <asp:ContentPlaceHolder runat="server" ID="TopBreadCrumbSub2"></asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub1">
+    <asp:ContentPlaceHolder runat="server" ID="SubNavTitle_Sub2"></asp:ContentPlaceHolder>
+</asp:Content>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub" Runat="Server">
+   
+    <asp:ContentPlaceHolder runat="server" ID="DropDownActionsSub2">
+    </asp:ContentPlaceHolder>
+ 
+</asp:Content>
+
+
+
+<asp:Content ID="Content2" ContentPlaceHolderID="Level2" Runat="Server">
+      <div id="divLevel2" runat="server">
+    <ul class="ul-secondary-nav">
+    <li id="createsysprep" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/imageprep/createsysprep.aspx") %>?level=2">
+            <span class="sub-nav-text">Create Sysprep Answer File</span></a>
+    </li>
+         <li id="searchsysprep" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/imageprep/searchsysprep.aspx") %>?level=2">
+            <span class="sub-nav-text">Search Sysprep Answer Files</span></a>
+    </li>
+
+
+    <li id="createsetupcomplete" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/imageprep/createsetupcomplete.aspx") %>?level=2">
+            <span class="sub-nav-text">Create SetupComplete File</span></a>
+    </li>
+         <li id="searchsetupcomplete" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/imageprep/searchsetupcomplete.aspx") %>?level=2">
+            <span class="sub-nav-text">Search SetupComplete Files</span></a>
+    </li>
+        </ul>
+          </div>
+    
+     
+  
+
+</asp:Content>
+
+<asp:Content ID="Content3" ContentPlaceHolderID="SubContent" Runat="Server">
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#imageprep').addClass("nav-current");
+        });
+    </script>
+    <asp:ContentPlaceHolder ID="SubContent2" runat="server">
+    </asp:ContentPlaceHolder>
+   
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="subHelp">
+    <asp:ContentPlaceHolder runat="server" ID="subsubHelp"></asp:ContentPlaceHolder>
+</asp:Content>

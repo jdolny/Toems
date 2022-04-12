@@ -133,6 +133,8 @@
     <Compile Include="Controllers\ActiveImagingTaskController.cs" />
     <Compile Include="Controllers\ActiveMulticastSessionController.cs" />
     <Compile Include="Controllers\ApprovalRequestController.cs" />
+    <Compile Include="Controllers\SetupCompleteFileController.cs" />
+    <Compile Include="Controllers\SysprepAnswerFileController.cs" />
     <Compile Include="Controllers\AssetGroupController.cs" />
     <Compile Include="Controllers\AssetGroupMemberController.cs" />
     <Compile Include="Controllers\AssetCategoryController.cs" />

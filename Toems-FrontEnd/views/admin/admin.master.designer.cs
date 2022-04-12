@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.admin {
-    
-    
-    public partial class AdminMaster {
-        
+namespace Toems_FrontEnd.views.admin
+{
+
+
+    public partial class AdminMaster
+    {
+
         /// <summary>
         /// TopBreadCrumbSub1 control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder TopBreadCrumbSub1;
-        
+
         /// <summary>
         /// SubNavTitle_Sub1 control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder SubNavTitle_Sub1;
-        
+
         /// <summary>
         /// Level1 control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl Level1;
-        
+
         /// <summary>
         /// about control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl about;
-        
+
         /// <summary>
         /// certificate control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl certificate;
-        
+
         /// <summary>
         /// comservers control.
         /// </summary>
@@ -65,7 +67,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl comservers;
-        
+
         /// <summary>
         /// dbmaintenance control.
         /// </summary>
@@ -74,7 +76,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl dbmaintenance;
-        
+
         /// <summary>
         /// email control.
         /// </summary>
@@ -83,7 +85,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl email;
-        
+
         /// <summary>
         /// imageprofiletemplates control.
         /// </summary>
@@ -92,7 +94,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl imageprofiletemplates;
-        
+
         /// <summary>
         /// imagingclient control.
         /// </summary>
@@ -101,7 +103,16 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl imagingclient;
-        
+
+        /// <summary>
+        /// imageprep control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl imageprep;
+
         /// <summary>
         /// impersonation control.
         /// </summary>
@@ -110,7 +121,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl impersonation;
-        
+
         /// <summary>
         /// imageprofiles control.
         /// </summary>
@@ -119,7 +130,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl imageprofiles;
-        
+
         /// <summary>
         /// ldap control.
         /// </summary>
@@ -128,7 +139,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl ldap;
-        
+
         /// <summary>
         /// provision control.
         /// </summary>
@@ -137,7 +148,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl provision;
-        
+
         /// <summary>
         /// pxe control.
         /// </summary>
@@ -146,7 +157,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl pxe;
-        
+
         /// <summary>
         /// remoteaccess control.
         /// </summary>
@@ -155,7 +166,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl remoteaccess;
-        
+
         /// <summary>
         /// security control.
         /// </summary>
@@ -164,7 +175,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl security;
-        
+
         /// <summary>
         /// server control.
         /// </summary>
@@ -173,7 +184,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl server;
-        
+
         /// <summary>
         /// storage control.
         /// </summary>
@@ -182,7 +193,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl storage;
-        
+
         /// <summary>
         /// client control.
         /// </summary>
@@ -191,7 +202,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl client;
-        
+
         /// <summary>
         /// wolrelays control.
         /// </summary>
@@ -200,7 +211,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl wolrelays;
-        
+
         /// <summary>
         /// Level2 control.
         /// </summary>
@@ -209,7 +220,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder Level2;
-        
+
         /// <summary>
         /// DropDownActionsSub control.
         /// </summary>
@@ -218,7 +229,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder DropDownActionsSub;
-        
+
         /// <summary>
         /// SubContent control.
         /// </summary>
@@ -227,7 +238,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder SubContent;
-        
+
         /// <summary>
         /// subHelp control.
         /// </summary>

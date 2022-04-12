@@ -103,6 +103,10 @@ namespace Toems_DataModel
         IGenericRepository<EntityMulticastPort> MulticastPortRepository { get; }
         IGenericRepository<EntityComputerLog> ComputerLogRepository { get; }
         IGenericRepository<EntityClientImagingId> ClientImagingIdRepository { get; }
+
+        IGenericRepository<EntitySysprepAnswerfile> SysprepAnswerFileRepository { get; }
+        IGenericRepository<EntitySetupCompleteFile> SetupCompleteFileRepository { get; }
+
         void Save();
     }
 }

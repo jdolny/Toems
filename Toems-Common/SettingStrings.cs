@@ -166,7 +166,7 @@
 
         public const string DefaultComputerView = "Default Computer View";
 
-        public const int GlobalVersion = 146;
+        public const int GlobalVersion = 147;
 
     }
 }

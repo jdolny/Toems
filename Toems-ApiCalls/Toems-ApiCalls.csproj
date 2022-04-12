@@ -61,6 +61,8 @@
     <Compile Include="APICall.cs" />
     <Compile Include="ApiRequest.cs" />
     <Compile Include="ApprovalRequestAPI.cs" />
+    <Compile Include="SetupCompleteFileAPI.cs" />
+    <Compile Include="SysprepAnswerFileAPI.cs" />
     <Compile Include="AssetGroupApi.cs" />
     <Compile Include="AssetGroupMemberAPI.cs" />
     <Compile Include="AssetCategoryAPI.cs" />

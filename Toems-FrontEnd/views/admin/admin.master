@@ -58,6 +58,12 @@
                 </a>
             </li>
 
+               <li id="imageprep" runat="server" clientidmode="Static">
+                <a href="<%= ResolveUrl("~/views/admin/imageprep/searchsysprep.aspx?level=2") %>">
+                    <span class="nav-text">Image Prep Templates</span>
+                </a>
+            </li>
+
                <li id="impersonation" runat="server" clientidmode="Static">
                 <a href="<%= ResolveUrl("~/views/admin/impersonation/search.aspx?level=2") %>">
                     <span class="nav-text">Impersonation Accounts</span>

@@ -14,6 +14,10 @@ namespace Toems_FrontEnd.BasePages
         public EntityComServerCluster ComServerCluster { get; set; }
         public EntityWolRelay WolRelay { get; set; }
         public EntityCustomBootMenu BootEntry { get; set; }
+
+        public EntitySysprepAnswerfile SysprepFile { get; set; }
+
+        public EntitySetupCompleteFile SetupCompleteFile { get; set; }
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -36,6 +40,12 @@ namespace Toems_FrontEnd.BasePages
             BootEntry = !string.IsNullOrEmpty(Request["entryId"])
               ? Call.CustomBootMenuApi.Get(Convert.ToInt32(Request.QueryString["entryId"]))
               : null;
+            SysprepFile = !string.IsNullOrEmpty(Request["sysprepId"])
+             ? Call.SysprepAnswerFileApi.Get(Convert.ToInt32(Request.QueryString["sysprepId"]))
+             : null;
+            SetupCompleteFile = !string.IsNullOrEmpty(Request["setupCompleteId"])
+             ? Call.SetupCompleteFileApi.Get(Convert.ToInt32(Request.QueryString["setupCompleteId"]))
+             : null;
 
         }
 

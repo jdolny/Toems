@@ -387,5 +387,15 @@ namespace Toems_ApiCalls
             get { return new RemoteAccessApi("RemoteAccess"); }
         }
 
+        public SysprepAnswerFileAPI SysprepAnswerFileApi
+        {
+            get { return new SysprepAnswerFileAPI("SysprepAnswerFile"); }
+        }
+
+        public SetupCompleteFileAPI SetupCompleteFileApi
+        {
+            get { return new SetupCompleteFileAPI("SetupCompleteFile"); }
+        }
+
     }
 }

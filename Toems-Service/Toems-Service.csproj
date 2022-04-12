@@ -84,6 +84,8 @@
   <ItemGroup>
     <Compile Include="BcdService.cs" />
     <Compile Include="ClientImagingServices.cs" />
+    <Compile Include="Entity\ServiceSetupCompleteFile.cs" />
+    <Compile Include="Entity\ServiceSysprepAnswerFile.cs" />
     <Compile Include="Entity\ServiceActiveImagingTask.cs" />
     <Compile Include="Entity\ServiceActiveMulticastSession.cs" />
     <Compile Include="Entity\ServiceComputerLog.cs" />

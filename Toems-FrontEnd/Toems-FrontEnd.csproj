@@ -161,6 +161,12 @@
     <Content Include="views\admin\comservers\replicatesettings.aspx" />
     <Content Include="views\admin\comservers\tftpsettings.aspx" />
     <Content Include="views\admin\dbmaintenance.aspx" />
+    <Content Include="views\admin\imageprep\createsetupcomplete.aspx" />
+    <Content Include="views\admin\imageprep\createsysprep.aspx" />
+    <Content Include="views\admin\imageprep\editsetupcomplete.aspx" />
+    <Content Include="views\admin\imageprep\editsysprep.aspx" />
+    <Content Include="views\admin\imageprep\searchsetupcomplete.aspx" />
+    <Content Include="views\admin\imageprep\searchsysprep.aspx" />
     <Content Include="views\admin\imageprofiletemplate.aspx" />
     <Content Include="views\admin\imagingclient.aspx" />
     <Content Include="views\admin\impersonation\create.aspx" />
@@ -428,6 +434,7 @@
     <Content Include="views\admin\kernels\kernels.master" />
     <Content Include="views\modules\sysprepmodules\sysprepmodule.master" />
     <Content Include="views\images\profiles\profiles.master" />
+    <Content Include="views\admin\imageprep\imageprep.master" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1127,6 +1134,55 @@
     </Compile>
     <Compile Include="views\admin\email.aspx.designer.cs">
       <DependentUpon>email.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\imageprep\createsetupcomplete.aspx.cs">
+      <DependentUpon>createsetupcomplete.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\imageprep\createsetupcomplete.aspx.designer.cs">
+      <DependentUpon>createsetupcomplete.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\imageprep\createsysprep.aspx.cs">
+      <DependentUpon>createsysprep.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\imageprep\createsysprep.aspx.designer.cs">
+      <DependentUpon>createsysprep.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\imageprep\editsetupcomplete.aspx.cs">
+      <DependentUpon>editsetupcomplete.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\imageprep\editsetupcomplete.aspx.designer.cs">
+      <DependentUpon>editsetupcomplete.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\imageprep\editsysprep.aspx.cs">
+      <DependentUpon>editsysprep.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\imageprep\editsysprep.aspx.designer.cs">
+      <DependentUpon>editsysprep.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\imageprep\imageprep.master.cs">
+      <DependentUpon>imageprep.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\imageprep\imageprep.master.designer.cs">
+      <DependentUpon>imageprep.master</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\imageprep\searchsetupcomplete.aspx.cs">
+      <DependentUpon>searchsetupcomplete.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\imageprep\searchsetupcomplete.aspx.designer.cs">
+      <DependentUpon>searchsetupcomplete.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\imageprep\searchsysprep.aspx.cs">
+      <DependentUpon>searchsysprep.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\imageprep\searchsysprep.aspx.designer.cs">
+      <DependentUpon>searchsysprep.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\admin\imageprofiletemplate.aspx.cs">
       <DependentUpon>imageprofiletemplate.aspx</DependentUpon>
