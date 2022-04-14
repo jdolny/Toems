@@ -3,7 +3,7 @@
      <li><a href="<%= ResolveUrl("~/views/admin/pxeboot/createbootentry.aspx") %>?level=2">Create Custom Boot Entry</a></li>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="SubNavTitle_Sub2" runat="server">
-
+    Edit Boot Entry
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="DropDownActionsSub2" runat="server">
 

@@ -3,7 +3,7 @@
      <li><a href="<%= ResolveUrl("~/views/admin/imageprep/searchsysprep.aspx") %>?level=2">Search Sysprep Answer Files</a></li>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="SubNavTitle_Sub2" runat="server">
-
+    Search Sysprep Files
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="DropDownActionsSub2" runat="server">
 

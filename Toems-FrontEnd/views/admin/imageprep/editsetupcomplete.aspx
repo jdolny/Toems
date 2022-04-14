@@ -3,7 +3,7 @@
      <li><a href="<%= ResolveUrl("~/views/admin/imageprep/editsetupcomplete.aspx") %>?level=2&setupCompleteId=<%= SetupCompleteFile.Id %>">Edit SetupComplete File</a></li>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="SubNavTitle_Sub2" runat="server">
-
+    Edit SetupComplete File
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="DropDownActionsSub2" runat="server">
 

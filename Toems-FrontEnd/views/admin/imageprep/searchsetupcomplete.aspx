@@ -3,7 +3,7 @@
      <li><a href="<%= ResolveUrl("~/views/admin/imageprep/searchsetupcomplete.aspx") %>?level=2">Search SetupComplete Files</a></li>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="SubNavTitle_Sub2" runat="server">
-
+    Search Setup Complete Files
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="DropDownActionsSub2" runat="server">
 

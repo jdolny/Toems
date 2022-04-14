@@ -3,7 +3,7 @@
     <li><a href="<%= ResolveUrl("~/views/admin/pxeboot/bootmenueditor.aspx") %>?level=2">PXE Boot Menu Editor</a></li>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub2">
-
+    PXE Boot Menu Editor
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub2" Runat="Server">
      <li><asp:LinkButton ID="btnSaveEditor" runat="server" Text="Save Changes" OnClick="saveEditor_Click" OnClientClick="update_click()" CssClass="main-action"/></li>

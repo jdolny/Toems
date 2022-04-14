@@ -3,7 +3,7 @@
     <li><a href="<%= ResolveUrl("~/views/admin/pxeboot/globalbootmenu.aspx") %>?level=2">Global Boot Menu</a></li>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="SubNavTitle_Sub2" runat="server">
-  
+  Global Boot Menu
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="DropDownActionsSub2" runat="server">
          <li><asp:LinkButton ID="btnSubmitDefault" runat="server" Text="Create Boot Files " OnClick="btnSubmit_Click" OnClientClick="get_shas();" CssClass="main-action"/></li>

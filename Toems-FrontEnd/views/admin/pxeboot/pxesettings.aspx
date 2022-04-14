@@ -3,7 +3,7 @@
      <li><a href="<%= ResolveUrl("~/views/admin/pxeboot/pxesettings.aspx") %>?level=2">PXE Boot Settings</a></li>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="SubNavTitle_Sub2" runat="server">
-
+    PXE Boot Settings
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="DropDownActionsSub2" runat="server">
 
