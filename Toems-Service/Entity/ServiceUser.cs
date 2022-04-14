@@ -213,7 +213,7 @@ namespace Toems_Service.Entity
         {
             var validationResult = new DtoValidationResult { Success = true };
 
-            if (string.IsNullOrEmpty(user.Name) || !user.Name.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '-'))
+            if (string.IsNullOrEmpty(user.Name) || !user.Name.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '-' || c == '.'))
             {
                 validationResult.Success = false;
                 validationResult.ErrorMessage = "User Name Is Not Valid";
@@ -266,6 +266,33 @@ namespace Toems_Service.Entity
         public List<DtoProcessWithUser> GetAllProcessForUser(DateTime dateCutoff, int limit, string userName)
         {
             return new ReportRepository().GetAllProcessForUser(dateCutoff, limit, userName);
+        }
+
+        public string GetUserComputerView(int userId)
+        {
+            var user = GetUser(userId);
+            if (user.DefaultComputerView.Equals("Default"))
+                return ServiceSetting.GetSettingValue(SettingStrings.DefaultComputerView);
+            else
+                return user.DefaultComputerView;
+        }
+
+        public string GetUserComputerSort(int userId)
+        {
+            var user = GetUser(userId);
+            if (user.ComputerSortMode.Equals("Default"))
+                return ServiceSetting.GetSettingValue(SettingStrings.ComputerSortMode);
+            else
+                return user.ComputerSortMode;
+        }
+
+        public string GetUserLoginPage(int userId)
+        {
+            var user = GetUser(userId);
+            if (user.DefaultLoginPage.Equals("Default"))
+                return ServiceSetting.GetSettingValue(SettingStrings.DefaultLoginPage);
+            else
+                return user.DefaultLoginPage;
         }
     }
 }
