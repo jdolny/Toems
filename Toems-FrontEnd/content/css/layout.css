@@ -85,7 +85,7 @@ float:left;
     overflow-x: hidden;
     overflow-y: hidden;
     position: relative;
-    width: calc(100% - 207px);
+    width: calc(100% - 210px);
 }
 
 .content-header {
