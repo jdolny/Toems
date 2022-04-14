@@ -49,6 +49,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('.uname').watermark('Username', { useNative: false });
+        $('.uname').focus();
         $('.password').watermark('Password', { useNative: false });
     });
 </script>
