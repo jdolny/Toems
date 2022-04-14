@@ -43,6 +43,7 @@
         <Columns>
             <asp:BoundField DataField="Name" HeaderText="Name" SortExpression="Name" ItemStyle-CssClass="width_200"></asp:BoundField>
             <asp:BoundField DataField="Version" HeaderText="Version" SortExpression="Version" ItemStyle-CssClass="width_200"></asp:BoundField>
+             <asp:BoundField DataField="UninstallString" HeaderText="Uninstall String" ></asp:BoundField>
            
         </Columns>
         <EmptyDataTemplate>

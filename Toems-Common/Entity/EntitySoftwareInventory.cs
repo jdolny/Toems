@@ -29,5 +29,8 @@ namespace Toems_Common.Entity
          [Column("revision")]
         public int Revision { get; set; }
 
+        [Column("uninstall_string")]
+        public string UninstallString { get; set; }
+
     }
 }

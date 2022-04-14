@@ -25,9 +25,15 @@ namespace Toems_Service.Entity
                 if (existing == null)
                 {
                     _uow.SoftwareInventoryRepository.Insert(software);
+                    actionResult.Id = software.Id;
                 }
-               
-                 actionResult.Id = software.Id;
+                else if (string.IsNullOrEmpty(existing.UninstallString) && !string.IsNullOrEmpty(software.UninstallString))
+                {
+                    //update to add uninstall string as of version 1.4.8
+                    existing.UninstallString = software.UninstallString;
+                    _uow.SoftwareInventoryRepository.Update(existing, existing.Id);
+                    actionResult.Id = existing.Id;
+                }
             }
 
             _uow.Save();

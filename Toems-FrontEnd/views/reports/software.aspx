@@ -33,7 +33,8 @@
         <Columns>
            
             <asp:BoundField DataField="Name" HeaderText="Name" ItemStyle-CssClass="width_200"></asp:BoundField>
-             <asp:BoundField DataField="Version" HeaderText="Version"></asp:BoundField>
+             <asp:BoundField DataField="Version" HeaderText="Version" ItemStyle-CssClass="width_200"></asp:BoundField>
+            <asp:BoundField DataField="UninstallString" HeaderText="Uninstall String"></asp:BoundField>
         </Columns>
         <EmptyDataTemplate>
             No Software Found
