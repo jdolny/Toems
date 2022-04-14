@@ -186,7 +186,7 @@ namespace Toems_FrontEnd.BasePages
         public string GetSortDirection(string sortExpression)
         {
             if (ViewState[sortExpression] == null)
-                ViewState[sortExpression] = "Desc";
+                ViewState[sortExpression] = "Asc";
             else
                 ViewState[sortExpression] = ViewState[sortExpression].ToString() == "Desc" ? "Asc" : "Desc";
 
