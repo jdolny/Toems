@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_DataModel;
@@ -16,17 +17,28 @@ namespace Toems_Service.Entity
 
         public DtoActionResult AddOrUpdate(List<EntityUserLogin> inventory, int computerId)
         {
+            DateTime nullTime = Convert.ToDateTime("0001-01-01 00:00:00");
             var actionResult = new DtoActionResult();
             foreach (var login in inventory)
             {
                 login.ComputerId = computerId;
-                var existing = _uow.UserLoginRepository.GetFirstOrDefault(x => x.ComputerId == login.ComputerId && x.LoginDateTime == login.LoginDateTime && x.LogoutDateTime == login.LogoutDateTime);
+                login.ClientLoginId = login.Id;
+
+                var existing = _uow.UserLoginRepository.GetFirstOrDefault(x => x.ComputerId == login.ComputerId && x.LoginDateTime == login.LoginDateTime && x.ClientLoginId == login.ClientLoginId);
                 if (existing == null)
                 {
                     _uow.UserLoginRepository.Insert(login);
+                    actionResult.Id = login.Id;
+                }
+                else if (login.LogoutDateTime != nullTime)
+                {
+                    existing.LogoutDateTime = login.LogoutDateTime;
+                    _uow.UserLoginRepository.Update(existing, existing.Id);
+                    actionResult.Id = existing.Id;
+
                 }
              
-                 actionResult.Id = login.Id;
+                
                  _uow.Save();
             }
            

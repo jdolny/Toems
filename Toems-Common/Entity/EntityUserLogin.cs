@@ -23,5 +23,8 @@ namespace Toems_Common.Entity
 
         [Column("logout_date_time_utc")]
         public DateTime LogoutDateTime { get; set; }
+
+        [Column("client_login_id")]
+        public int ClientLoginId { get; set; }
     }
 }
