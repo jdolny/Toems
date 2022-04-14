@@ -95,6 +95,8 @@ namespace Toems_Common.Entity
         [Column("pxe_dns")]
         public string PxeDns { get; set; }
 
+        [NotMapped]
+        public string LastLoggedInUser {get; set;}
     }
 
     [NotMapped]
@@ -109,4 +111,5 @@ namespace Toems_Common.Entity
         public EntityImage Image { get; set; }
         public EntityImageProfile ImageProfile { get; set; }
     }
+
 }
