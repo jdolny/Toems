@@ -43,6 +43,7 @@ namespace Toems_DataModel
             return (from h in _context.Computers
                     join g in _context.GroupMemberships on h.Id equals g.ComputerId
                     where (g.GroupId == searchGroupId) && (h.Name.Contains(searchString))
+                    orderby h.Name
                     select h).ToList();
         }
 
@@ -51,6 +52,7 @@ namespace Toems_DataModel
             return (from h in _context.Computers
                 join g in _context.GroupMemberships on h.Id equals g.ComputerId
                 where (g.GroupId == groupId)
+                orderby h.Name
                 select h).ToList();
         }
 
