@@ -78,9 +78,15 @@ namespace Toems_Service
 
         public string DecryptText(string input)
         {
+            if (input == null) {
+                log.Error("No input to decrypt! Provision key generated?");
+                return null;
+            }
+
             var bytesToBeDecrypted = Convert.FromBase64String(input);
             var passwordBytes = Encoding.UTF8.GetBytes(ConfigurationManager.AppSettings["DbEncryptionKey"]);
             passwordBytes = SHA256.Create().ComputeHash(passwordBytes);
+
 
             try
             {

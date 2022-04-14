@@ -14,7 +14,7 @@ namespace Toems_Service.Workflows
 {
     public class ComServerFreeSpace
     {
-        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public List<DtoFreeSpace> RunAllServers()
         {
             var uow = new UnitOfWork();
@@ -28,7 +28,14 @@ namespace Toems_Service.Workflows
             {
                 var free = new DtoFreeSpace();
                 free = new APICall().ClientComServerApi.GetFreeSpace(com.Url, "", decryptedKey);
-                list.Add(free);
+
+                if (free == null) {
+                    logger.Error("Com server returned null for status. Check your com server URL!");
+                }
+                else
+                {
+                    list.Add(free);
+                }
             }
 
             return list;

@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.admin {
-    
-    
-    public partial class ldap {
-        
+namespace Toems_FrontEnd.views.admin
+{
+
+
+    public partial class ldap
+    {
+
         /// <summary>
         /// btnUpdateSettings control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnUpdateSettings;
-        
+
         /// <summary>
         /// btnTestBind control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnTestBind;
-        
+
         /// <summary>
         /// txtLdap control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label txtLdap;
-        
+
         /// <summary>
         /// ad control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl ad;
-        
+
         /// <summary>
         /// txtldapServer control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtldapServer;
-        
+
         /// <summary>
         /// txtldapPort control.
         /// </summary>
@@ -65,7 +67,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtldapPort;
-        
+
         /// <summary>
         /// txtldapAuthAttribute control.
         /// </summary>
@@ -74,7 +76,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtldapAuthAttribute;
-        
+
         /// <summary>
         /// txtldapbasedn control.
         /// </summary>
@@ -83,7 +85,16 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtldapbasedn;
-        
+
+        /// <summary>
+        /// txtldapgroupfilter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtldapgroupfilter;
+
         /// <summary>
         /// txtLdapUsername control.
         /// </summary>
@@ -92,7 +103,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtLdapUsername;
-        
+
         /// <summary>
         /// txtLdapPassword control.
         /// </summary>
@@ -101,7 +112,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtLdapPassword;
-        
+
         /// <summary>
         /// ddlldapAuthType control.
         /// </summary>

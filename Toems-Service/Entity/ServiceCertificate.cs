@@ -82,6 +82,11 @@ namespace Toems_Service.Entity
             var ca = _uow.CertificateRepository.GetFirstOrDefault(x => x.Type == EnumCertificate.CertificateType.Authority);
             var intermediate = _uow.CertificateRepository.GetFirstOrDefault(x => x.Type == EnumCertificate.CertificateType.Intermediate);
 
+            // Certificates weren't generated yet.
+            if (ca == null || intermediate == null) {
+                return null;
+            }
+
             ca.PfxBlob = null;
             intermediate.PfxBlob = null;
             ca.Password = null;
