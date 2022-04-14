@@ -52,7 +52,7 @@
         </div>
         <br class="clear"/>
         <div class="size-4 column">
-            LDAP Group Filter:
+            LDAP Sync OU:
         </div>
         <div class="size-5 column">
             <asp:TextBox ID="txtldapgroupfilter" runat="server" CssClass="textbox"></asp:TextBox>
@@ -94,8 +94,8 @@
 <p>The attribute to authenticate against, should most of the time be set to <strong>samaccountname</strong></p>
 <h5><span style="color: #ff9900;">LDAP Base DN:</span></h5>
 <p>The root of your domain, it must be the root in order to work, such as <strong>dc=theopenem,dc=com</strong></p>
-<h5><span style="color: #ff9900;">LDAP Group Filter:</span></h5>
-<p>Filters groups by this given OU filter, needs to be in the following format <strong>ou=parttime,ou=openemstaff</strong></p>
+<h5><span style="color: #ff9900;">LDAP Sync OU:</span></h5>
+<p>Limit the LDAP sync to this OU and all child elements, needs to be in the following format <strong>ou=parttime,ou=openemstaff</strong></p>
 <h5><span style="color: #ff9900;">LDAP Bind Username:</span></h5>
 <p>The username of the account used to bind to AD.  Domain should not be included.</p>
 <h5><span style="color: #ff9900;">LDAP Bind Password:</span></h5>

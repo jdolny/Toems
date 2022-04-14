@@ -19,6 +19,7 @@ namespace Toems_Service.Workflows
         private string _password;
         private List<EntityGroupMembership> _groupMemberships;
         private string _baseDn;
+        private string _syncOU;
         private readonly ServiceComputer _computerService;
         private readonly ServiceGroup _groupService;
         private readonly ServiceGroupMembership _groupMembershipService;
@@ -82,8 +83,9 @@ namespace Toems_Service.Workflows
             _username = ServiceSetting.GetSettingValue(SettingStrings.LdapBindUsername);
             _password =
                 new EncryptionServices().DecryptText(ServiceSetting.GetSettingValue(SettingStrings.LdapBindPassword));
-            _baseDn = ServiceSetting.GetSettingValue(SettingStrings.LdapGroupFilter) + "," + ServiceSetting.GetSettingValue(SettingStrings.LdapBaseDN);
-            
+            _syncOU = ServiceSetting.GetSettingValue(SettingStrings.LdapSyncOU);
+            _baseDn =  _syncOU + "," + ServiceSetting.GetSettingValue(SettingStrings.LdapBaseDN);
+            _baseDn = _baseDn.Trim(',');
 
             var ous = GetOUs();
             var parents = GetParentOU(ous);
