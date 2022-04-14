@@ -77,7 +77,46 @@ Users
           
         </asp:DropDownList>
     </div>
-    <br class="clear"/>
+     <br class="clear"/>
+
+     <div class="size-4 column">
+            Default Computers Page:
+        </div>
+        <div class="size-5 column">
+            <asp:DropDownList ID="ddlComputerView" runat="server" CssClass="ddlist">
+                <asp:ListItem>Default</asp:ListItem>
+                <asp:ListItem>Active</asp:ListItem>
+                <asp:ListItem>Image Only</asp:ListItem>
+                <asp:ListItem>All</asp:ListItem>
+            </asp:DropDownList>
+        </div>
+        <br class="clear"/>
+
+      <div class="size-4 column">
+            Default Computer Sort:
+        </div>
+        <div class="size-5 column">
+            <asp:DropDownList ID="ddlComputerSort" runat="server" CssClass="ddlist">
+                <asp:ListItem>Default</asp:ListItem>
+                <asp:ListItem>Name</asp:ListItem>
+                <asp:ListItem>Last Checkin</asp:ListItem>
+            </asp:DropDownList>
+        </div>
+        <br class="clear"/>
+
+      <div class="size-4 column">
+            Default Login Page:
+        </div>
+        <div class="size-5 column">
+            <asp:DropDownList ID="ddlLoginPage" runat="server" CssClass="ddlist">
+                <asp:ListItem>Default</asp:ListItem>
+                <asp:ListItem>Dashboard</asp:ListItem>
+                <asp:ListItem>Active Computers</asp:ListItem>
+                <asp:ListItem>Image Only Computers</asp:ListItem>
+                <asp:ListItem>All Computers</asp:ListItem>
+            </asp:DropDownList>
+        </div>
+        <br class="clear"/>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
     <h5><span style="color: #ff9900;">Username:</span></h5>

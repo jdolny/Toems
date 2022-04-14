@@ -38,6 +38,15 @@ namespace Toems_Common.Entity
         [Column("imaging_token")]
         public string ImagingToken { get; set; }
 
+        [Column("default_computer_view")]
+        public string DefaultComputerView { get; set; }
+
+        [Column("computer_sort_mode")]
+        public string ComputerSortMode { get; set; }
+
+        [Column("default_login_page")]
+        public string DefaultLoginPage { get; set; }
+
 
     }
 

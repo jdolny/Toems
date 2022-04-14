@@ -115,7 +115,7 @@ namespace Toems_ApplicationApi.Controllers
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         public IEnumerable<EntityComputer> Get()
         {
-            return _computerServices.SearchComputers(new DtoSearchFilterCategories());
+            return _computerServices.SearchComputers(new DtoSearchFilterCategories(),_userId);
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
@@ -196,21 +196,21 @@ namespace Toems_ApplicationApi.Controllers
         [HttpPost]
         public IEnumerable<EntityComputer> Search(DtoSearchFilterCategories filter)
         {
-            return _computerServices.SearchComputers(filter);
+            return _computerServices.SearchComputers(filter,_userId);
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         [HttpPost]
         public IEnumerable<EntityComputer> SearchImageOnlyComputers(DtoSearchFilterCategories filter)
         {
-            return _computerServices.SearchImageOnlyComputers(filter);
+            return _computerServices.SearchImageOnlyComputers(filter,_userId);
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         [HttpPost]
         public IEnumerable<EntityComputer> SearchAllComputers(DtoSearchFilterAllComputers filter)
         {
-            return _computerServices.SearchAllComputers(filter);
+            return _computerServices.SearchAllComputers(filter,_userId);
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
@@ -330,6 +330,13 @@ namespace Toems_ApplicationApi.Controllers
         public DtoApiBoolResponse CollectInventory(int id)
         {
             return new DtoApiBoolResponse() { Value = _computerServices.CollectInventory(id) };
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ComputerForceCheckin)]
+        [HttpGet]
+        public DtoApiBoolResponse GetUptime(int id)
+        {
+            return new DtoApiBoolResponse() { Value = _computerServices.GetSystemUptime(id) };
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]

@@ -181,6 +181,24 @@ namespace Toems_ApplicationApi.Controllers
             return new DtoApiBoolResponse { Value = _userServices.IsAdmin(id) };
         }
 
+        [Authorize]
+        public DtoApiStringResponse GetUserComputerView()
+        {
+            return new DtoApiStringResponse { Value = _userServices.GetUserComputerView(_userId) };
+        }
+
+        [Authorize]
+        public DtoApiStringResponse GetUserComputerSort()
+        {
+            return new DtoApiStringResponse { Value = _userServices.GetUserComputerSort(_userId) };
+        }
+
+        [Authorize]
+        public DtoApiStringResponse GetUserLoginPage()
+        {
+            return new DtoApiStringResponse { Value = _userServices.GetUserLoginPage(_userId) };
+        }
+
 
     }
 }

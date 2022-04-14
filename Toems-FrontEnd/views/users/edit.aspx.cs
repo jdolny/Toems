@@ -47,6 +47,9 @@ namespace Toems_FrontEnd.views.users
             updatedUser.Membership = ddluserMembership.Text;
             updatedUser.Email = txtEmail.Text;
             updatedUser.Theme = ddlTheme.Text;
+            updatedUser.DefaultLoginPage = ddlLoginPage.Text;
+            updatedUser.DefaultComputerView = ddlComputerView.Text;
+            updatedUser.ComputerSortMode = ddlComputerSort.Text;
             var result = Call.ToemsUserApi.Put(updatedUser.Id, updatedUser);
             EndUserMessage = !result.Success ? result.ErrorMessage : "Successfully Updated User";
         }
@@ -74,7 +77,9 @@ namespace Toems_FrontEnd.views.users
             ddluserMembership.Text = ToemsUser.Membership;
             txtEmail.Text = ToemsUser.Email;
             ddlTheme.Text = ToemsUser.Theme;
-
+            ddlComputerView.Text = ToemsUser.DefaultComputerView;
+            ddlComputerSort.Text = ToemsUser.ComputerSortMode;
+            ddlLoginPage.Text = ToemsUser.DefaultLoginPage;
         }
     }
 }

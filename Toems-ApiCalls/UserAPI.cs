@@ -153,5 +153,38 @@ namespace Toems_ApiCalls
             return response != null && response.Value;
         }
 
+        public string GetUserComputerView()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetUserComputerView/", Resource);
+            var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            if (response == null)
+                return "";
+            else
+                return response.Value;
+        }
+
+        public string GetUserComputerSort()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetUserComputerSort/}", Resource);
+            var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            if (response == null)
+                return "";
+            else
+                return response.Value;
+        }
+
+        public string GetUserLoginPage()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetUserLoginPage/", Resource);
+            var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            if (response == null)
+                return "";
+            else
+                return response.Value;
+        }
+
     }
 }

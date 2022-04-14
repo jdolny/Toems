@@ -29,6 +29,14 @@ namespace Toems_FrontEnd.views.dashboard
                 var versionInfo = Call.VersionApi.GetAllVersionInfo();
                 if (versionInfo.DatabaseVersion != versionInfo.TargetDbVersion)
                     Response.Redirect("~/views/dashboard/dbupdate.aspx");
+
+                var userLoginPage = Call.ToemsUserApi.GetUserLoginPage();
+                if (userLoginPage.Equals("Active Computers"))
+                    Response.Redirect("~/views/computers/search.aspx");
+                else if (userLoginPage.Equals("Image Only Computers"))
+                    Response.Redirect("~/views/computers/searchimageonly.aspx");
+                else if (userLoginPage.Equals("All Computers"))
+                    Response.Redirect("~/views/computers/all.aspx");
             }
 
             if (Request.QueryString["access"] == "denied")
@@ -42,6 +50,9 @@ namespace Toems_FrontEnd.views.dashboard
                     Response.Redirect("~/?session=expired", true);
                 }
             }
+
+          
+
 
             PopulateStats();
 

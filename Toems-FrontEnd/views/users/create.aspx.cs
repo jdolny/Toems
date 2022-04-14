@@ -46,6 +46,9 @@ namespace Toems_FrontEnd.views.users
                 Theme = ddlTheme.Text,
                 IsLdapUser = chkldap.Checked ? 1 : 0,
                 UserGroupId = -1,
+                ComputerSortMode = ddlComputerSort.Text,
+                DefaultLoginPage = ddlLoginPage.Text,
+                DefaultComputerView = ddlComputerView.Text
             };
 
             user.Password = Utility.CreatePasswordHash(txtUserPwd.Text, user.Salt);

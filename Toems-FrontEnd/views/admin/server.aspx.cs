@@ -52,6 +52,18 @@ namespace Toems_FrontEnd.views.admin
                     Value = ddlComputerView.Text,
                     Id = Call.SettingApi.GetSetting(SettingStrings.DefaultComputerView).Id
                 },
+                 new EntitySetting
+                {
+                    Name = SettingStrings.ComputerSortMode,
+                    Value = ddlComputerSort.Text,
+                    Id = Call.SettingApi.GetSetting(SettingStrings.ComputerSortMode).Id
+                },
+                  new EntitySetting
+                {
+                    Name = SettingStrings.DefaultLoginPage,
+                    Value = ddlLoginPage.Text,
+                    Id = Call.SettingApi.GetSetting(SettingStrings.DefaultLoginPage).Id
+                },
 
 
 

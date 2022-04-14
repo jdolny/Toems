@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.users {
-    
-    
-    public partial class CreateUser {
-        
+namespace Toems_FrontEnd.views.users
+{
+
+
+    public partial class CreateUser
+    {
+
         /// <summary>
         /// btnSubmit control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.users {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnSubmit;
-        
+
         /// <summary>
         /// txtUserName control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.users {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtUserName;
-        
+
         /// <summary>
         /// ddluserMembership control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.users {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddluserMembership;
-        
+
         /// <summary>
         /// chkldap control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.users {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkldap;
-        
+
         /// <summary>
         /// passwords control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views.users {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl passwords;
-        
+
         /// <summary>
         /// txtUserPwd control.
         /// </summary>
@@ -65,7 +67,7 @@ namespace Toems_FrontEnd.views.users {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtUserPwd;
-        
+
         /// <summary>
         /// txtUserPwdConfirm control.
         /// </summary>
@@ -74,7 +76,7 @@ namespace Toems_FrontEnd.views.users {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtUserPwdConfirm;
-        
+
         /// <summary>
         /// txtEmail control.
         /// </summary>
@@ -83,7 +85,7 @@ namespace Toems_FrontEnd.views.users {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtEmail;
-        
+
         /// <summary>
         /// ddlTheme control.
         /// </summary>
@@ -92,5 +94,32 @@ namespace Toems_FrontEnd.views.users {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlTheme;
+
+        /// <summary>
+        /// ddlComputerView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlComputerView;
+
+        /// <summary>
+        /// ddlComputerSort control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlComputerSort;
+
+        /// <summary>
+        /// ddlLoginPage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlLoginPage;
     }
 }

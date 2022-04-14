@@ -134,7 +134,7 @@
 
         public const string DefaultKernel32 = "5.6.4";
 
-        public const string DefaultKernel64 = "5.10.11x64";
+        public const string DefaultKernel64 = "5.17.3x64";
 
         public const string IpxeSSL = "iPXE SSL";
 
@@ -165,6 +165,10 @@
         public const string DomainJoinName = "Domain Join Name";
 
         public const string DefaultComputerView = "Default Computer View";
+
+        public const string ComputerSortMode = "Computer Sort Mode";
+
+        public const string DefaultLoginPage = "Default Login Page";
 
         public const int GlobalVersion = 147;
 

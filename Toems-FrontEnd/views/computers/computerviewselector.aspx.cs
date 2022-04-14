@@ -12,7 +12,7 @@ namespace Toems_FrontEnd.views.computers
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            var computerView = GetSetting(SettingStrings.DefaultComputerView);
+            var computerView = Call.ToemsUserApi.GetUserComputerView();
             if(string.IsNullOrEmpty(computerView))
                 Response.Redirect("~/views/computers/search.aspx");
             else if(computerView.Equals("Active"))
