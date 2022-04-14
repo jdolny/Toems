@@ -402,9 +402,11 @@ namespace Toems_FrontEnd.views.computers
             ComputerBasePage.Call.ComputerApi.ClearLastSocketResult(ComputerEntity.Id);
             if (!string.IsNullOrEmpty(lastSocketResult))
             {
+                var fileName = ComputerEntity.Name + DateTime.Now.ToString("_MM-dd-yyyy_HH-mm");
                 HttpContext.Current.Response.ContentType = "application/octet-stream";
                 HttpContext.Current.Response.AppendHeader("Content-Disposition",
                     "attachment; filename=service.log");
+                    "attachment; filename=" +fileName+".log");
 
                 HttpContext.Current.Response.Write(lastSocketResult);
                 HttpContext.Current.Response.End();
