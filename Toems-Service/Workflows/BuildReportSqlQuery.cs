@@ -276,7 +276,10 @@ namespace Toems_Service.Workflows
             {
                 select += @" r." + query.Field + ",";
             }
-
+            foreach (var query in queries.Where(x => x.Table.Equals("Category")))
+            {
+                select += @" t." + query.Field + ",";
+            }
 
             foreach (var query in queries)
             {
@@ -348,6 +351,11 @@ namespace Toems_Service.Workflows
             {
                 sb.Append("LEFT JOIN computer_certificates q on a.computer_id = q.computer_id ");
                 sb.Append("LEFT JOIN certificate_inventory r on q.certificate_id = r.certificate_inventory_id ");
+            }
+            if (queries.Any(x => x.Table == "Category"))
+            {
+                sb.Append("LEFT JOIN computer_categories s on a.computer_id = s.computer_id ");
+                sb.Append("LEFT JOIN categories t on s.category_id = t.category_id ");
             }
 
 
@@ -434,6 +442,8 @@ namespace Toems_Service.Workflows
                     tableAs = "p";
                 else if (query.Table == "Certificates")
                     tableAs = "r";
+                else if (query.Table == "Category")
+                    tableAs = "t";
                 else
                 {
                     if (query.Table.StartsWith("("))
@@ -464,20 +474,20 @@ namespace Toems_Service.Workflows
 
             if (queries.First().IncludeArchived && queries.First().IncludePreProvisioned)
             {
-                sb.Append(") AND (a.provision_status = 8 OR a.provision_status = 11 OR a.provision_status = 6)");
+                sb.Append(") AND (a.provision_status = 8 OR a.provision_status = 11 OR a.provision_status = 6 OR a.provision_status = 13)");
             }
             else if (queries.First().IncludeArchived)
             {
-                sb.Append(") AND (a.provision_status = 8 OR a.provision_status = 11)");
+                sb.Append(") AND (a.provision_status = 8 OR a.provision_status = 11 OR a.provision_status = 13)");
             }
 
             else if (queries.First().IncludePreProvisioned)
             {
-                sb.Append(") AND (a.provision_status = 8 OR a.provision_status = 6)");
+                sb.Append(") AND (a.provision_status = 8 OR a.provision_status = 6 OR a.provision_status = 13)");
             }
             else
             {
-                sb.Append(") AND a.provision_status = 8");
+                sb.Append(") AND (a.provision_status = 8 OR a.provision_status = 13)");
             }
 
             var gb = BuildGroupBy(queries.First().GroupBy);

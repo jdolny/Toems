@@ -76,9 +76,10 @@ namespace Toems_FrontEnd.views.groups
             ddl.Items.Insert(12, new ListItem("Logical Volumes", "Logical Volumes"));
             ddl.Items.Insert(13, new ListItem("Network Adapters", "Network Adapters"));
             ddl.Items.Insert(14, new ListItem("Certificates", "Certificates"));
+            ddl.Items.Insert(15, new ListItem("Category", "Category"));
 
 
-            var counter = 14;
+            var counter = 15;
             var customInventories = Call.ScriptModuleApi.GetAllWithInventory();
             foreach (var ci in customInventories)
             {
@@ -481,6 +482,11 @@ namespace Toems_FrontEnd.views.groups
                 ddlField.Items.Insert(4, new ListItem("serial", "serial"));
                 ddlField.Items.Insert(5, new ListItem("notbefore_utc", "notbefore_utc"));
                 ddlField.Items.Insert(6, new ListItem("notafter_utc", "notafter_utc"));
+            }
+            else if (ddlTable.Text == "Category")
+            {
+                ddlField.Items.Insert(0, new ListItem("category_name", "category_name"));
+
             }
             else
             {

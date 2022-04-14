@@ -96,6 +96,7 @@ namespace Toems_FrontEnd.views.reports.asset
         {
             ddl.Items.Insert(0, new ListItem("Asset", "Asset"));
             ddl.Items.Insert(1, new ListItem("Asset Type", "Asset Type"));
+            ddl.Items.Insert(2, new ListItem("Category", "Category"));
             var counter = 1;
 
             var computerAttributes = Call.CustomAttributeApi.Get();
@@ -299,6 +300,10 @@ namespace Toems_FrontEnd.views.reports.asset
             else if (ddlTable.Text == "Asset Type")
             {
                 ddlField.Items.Insert(0, new ListItem("name", "name"));
+            }
+            else if (ddlTable.Text == "Category")
+            {
+                ddlField.Items.Insert(0, new ListItem("category_name", "category_name"));
             }
             else
             {

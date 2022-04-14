@@ -60,6 +60,10 @@ namespace Toems_Service.Workflows
             {
                 select += @" b." + query.Field + ",";
             }
+            foreach (var query in queries.Where(x => x.Table.Equals("Category")))
+            {
+                select += @" d." + query.Field + ",";
+            }
 
             foreach (var query in queries)
             {
@@ -90,7 +94,12 @@ namespace Toems_Service.Workflows
             {
                 sb.Append("LEFT JOIN custom_asset_types b on a.asset_type_id = b.custom_asset_type_id ");
             }
-         
+            if (queries.Any(x => x.Table == "Category"))
+            {
+                sb.Append("LEFT JOIN custom_asset_categories c on a.asset_id = c.custom_asset_id ");
+                sb.Append("LEFT JOIN categories d on c.category_id = d.category_id ");
+            }
+
             var customAttributeIds = new List<int>();
             foreach (var query in queries)
             {
@@ -130,7 +139,9 @@ namespace Toems_Service.Workflows
                     tableAs = "a";
                 else if (query.Table == "Asset Type")
                     tableAs = "b";
-              
+                else if (query.Table == "Category")
+                    tableAs = "d";
+
                 else
                 {
                     if (query.Table.StartsWith("("))
