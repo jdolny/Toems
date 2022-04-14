@@ -27,6 +27,11 @@ ADD COLUMN `uninstall_string` TEXT NULL AFTER `revision`;
 ALTER TABLE `user_logins` 
 ADD COLUMN `client_login_id` INT(11) NULL AFTER `logout_date_time_utc`;
 
+INSERT INTO `admin_settings` (`admin_setting_name`, `admin_setting_value`) VALUES ('Ldap Sync OU', '');
+
+ALTER TABLE `groups` 
+CHANGE COLUMN `group_name` `group_name` VARCHAR(255) NOT NULL ;
+
 "
             ;
         }
