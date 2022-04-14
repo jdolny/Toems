@@ -34,6 +34,7 @@ namespace Toems_FrontEnd.views.computers
                 btnServiceLog.Visible = false;
                 btnRemoteControl.Visible = false;
                 btnClearImagingId.Visible = false;
+                btnUptime.Visible = false;
 
             }
             else
@@ -52,7 +53,7 @@ namespace Toems_FrontEnd.views.computers
                 btnUpload.Visible = true;
                 btnServiceLog.Visible = true;
                 btnRemoteControl.Visible = true;
-
+                btnUptime.Visible = true;
             }
         }
 
@@ -409,6 +410,30 @@ namespace Toems_FrontEnd.views.computers
 
                 HttpContext.Current.Response.Write(lastSocketResult);
                 HttpContext.Current.Response.End();
+            }
+        }
+
+        protected void btnUptime_Click(object sender, EventArgs e)
+        {
+            ComputerBasePage.Call.ComputerApi.ClearLastSocketResult(ComputerEntity.Id);
+            ComputerBasePage.Call.ComputerApi.GetUptime(ComputerEntity.Id);
+
+            var counter = 0;
+            while (counter < 10)
+            {
+                var lastSocketResult = ComputerBasePage.Call.ComputerApi.GetLastSocketResult(ComputerEntity.Id);
+                if (!string.IsNullOrEmpty(lastSocketResult))
+                {
+                    PageBaseMaster.EndUserMessage = lastSocketResult;
+                    break;
+                }
+                if (counter == 9)
+                {
+                    PageBaseMaster.EndUserMessage = "Could Not Determine System Uptime";
+                    return;
+                }
+                System.Threading.Thread.Sleep(1000);
+                counter++;
             }
         }
     }

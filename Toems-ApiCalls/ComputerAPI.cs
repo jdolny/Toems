@@ -252,6 +252,18 @@ namespace Toems_ApiCalls
             return false;
         }
 
+        public bool GetUptime(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetUptime/{1}", Resource, id);
+            var responseData = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
+            if (responseData != null)
+            {
+                return responseData.Value;
+            }
+            return false;
+        }
+
         public bool GetServiceLog(int id)
         {
             Request.Method = Method.GET;

@@ -152,6 +152,7 @@
                 <li><asp:LinkButton ID="btnReboot" runat="server" OnClick="btnReboot_OnClick" Text="Reboot" OnClientClick="reboot();"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="btnShutdown" runat="server" OnClick="btnShutdown_OnClick" Text="Shutdown" OnClientClick="shutdown();"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="btnWakeup" runat="server" OnClick="btnWakeup_OnClick" Text="Wake Up"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnUptime" runat="server" OnClick="btnUptime_Click" Text="System Uptime" OnClientClick="uptime();"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="btnServiceLog" runat="server" OnClick="btnServiceLog_Click" Text="Get Service Log" OnClientClick="logs();"></asp:LinkButton></li>
                
                  
@@ -227,6 +228,14 @@
                   timer: 9000,
                   timerProgressBar: true
               })
+        }
+        function uptime() {
+            Swal.fire({
+                title: 'Please Wait',
+                text: 'Attempting To Get System Uptime',
+                timer: 9000,
+                timerProgressBar: true
+            })
         }
 
         $(document).ready(function() {
