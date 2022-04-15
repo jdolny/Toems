@@ -172,7 +172,7 @@
 
         public const string DefaultLoginPage = "Default Login Page";
 
-        public const int GlobalVersion = 147;
+        public const int GlobalVersion = 148;
 
     }
 }
