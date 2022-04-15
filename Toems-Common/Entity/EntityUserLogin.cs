@@ -25,6 +25,6 @@ namespace Toems_Common.Entity
         public DateTime LogoutDateTime { get; set; }
 
         [Column("client_login_id")]
-        public int ClientLoginId { get; set; }
+        public int? ClientLoginId { get; set; }
     }
 }
