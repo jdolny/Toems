@@ -43,14 +43,13 @@ namespace Toems_ApplicationApi.Controllers
             return result;
         }
 
-        [Authorize]
+       
         public DtoVersion GetAllVersionInfo()
         {
             return _versionServices.GetAllVersionInfo();
         }
 
         [HttpGet]
-        [Authorize]
         public DtoActionResult UpdateDatabase()
         {
             return new DbUpdater().Update();

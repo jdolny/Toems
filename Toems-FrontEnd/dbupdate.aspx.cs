@@ -32,6 +32,7 @@ namespace Toems_FrontEnd.views.dashboard
                 else
                 {
                     lblVersion.Text = "Error:  Could Not Determine Current Database Version";
+                    btnUpdate.Visible = false;
                 }
             }
 
@@ -44,7 +45,7 @@ namespace Toems_FrontEnd.views.dashboard
             if (result.Success)
             {
                 lblResult.Text = "Success";
-                Response.Redirect("~/views/dashboard/dash.aspx");
+                Response.Redirect("~/default.aspx");
             }
             else
             {

@@ -38,9 +38,47 @@ namespace Toems_FrontEnd
             }
         }
 
+        private void CheckDbUpdate()
+        {
+            HttpCookie baseUrlCookie = Request.Cookies["toemsBaseUrl"];
+            if (baseUrlCookie == null)
+            {
+                var applicationApiUrl = ConfigurationManager.AppSettings["ApplicationApiUrl"];
+                if (!applicationApiUrl.EndsWith("/"))
+                    applicationApiUrl = applicationApiUrl + "/";
+                baseUrlCookie = new HttpCookie("toemsBaseUrl")
+                {
+                    Value = applicationApiUrl,
+                    HttpOnly = true
+                };
+                Response.Cookies.Add(baseUrlCookie);
+                Request.Cookies.Add(baseUrlCookie);
+            }
+            else
+            {
+                var applicationApiUrl = ConfigurationManager.AppSettings["ApplicationApiUrl"];
+                if (!applicationApiUrl.EndsWith("/"))
+                    applicationApiUrl = applicationApiUrl + "/";
+                baseUrlCookie.Value = applicationApiUrl;
+                Response.Cookies.Add(baseUrlCookie);
+                Request.Cookies.Add(baseUrlCookie);
+            }
+
+            var versionInfo = new APICall().VersionApi.GetAllVersionInfo();
+            if (versionInfo == null)
+            {
+                lblError.Text = "Could Not Determine Database Version";
+                lblError.Visible = true;
+                return;
+            }
+            if (versionInfo.DatabaseVersion != versionInfo.TargetDbVersion)
+                Response.Redirect("~/dbupdate.aspx");
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
-           
+            //check for db upgrades here
+            CheckDbUpdate();
+
             if (!IsPostBack)
             {
                 ClearSession();

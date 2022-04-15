@@ -23,10 +23,15 @@ namespace Toems_Service.Workflows
 
         public DtoActionResult Update()
         {
+            var versionService = new ServiceVersion();
+            var versions = versionService.GetAllVersionInfo();
+            if (versions.DatabaseVersion == versions.TargetDbVersion)
+                return new DtoActionResult { Success = true };
+
             var result = new DtoActionResult();
 
             var updatesToRun = new List<int>();
-            var currentDbVersion = new ServiceVersion().Get(1).DatabaseVersion;
+            var currentDbVersion = versionService.Get(1).DatabaseVersion;
             var currentAppVersion = SettingStrings.GlobalVersion;
             var versionMapping = new VersionMapping().Get();
             var targetDbVersion = versionMapping[currentAppVersion];
