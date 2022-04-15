@@ -22,6 +22,8 @@ namespace Toems_FrontEnd.views.admin
         {
             txtOrganization.Text = Call.SettingApi.GetSetting(SettingStrings.CertificateOrganization).Value;
             ddlComputerView.Text = GetSetting(SettingStrings.DefaultComputerView);
+            ddlComputerSort.Text = GetSetting(SettingStrings.ComputerSortMode);
+            ddlLoginPage.Text = GetSetting(SettingStrings.DefaultLoginPage);
         }
 
         protected void btnUpdateSettings_OnClick(object sender, EventArgs e)
