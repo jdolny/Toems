@@ -242,7 +242,7 @@ namespace Toems_Service.Entity
 
         public List<EntityComputer> SearchAllComputers(DtoSearchFilterAllComputers filter, int userId)
         {
-            var user = new ServiceUser().GetUser(userId);
+            var sortMode = new ServiceUser().GetUserComputerSort(userId);
             var list = new List<EntityComputer>();
             if (filter.State.Equals("Enabled"))
                 filter.State = "false";
@@ -250,7 +250,7 @@ namespace Toems_Service.Entity
                 filter.State = "true";
 
 
-            if (user == null)
+            if (sortMode == null)
             {
                 if (filter.State.Equals("Any State") && filter.Status.Equals("Any Status"))
                     list = _uow.ComputerRepository.Get(s => s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)).OrderBy(x => x.Name).ToList();
@@ -267,7 +267,7 @@ namespace Toems_Service.Entity
                     list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && !s.AdDisabled).OrderBy(x => x.Name).ToList();
 
             }
-            else if (user.ComputerSortMode.Equals("Last Checkin"))
+            else if (sortMode.Equals("Last Checkin"))
             {
                 if (filter.State.Equals("Any State") && filter.Status.Equals("Any Status"))
                     list = _uow.ComputerRepository.Get(s => s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)).OrderByDescending(x => x.LastCheckinTime).ThenBy(x=> x.Name).ToList();
@@ -284,7 +284,7 @@ namespace Toems_Service.Entity
                     list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && !s.AdDisabled).OrderByDescending(x => x.LastCheckinTime).ThenBy(x => x.Name).ToList();
 
             }
-            else if (user.ComputerSortMode.Equals("Name"))
+            else if (sortMode.Equals("Name"))
             {
                 if (filter.State.Equals("Any State") && filter.Status.Equals("Any Status"))
                     list = _uow.ComputerRepository.Get(s => s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)).OrderBy(x => x.Name).ToList();
@@ -410,13 +410,13 @@ namespace Toems_Service.Entity
         public List<EntityComputer> SearchComputers(DtoSearchFilterCategories filter, int userId)
         {
             var list = new List<EntityComputer>();
-            var user = new ServiceUser().GetUser(userId);
+            var sortMode = new ServiceUser().GetUserComputerSort(userId);
 
-            if (user == null)
+            if (sortMode == null)
                 list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && s.ProvisionStatus != EnumProvisionStatus.Status.Archived && s.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved && s.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly).OrderByDescending(x => x.LastCheckinTime).ToList();
-            else if (user.ComputerSortMode.Equals("Last Checkin"))
+            else if (sortMode.Equals("Last Checkin"))
                 list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && s.ProvisionStatus != EnumProvisionStatus.Status.Archived && s.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved && s.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly).OrderByDescending(x => x.LastCheckinTime).ToList();
-            else if (user.ComputerSortMode.Equals("Name"))
+            else if (sortMode.Equals("Name"))
                 list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && s.ProvisionStatus != EnumProvisionStatus.Status.Archived && s.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved && s.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly).OrderBy(x => x.Name).ToList();
             else
                 list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && s.ProvisionStatus != EnumProvisionStatus.Status.Archived && s.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved && s.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly).OrderByDescending(x => x.LastCheckinTime).ToList();
@@ -505,13 +505,13 @@ namespace Toems_Service.Entity
         public List<EntityComputer> SearchImageOnlyComputers(DtoSearchFilterCategories filter, int userId)
         {
             var list = new List<EntityComputer>();
-            var user = new ServiceUser().GetUser(userId);
-            
-            if(user == null)
+            var sortMode = new ServiceUser().GetUserComputerSort(userId);
+
+            if (sortMode == null)
                 list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly).OrderByDescending(x => x.LastCheckinTime).ThenBy(x => x.Name).ToList();
-            else if(user.ComputerSortMode.Equals("Last Checkin"))
+            else if(sortMode.Equals("Last Checkin"))
                 list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly).OrderByDescending(x => x.LastCheckinTime).ThenBy(x => x.Name).ToList();
-            else if (user.ComputerSortMode.Equals("Name"))
+            else if (sortMode.Equals("Name"))
                 list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly).OrderBy(x => x.Name).ToList();
             else
                 list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly).OrderByDescending(x => x.LastCheckinTime).ThenBy(x => x.Name).ToList();
