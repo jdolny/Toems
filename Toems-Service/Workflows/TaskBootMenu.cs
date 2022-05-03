@@ -30,7 +30,7 @@ namespace Toems_Service.Workflows
 
             _uow = new UnitOfWork();
             var comServers = new Workflows.GetCompTftpServers().Run(computer.Id);
-            if(comServers == null)
+            if (comServers == null)
             {
                 log.Error("Could Not Determine Tftp Com Servers For Computer: " + computer.Name);
                 return false;
@@ -92,14 +92,13 @@ namespace Toems_Service.Workflows
                 log.Debug("Computer Task PXE Mac: " + _computer.ImagingMac);
                 listOfMacs.Add(StringManipulationServices.MacToPxeMac(_computer.ImagingMac));
             }
-            else
+
+            var computerMacs = _uow.NicInventoryRepository.Get(x => x.ComputerId == computer.Id && x.Type.Equals("Ethernet")).Select(x => x.Mac).ToList();
+            foreach (var mac in computerMacs)
             {
-                var computerMacs = _uow.NicInventoryRepository.Get(x => x.ComputerId == computer.Id && x.Type.Equals("Ethernet")).Select(x => x.Mac).ToList();
-                foreach (var mac in computerMacs)
-                {
-                    listOfMacs.Add(StringManipulationServices.MacToPxeMac(mac));
-                }
+                listOfMacs.Add(StringManipulationServices.MacToPxeMac(mac));
             }
+
             var imageComServers = new Workflows.GetCompImagingServers().Run(computer.Id);
 
             if (imageComServers == null)
@@ -125,9 +124,9 @@ namespace Toems_Service.Workflows
             var globalComputerArgs = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingArguments);
 
             //add static ip info if populated
-            if(computer.PxeIpAddress != null)
+            if (computer.PxeIpAddress != null)
                 globalComputerArgs += $" cd_net_ip={computer.PxeIpAddress} cd_net_netmask={computer.PxeNetmask} cd_net_gateway={computer.PxeGateway} cd_net_dns={computer.PxeDns} ";
-            
+
             var compTftpServers = new Workflows.GetCompTftpServers().Run(computer.Id);
 
             if (compTftpServers == null)
@@ -254,7 +253,7 @@ namespace Toems_Service.Workflows
                     if (!new FilesystemServices().WritePath(path, fileContents))
                         return false;
                 }
-  
+
             }
 
             return true;

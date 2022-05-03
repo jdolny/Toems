@@ -15,24 +15,24 @@ namespace Toems_Service.Workflows
     public class CleanTaskBootFiles
     {
         private const string ConfigFolder = "pxelinux.cfg";
-        private  EntityComputer _computer;
-        private  ServiceComputer _computerServices;
+        private EntityComputer _computer;
+        private ServiceComputer _computerServices;
         private EntityClientComServer _thisComServer;
         private List<string> _listOfMacs;
         private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public bool RunAllServers(EntityComputer computer)
         {
-         
+
             var uow = new UnitOfWork();
             var comServers = uow.ClientComServerRepository.Get(x => x.IsTftpServer);
-           
+
             var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
             var NoErrors = true;
             foreach (var com in comServers)
             {
-                if (!new APICall().ClientComServerApi.CleanTaskBootFiles(com.Url, "", decryptedKey,computer))
+                if (!new APICall().ClientComServerApi.CleanTaskBootFiles(com.Url, "", decryptedKey, computer))
                     NoErrors = false;
             }
 
@@ -47,13 +47,11 @@ namespace Toems_Service.Workflows
             _listOfMacs = new List<string>();
             if (!string.IsNullOrEmpty(_computer.ImagingMac))
                 _listOfMacs.Add(StringManipulationServices.MacToPxeMac(_computer.ImagingMac));
-            else
+
+            var computerMacs = new UnitOfWork().NicInventoryRepository.Get(x => x.ComputerId == computer.Id && x.Type.Equals("Ethernet")).Select(x => x.Mac).ToList();
+            foreach (var mac in computerMacs)
             {
-                var computerMacs = new UnitOfWork().NicInventoryRepository.Get(x => x.ComputerId == computer.Id && x.Type.Equals("Ethernet")).Select(x => x.Mac).ToList();
-                foreach (var mac in computerMacs)
-                {
-                    _listOfMacs.Add(StringManipulationServices.MacToPxeMac(mac));
-                }
+                _listOfMacs.Add(StringManipulationServices.MacToPxeMac(mac));
             }
 
             _computerServices = new ServiceComputer();
