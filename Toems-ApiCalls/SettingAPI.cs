@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -85,7 +86,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/UpdateSettings/", Resource);
-            Request.AddJsonBody(listSettings);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(listSettings), ParameterType.RequestBody);
             var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
             return response != null && response.Value;
         }
@@ -94,7 +95,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/UpdatePxeSettings/", Resource);
-            Request.AddJsonBody(listSettings);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(listSettings), ParameterType.RequestBody);
             var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
             return response != null && response.Value;
         }
@@ -202,7 +203,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/CreateDefaultBootMenu/", Resource);
-            Request.AddJsonBody(defaultMenuOptions);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(defaultMenuOptions), ParameterType.RequestBody);
             var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
             return response != null && response.Value;
         }
@@ -219,7 +220,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/GenerateISO/", Resource);
-            Request.AddJsonBody(isoOptions);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(isoOptions), ParameterType.RequestBody);
             return _apiRequest.ExecuteRaw(Request);
         }
 

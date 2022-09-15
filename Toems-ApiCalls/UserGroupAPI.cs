@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -47,7 +48,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/GetGroupMembers/{1}", Resource, id);
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             return _apiRequest.Execute<List<EntityToemsUser>>(Request);
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -93,7 +94,7 @@ namespace Toems_ApiCalls
         public DtoActionResult Post(EntityImageProfile profile)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(profile);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(profile), ParameterType.RequestBody);
             Request.Resource = string.Format("{0}/Post/",Resource);
             var response = new ApiRequest().Execute<DtoActionResult>(Request);
             if (response != null)

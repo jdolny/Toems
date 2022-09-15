@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using Newtonsoft.Json;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/DownloadKernel/", Resource);
-            Request.AddJsonBody(onlineKernel);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(onlineKernel), ParameterType.RequestBody);
             var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
             return response != null && response.Value;
         }

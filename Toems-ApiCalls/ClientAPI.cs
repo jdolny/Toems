@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
+using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
 
@@ -35,7 +36,7 @@ namespace Toems_ApiCalls
         public void SendWolTask(string url, X509Certificate2 cert, DtoWolTask wolTask)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(wolTask);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(wolTask), ParameterType.RequestBody);
             Request.Resource = "toec/Push/WolTask";
             new ApiRequest(new Uri(url)).ExecuteHMACAsync<DtoApiBoolResponse>(Request, cert);
         }
@@ -43,7 +44,8 @@ namespace Toems_ApiCalls
         public void Reboot(string url, X509Certificate2 cert, string delay)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(new DtoApiStringResponse() { Value = delay });
+
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(new DtoApiStringResponse() { Value = delay }), ParameterType.RequestBody);
             Request.Resource = "toec/Push/Reboot";
             new ApiRequest(new Uri(url)).ExecuteHMACAsync<DtoApiBoolResponse>(Request, cert);
         }
@@ -51,7 +53,7 @@ namespace Toems_ApiCalls
         public void Shutdown(string url, X509Certificate2 cert,string delay)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(new DtoApiStringResponse() {Value = delay});
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(new DtoApiStringResponse() { Value = delay }), ParameterType.RequestBody);
             Request.Resource = "toec/Push/Shutdown";
             new ApiRequest(new Uri(url)).ExecuteHMACAsync<DtoApiBoolResponse>(Request, cert);
 
@@ -60,8 +62,8 @@ namespace Toems_ApiCalls
         public void SendMessage(string url, X509Certificate2 cert,DtoMessage message)
         {
             Request.Method = Method.POST;
-            Request.Resource = "toec/Push/Message";      
-            Request.AddJsonBody(message);
+            Request.Resource = "toec/Push/Message";
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(message), ParameterType.RequestBody);
             new ApiRequest(new Uri(url)).ExecuteHMACAsync<DtoApiBoolResponse>(Request,cert);
 
         }

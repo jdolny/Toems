@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -26,7 +27,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/GetArchived", Resource);
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             return new ApiRequest().Execute<List<EntitySysprepModule>>(Request);
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
 
@@ -20,7 +21,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = $"{Resource}/Search";
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             return new ApiRequest().Execute<List<T>>(Request);
         }
 
@@ -28,7 +29,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = $"{Resource}/Search";
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             return new ApiRequest().Execute<List<T>>(Request);
         }
 
@@ -58,7 +59,7 @@ namespace Toems_ApiCalls
         public DtoActionResult Put(int id,T tObject)
         {
             Request.Method = Method.PUT;
-            Request.AddJsonBody(tObject);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(tObject), ParameterType.RequestBody);
             Request.Resource = $"{Resource}/Put/{id}";
             var response = new ApiRequest().Execute<DtoActionResult>(Request);
             if (response != null)
@@ -80,7 +81,7 @@ namespace Toems_ApiCalls
         public DtoActionResult Post(T tObject)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(tObject);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(tObject), ParameterType.RequestBody);
             Request.Resource = $"{Resource}/Post/";
             var response = new ApiRequest().Execute<DtoActionResult>(Request);
             if (response != null)

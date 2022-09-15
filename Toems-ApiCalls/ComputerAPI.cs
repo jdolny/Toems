@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -192,7 +193,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/SendMessage/{1}", Resource,id);
-            Request.AddJsonBody(message);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(message), ParameterType.RequestBody);
             var responseData = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
             if (responseData != null)
             {
@@ -374,7 +375,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = $"{Resource}/SearchAllComputers";
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
 
             return new ApiRequest().Execute<List<EntityComputer>>(Request);
         }
@@ -383,7 +384,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = $"{Resource}/SearchImageOnlyComputers";
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
 
             return new ApiRequest().Execute<List<EntityComputer>>(Request);
         }
@@ -392,7 +393,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = $"{Resource}/SearchAllComputers";
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
 
             var res = new ApiRequest().ExecuteAsync<List<EntityComputer>>(Request);
             return res;
@@ -402,7 +403,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/SearchForGroup", Resource);
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             return new ApiRequest().Execute<List<EntityComputer>>(Request);
         }
 
@@ -461,7 +462,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/AddComment/", Resource);
-            Request.AddJsonBody(comment);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(comment), ParameterType.RequestBody);
             return new ApiRequest().Execute<DtoActionResult>(Request);
         }
 

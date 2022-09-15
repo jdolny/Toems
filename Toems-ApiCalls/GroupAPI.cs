@@ -19,7 +19,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = $"{Resource}/Search";
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             return new ApiRequest().Execute<List<DtoGroupWithCount>>(Request);
         }
 
@@ -34,7 +34,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/GetAssignedPolicies/{1}", Resource, id);
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             return new ApiRequest().Execute<List<GroupPolicyDetailed>>(Request);
         }
 
@@ -42,7 +42,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/GetGroupMembers/{1}", Resource, id);
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             return new ApiRequest().Execute<List<EntityComputer>>(Request);
         }
 
@@ -91,7 +91,7 @@ namespace Toems_ApiCalls
         public DataSet GetDynamic(List<EntitySmartGroupQuery> queries)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(queries);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(queries), ParameterType.RequestBody);
             Request.Resource = string.Format("{0}/GetDynamic/", Resource);
             var response = new ApiRequest().Execute<DtoApiStringResponse>(Request);
             if (response != null)
@@ -102,7 +102,7 @@ namespace Toems_ApiCalls
         public bool UpdateDynamicQuery(List<EntitySmartGroupQuery> queries)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(queries);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(queries), ParameterType.RequestBody);
             Request.Resource = string.Format("{0}/UpdateDynamicQuery/", Resource);
             var response = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
             if (response != null) return response.Value;
@@ -130,7 +130,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/SendMessage/{1}", Resource, id);
-            Request.AddJsonBody(message);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(message), ParameterType.RequestBody);
             new ApiRequest().ExecuteAsync<DtoApiBoolResponse>(Request);
         }
 

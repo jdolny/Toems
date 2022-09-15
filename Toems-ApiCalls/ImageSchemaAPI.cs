@@ -25,7 +25,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/GetHardDrives", Resource);
-            Request.AddJsonBody(schemaRequest);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(schemaRequest), ParameterType.RequestBody);
             var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
             if(response == null) return new List<DtoHardDrive>();
             var result = JsonConvert.DeserializeObject<List<DtoHardDrive>>(response.Value);
@@ -39,7 +39,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/GetLogicalVolumes", Resource);
-            Request.AddJsonBody(schemaRequest);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(schemaRequest), ParameterType.RequestBody);
             var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
             if (response == null) return new List<DtoLogicalVolume>();
             var result = JsonConvert.DeserializeObject<List<DtoLogicalVolume>>(response.Value);
@@ -53,7 +53,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/GetPartitions", Resource);
-            Request.AddJsonBody(schemaRequest);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(schemaRequest), ParameterType.RequestBody);
             var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
             if (response == null) return new List<DtoPartition>();
             var result = JsonConvert.DeserializeObject<List<DtoPartition>>(response.Value);
@@ -67,7 +67,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/GetSchema", Resource);
-            Request.AddJsonBody(schemaRequest);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(schemaRequest), ParameterType.RequestBody);
             var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
             if (response == null) return new DtoImageSchemaGridView();
             var result = JsonConvert.DeserializeObject<DtoImageSchemaGridView>(response.Value);

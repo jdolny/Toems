@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
 using Toems_Common.Dto.exports;
@@ -28,7 +29,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/GetArchived", Resource);
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             return new ApiRequest().Execute<List<EntityPolicy>>(Request);
         }
 
@@ -133,7 +134,7 @@ namespace Toems_ApiCalls
         public DtoPolicyExport ExportPolicy(DtoPolicyExportGeneral exportInfo)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(exportInfo);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(exportInfo), ParameterType.RequestBody);
             Request.Resource = string.Format("{0}/ExportPolicy/", Resource);
             return new ApiRequest().Execute<DtoPolicyExport>(Request);
         }
@@ -141,7 +142,7 @@ namespace Toems_ApiCalls
         public DtoImportResult ImportPolicy(DtoPolicyExport export)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(export);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(export), ParameterType.RequestBody);
             Request.Resource = string.Format("{0}/ImportPolicy/", Resource);
             return new ApiRequest().Execute<DtoImportResult>(Request);
         }
@@ -149,7 +150,7 @@ namespace Toems_ApiCalls
         public DtoActionResult ValidatePolicyExport(DtoPolicyExportGeneral exportInfo)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(exportInfo);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(exportInfo), ParameterType.RequestBody);
             Request.Resource = string.Format("{0}/ValidatePolicyExport/", Resource);
             return new ApiRequest().Execute<DtoActionResult>(Request);
         }
@@ -157,7 +158,7 @@ namespace Toems_ApiCalls
         public IEnumerable<DtoModule> GetAllModules(DtoModuleSearchFilter filter)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             Request.Resource = string.Format("{0}/GetAllModules/", Resource);
             return new ApiRequest().Execute<List<DtoModule>>(Request);
         }
@@ -166,14 +167,14 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/GetAssignedModules/{1}", Resource,id);
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             return new ApiRequest().Execute<List<EntityPolicyModules>>(Request);
         }
 
         public IEnumerable<EntityPolicyHistory> GetHistoryWithComputer(int id,DtoSearchFilter filter)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             Request.Resource = string.Format("{0}/GetHistoryWithComputer/{1}", Resource, id);
             return new ApiRequest().Execute<List<EntityPolicyHistory>>(Request);
         }

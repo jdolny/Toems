@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -21,7 +22,7 @@ namespace Toems_ApiCalls
         public DtoActionResult ChangePassword(EntityToemsUser tObject)
         {
             Request.Method = Method.PUT;
-            Request.AddJsonBody(tObject);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(tObject), ParameterType.RequestBody);
             Request.Resource = string.Format("{0}/ChangePassword/", Resource);
             var response = _apiRequest.Execute<DtoActionResult>(Request);
             if (response.Id == 0)
@@ -52,7 +53,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = $"{Resource}/Search";
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             return new ApiRequest().Execute<List<UserWithUserGroup>>(Request);
         }
 
@@ -111,7 +112,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/GetUserAuditLogs/{1}", Resource, id);
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             return _apiRequest.Execute<List<EntityAuditLog>>(Request);
         }
 

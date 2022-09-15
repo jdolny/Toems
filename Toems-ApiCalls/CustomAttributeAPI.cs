@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -30,7 +31,7 @@ namespace Toems_ApiCalls
         new public IEnumerable<DtoCustomAttributeWithType> Search(DtoSearchFilter filter)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(filter);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             Request.Resource = string.Format("{0}/Search", Resource);
             return new ApiRequest().Execute<List<DtoCustomAttributeWithType>>(Request);
         }

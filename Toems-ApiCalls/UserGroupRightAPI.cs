@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -18,7 +19,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/Post/", Resource);
-            Request.AddJsonBody(listOfRights);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(listOfRights), ParameterType.RequestBody);
             var response = _apiRequest.Execute<DtoActionResult>(Request);
              if (response != null)
             {

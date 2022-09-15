@@ -56,7 +56,7 @@ namespace Toems_ApiCalls
         public DataSet GetCustomComputer(List<DtoCustomComputerQuery> queries)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(queries);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(queries), ParameterType.RequestBody);
             Request.Resource = string.Format("{0}/GetCustomComputer/", Resource);
             var response = new ApiRequest().Execute<DtoApiStringResponse>(Request);
             if (response != null)
@@ -67,7 +67,7 @@ namespace Toems_ApiCalls
         public DataSet GetCustomAsset(List<DtoCustomComputerQuery> queries)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(queries);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(queries), ParameterType.RequestBody);
             Request.Resource = string.Format("{0}/GetCustomAsset/", Resource);
             var response = new ApiRequest().Execute<DtoApiStringResponse>(Request);
             if (response != null)

@@ -134,8 +134,7 @@ namespace Toems_ApiCalls
 
             var signatureRawData = string.Format("{0}{1}{2}{3}{4}{5}", serverName, request.Method, url,
                 requestTimeStamp, nonce, requestContentBase64String);
-          
-          
+
 
             var signature = Encoding.UTF8.GetBytes(signatureRawData);
             string requestSignatureBase64String;

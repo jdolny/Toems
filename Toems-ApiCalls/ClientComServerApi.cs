@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -41,7 +42,7 @@ namespace Toems_ApiCalls
             comPid.Pid = pid;
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/KillReplicationProcess/", Resource);
-            Request.AddJsonBody(comPid);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(comPid), ParameterType.RequestBody);
             var response = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
             if (response == null)
                 return false;
@@ -53,7 +54,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = "Socket/SendAction";
-            Request.AddJsonBody(socketRequest);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(socketRequest), ParameterType.RequestBody);
             var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
         }
 
@@ -77,7 +78,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = "Imaging/SyncComToSmb/";
-            Request.AddJsonBody(imageIds);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(imageIds), ParameterType.RequestBody);
             var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
             return responseData != null && responseData.Value;
         }
@@ -86,7 +87,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = "Imaging/SyncSmbToCom/";
-            Request.AddJsonBody(imageIds);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(imageIds), ParameterType.RequestBody);
             var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
             return responseData != null && responseData.Value;
         }
@@ -95,7 +96,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = "Wol/Wakeup";
-            Request.AddJsonBody(task);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(task), ParameterType.RequestBody);
             var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
             return responseData != null && responseData.Value;
         }
@@ -145,7 +146,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = "Imaging/CleanTaskBootFiles";
-            Request.AddJsonBody(computer);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(computer), ParameterType.RequestBody);
             var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
             return responseData != null && responseData.Value;
         }
@@ -154,7 +155,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = "Imaging/KillUdpReceiver";
-            Request.AddJsonBody(pids);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(pids), ParameterType.RequestBody);
             var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
             return responseData != null && responseData.Value;
         }
@@ -163,7 +164,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = "Imaging/TerminateMulticast";
-            Request.AddJsonBody(multicast);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(multicast), ParameterType.RequestBody);
             var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
             return responseData != null && responseData.Value;
         }
@@ -172,7 +173,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = "Imaging/CreateDefaultBootMenu";
-            Request.AddJsonBody(bootOptions);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(bootOptions), ParameterType.RequestBody);
             var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
             return responseData != null && responseData.Value;
         }
@@ -181,7 +182,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = "Imaging/CreateTaskBootFiles";
-            Request.AddJsonBody(bootFile);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(bootFile), ParameterType.RequestBody);
             var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
             return responseData != null && responseData.Value;
         }
@@ -190,7 +191,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = "Imaging/StartUdpSender";
-            Request.AddJsonBody(mArgs);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(mArgs), ParameterType.RequestBody);
             var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiIntResponse>(Request, serverName, interComKey);
             if (responseData != null)
                 return responseData.Value;
@@ -203,7 +204,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = "Imaging/DownloadKernel";
-            Request.AddJsonBody(onlineKernel);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(onlineKernel), ParameterType.RequestBody);
             var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
             return responseData != null && responseData.Value;
         }
@@ -222,7 +223,7 @@ namespace Toems_ApiCalls
             dtorequest.limit = limit;
             Request.Method = Method.POST;
             Request.Resource = "Imaging/GetComServerLogContents";
-            Request.AddJsonBody(dtorequest);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(dtorequest),ParameterType.RequestBody);
             return new ApiRequest(new Uri(url)).ExecuteHMACInterCom<List<string>>(Request, serverName, interComKey);
         }
 
@@ -258,7 +259,7 @@ namespace Toems_ApiCalls
         public byte[] GenerateISO(string url, string serverName, string interComKey,DtoIsoGenOptions isoOptions)
         {
             Request.Method = Method.POST;
-            Request.AddJsonBody(isoOptions);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(isoOptions), ParameterType.RequestBody);
             Request.Resource = string.Format("Imaging/GenerateISO");
             return new ApiRequest(new Uri(url)).ExecuteRaw(Request);
         }
@@ -284,7 +285,7 @@ namespace Toems_ApiCalls
             dto.Path = path;
             Request.Method = Method.POST;
             Request.Resource = "Imaging/ReadFileText";
-            Request.AddJsonBody(dto);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(dto), ParameterType.RequestBody);
             var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiStringResponse>(Request, serverName, interComKey);
 
             return responseData.Value;
@@ -294,7 +295,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = "Imaging/EditDefaultBootMenu";
-            Request.AddJsonBody(script);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(script), ParameterType.RequestBody);
             var responseData = new ApiRequest(new Uri(url)).ExecuteHMACInterCom<DtoApiBoolResponse>(Request, serverName, interComKey);
             return responseData != null && responseData.Value;
         }
@@ -314,7 +315,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/EditDefaultBootMenu/", Resource);
-            Request.AddJsonBody(script);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(script), ParameterType.RequestBody);
             var response = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
 
             return response.Value;

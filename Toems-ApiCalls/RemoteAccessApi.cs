@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using Newtonsoft.Json;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,7 +83,7 @@ namespace Toems_ApiCalls
         {
             _request.Method = Method.POST;
             _request.Resource = string.Format("{0}/UpdateWebRtc/", _resource);
-            _request.AddJsonBody(webRtc);
+            _request.AddParameter("application/json", JsonConvert.SerializeObject(webRtc), ParameterType.RequestBody);
             var response = new ApiRequest().Execute<DtoApiStringResponse>(_request);
             if (response != null) return response.Value;
             else return null;
@@ -100,7 +101,7 @@ namespace Toems_ApiCalls
         public string CreateRemotelyFirstUser(string remotelyUrl, RemotelyUser user)
         {
             _request.Method = Method.POST;
-            _request.AddJsonBody(user);
+            _request.AddParameter("application/json", JsonConvert.SerializeObject(user), ParameterType.RequestBody);
             _request.Resource = "api/Theopenem/CreateFirstUser";
             return new ApiRequest(new Uri(remotelyUrl)).ExecuteRemotely(_request,"");
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -26,7 +27,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/DownloadFile", Resource);
-            Request.AddJsonBody(download);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(download), ParameterType.RequestBody);
             Request.Timeout = Int32.MaxValue;
             new ApiRequest().ExecuteAsync<DtoApiBoolResponse>(Request);
            
@@ -36,7 +37,7 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/BatchDownload", Resource);
-            Request.AddJsonBody(downloads);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(downloads), ParameterType.RequestBody);
             Request.Timeout = Int32.MaxValue;
             new ApiRequest().ExecuteAsync<DtoApiBoolResponse>(Request);
 
