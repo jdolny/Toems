@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.computers {
-    
-    
-    public partial class systeminfo {
-        
+namespace Toems_FrontEnd.views.computers
+{
+
+
+    public partial class systeminfo
+    {
+
         /// <summary>
         /// lblName control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblName;
-        
+
         /// <summary>
         /// lblDomain control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblDomain;
-        
+
         /// <summary>
         /// lblWorkgroup control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblWorkgroup;
-        
+
         /// <summary>
         /// lblManufacturer control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblManufacturer;
-        
+
         /// <summary>
         /// lblModel control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblModel;
-        
+
         /// <summary>
         /// lblMemory control.
         /// </summary>
@@ -65,7 +67,16 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblMemory;
-        
+
+        /// <summary>
+        /// lblGpu control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblGpu;
+
         /// <summary>
         /// lblOsName control.
         /// </summary>
@@ -74,7 +85,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblOsName;
-        
+
         /// <summary>
         /// lblOsVersion control.
         /// </summary>
@@ -83,7 +94,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblOsVersion;
-        
+
         /// <summary>
         /// lblOsBuild control.
         /// </summary>
@@ -92,7 +103,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblOsBuild;
-        
+
         /// <summary>
         /// lblReleaseId control.
         /// </summary>
@@ -101,7 +112,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblReleaseId;
-        
+
         /// <summary>
         /// lblOsArch control.
         /// </summary>
@@ -110,7 +121,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblOsArch;
-        
+
         /// <summary>
         /// lblOsSpMajor control.
         /// </summary>
@@ -119,7 +130,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblOsSpMajor;
-        
+
         /// <summary>
         /// lblOsSpMinor control.
         /// </summary>
@@ -128,7 +139,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblOsSpMinor;
-        
+
         /// <summary>
         /// lblTimeZone control.
         /// </summary>
@@ -137,7 +148,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblTimeZone;
-        
+
         /// <summary>
         /// lblBiosSerial control.
         /// </summary>
@@ -146,7 +157,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblBiosSerial;
-        
+
         /// <summary>
         /// lblBiosVersion control.
         /// </summary>
@@ -155,7 +166,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblBiosVersion;
-        
+
         /// <summary>
         /// lblSmBiosVersion control.
         /// </summary>
@@ -164,7 +175,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblSmBiosVersion;
-        
+
         /// <summary>
         /// lblProcessor control.
         /// </summary>
@@ -173,7 +184,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblProcessor;
-        
+
         /// <summary>
         /// lblSpeed control.
         /// </summary>
@@ -182,7 +193,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblSpeed;
-        
+
         /// <summary>
         /// lblCores control.
         /// </summary>
@@ -191,7 +202,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblCores;
-        
+
         /// <summary>
         /// lblUac control.
         /// </summary>
@@ -200,7 +211,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblUac;
-        
+
         /// <summary>
         /// lblLocation control.
         /// </summary>
@@ -209,7 +220,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLocation;
-        
+
         /// <summary>
         /// lblDomainFirewall control.
         /// </summary>
@@ -218,7 +229,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblDomainFirewall;
-        
+
         /// <summary>
         /// lblPrivateFirewall control.
         /// </summary>
@@ -227,7 +238,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblPrivateFirewall;
-        
+
         /// <summary>
         /// lblPublicFirewall control.
         /// </summary>
@@ -236,7 +247,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblPublicFirewall;
-        
+
         /// <summary>
         /// lblUpdateServer control.
         /// </summary>
@@ -245,7 +256,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblUpdateServer;
-        
+
         /// <summary>
         /// lblTargetGroup control.
         /// </summary>
@@ -254,7 +265,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblTargetGroup;
-        
+
         /// <summary>
         /// gvAntivirus control.
         /// </summary>
@@ -263,7 +274,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvAntivirus;
-        
+
         /// <summary>
         /// gvBitlocker control.
         /// </summary>
@@ -272,7 +283,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvBitlocker;
-        
+
         /// <summary>
         /// gvHds control.
         /// </summary>
@@ -281,7 +292,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvHds;
-        
+
         /// <summary>
         /// gvLogicalVolumes control.
         /// </summary>
@@ -290,7 +301,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvLogicalVolumes;
-        
+
         /// <summary>
         /// gvNics control.
         /// </summary>
@@ -299,7 +310,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvNics;
-        
+
         /// <summary>
         /// gvPrinters control.
         /// </summary>
@@ -308,7 +319,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvPrinters;
-        
+
         /// <summary>
         /// lblLatitude control.
         /// </summary>
@@ -317,7 +328,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLatitude;
-        
+
         /// <summary>
         /// lblLongitude control.
         /// </summary>
@@ -326,7 +337,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLongitude;
-        
+
         /// <summary>
         /// lblLastLocationUpdate control.
         /// </summary>

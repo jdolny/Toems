@@ -60,6 +60,13 @@
     <div class="size-lbl2 column">
         <asp:Label runat="server" ID="lblMemory" ></asp:Label>
     </div>
+     <br class="clear"/>
+    <div class="size-lbl column">
+        GPU:
+    </div>
+    <div class="size-lbl2 column">
+        <asp:Label runat="server" ID="lblGpu" ></asp:Label>
+    </div>
     <br class="clear"/>
     <br /><br/>
     <div class="size-lbl column">

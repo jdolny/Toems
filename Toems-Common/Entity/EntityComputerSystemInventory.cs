@@ -33,6 +33,9 @@ namespace Toems_Common.Entity
         [Column("memory")]
         public int Memory { get; set; }
 
+        [Column("gpu")]
+        public string Gpu { get; set; }
+
         [NotMapped]
         public UInt64 TotalPhysicalMemory { get; set; }
     }

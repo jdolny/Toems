@@ -28,6 +28,7 @@ namespace Toems_FrontEnd.views.computers
                 lblDomain.Text = sysInfo.ComputerSystem.Domain;
                 lblWorkgroup.Text = sysInfo.ComputerSystem.Workgroup;
                 lblMemory.Text = sysInfo.ComputerSystem.Memory.ToString();
+                lblGpu.Text = sysInfo.ComputerSystem.Gpu;
                 lblName.Text = sysInfo.ComputerSystem.Name;
             }
             if (sysInfo.Os != null)
