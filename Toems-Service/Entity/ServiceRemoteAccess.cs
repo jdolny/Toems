@@ -234,7 +234,7 @@ namespace Toems_Service.Entity
                             webClient.DownloadFile(new Uri(remotelyUrl + "/Downloads/" + fileName), Path.Combine(destinationDir, fileName));
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
 
                         return;

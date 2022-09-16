@@ -22,7 +22,6 @@ namespace Toems_ApiCalls
             Request.Method = Method.GET;
             Request.Resource = string.Format("{0}/CheckExpiredToken/", Resource);
             var result = _apiRequest.ExecuteExpired<DtoApiBoolResponse>(Request);
-            if (result == null) return false;
             return result;
         }
 

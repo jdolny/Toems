@@ -676,7 +676,9 @@ namespace Toems_Service.Entity
                 return "new";
             var originalHash = policy.Hash;
             var json = JsonConvert.SerializeObject(new Workflows.ClientPolicyJson().Create(policyId));
+#pragma warning disable CS0618 // Type or member is obsolete
             var newHash = FormsAuthentication.HashPasswordForStoringInConfigFile(json, "MD5");
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (originalHash.Equals(newHash))
             {
@@ -705,7 +707,9 @@ namespace Toems_Service.Entity
             var originalHash = policy.Hash;
             //Update the existing policies hash
             var json = JsonConvert.SerializeObject(new Workflows.ClientPolicyJson().Create(policyId));
+#pragma warning disable CS0618 // Type or member is obsolete
             var newHash = FormsAuthentication.HashPasswordForStoringInConfigFile(json, "MD5");
+#pragma warning restore CS0618 // Type or member is obsolete
             policy.Hash = newHash;
             _uow.PolicyRepository.Update(policy, policy.Id);
             if (policy.Hash != originalHash)
@@ -752,7 +756,7 @@ namespace Toems_Service.Entity
                     return new DtoActionResult { Success = true, Id = finalActivePolicy.Id };
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 new ServiceActiveClientPolicy().Delete(finalActivePolicy.Id);
                 return new DtoActionResult { ErrorMessage = "Could Not Verify Client Policy Deserialization", Id = 0 };

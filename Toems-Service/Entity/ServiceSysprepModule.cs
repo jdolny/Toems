@@ -184,7 +184,6 @@ namespace Toems_Service.Entity
         private DtoValidationResult ValidateModule(EntitySysprepModule module, bool isNew)
         {
             var validationResult = new DtoValidationResult { Success = true };
-            int value;
           
             if (string.IsNullOrEmpty(module.Name) || !module.Name.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '-' || c == ' ' || c == '.'))
             {

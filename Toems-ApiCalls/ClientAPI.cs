@@ -38,7 +38,9 @@ namespace Toems_ApiCalls
             Request.Method = Method.POST;
             Request.AddParameter("application/json", JsonConvert.SerializeObject(wolTask), ParameterType.RequestBody);
             Request.Resource = "toec/Push/WolTask";
+#pragma warning disable CS4014
             new ApiRequest(new Uri(url)).ExecuteHMACAsync<DtoApiBoolResponse>(Request, cert);
+#pragma warning restore CS4014
         }
 
         public void Reboot(string url, X509Certificate2 cert, string delay)
@@ -47,7 +49,9 @@ namespace Toems_ApiCalls
 
             Request.AddParameter("application/json", JsonConvert.SerializeObject(new DtoApiStringResponse() { Value = delay }), ParameterType.RequestBody);
             Request.Resource = "toec/Push/Reboot";
+#pragma warning disable CS4014
             new ApiRequest(new Uri(url)).ExecuteHMACAsync<DtoApiBoolResponse>(Request, cert);
+#pragma warning restore CS4014
         }
 
         public void Shutdown(string url, X509Certificate2 cert,string delay)
@@ -55,7 +59,9 @@ namespace Toems_ApiCalls
             Request.Method = Method.POST;
             Request.AddParameter("application/json", JsonConvert.SerializeObject(new DtoApiStringResponse() { Value = delay }), ParameterType.RequestBody);
             Request.Resource = "toec/Push/Shutdown";
+#pragma warning disable CS4014
             new ApiRequest(new Uri(url)).ExecuteHMACAsync<DtoApiBoolResponse>(Request, cert);
+#pragma warning restore CS4014
 
         }
 
@@ -64,7 +70,9 @@ namespace Toems_ApiCalls
             Request.Method = Method.POST;
             Request.Resource = "toec/Push/Message";
             Request.AddParameter("application/json", JsonConvert.SerializeObject(message), ParameterType.RequestBody);
+#pragma warning disable CS4014
             new ApiRequest(new Uri(url)).ExecuteHMACAsync<DtoApiBoolResponse>(Request,cert);
+#pragma warning restore CS4014
 
         }
 
@@ -72,16 +80,20 @@ namespace Toems_ApiCalls
         {
             Request.Method = Method.GET;
             Request.Resource = "toec/Push/Checkin";
+#pragma warning disable CS4014
             new ApiRequest(new Uri(url)).ExecuteHMACAsync<DtoApiBoolResponse>(Request, cert);
+#pragma warning restore CS4014
         }
 
         public void RunInventory(string url, X509Certificate2 cert)
         {
             Request.Method = Method.GET;
             Request.Resource = "toec/Push/Inventory";
+#pragma warning disable CS4014
             new ApiRequest(new Uri(url)).ExecuteHMACAsync<DtoApiBoolResponse>(Request, cert);
+#pragma warning restore CS4014
         }
 
-     
+
     }
 }

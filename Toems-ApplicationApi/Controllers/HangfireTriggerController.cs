@@ -17,7 +17,8 @@ namespace Toems_ApplicationApi.Controllers
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public DtoApiBoolResponse StartFolderSync()
         {
-            Hangfire.RecurringJob.Trigger("StorageSync-Job");
+            new RecurringJobManager().TriggerJob("StorageSync-Job");
+
             return new DtoApiBoolResponse() {Value = true};
         }
 
@@ -25,7 +26,7 @@ namespace Toems_ApplicationApi.Controllers
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public DtoApiBoolResponse StartLdapSync()
         {
-            Hangfire.RecurringJob.Trigger("LDAPSync-Job");
+            new RecurringJobManager().TriggerJob("LDAPSync-Job");
             return new DtoApiBoolResponse() { Value = true };
         }
 
@@ -33,7 +34,7 @@ namespace Toems_ApplicationApi.Controllers
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public DtoApiBoolResponse StartDynamicGroupSync()
         {
-            Hangfire.RecurringJob.Trigger("DynamicGroupUpdate-Job");
+            new RecurringJobManager().TriggerJob("DynamicGroupUpdate-Job");
             return new DtoApiBoolResponse() { Value = true };
         }
 
@@ -41,7 +42,7 @@ namespace Toems_ApplicationApi.Controllers
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public DtoApiBoolResponse StartResetReport()
         {
-            Hangfire.RecurringJob.Trigger("ResetRequestReport-Job");
+            new RecurringJobManager().TriggerJob("ResetRequestReport-Job");
             return new DtoApiBoolResponse() { Value = true };
         }
 
@@ -49,7 +50,7 @@ namespace Toems_ApplicationApi.Controllers
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public DtoApiBoolResponse StartApproveReport()
         {
-            Hangfire.RecurringJob.Trigger("ApprovalRequestReport-Job");
+            new RecurringJobManager().TriggerJob("ApprovalRequestReport-Job");
             return new DtoApiBoolResponse() { Value = true };
         }
 
@@ -57,7 +58,7 @@ namespace Toems_ApplicationApi.Controllers
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public DtoApiBoolResponse StartSmartReport()
         {
-            Hangfire.RecurringJob.Trigger("SmartReport-Job");
+            new RecurringJobManager().TriggerJob("SmartReport-Job");
             return new DtoApiBoolResponse() { Value = true };
         }
 
@@ -65,7 +66,7 @@ namespace Toems_ApplicationApi.Controllers
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public DtoApiBoolResponse StartDataCleanup()
         {
-            Hangfire.RecurringJob.Trigger("DataCleanup-Job");
+            new RecurringJobManager().TriggerJob("DataCleanup-Job");
             return new DtoApiBoolResponse() { Value = true };
         }
 
@@ -73,7 +74,7 @@ namespace Toems_ApplicationApi.Controllers
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public DtoApiBoolResponse StartLowDiskReport()
         {
-            Hangfire.RecurringJob.Trigger("LowDiskReport-Job");
+            new RecurringJobManager().TriggerJob("LowDiskReport-Job");
             return new DtoApiBoolResponse() { Value = true };
         }
 
@@ -82,7 +83,7 @@ namespace Toems_ApplicationApi.Controllers
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public DtoApiBoolResponse StartShutdown()
         {
-            Hangfire.RecurringJob.Trigger("Shutdown-Job");
+            new RecurringJobManager().TriggerJob("Shutdown-Job");
             return new DtoApiBoolResponse() { Value = true };
         }
 

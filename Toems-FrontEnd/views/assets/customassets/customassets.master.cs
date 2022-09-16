@@ -60,7 +60,7 @@ namespace Toems_FrontEnd.views.assets.customassets
             var result = new DtoActionResult();
             var action = (string)Session["action"];
             Session.Remove("action");
-            var count = 0;
+
             switch (action)
             {
                 case "delete":

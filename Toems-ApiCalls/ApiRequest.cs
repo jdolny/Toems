@@ -250,7 +250,7 @@ namespace Toems_ApiCalls
             }
             request.AddHeader("Authorization", "bearer " + _token);
 
-            var response = await _client.ExecuteTaskAsync<TClass>(request);
+            var response = await _client.ExecuteAsync<TClass>(request);
 
             if (response == null)
             {
@@ -417,7 +417,7 @@ namespace Toems_ApiCalls
 
             request.AddHeader("Authorization", "amx " + string.Format("{0}:{1}:{2}", Convert.ToBase64String(signature), nonce, requestTimeStamp));
 
-            var response = await Task.Run(() => _client.ExecuteTaskAsync<TClass>(request));
+            var response = await Task.Run(() => _client.ExecuteAsync<TClass>(request));
             if (response == null)
             {
                 _log.Error("Could Not Complete API Request.  The Response was empty." + request.Resource);

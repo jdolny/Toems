@@ -47,7 +47,7 @@ namespace Toems_ApiCalls
             throw new NotImplementedException();
         }
 
-        public new List<EntityGroupPolicy> Search(int limit, string searchstring)
+        public List<EntityGroupPolicy> Search(int limit, string searchstring)
         {
             throw new NotImplementedException();
         }

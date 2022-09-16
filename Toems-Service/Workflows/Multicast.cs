@@ -21,8 +21,7 @@ namespace Toems_Service.Workflows
         private readonly bool _isOnDemand;
         private readonly EntityActiveMulticastSession _multicastSession;
         private readonly int _userId;
-        private readonly int _clusterId;
-        private readonly ILog log = LogManager.GetLogger(typeof(Multicast));
+
         private List<EntityComputer> _computers;
         private ImageProfileWithImage _imageProfile;
         private int? _multicastServerId;

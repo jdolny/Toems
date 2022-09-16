@@ -78,8 +78,8 @@ namespace Toems_ClientApi.Controllers.Authorization
             get { return false; }
         }
 
-   
 
+#pragma warning disable CS1998
         private async Task<bool> isValidRequest(string computerGuid, string deviceCert)
         {
             var computerEntity = new ServiceComputer().GetByGuid(computerGuid);
@@ -110,10 +110,8 @@ namespace Toems_ClientApi.Controllers.Authorization
                 Logger.Debug($"ID: {logId} - Certificate failed validation");
                 return false;
             }
-
-
         }
-
+#pragma warning restore CS1998
         public class ResultWithChallenge : IHttpActionResult
         {
             private readonly string authenticationScheme = "x509";

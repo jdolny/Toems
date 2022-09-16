@@ -43,7 +43,9 @@ namespace Toems_Service
             }
         }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task<string> DecryptAsync(byte[] key, byte[] data)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             using (Aes aes = Aes.Create())
             {

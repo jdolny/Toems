@@ -151,7 +151,9 @@ namespace Toems_Service
             // Set the signature algorithm. This is used to generate the thumbprint which is then signed
             // with the issuer's private key. We'll use SHA-256, which is (currently) considered fairly strong.
             const string signatureAlgorithm = "SHA256WithRSA";
+#pragma warning disable CS0618 // Type or member is obsolete
             certificateGenerator.SetSignatureAlgorithm(signatureAlgorithm);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             var issuerDN = new X509Name(issuerName);
             certificateGenerator.SetIssuerDN(issuerDN);
@@ -178,8 +180,10 @@ namespace Toems_Service
                 AddSubjectAlternativeNames(certificateGenerator, subjectAlternativeNames);
 
             // The certificate is signed with the issuer's private key.
-            
+
+#pragma warning disable CS0618 // Type or member is obsolete
             var certificate = certificateGenerator.Generate(issuerKeyPair.Private, random);
+#pragma warning restore CS0618 // Type or member is obsolete
             return certificate;
         }
 

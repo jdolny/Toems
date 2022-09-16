@@ -29,8 +29,10 @@ namespace Toems_ApiCalls
             Request.Resource = string.Format("{0}/DownloadFile", Resource);
             Request.AddParameter("application/json", JsonConvert.SerializeObject(download), ParameterType.RequestBody);
             Request.Timeout = Int32.MaxValue;
+#pragma warning disable CS4014
             new ApiRequest().ExecuteAsync<DtoApiBoolResponse>(Request);
-           
+#pragma warning restore CS4014
+
         }
 
         public void BatchDownload(List<DtoFileDownload> downloads)
@@ -39,8 +41,9 @@ namespace Toems_ApiCalls
             Request.Resource = string.Format("{0}/BatchDownload", Resource);
             Request.AddParameter("application/json", JsonConvert.SerializeObject(downloads), ParameterType.RequestBody);
             Request.Timeout = Int32.MaxValue;
+#pragma warning disable CS4014
             new ApiRequest().ExecuteAsync<DtoApiBoolResponse>(Request);
-
+#pragma warning restore CS4014
         }
 
 

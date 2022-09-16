@@ -131,42 +131,54 @@ namespace Toems_ApiCalls
             Request.Method = Method.POST;
             Request.Resource = string.Format("{0}/SendMessage/{1}", Resource, id);
             Request.AddParameter("application/json", JsonConvert.SerializeObject(message), ParameterType.RequestBody);
+#pragma warning disable CS4014
             new ApiRequest().ExecuteAsync<DtoApiBoolResponse>(Request);
+#pragma warning restore CS4014
         }
 
         public void Reboot(int id)
         {
             Request.Method = Method.GET;
             Request.Resource = string.Format("{0}/Reboot/{1}", Resource, id);
+#pragma warning disable CS4014
             new ApiRequest().ExecuteAsync<DtoApiBoolResponse>(Request);
+#pragma warning restore CS4014
         }
 
         public void Shutdown(int id)
         {
             Request.Method = Method.GET;
             Request.Resource = string.Format("{0}/Shutdown/{1}", Resource, id);
+#pragma warning disable CS4014
             new ApiRequest().ExecuteAsync<DtoApiBoolResponse>(Request);
+#pragma warning restore CS4014
         }
 
         public void Wakeup(int id)
         {
             Request.Method = Method.GET;
             Request.Resource = string.Format("{0}/Wakeup/{1}", Resource, id);
+#pragma warning disable CS4014
             new ApiRequest().ExecuteAsync<DtoApiBoolResponse>(Request);
+#pragma warning restore CS4014
         }
 
         public void ForceCheckin(int id)
         {
             Request.Method = Method.GET;
             Request.Resource = string.Format("{0}/ForceCheckin/{1}", Resource, id);
+#pragma warning disable CS4014
             new ApiRequest().ExecuteAsync<DtoApiBoolResponse>(Request);
+#pragma warning restore CS4014
         }
 
         public void CollectInventory(int id)
         {
             Request.Method = Method.GET;
             Request.Resource = string.Format("{0}/CollectInventory/{1}", Resource, id);
+#pragma warning disable CS4014
             new ApiRequest().ExecuteAsync<DtoApiBoolResponse>(Request);
+#pragma warning restore CS4014
         }
 
         public List<DtoProcessWithTime> GroupProcessTimes(DateTime dateCutoff, int limit, int groupId)

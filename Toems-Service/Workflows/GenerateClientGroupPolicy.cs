@@ -74,7 +74,7 @@ namespace Toems_Service.Workflows
                 else
                     return new DtoActionResult() {ErrorMessage = warningMessage};
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //back out any changes
                 new ServiceActiveGroupPolicy().Delete(clientGroupPolicy.Id);
