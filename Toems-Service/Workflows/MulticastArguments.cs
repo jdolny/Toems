@@ -141,16 +141,14 @@ namespace Toems_Service.Workflows
                         {
                             processArguments += prefix + "cat " + "\"" + imageFile + "\"" + " | udp-sender" +
                                                 " --portbase " + mArgs.Port + minReceivers + " " +
-                                                " --ttl 32 --interface " + _thisComServer.MulticastInterfaceIp + " --mcast-rdv-address " + _thisComServer.MulticastInterfaceIp +
-                                                mArgs.ExtraArgs;
+                                                " --ttl 32 --interface " + _thisComServer.MulticastInterfaceIp + " " + mArgs.ExtraArgs;
                         }
 
                         else
                         {
                             processArguments += prefix + compAlg + "\"" + imageFile + "\"" + stdout + " | udp-sender" +
                                                 " --portbase " + mArgs.Port + minReceivers + " " +
-                                                " --ttl 32 --interface " + _thisComServer.MulticastInterfaceIp + " --mcast-rdv-address " + _thisComServer.MulticastInterfaceIp +
-                                                mArgs.ExtraArgs;
+                                                " --ttl 32 --interface " + _thisComServer.MulticastInterfaceIp + " " + mArgs.ExtraArgs;
                         }
                     }
                     else
@@ -172,8 +170,7 @@ namespace Toems_Service.Workflows
                             processArguments += prefix + "\"" + appPath +
                                                 "udp-sender.exe" + "\"" + " --file " + "\"" + imageFile + "\"" +
                                                 " --portbase " + mArgs.Port + minReceivers + " " +
-                                                " --ttl 32 --interface " + _thisComServer.MulticastInterfaceIp + " --mcast-rdv-address " + _thisComServer.MulticastInterfaceIp +
-                                                mArgs.ExtraArgs;
+                                                " --ttl 32 --interface " + _thisComServer.MulticastInterfaceIp + " " + mArgs.ExtraArgs;
                         }
                         else
                         {
@@ -181,8 +178,7 @@ namespace Toems_Service.Workflows
                                                 " | " + "\"" + appPath +
                                                 "udp-sender.exe" + "\"" +
                                                 " --portbase " + mArgs.Port + minReceivers + " " +
-                                                " --ttl 32 --interface " + _thisComServer.MulticastInterfaceIp + " --mcast-rdv-address " + _thisComServer.MulticastInterfaceIp +
-                                                mArgs.ExtraArgs;
+                                                " --ttl 32 --interface " + _thisComServer.MulticastInterfaceIp + " " + mArgs.ExtraArgs;
                         }
                     }
                 }
