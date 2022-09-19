@@ -13,6 +13,7 @@ namespace Toems_Service.Workflows
 
             new ServiceBiosInventory().AddOrUpdate(collection.Bios,client.Id);
             new ServiceComputerSystemInventory().AddOrUpdate(collection.ComputerSystem,client.Id);
+            new ServiceComputerGpuInventory().AddOrUpdate(collection.Gpu, client.Id);
             new ServiceOsInventory().AddOrUpdate(collection.Os,client.Id);
             new ServiceProcessorInventory().AddOrUpdate(collection.Processor,client.Id);
             new ServicePrinterInventory().AddOrUpdate(collection.Printers, client.Id);

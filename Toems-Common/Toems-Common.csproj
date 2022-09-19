@@ -242,6 +242,7 @@
     <Compile Include="Entity\EntityClientImagingId.cs" />
     <Compile Include="Entity\EntityAntivirusInventory.cs" />
     <Compile Include="Entity\EntityComputerLog.cs" />
+    <Compile Include="Entity\EntityComputerGpuInventory.cs" />
     <Compile Include="Entity\EntityCustomBootMenu.cs" />
     <Compile Include="Entity\EntityAssetGroupMember.cs" />
     <Compile Include="Entity\EntityAssetGroup.cs" />

@@ -107,6 +107,8 @@ namespace Toems_DataModel
         IGenericRepository<EntitySysprepAnswerfile> SysprepAnswerFileRepository { get; }
         IGenericRepository<EntitySetupCompleteFile> SetupCompleteFileRepository { get; }
 
+        IGenericRepository<EntityComputerGpuInventory> ComputerGpuRepository { get; }
+
         void Save();
     }
 }

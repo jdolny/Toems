@@ -61,13 +61,7 @@
         <asp:Label runat="server" ID="lblMemory" ></asp:Label>
     </div>
      <br class="clear"/>
-    <div class="size-lbl column">
-        GPU:
-    </div>
-    <div class="size-lbl2 column">
-        <asp:Label runat="server" ID="lblGpu" ></asp:Label>
-    </div>
-    <br class="clear"/>
+  
     <br /><br/>
     <div class="size-lbl column">
         OS Name:
@@ -298,6 +292,23 @@
         </Columns>
         <EmptyDataTemplate>
             No Logical Volumes Found
+        </EmptyDataTemplate>
+    </asp:GridView>
+<br class="clear"/>
+<br />
+<hr/>
+<br/>
+<hr/>
+<br/>
+     <h2>GPU's</h2>
+
+    <asp:GridView ID="gvGpus" runat="server" DataKeyNames="Id" AutoGenerateColumns="False" CssClass="Gridview" AlternatingRowStyle-CssClass="alt">
+        <Columns>
+            <asp:BoundField DataField="Name" HeaderText="Name" ItemStyle-CssClass="width_200"></asp:BoundField>
+           <asp:BoundField DataField="Memory" HeaderText="Memory"></asp:BoundField>
+        </Columns>
+        <EmptyDataTemplate>
+            No Gpu's Found
         </EmptyDataTemplate>
     </asp:GridView>
 <br class="clear"/>

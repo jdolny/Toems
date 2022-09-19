@@ -280,6 +280,10 @@ namespace Toems_Service.Workflows
             {
                 select += @" t." + query.Field + ",";
             }
+            foreach (var query in queries.Where(x => x.Table.Equals("Gpu")))
+            {
+                select += @" u." + query.Field + ",";
+            }
 
             foreach (var query in queries)
             {
@@ -357,6 +361,8 @@ namespace Toems_Service.Workflows
                 sb.Append("LEFT JOIN computer_categories s on a.computer_id = s.computer_id ");
                 sb.Append("LEFT JOIN categories t on s.category_id = t.category_id ");
             }
+            if (queries.Any(x => x.Table == "Gpu"))
+                sb.Append("LEFT JOIN computer_gpu_inventory u on a.computer_id = u.computer_id ");
 
 
             var scriptModuleIds = new List<int>();
@@ -444,6 +450,8 @@ namespace Toems_Service.Workflows
                     tableAs = "r";
                 else if (query.Table == "Category")
                     tableAs = "t";
+                else if (query.Table == "Gpu")
+                    tableAs = "u";
                 else
                 {
                     if (query.Table.StartsWith("("))

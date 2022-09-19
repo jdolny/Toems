@@ -77,9 +77,10 @@ namespace Toems_FrontEnd.views.groups
             ddl.Items.Insert(13, new ListItem("Network Adapters", "Network Adapters"));
             ddl.Items.Insert(14, new ListItem("Certificates", "Certificates"));
             ddl.Items.Insert(15, new ListItem("Category", "Category"));
+            ddl.Items.Insert(16, new ListItem("Gpu", "Gpu"));
 
 
-            var counter = 15;
+            var counter = 16;
             var customInventories = Call.ScriptModuleApi.GetAllWithInventory();
             foreach (var ci in customInventories)
             {
@@ -388,8 +389,13 @@ namespace Toems_FrontEnd.views.groups
                  ddlField.Items.Insert(3, new ListItem("size", "size"));
                  ddlField.Items.Insert(4, new ListItem("smart_status", "smart_status"));
              }
+            else if (ddlTable.Text == "Gpu")
+            {
+                ddlField.Items.Insert(0, new ListItem("computer_gpu_name", "computer_gpu_name"));
+                ddlField.Items.Insert(1, new ListItem("computer_gpu_ram", "computer_gpu_ram"));
+            }
 
-             else if (ddlTable.Text == "OS")
+            else if (ddlTable.Text == "OS")
              {
                  ddlField.Items.Insert(0, new ListItem("name", "name"));
                  ddlField.Items.Insert(1, new ListItem("version", "version"));

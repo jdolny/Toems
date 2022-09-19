@@ -989,6 +989,7 @@ namespace Toems_Service.Entity
             var systemInfo = new DtoInventoryCollection();
             systemInfo.Bios = _uow.BiosInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault();
             systemInfo.ComputerSystem = _uow.ComputerSystemInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault();
+            systemInfo.Gpu = _uow.ComputerGpuRepository.Get(x => x.ComputerId == computerId);
             systemInfo.Os = _uow.OsInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault();
             systemInfo.Processor =
                 _uow.ProcessorInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault();

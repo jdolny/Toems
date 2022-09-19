@@ -119,6 +119,7 @@ namespace Toems_DataModel
         private IGenericRepository<EntityClientImagingId> _clientImagingIdRepository;
         private IGenericRepository<EntitySysprepAnswerfile> _sysprepAnswerFilesRepository;
         private IGenericRepository<EntitySetupCompleteFile> _setupCompleteFilesRepository;
+        private IGenericRepository<EntityComputerGpuInventory> _computerGpuRepository;
 
 
         private bool disposed;
@@ -127,6 +128,14 @@ namespace Toems_DataModel
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public IGenericRepository<EntityComputerGpuInventory> ComputerGpuRepository
+        {
+            get
+            {
+                return _computerGpuRepository ?? (_computerGpuRepository = new GenericRepository<EntityComputerGpuInventory>(_context));
+            }
         }
 
         public IGenericRepository<EntitySysprepAnswerfile> SysprepAnswerFileRepository
