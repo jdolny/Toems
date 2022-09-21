@@ -69,6 +69,7 @@ namespace Toems_ApplicationApi
         }
     }
 
+
     public class Startup
     {
         public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }
@@ -105,9 +106,10 @@ namespace Toems_ApplicationApi
                     return next(env);
                 }
             }));
-          
-            // Hangfire initialization
 
+            // Hangfire initialization
+            GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0 });
+            GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(600));
             var providerName = System.Configuration.ConfigurationManager.
                 ConnectionStrings["toems"].ProviderName;
 
