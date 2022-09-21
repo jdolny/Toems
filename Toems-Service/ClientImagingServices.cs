@@ -717,15 +717,10 @@ namespace Toems_Service
         {
             var images = new ServiceImage().GetOnDemandImageList(task, userId);
 
-            if (images.Count == 0)
-            {
-                var imageList = new ImageList { Images = new List<string>() };
-                imageList.Images.Add(-1 + " " + "No_Images_Found");
-                return JsonConvert.SerializeObject(imageList);
-            }
+
             if (computerId == "false")
                 computerId = "0";
-            
+
             if (environment == "winpe")
             {
                 images = images.Where(x => x.Environment == "winpe").ToList();
@@ -736,6 +731,10 @@ namespace Toems_Service
                     winpeImage.ImageId = image.Id.ToString();
                     winpeImage.ImageName = image.Name;
                     imageList.Add(winpeImage);
+                }
+                if(!imageList.Any())
+                {
+                    imageList.Add(new WinPEImageList() { ImageId = "-1", ImageName = "No Images Found"});
                 }
                 return JsonConvert.SerializeObject(imageList);
             }
@@ -753,7 +752,7 @@ namespace Toems_Service
                     images =
                         images.Where(x => x.Environment != "winpe").ToList();
                 foreach (var image in images)
-                    imageList.Images.Add(image.Id + " " + image.Name.Replace(" ","_"));
+                    imageList.Images.Add(image.Id + " " + image.Name.Replace(" ", "_"));
 
                 if (imageList.Images.Count == 0)
                     imageList.Images.Add(-1 + " " + "No_Images_Found");
@@ -835,6 +834,10 @@ namespace Toems_Service
                     multicastSession.Name = multicast.Name;
                     multicastList.Add(multicastSession);
                 }
+                if(!multicastList.Any())
+                {
+                    multicastList.Add(new WinPEMulticastList() { Port = "-1", Name = "No Multicast Sessions" });
+                }
                 return JsonConvert.SerializeObject(multicastList);
             }
             else
@@ -846,6 +849,11 @@ namespace Toems_Service
                     multicastList.Multicasts.Add(multicast.Id + " " + multicast.Name.Replace(" ","_"));
                 }
 
+                if (!multicastList.Multicasts.Any())
+                {
+                    multicastList.Multicasts.Add(-1 + " " + "No_Multicasts_Found");
+                    return JsonConvert.SerializeObject(multicastList);
+                }
                 return JsonConvert.SerializeObject(multicastList);
             }
         }
