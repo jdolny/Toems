@@ -126,8 +126,9 @@ namespace Toems_FrontEnd.views.reports.computer
             ddl.Items.Insert(14, new ListItem("Certificates", "Certificates"));
             ddl.Items.Insert(15, new ListItem("Category", "Category"));
             ddl.Items.Insert(16, new ListItem("Gpu", "Gpu"));
+            ddl.Items.Insert(17, new ListItem("Group", "Group"));
 
-            var counter = 16;
+            var counter = 17;
             var customInventories = Call.ScriptModuleApi.GetAllWithInventory();
             foreach (var ci in customInventories)
             {
@@ -321,6 +322,25 @@ namespace Toems_FrontEnd.views.reports.computer
 
         private void PopulateGroupBy()
         {
+            Dictionary<string, int> queryTypeCount = new Dictionary<string, int>();
+            queryTypeCount.Add("Bios", 0);
+            queryTypeCount.Add("System", 0);
+            queryTypeCount.Add("Hard Drive", 0);
+            queryTypeCount.Add("OS", 0);
+            queryTypeCount.Add("Printer", 0);
+            queryTypeCount.Add("Processor", 0);
+            queryTypeCount.Add("Application", 0);
+            queryTypeCount.Add("Windows Update", 0);
+            queryTypeCount.Add("Firewall", 0);
+            queryTypeCount.Add("AntiVirus", 0);
+            queryTypeCount.Add("BitLocker", 0);
+            queryTypeCount.Add("Logical Volumes", 0);
+            queryTypeCount.Add("Network Adapters", 0);
+            queryTypeCount.Add("Certificates", 0);
+            queryTypeCount.Add("Category", 0);
+            queryTypeCount.Add("Gpu", 0);
+            queryTypeCount.Add("Group", 0);
+
             ddlGroupBy.Items.Clear();
             ddlGroupBy.Items.Insert(0, new ListItem("", ""));
             ddlGroupBy.Items.Insert(1, new ListItem("Computer.computer_name", "Computer.computer_name"));
@@ -334,7 +354,93 @@ namespace Toems_FrontEnd.views.reports.computer
                     var field = ((Label) row.FindControl("lblField")).Text;
                     if (table.Equals("Computer") && field.Equals("computer_name")) continue;
                     indexCount++;
-                    ddlGroupBy.Items.Insert(indexCount, new ListItem(table + "." + field, table + "." + field));
+                    var tableCounter = 0;
+                    if(table.Equals("Bios"))
+                    {
+                        tableCounter = queryTypeCount["Bios"];
+                        queryTypeCount["Bios"]++;
+                    }
+                    else if (table.Equals("System"))
+                    {
+                        tableCounter = queryTypeCount["System"];
+                        queryTypeCount["System"]++;
+                    }
+                    if (table.Equals("Hard Drive"))
+                    {
+                        tableCounter = queryTypeCount["Hard Drive"];
+                        queryTypeCount["Hard Drive"]++;
+                    }
+                    if (table.Equals("OS"))
+                    {
+                        tableCounter = queryTypeCount["OS"];
+                        queryTypeCount["OS"]++;
+                    }
+                    if (table.Equals("Printer"))
+                    {
+                        tableCounter = queryTypeCount["Printer"];
+                        queryTypeCount["Printer"]++;
+                    }
+                    if (table.Equals("Processor"))
+                    {
+                        tableCounter = queryTypeCount["Processor"];
+                        queryTypeCount["Processor"]++;
+                    }
+                    if (table.Equals("Application"))
+                    {
+                        tableCounter = queryTypeCount["Application"];
+                        queryTypeCount["Application"]++;
+                    }
+                    if (table.Equals("Windows Update"))
+                    {
+                        tableCounter = queryTypeCount["Windows Update"];
+                        queryTypeCount["Windows Update"]++;
+                    }
+                    if (table.Equals("Firewall"))
+                    {
+                        tableCounter = queryTypeCount["Firewall"];
+                        queryTypeCount["Firewall"]++;
+                    }
+                    if (table.Equals("AntiVirus"))
+                    {
+                        tableCounter = queryTypeCount["AntiVirus"];
+                        queryTypeCount["AntiVirus"]++;
+                    }
+                    if (table.Equals("BitLocker"))
+                    {
+                        tableCounter = queryTypeCount["BitLocker"];
+                        queryTypeCount["BitLocker"]++;
+                    }
+                    if (table.Equals("Logical Volumes"))
+                    {
+                        tableCounter = queryTypeCount["Logical Volumes"];
+                        queryTypeCount["Logical Volumes"]++;
+                    }
+                    if (table.Equals("Network Adapters"))
+                    {
+                        tableCounter = queryTypeCount["Network Adapters"];
+                        queryTypeCount["Network Adapters"]++;
+                    }
+                    if (table.Equals("Certificates"))
+                    {
+                        tableCounter = queryTypeCount["Certificates"];
+                        queryTypeCount["Certificates"]++;
+                    }
+                    if (table.Equals("Category"))
+                    {
+                        tableCounter = queryTypeCount["Category"];
+                        queryTypeCount["Category"]++;
+                    }
+                    if (table.Equals("Gpu"))
+                    {
+                        tableCounter = queryTypeCount["Gpu"];
+                        queryTypeCount["Gpu"]++;
+                    }
+                    if (table.Equals("Group"))
+                    {
+                        tableCounter = queryTypeCount["Group"];
+                        queryTypeCount["Group"]++;
+                    }
+                    ddlGroupBy.Items.Insert(indexCount, new ListItem(tableCounter + "." + table + "." + field, tableCounter + "." + table + "." + field));
                 }
             }
         }
@@ -380,6 +486,11 @@ namespace Toems_FrontEnd.views.reports.computer
             {
                 ddlField.Items.Insert(0, new ListItem("computer_gpu_name", "computer_gpu_name"));
                 ddlField.Items.Insert(1, new ListItem("computer_gpu_ram", "computer_gpu_ram"));
+            }
+            else if (ddlTable.Text == "Group")
+            {
+                ddlField.Items.Insert(0, new ListItem("group_id", "group_id"));
+                ddlField.Items.Insert(1, new ListItem("group_name", "group_name"));
             }
 
             else if (ddlTable.Text == "OS")
