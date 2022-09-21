@@ -21,6 +21,11 @@ namespace Toems_FrontEnd.views.groups
                 EndUserMessage = "Computers Cannot Be Removed From Active Directory OU's";
                 return;
             }
+            if (GroupEntity.IsSecurityGroup)
+            {
+                EndUserMessage = "Computers Cannot Be Removed From Active Directory Security Groups";
+                return;
+            }
 
             var removedCount = 0;
             foreach (GridViewRow row in gvComputers.Rows)
