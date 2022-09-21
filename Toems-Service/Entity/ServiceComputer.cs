@@ -197,6 +197,11 @@ namespace Toems_Service.Entity
            return _uow.ComputerRepository.GetComputerAdGroups(computerId);
         }
 
+        public List<EntityGroup> GetComputerAdSecurityGroups(int computerId)
+        {
+            return _uow.ComputerRepository.GetComputerAdSecurityGroups(computerId);
+        }
+
         public List<EntityClientComServer> GetEmServers(int computerId)
         {
             var list = new List<EntityClientComServer>();

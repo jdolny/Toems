@@ -87,11 +87,14 @@ namespace Toems_Service.Workflows
             _baseDn =  _syncOU + "," + ServiceSetting.GetSettingValue(SettingStrings.LdapBaseDN);
             _baseDn = _baseDn.Trim(',');
 
+           
             var ous = GetOUs();
             var parents = GetParentOU(ous);
             CreateOuGroups(ous, parents);
             SyncComputers();
             UpdateMemberships();
+            GetSecurityGroups();
+
             Logger.Debug("Finished Active Directory Sync");
             return true;
         }
@@ -375,6 +378,105 @@ namespace Toems_Service.Workflows
                 }
             }
             _groupMembershipService.AddMembership(_groupMemberships);
+        }
+
+        private void GetSecurityGroups()
+        {
+            Logger.Debug("Getting Active Directory Security Groups");
+            var securityGroups = new Dictionary<string, string>();
+            using (DirectoryEntry entry = InitializeEntry())
+            {
+                using (DirectorySearcher searcher = new DirectorySearcher(entry))
+                {
+                    searcher.Filter = "(groupType:1.2.840.113556.1.4.803:=2147483648)";
+                    searcher.PropertiesToLoad.Add("cn");
+                    searcher.PropertiesToLoad.Add("distinguishedName");
+                    searcher.SizeLimit = 0;
+                    searcher.PageSize = 500;
+                    foreach (SearchResult res in searcher.FindAll())
+                        securityGroups.Add((string)res.Properties["distinguishedName"][0],
+                            ((string)res.Properties["cn"][0]).ToUpper());
+                }
+            }
+
+            var listMemberships = new List<EntityGroupMembership>();
+
+            foreach (var securityGroup in securityGroups)
+            {
+                var securityGroupComputers = new List<string>();
+                using (DirectoryEntry entry = InitializeEntry())
+                {
+                    using (DirectorySearcher searcher = new DirectorySearcher(entry))
+                    {
+                        searcher.Filter = $"(&(objectCategory=Computer)(memberOf:1.2.840.113556.1.4.1941:={securityGroup.Key}))";
+                        searcher.PropertiesToLoad.Add("cn");
+                        searcher.SizeLimit = 0;
+                        searcher.PageSize = 500;
+                        try
+                        {
+                            foreach (SearchResult res in searcher.FindAll())
+                                securityGroupComputers.Add(((string)res.Properties["cn"][0]));
+                        }
+                        catch {//continue
+                              }
+                    }
+                }
+
+                if (securityGroupComputers.Any())
+                {
+                    EntityGroup group = _groupService.GetGroupByDn(securityGroup.Key);
+                    if (group == null)
+                    {
+                        group = new EntityGroup();
+                        group.Name = securityGroup.Value;
+                        group.Dn = securityGroup.Key;
+                        group.IsOu = false;
+                        group.IsSecurityGroup = true;
+                        group.Type = "Static";
+                        group.Description = "Security Group Imported from Active Directory";
+                        group.ClusterId = -1;
+
+                        _groupService.AddGroup(group);
+                    }
+                    foreach (var computer in securityGroupComputers)
+                    {
+                       
+                        var entityComputer = _computerService.GetByName(computer);
+                        if (entityComputer == null) continue;
+
+                        var groupMembership = new EntityGroupMembership();
+                        groupMembership.ComputerId = entityComputer.Id;
+                        groupMembership.GroupId = group.Id;
+                        listMemberships.Add(groupMembership);
+                    }
+                }
+            }
+
+            var ddComputers = _computerService.GetAllAdComputers();
+
+            foreach (var computer in ddComputers)
+            {
+                var computerAdSecurityGroups = _computerService.GetComputerAdSecurityGroups(computer.Id);
+                foreach (var adSecurityGroup in computerAdSecurityGroups)
+                {
+                    var membership =
+                        listMemberships.FirstOrDefault(x => x.ComputerId == computer.Id && x.GroupId == adSecurityGroup.Id);
+                    if (membership == null)
+                        _groupMembershipService.DeleteByIds(computer.Id, adSecurityGroup.Id);
+
+                }
+            }
+            
+            _groupMembershipService.AddMembership(listMemberships);
+
+            foreach (var g in _groupService.GetAllAdSecurityGroups())
+            {
+                if (!_groupService.GetGroupMembers(g.Id).Any())
+                {
+                    g.IsHidden = true;
+                    _groupService.UpdateGroup(g);
+                }
+            }
         }
     }
 }

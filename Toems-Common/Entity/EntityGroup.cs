@@ -66,6 +66,12 @@ namespace Toems_Common.Entity
 
         [Column ("em_priority")]
         public int EmPriority { get; set; }
+
+        [Column("is_security_group")]
+        public bool IsSecurityGroup { get; set; }
+
+        [Column("is_hidden")]
+        public bool IsHidden { get; set; }
     }
 
    

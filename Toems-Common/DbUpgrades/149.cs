@@ -28,7 +28,20 @@ ADD CONSTRAINT `CGPU_COMPUTER_FK`
   REFERENCES `theopenem`.`computers` (`computer_id`)
   ON DELETE CASCADE
   ON UPDATE NO ACTION;
+
+ALTER TABLE `groups` 
+ADD COLUMN `is_security_group` TINYINT NULL DEFAULT NULL AFTER `proxy_bootloader`;
+
+ALTER TABLE `groups` 
+CHANGE COLUMN `is_ou` `is_ou` TINYINT(4) NULL DEFAULT 0 ,
+CHANGE COLUMN `is_security_group` `is_security_group` TINYINT(4) NULL DEFAULT 0 ;
+
+ALTER TABLE `groups` 
+ADD COLUMN `is_hidden` TINYINT NULL DEFAULT 0 AFTER `is_security_group`;
+
 "
+
+
             ;
         }
     }

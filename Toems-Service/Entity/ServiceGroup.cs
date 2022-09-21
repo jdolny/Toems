@@ -217,6 +217,11 @@ namespace Toems_Service.Entity
             return _uow.GroupRepository.Get(x => x.IsOu).OrderBy(x => x.Name).ToList();
         }
 
+        public List<EntityGroup> GetAllAdSecurityGroups()
+        {
+            return _uow.GroupRepository.Get(x => x.IsSecurityGroup).OrderBy(x => x.Name).ToList();
+
+        }
         public List<EntityGroup> GetAllDynamicGroups()
         {
             return _uow.GroupRepository.Get(x => x.Type == "Dynamic").OrderBy(x => x.Name).ToList();
@@ -229,7 +234,7 @@ namespace Toems_Service.Entity
             if(filter.IncludeOus)
                 list = _uow.GroupRepository.Get(s => s.Name.Contains(filter.SearchText)).OrderBy(x => x.Name).ToList();
             else
-                list = _uow.GroupRepository.Get(s => s.Name.Contains(filter.SearchText) && !s.IsOu).OrderBy(x => x.Name).ToList();
+                list = _uow.GroupRepository.Get(s => s.Name.Contains(filter.SearchText) && !s.IsOu && !s.IsHidden).OrderBy(x => x.Name).ToList();
             if (list.Count == 0) return returnList;
 
             var categoryFilterIds = new List<int>();

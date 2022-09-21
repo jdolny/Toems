@@ -133,6 +133,15 @@ namespace Toems_DataModel
 
         }
 
+        public List<EntityGroup> GetComputerAdSecurityGroups(int computerId)
+        {
+            return (from h in _context.GroupMemberships
+                    join g in _context.Groups on h.GroupId equals g.Id
+                    where h.ComputerId == computerId && g.IsSecurityGroup
+                    select g).ToList();
+
+        }
+
         public List<EntityGroup> GetAllComputerGroups(int computerId)
         {
             var groups = (from h in _context.GroupMemberships
