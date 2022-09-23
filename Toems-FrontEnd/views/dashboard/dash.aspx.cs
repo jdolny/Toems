@@ -8,6 +8,7 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using Toems_ApiCalls;
+using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_FrontEnd.BasePages;
 
@@ -25,6 +26,8 @@ namespace Toems_FrontEnd.views.dashboard
             //Only check after login
             if (Request.QueryString["fromlogin"] == "true")
             {
+                if (!new APICall().ToemsUserApi.CheckMfaSetupComplete())
+                    Response.Redirect("~/views/dashboard/mfa.aspx");
                 var userLoginPage = Call.ToemsUserApi.GetUserLoginPage();
                 if (userLoginPage.Equals("Active Computers"))
                     Response.Redirect("~/views/computers/search.aspx");

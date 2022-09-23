@@ -172,6 +172,14 @@
 
         public const string DefaultLoginPage = "Default Login Page";
 
+        public const string EnableMfa = "Enable MFA";
+
+        public const string ForceMfa = "Force MFA";
+
+        public const string MfaDisplayName = "MFA Display Name";
+
+        public const string ForceImagingMfa = "Force Imaging MFA";
+
         public const int GlobalVersion = 148;
 
     }

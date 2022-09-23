@@ -51,11 +51,11 @@
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.DynamicData" />
@@ -380,6 +380,7 @@
     <Content Include="views\site.master" />
     <Content Include="views\users\groupacls.aspx" />
     <Content Include="views\users\history.aspx" />
+    <Content Include="views\dashboard\mfa.aspx" />
     <Content Include="views\users\user.master" />
     <Content Include="content\js\fineuploader\dnd.js.map" />
     <Content Include="content\js\fineuploader\dnd.min.js.map" />
@@ -2944,6 +2945,13 @@
     </Compile>
     <Compile Include="views\users\removemembers.aspx.designer.cs">
       <DependentUpon>removemembers.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\dashboard\mfa.aspx.cs">
+      <DependentUpon>mfa.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\dashboard\mfa.aspx.designer.cs">
+      <DependentUpon>mfa.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\users\resetpass.aspx.cs">
       <DependentUpon>resetpass.aspx</DependentUpon>

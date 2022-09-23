@@ -28,6 +28,30 @@
     </div>
     <br class="clear"/>
     <br />
+       <div class="size-4 column">
+        Enable MFA:
+    </div>
+    <div class="size-setting column hidden-check">
+        <asp:CheckBox ID="chkMfa" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkMfa"></label>
+    </div>
+    <br class="clear"/>
+       <div class="size-4 column">
+        Force MFA For Web - All Users:
+    </div>
+    <div class="size-setting column hidden-check">
+        <asp:CheckBox ID="chkForceMfa" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkForceMfa"></label>
+    </div>
+    <br class="clear"/>
+       <div class="size-4 column">
+        Force MFA For Imaging - All Users:
+    </div>
+    <div class="size-setting column hidden-check">
+        <asp:CheckBox ID="chkForceMfaImaging" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkForceMfaImaging"></label>
+    </div>
+    <br class="clear"/>
     <div class="size-4 column">
         Enable LDAP Integration:
     </div>

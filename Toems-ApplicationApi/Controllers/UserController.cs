@@ -47,6 +47,38 @@ namespace Toems_ApplicationApi.Controllers
             return result;
         }
 
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpGet]
+        public DtoApiBoolResponse ResetUserMfaData(int id)
+        {
+            var result = _userServices.ResetUserMfaData(id);
+            return new DtoApiBoolResponse() { Value = result};
+        }
+
+        [Authorize]
+        [HttpGet]
+        public DtoApiStringResponse GenerateTempMfaSecret()
+        {
+            var result = _userServices.GenerateTempMfaSecret(_userId);
+            return new DtoApiStringResponse() { Value = result };
+        }
+
+        [Authorize]
+        [HttpGet]
+        public DtoApiBoolResponse VerifyMfaSecret(string code)
+        {
+            var result = _userServices.VerifyMfaSecret(_userId, code);
+            return new DtoApiBoolResponse() { Value = result };
+        }
+
+        [Authorize]
+        [HttpGet]
+        public DtoApiBoolResponse CheckMfaSetupComplete()
+        {
+            var result = _userServices.CheckMfaSetupComplete(_userId);
+            return new DtoApiBoolResponse() { Value = result };
+        }
+
         [Authorize]
         public EntityToemsUser GetSelf()
         {

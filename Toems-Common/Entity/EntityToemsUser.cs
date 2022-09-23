@@ -47,6 +47,17 @@ namespace Toems_Common.Entity
         [Column("default_login_page")]
         public string DefaultLoginPage { get; set; }
 
+        [Column("mfa_secret_encrypted")]
+        public string MfaSecret { get; set; }
+
+        [Column("enable_web_mfa")]
+        public bool EnableWebMfa { get; set; }
+
+        [Column("enable_imaging_mfa")]
+        public bool EnableImagingMfa { get; set; }
+
+        [Column("mfa_temp_secret_encrypted")]
+        public string MfaTempSecret { get; set; }
 
     }
 

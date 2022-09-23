@@ -24,6 +24,15 @@ namespace Toems_FrontEnd.views.users
         protected global::System.Web.UI.WebControls.LinkButton btnSubmit;
 
         /// <summary>
+        /// btnResetMfa control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnResetMfa;
+
+        /// <summary>
         /// txtUserName control.
         /// </summary>
         /// <remarks>
@@ -121,5 +130,23 @@ namespace Toems_FrontEnd.views.users
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlLoginPage;
+
+        /// <summary>
+        /// chkWebMfa control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkWebMfa;
+
+        /// <summary>
+        /// chkImagingMfa control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkImagingMfa;
     }
 }

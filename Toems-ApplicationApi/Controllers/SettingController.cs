@@ -54,6 +54,12 @@ namespace Toems_ApplicationApi.Controllers
             return new DtoApiStringResponse() { Value = ApplicationStrings.ApplicationVersion };
         }
 
+        [HttpGet]
+        public DtoApiStringResponse CheckMfaEnabled()
+        {
+            return new DtoApiStringResponse() { Value = _settingServices.GetSetting(SettingStrings.EnableMfa).Value };
+        }
+
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         [HttpGet]
         public DtoApiBoolResponse SendEmailTest()

@@ -50,6 +50,8 @@ namespace Toems_FrontEnd.views.users
             updatedUser.DefaultLoginPage = ddlLoginPage.Text;
             updatedUser.DefaultComputerView = ddlComputerView.Text;
             updatedUser.ComputerSortMode = ddlComputerSort.Text;
+            updatedUser.EnableWebMfa = chkWebMfa.Checked;
+            updatedUser.EnableImagingMfa = chkImagingMfa.Checked;
             var result = Call.ToemsUserApi.Put(updatedUser.Id, updatedUser);
             EndUserMessage = !result.Success ? result.ErrorMessage : "Successfully Updated User";
         }
@@ -80,6 +82,14 @@ namespace Toems_FrontEnd.views.users
             ddlComputerView.Text = ToemsUser.DefaultComputerView;
             ddlComputerSort.Text = ToemsUser.ComputerSortMode;
             ddlLoginPage.Text = ToemsUser.DefaultLoginPage;
+            chkWebMfa.Checked = ToemsUser.EnableWebMfa;
+            chkImagingMfa.Checked = ToemsUser.EnableImagingMfa;
+        }
+
+        protected void btnResetMfa_Click(object sender, EventArgs e)
+        {
+            var result = Call.ToemsUserApi.ResetUserMfaData(ToemsUser.Id);
+            EndUserMessage = result ? "Successfully Reset MFA Data" : "Could Not Reset MFA Data";
         }
     }
 }

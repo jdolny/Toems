@@ -35,8 +35,6 @@
                 <a href="<%= ResolveUrl("~/views/users/creategroup.aspx") %>">
                     <span class="sub-nav-text">New User Group</span></a>
             </li>
-
-
         </ul>
     </div>
 

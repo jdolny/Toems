@@ -187,5 +187,50 @@ namespace Toems_ApiCalls
                 return response.Value;
         }
 
+        public bool ResetUserMfaData(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/ResetUserMfaData/{1}", Resource,id);
+            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
+            if (response == null)
+                return false;
+            else
+                return response.Value;
+        }
+
+        public bool CheckMfaSetupComplete()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/CheckMfaSetupComplete/", Resource);
+            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
+            if (response == null)
+                return false;
+            else
+                return response.Value;
+        }
+
+        public string GenerateTempMfaSecret()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GenerateTempMfaSecret/", Resource);
+            var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            if (response == null)
+                return "";
+            else
+                return response.Value;
+        }
+
+        public bool VerifyMfaSecret(string code)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/VerifyMfaSecret/", Resource);
+            Request.AddParameter("code", code);
+            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
+            if (response == null)
+                return false;
+            else
+                return response.Value;
+        }
+
     }
 }

@@ -79,6 +79,12 @@ namespace Toems_FrontEnd
             //check for db upgrades here
             CheckDbUpdate();
 
+            var mfaEnabled = new APICall().SettingApi.CheckMfaEnabled();
+            if(mfaEnabled.Equals("1"))
+            {
+                (WebLogin.FindControl("VerifyCode") as TextBox).Visible = true; ;
+            }
+
             if (!IsPostBack)
             {
                 ClearSession();
@@ -124,7 +130,8 @@ namespace Toems_FrontEnd
             }
 
             //Get token
-            var token = new APICall().TokenApi.Get(WebLogin.UserName, WebLogin.Password);
+            var verificationCode = WebLogin.FindControl("VerifyCode") as TextBox;
+            var token = new APICall().TokenApi.Get(WebLogin.UserName, WebLogin.Password, verificationCode.Text);
             if (token == null)
             {
                 lblError.Text = "Unknown API Error";

@@ -62,7 +62,7 @@ input, select, textarea, button {
 .button {
     margin-left:25px;
 }
-.uname, .password {
+.uname, .password, .textbox {
     border: 1px solid #ccc;
     border-top: none;
     border-left: none;
@@ -134,7 +134,7 @@ input[type="submit"]:hover {
         margin-top: 80px;
     }
 
-    .uname, .password { width: 280px; }
+    .uname, .password, .textbox { width: 280px; }
 
     .button { margin-left: 100px; }
 
@@ -153,7 +153,7 @@ input[type="submit"]:hover {
         margin-top: 80px;
     }
 
-    .uname, .password { width: 280px; }
+    .uname, .password, .textbox { width: 280px; }
 
     .button { margin-left: 50px; }
 
@@ -177,7 +177,7 @@ input[type="submit"]:hover {
         margin-top: 80px;
     }
 
-    .uname, .password { width: 280px; }
+    .uname, .password, .textbox { width: 280px; }
 
     .button { margin-left: 0; }
 

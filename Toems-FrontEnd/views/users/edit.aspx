@@ -8,6 +8,7 @@
 </asp:Content>
 <asp:Content ID="Breadcrumb" ContentPlaceHolderID="DropDownActionsSub" Runat="Server">
     <li><asp:LinkButton ID="btnSubmit" runat="server" OnClick="btnSubmit_Click" Text="Update User" CssClass="main-action"/></li>
+     <li><asp:LinkButton ID="btnResetMfa" runat="server" OnClick="btnResetMfa_Click" Text="Reset Mfa Data" /></li>
 </asp:Content>
 
 
@@ -114,6 +115,22 @@
             </asp:DropDownList>
         </div>
         <br class="clear"/>
+     <div class="size-4 column">
+        Enable Web MFA:
+    </div>
+    <div class="size-setting column hidden-check">
+        <asp:CheckBox ID="chkWebMfa" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkWebMfa"></label>
+    </div>
+    <br class="clear"/>
+     <div class="size-4 column">
+        Enable Imaging MFA:
+    </div>
+    <div class="size-setting column hidden-check">
+        <asp:CheckBox ID="chkImagingMfa" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkImagingMfa"></label>
+    </div>
+    <br class="clear"/>
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
     <h5><span style="color: #ff9900;">Username:</span></h5>

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -40,16 +42,19 @@ namespace Toems_ApplicationApi
     {
         public override Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
+            var data = context.Request.ReadFormAsync();
             context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] {"*"});
             var auth = new AuthenticationServices();
 
-            var validationResult = auth.GlobalLogin(context.UserName, context.Password, "Web");
+            var validationResult = auth.GlobalLogin(context.UserName, context.Password, "Web", data.Result["verification_code"]);
             if (validationResult.Success)
             {
                 var oAuthIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
                 context.Validated(oAuthIdentity);
                 var user = new ServiceUser().GetUser(context.UserName);
                 oAuthIdentity.AddClaim(new Claim("user_id", user.Id.ToString()));
+                if(validationResult.ErrorMessage.Equals("Mfa setup is required"))
+                    oAuthIdentity.AddClaim(new Claim("mfa_setup_required", "true"));
                 //set different time spans here
                 //if (user.Membership == "Administrator")
                 //    context.Options.AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(20);

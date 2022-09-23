@@ -48,8 +48,10 @@ namespace Toems_FrontEnd.views.users
                 UserGroupId = -1,
                 ComputerSortMode = ddlComputerSort.Text,
                 DefaultLoginPage = ddlLoginPage.Text,
-                DefaultComputerView = ddlComputerView.Text
-            };
+                DefaultComputerView = ddlComputerView.Text,
+                EnableWebMfa = chkWebMfa.Checked,
+                EnableImagingMfa = chkImagingMfa.Checked
+        };
 
             user.Password = Utility.CreatePasswordHash(txtUserPwd.Text, user.Salt);
             var result = Call.ToemsUserApi.Post(user);

@@ -27,7 +27,7 @@ namespace Toems_ApiCalls
             _resource = resource;
         }
 
-        public DtoToken Get(string username, string password)
+        public DtoToken Get(string username, string password, string verificationCode=null)
         {
             var token = new DtoToken();
 
@@ -37,7 +37,7 @@ namespace Toems_ApiCalls
             _request.AddParameter("grant_type", "password");
             _request.AddParameter("userName", username);
             _request.AddParameter("password", password);
-
+            _request.AddParameter("verification_code", verificationCode);
             var response = _client.Execute<DtoToken>(_request);
 
             if (response == null)

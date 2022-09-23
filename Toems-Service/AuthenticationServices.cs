@@ -8,6 +8,7 @@ using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_Service.Entity;
+using TwoFactorAuthNet;
 
 namespace Toems_Service
 {
@@ -46,7 +47,7 @@ namespace Toems_Service
             else
             {
                 log.Info("Console Login Request Succeeded");
-                var ToemsUser = _userServices.GetUser(username);
+                var ToemsUser = _userServices.GetUserForLogin(username);
                 result.Add("valid", "true");
                 result.Add("user_id", ToemsUser.Id.ToString());
                 result.Add("user_token", ToemsUser.ImagingToken);
@@ -55,7 +56,7 @@ namespace Toems_Service
             return JsonConvert.SerializeObject(result);
         }
 
-        public DtoValidationResult GlobalLogin(string userName, string password, string loginType)
+        public DtoValidationResult GlobalLogin(string userName, string password, string loginType, string verificationCode = null)
         {
            
             var validationResult = new DtoValidationResult
@@ -73,7 +74,7 @@ namespace Toems_Service
             auditLog.AuditType = EnumAuditEntry.AuditType.FailedLogin;
 
             //Check if user exists in database
-            var user = _userServices.GetUser(userName);
+            var user = _userServices.GetUserForLogin(userName);
             if (user == null)
             {
                 //Check For a first time LDAP User Group Login
@@ -100,7 +101,7 @@ namespace Toems_Service
                             if (_userServices.AddUser(cdUser).Success)
                             {
                                 //add user to group
-                                var newUser = _userServices.GetUser(userName);
+                                var newUser = _userServices.GetUserForLogin(userName);
                                 _userGroupServices.AddNewGroupMember(ldapGroup.Id, newUser.Id);
                                 auditLog.UserId = newUser.Id;
                                 auditLog.ObjectId = newUser.Id;
@@ -126,6 +127,53 @@ namespace Toems_Service
                 return validationResult;
             }
 
+
+            //MFA
+            if (ServiceSetting.GetSettingValue(SettingStrings.EnableMfa) == "1" && user.MfaSecret == null
+                && (user.EnableWebMfa || ServiceSetting.GetSettingValue(SettingStrings.ForceMfa) == "1"
+                || user.EnableImagingMfa || ServiceSetting.GetSettingValue(SettingStrings.ForceImagingMfa) == "1"))
+            { 
+                validationResult.ErrorMessage = "Mfa setup is required"; 
+                if(loginType.Equals("Console"))
+                {
+                    validationResult.Success = false;
+                    return validationResult;
+                }
+
+                // don't return result yet for web login, still need to check if user actually authenticated correctly to get to the mfa setup page
+            }
+            else
+            {
+                if (ServiceSetting.GetSettingValue(SettingStrings.EnableMfa) == "1" && user.MfaSecret != null
+                   && loginType.Equals("Console") && (user.EnableImagingMfa || ServiceSetting.GetSettingValue(SettingStrings.ForceImagingMfa) == "1"))
+                {
+                    var code = password.Substring(password.Length - 6);
+                    password = password.Replace(code, "");
+
+                    var mfaResult = new TwoFactorAuth().VerifyCode(new EncryptionServices().DecryptText(user.MfaSecret), code);
+                    if (!mfaResult)
+                    {
+                        auditLog.UserId = user.Id;
+                        auditLog.ObjectId = user.Id;
+                        auditLogService.AddAuditLog(auditLog);
+                        return validationResult;
+                    }
+                }
+                if (ServiceSetting.GetSettingValue(SettingStrings.EnableMfa) == "1" && user.MfaSecret != null
+                   && loginType.Equals("Web") && (user.EnableWebMfa || ServiceSetting.GetSettingValue(SettingStrings.ForceMfa) == "1"))
+
+                {
+                    var mfaResult = new TwoFactorAuth().VerifyCode(new EncryptionServices().DecryptText(user.MfaSecret), verificationCode);
+                    if (!mfaResult)
+                    {
+                        auditLog.UserId = user.Id;
+                        auditLog.ObjectId = user.Id;
+                        auditLogService.AddAuditLog(auditLog);
+                        return validationResult;
+                    }
+                }
+            }
+
             //Check against AD
             if (user.IsLdapUser == 1 && ServiceSetting.GetSettingValue(SettingStrings.LdapEnabled) == "1")
             {
@@ -148,6 +196,7 @@ namespace Toems_Service
                             {
                                 //user is either not in that group anymore, not in the directory, or bad password
                                 validationResult.Success = false;
+
 
                                 if (new LdapServices().Authenticate(userName, password))
                                 {
@@ -198,6 +247,7 @@ namespace Toems_Service
                 _userLockoutServices.DeleteUserLockouts(user.Id);
                 return validationResult;
             }
+            validationResult.ErrorMessage = "Incorrect Username Or Password";
             auditLog.AuditType = EnumAuditEntry.AuditType.FailedLogin;
             auditLog.UserId = user.Id;
             auditLog.ObjectId = user.Id;

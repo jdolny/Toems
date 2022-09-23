@@ -28,14 +28,14 @@
                 <asp:TextBox ID="UserName" runat="server" CssClass="uname" ClientIDMode="Static"></asp:TextBox>
                 
                 <asp:TextBox ID="Password" runat="server" TextMode="Password" CssClass="password" ClientIDMode="Static"></asp:TextBox>
-                 </div>
+                 <asp:TextBox ID="VerifyCode" runat="server" CssClass="textbox" ClientIDMode="Static" Visible="false"></asp:TextBox>
+                    </div>
                   <br class="clear"/>
                   <div class="button">
                     <asp:Button ID="LoginButton" runat="server" CommandName="Login" Text="Log In"/>
                 </div>
             </LayoutTemplate>
         </asp:Login>
-      
     
          
         <div id="error">
@@ -51,6 +51,7 @@
         $('.uname').watermark('Username', { useNative: false });
         $('.uname').focus();
         $('.password').watermark('Password', { useNative: false });
+        $('.textbox').watermark('Verification Code', { useNative: false });
     });
 </script>
 </body>

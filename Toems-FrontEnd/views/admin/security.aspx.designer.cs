@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.admin {
-    
-    
-    public partial class views_admin_security {
-        
+namespace Toems_FrontEnd.views.admin
+{
+
+
+    public partial class views_admin_security
+    {
+
         /// <summary>
         /// btnUpdateSettings control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnUpdateSettings;
-        
+
         /// <summary>
         /// btnGenKey control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnGenKey;
-        
+
         /// <summary>
         /// btnGenImagingToken control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnGenImagingToken;
-        
+
         /// <summary>
         /// txtKey control.
         /// </summary>
@@ -47,7 +49,34 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtKey;
-        
+
+        /// <summary>
+        /// chkMfa control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkMfa;
+
+        /// <summary>
+        /// chkForceMfa control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkForceMfa;
+
+        /// <summary>
+        /// chkForceMfaImaging control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkForceMfaImaging;
+
         /// <summary>
         /// chkldap control.
         /// </summary>
@@ -56,7 +85,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkldap;
-        
+
         /// <summary>
         /// chkPreProvision control.
         /// </summary>
@@ -65,7 +94,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkPreProvision;
-        
+
         /// <summary>
         /// chkProvisionApproval control.
         /// </summary>
@@ -74,7 +103,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkProvisionApproval;
-        
+
         /// <summary>
         /// chkPreProvisionApproval control.
         /// </summary>
@@ -83,7 +112,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkPreProvisionApproval;
-        
+
         /// <summary>
         /// chkResetRequest control.
         /// </summary>
@@ -92,7 +121,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkResetRequest;
-        
+
         /// <summary>
         /// txtImagingToken control.
         /// </summary>
@@ -101,7 +130,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtImagingToken;
-        
+
         /// <summary>
         /// chkWebTask control.
         /// </summary>
@@ -110,7 +139,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkWebTask;
-        
+
         /// <summary>
         /// chkConsoleTask control.
         /// </summary>

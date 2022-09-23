@@ -47,6 +47,17 @@ namespace Toems_ApiCalls
                 return "";
         }
 
+        public string CheckMfaEnabled()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/CheckMfaEnabled/", Resource);
+            var result = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            if (result != null)
+                return result.Value;
+            else
+                return "";
+        }
+
 
 
         public EntitySetting GetSetting(string name)

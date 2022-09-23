@@ -65,11 +65,29 @@ namespace Toems_FrontEnd.views.admin
                     Value = Guid.NewGuid().ToString("N").ToUpper() + Guid.NewGuid().ToString("N").ToUpper(),
                     Id = Call.SettingApi.GetSetting(SettingStrings.IntercomKeyEncrypted).Id
                 },
-                  new EntitySetting
+                new EntitySetting
                 {
                     Name = SettingStrings.GlobalImagingToken,
                     Value = txtImagingToken.Text,
                     Id = Call.SettingApi.GetSetting(SettingStrings.GlobalImagingToken).Id
+                },
+                 new EntitySetting
+                {
+                    Name = SettingStrings.EnableMfa,
+                    Value = chkMfa.Checked ? "1" : "0",
+                    Id = Call.SettingApi.GetSetting(SettingStrings.EnableMfa).Id
+                },
+                   new EntitySetting
+                {
+                    Name = SettingStrings.ForceMfa,
+                    Value = chkForceMfa.Checked ? "1" : "0",
+                    Id = Call.SettingApi.GetSetting(SettingStrings.ForceMfa).Id
+                },
+                     new EntitySetting
+                {
+                    Name = SettingStrings.ForceImagingMfa,
+                    Value = chkForceMfaImaging.Checked ? "1" : "0",
+                    Id = Call.SettingApi.GetSetting(SettingStrings.ForceImagingMfa).Id
                 },
 
 
@@ -102,6 +120,9 @@ namespace Toems_FrontEnd.views.admin
             chkPreProvision.Checked = GetSetting(SettingStrings.RequirePreProvision) == "1";
             chkProvisionApproval.Checked = GetSetting(SettingStrings.RequireProvisionApproval) == "1";
             chkPreProvisionApproval.Checked = GetSetting(SettingStrings.PreProvisionRequiresApproval) == "1";
+            chkMfa.Checked = GetSetting(SettingStrings.EnableMfa) == "1";
+            chkForceMfa.Checked = GetSetting(SettingStrings.ForceMfa) == "1";
+            chkForceMfaImaging.Checked = GetSetting(SettingStrings.ForceImagingMfa) == "1";
             chkWebTask.Checked = Convert.ToBoolean(GetSetting(SettingStrings.WebTasksRequireLogin));
             chkConsoleTask.Checked = Convert.ToBoolean(GetSetting(SettingStrings.ConsoleTasksRequireLogin));
             txtImagingToken.Text = GetSetting(SettingStrings.GlobalImagingToken);

@@ -39,6 +39,21 @@ CHANGE COLUMN `is_security_group` `is_security_group` TINYINT(4) NULL DEFAULT 0 
 ALTER TABLE `groups` 
 ADD COLUMN `is_hidden` TINYINT NULL DEFAULT 0 AFTER `is_security_group`;
 
+ALTER TABLE `toems_users` 
+ADD COLUMN `mfa_secret_encrypted` VARCHAR(255) NULL DEFAULT NULL AFTER `default_login_page`,
+
+INSERT INTO `admin_settings` (`admin_setting_name`, `admin_setting_value`) VALUES ('Enable MFA', '0');
+INSERT INTO `admin_settings` (`admin_setting_name`, `admin_setting_value`) VALUES ('Force MFA', '0');
+INSERT INTO `admin_settings` (`admin_setting_name`, `admin_setting_value`) VALUES ('MFA Display Name', '');
+INSERT INTO `admin_settings` (`admin_setting_name`, `admin_setting_value`) VALUES ('Force Imaging MFA', '0');
+
+ALTER TABLE `toems_users` 
+ADD COLUMN `enable_web_mfa` TINYINT NULL DEFAULT 0 AFTER `mfa_secret_encrypted`,
+ADD COLUMN `enable_imaging_mfa` TINYINT NULL DEFAULT 0 AFTER `enable_web_mfa`;
+
+ALTER TABLE `toems_users` 
+ADD COLUMN `mfa_temp_secret_encrypted` VARCHAR(255) NULL DEFAULT NULL AFTER `enable_imaging_mfa`;
+
 "
 
 

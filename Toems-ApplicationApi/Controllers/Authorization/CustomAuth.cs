@@ -19,15 +19,22 @@ namespace Toems_ApplicationApi.Controllers.Authorization
 
         public override void OnAuthorization(HttpActionContext actionContext)
         {
+            var authorized = false;
             _log.Debug(actionContext.Request.RequestUri);
             base.OnAuthorization(actionContext);
             var identity = (ClaimsPrincipal) Thread.CurrentPrincipal;
             var userId = identity.Claims.Where(c => c.Type == "user_id")
                 .Select(c => c.Value).SingleOrDefault();
 
-            if (userId == null) return;
+            var mfaSetupRequired = identity.Claims.Where(c => c.Type == "mfa_setup_required")
+                .Select(c => c.Value).SingleOrDefault();
+            if (mfaSetupRequired == null)
+                mfaSetupRequired = "false";
 
-            var authorized = new AuthorizationServices(Convert.ToInt32(userId), Permission).IsAuthorized();
+            if (userId == null || mfaSetupRequired.Equals("true"))
+                authorized = false;
+            else
+                authorized = new AuthorizationServices(Convert.ToInt32(userId), Permission).IsAuthorized();
            
 
             if (!authorized)

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using log4net;
+using Microsoft.Deployment.WindowsInstaller;
 using Newtonsoft.Json;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_DataModel;
+using TwoFactorAuthNet;
 
 namespace Toems_Service.Entity
 {
@@ -71,12 +73,29 @@ namespace Toems_Service.Entity
 
         public EntityToemsUser GetUser(int userId)
         {
-            return _uow.UserRepository.GetById(userId);
+            var user = _uow.UserRepository.GetById(userId);
+            if(user == null) return null;
+            user.Password = string.Empty;
+            user.Salt = string.Empty;
+            user.MfaSecret = string.Empty;
+            return user;
         }
 
         public EntityToemsUser GetUser(string userName)
         {
-            return _uow.UserRepository.GetFirstOrDefault(u => u.Name == userName);
+            var user = _uow.UserRepository.GetFirstOrDefault(u => u.Name == userName);
+            if (user == null) return null;
+            user.Password = string.Empty;
+            user.Salt = string.Empty;
+            user.MfaSecret = string.Empty;
+            return user;
+        }
+
+        public EntityToemsUser GetUserForLogin(string userName)
+        {
+            var user = _uow.UserRepository.GetFirstOrDefault(u => u.Name == userName);
+            if (user == null) return null;
+            return user;
         }
 
         public string GetUserName(int userId)
@@ -103,6 +122,7 @@ namespace Toems_Service.Entity
                 return null;
             user.Password = string.Empty;
             user.Salt = string.Empty;
+            user.MfaSecret = string.Empty;
 
             return user;
         }
@@ -124,6 +144,13 @@ namespace Toems_Service.Entity
 
             return result;
         }
+
+        public EntityToemsUser GetUserWithPass(int userId)
+        {
+            return _uow.UserRepository.GetById(userId);
+
+        }
+
 
         public List<DtoPinnedPolicy> GetPinnedPolicyCounts(int userId)
         {
@@ -151,12 +178,26 @@ namespace Toems_Service.Entity
 
         public List<EntityToemsUser> GetAll()
         {
-            return _uow.UserRepository.Get();
+            var users = _uow.UserRepository.Get();
+            foreach(var user in users)
+            {
+                user.Password = string.Empty;
+                user.Salt = string.Empty;
+                user.MfaSecret = string.Empty;
+            }
+            return users;
         }
 
         public List<UserWithUserGroup> SearchUsers(DtoSearchFilter filter)
         {
-            return _uow.UserRepository.Search(filter.SearchText);
+            var users = _uow.UserRepository.Search(filter.SearchText);
+            foreach (var user in users)
+            {
+                user.Password = string.Empty;
+                user.Salt = string.Empty;
+                user.MfaSecret = string.Empty;
+            }
+            return users;
         }
 
         public void SendLockOutEmail(int userId)
@@ -179,6 +220,56 @@ namespace Toems_Service.Entity
         }
 
       
+        public bool ResetUserMfaData(int userId)
+        {
+            var u = GetUserWithPass(userId);
+            if (u == null) return false;
+            u.MfaSecret = null;
+            _uow.UserRepository.Update(u, u.Id);
+            _uow.Save();
+            return true;
+        }
+
+        public bool CheckMfaSetupComplete(int userId)
+        {
+            var u = GetUserWithPass(userId);
+            if (u == null) return false;
+            if(!string.IsNullOrEmpty(u.MfaSecret))
+                return true;
+            if (ServiceSetting.GetSettingValue(SettingStrings.EnableMfa) == "1" && string.IsNullOrEmpty(u.MfaSecret)
+                 && (u.EnableWebMfa || ServiceSetting.GetSettingValue(SettingStrings.ForceMfa) == "1"))
+                return false;
+
+            return true;
+        }
+
+        public bool VerifyMfaSecret(int userId, string code)
+        {
+            var u = GetUserWithPass(userId);
+            if (u == null) return false;
+            var result = new TwoFactorAuth().VerifyCode(new EncryptionServices().DecryptText(u.MfaTempSecret), code);
+            if (result)
+            {
+                u.MfaSecret = u.MfaTempSecret;
+                u.MfaTempSecret = null;
+                _uow.UserRepository.Update(u, u.Id);
+                _uow.Save();
+                return true;
+            }
+
+            return false;
+        }
+
+        public string GenerateTempMfaSecret(int userId)
+        {
+            var u = GetUserWithPass(userId);
+            var mfa = new TwoFactorAuth("Theopenem", 6, 60, Algorithm.SHA512);
+            var secret = mfa.CreateSecret(160);
+            u.MfaTempSecret = new EncryptionServices().EncryptText(secret);
+            _uow.UserRepository.Update(u, u.Id);
+            _uow.Save();
+            return mfa.GetQrCodeImageAsDataUri(u.Name, secret);
+        }
 
         public string TotalCount()
         {
@@ -187,7 +278,7 @@ namespace Toems_Service.Entity
 
         public DtoActionResult UpdateUser(EntityToemsUser user)
         {
-            var u = GetUser(user.Id);
+            var u = GetUserWithPass(user.Id);
             if (u == null) return new DtoActionResult { ErrorMessage = "User Not Found", Id = 0 };
             if (GetAdminCount() == 1 && user.Membership != "Administrator" && u.Membership.Equals("Administrator"))
                 return new DtoActionResult() {ErrorMessage = "There Must Be At Least 1 Administrator"};
@@ -196,6 +287,13 @@ namespace Toems_Service.Entity
             if (validationResult.Success)
             {
                 user.ImagingToken = Guid.NewGuid().ToString("N").ToUpper() + Guid.NewGuid().ToString("N").ToUpper(); //create new token each time user is updated
+                if(string.IsNullOrEmpty(user.Password) && string.IsNullOrEmpty(user.Salt))
+                {
+                    user.Salt = u.Salt;
+                    user.Password = u.Password;
+                }
+                if (string.IsNullOrEmpty(user.MfaSecret))
+                    user.MfaSecret = u.MfaSecret;
                 _uow.UserRepository.Update(user, user.Id);
                 _uow.Save();
                 actionResult.Success = true;
