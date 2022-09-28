@@ -54,6 +54,10 @@ ADD COLUMN `enable_imaging_mfa` TINYINT NULL DEFAULT 0 AFTER `enable_web_mfa`;
 ALTER TABLE `toems_users` 
 ADD COLUMN `mfa_temp_secret_encrypted` VARCHAR(255) NULL DEFAULT NULL AFTER `enable_imaging_mfa`;
 
+ALTER TABLE `active_imaging_tasks` 
+ADD COLUMN `web_task_token` VARCHAR(100) NULL DEFAULT NULL AFTER `image_profile_id`;
+
+
 "
 
 

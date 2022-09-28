@@ -40,7 +40,17 @@ namespace Toems_Service
                    });
             }
 
-            if(name.Length > 15)
+            if (name.StartsWith(" ") || name.EndsWith(" "))
+            {
+                return
+                   JsonConvert.SerializeObject(new DtoActionResult
+                   {
+                       Success = false,
+                       ErrorMessage = "Name Not Valid.  Cannot Start Or End With A Space."
+                   });
+            }
+
+            if (name.Length > 15)
             {
                 return
                   JsonConvert.SerializeObject(new DtoActionResult
@@ -139,18 +149,33 @@ namespace Toems_Service
             return JsonConvert.SerializeObject(regDto);
         }
 
+        public string GetWebTaskToken(string clientId)
+        {
+            var webTaskRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.WebTasksRequireLogin);
+            if (webTaskRequiresLogin.Equals("True")) return string.Empty;
+            var computer = new ServiceComputer().GetComputerFromClientIdentifier(clientId);
+            if (computer == null) return string.Empty;
+            var task = new ServiceActiveImagingTask().GetAll().Where(x => x.ComputerId == computer.Id).FirstOrDefault();
+            if(task == null) return string.Empty;
+
+            return task.WebTaskToken;
+        }
+
         public bool AuthorizeApiCall(string token)
         {
             if (string.IsNullOrEmpty(token)) return false;
-            var globalToken = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingToken);
+            
 
             var user = new ServiceUser().GetUserFromToken(token);
             if (user != null)
                 return true;
 
+            var task = new ServiceActiveImagingTask().GetAll().Where(x => x.WebTaskToken.Equals(token)).FirstOrDefault();
+            if (task != null)
+                return true;
 
             //check global token
-
+            var globalToken = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingToken);
             if (token.Equals(globalToken) && !string.IsNullOrEmpty(globalToken))
                 return true;
 
@@ -493,14 +518,19 @@ namespace Toems_Service
                     return "true";
                 else
                 {
+                    var activeTask = new ServiceActiveImagingTask().GetAll().Where(x => x.WebTaskToken.Equals(token)).FirstOrDefault();
+                    if (activeTask != null)
+                        return "true";
+
                     var user = new ServiceUser().GetUserFromToken(token);
                     if (user != null)
                         return "true";
-                    else
-                        return "false";
+
                 }
             }
-          
+
+            return "false";
+
         }
 
         public void DeleteImage(int profileId)
@@ -533,6 +563,29 @@ namespace Toems_Service
                 return JsonConvert.SerializeObject(modelTask);
             }
             return JsonConvert.SerializeObject(new ModelTaskDTO());
+        }
+
+        public string GetComputerNameForPe(string id)
+        {
+            var determineTaskDto = new DetermineTaskDTO();
+            var computerServices = new ServiceComputer();
+            EntityComputer computer;
+
+            computer = computerServices.GetComputerFromClientIdentifier(id);
+
+            if (computer == null)
+            {
+                determineTaskDto.task = "ond";
+                determineTaskDto.computerId = "false";
+                return JsonConvert.SerializeObject(determineTaskDto);
+            }
+
+
+            determineTaskDto.computerId = computer.Id.ToString();
+            determineTaskDto.computerName = computer.Name.Split(':').First(); //imaging only computers have a : in the name to avoid duplicates, just take beginning
+
+
+            return JsonConvert.SerializeObject(determineTaskDto);
         }
 
         public string DetermineTask(string id)

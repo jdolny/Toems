@@ -24,7 +24,7 @@ namespace Toems_FrontEnd.views.admin
         protected void btnGenerate_OnClick(object sender, EventArgs e)
         {
             var result = Call.SettingApi.GenerateCAInt();
-            EndUserMessage = result ? "Successfully Generated Certificates." : "Could Not Generate Certificates";
+            EndUserMessage = result ? "Successfully Generated Certificates." : "Could Not Generate Certificates.  Verify CA Gen is allowed in web.config.";
 
             PopulateForm();
         }

@@ -1097,6 +1097,8 @@ namespace Toems_Service.Entity
 
         public EntityComputer GetComputerFromClientIdentifier(string clientIdentifier)
         {
+            if (string.IsNullOrEmpty(clientIdentifier))
+                return null;
             EntityComputer result;
             clientIdentifier = clientIdentifier.ToUpper();
             //Don't know if uuid is raw or pretty.  Check for both

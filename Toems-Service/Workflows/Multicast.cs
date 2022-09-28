@@ -190,7 +190,8 @@ namespace Toems_Service.Workflows
                     Direction = "deploy",
                     MulticastId = _multicastSession.Id,
                     UserId = _userId,
-                    ImageProfileId = _imageProfile.Id
+                    ImageProfileId = _imageProfile.Id,
+                    WebTaskToken = Guid.NewGuid().ToString("N").ToUpper()
                 };
 
                 if (activeImagingTaskServices.AddActiveImagingTask(activeTask))

@@ -166,11 +166,27 @@ namespace Toems_ClientApi.Controllers
         }
 
         [HttpPost]
+        public HttpResponseMessage GetComputerNameForPe(IdTypeDTO idTypeDto)
+        {
+            _response.Content =
+                new StringContent(new ClientImagingServices().GetComputerNameForPe(idTypeDto.id),
+                    Encoding.UTF8, "text/plain");
+            return _response;
+        }
+
+        [HttpPost]
         public HttpResponseMessage DetermineTask(IdTypeDTO idTypeDto)
         {
             _response.Content =
                 new StringContent(new ClientImagingServices().DetermineTask(idTypeDto.id),
                     Encoding.UTF8, "text/plain");
+            return _response;
+        }
+
+        [HttpPost]
+        public HttpResponseMessage GetWebTaskToken(IdTypeDTO idTypeDto)
+        {
+            _response.Content = new StringContent(new ClientImagingServices().GetWebTaskToken(idTypeDto.id), Encoding.UTF8, "text/plain");
             return _response;
         }
 

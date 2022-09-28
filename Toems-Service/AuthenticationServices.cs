@@ -267,10 +267,9 @@ namespace Toems_Service
             }
 
             string userToken;
-            var webRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.WebTasksRequireLogin);
             var consoleRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
             var globalToken = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingToken);
-            if (webRequiresLogin.Equals("False") || consoleRequiresLogin.Equals("False"))
+            if (consoleRequiresLogin.Equals("False"))
                 userToken = globalToken;
             else
                 userToken = "";

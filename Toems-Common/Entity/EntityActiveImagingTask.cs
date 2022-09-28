@@ -66,6 +66,9 @@ namespace Toems_Common.Entity
         [Column("image_profile_id")]
         public int? ImageProfileId { get; set; }
 
+        [Column("web_task_token")]
+        public string WebTaskToken { get; set; }
+
         [NotMapped]
         public string Direction { get; set; }
 

@@ -79,12 +79,8 @@ namespace Toems_Service.Workflows
                 return false;
             }
 
-            var webRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.WebTasksRequireLogin);
-            var globalToken = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingToken);
-            if (webRequiresLogin.Equals("False"))
-                _userToken = globalToken;
-            else
-                _userToken = "";
+
+            _userToken = "";
 
             var listOfMacs = new List<string>();
             if (!string.IsNullOrEmpty(_computer.ImagingMac))

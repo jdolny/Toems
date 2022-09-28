@@ -69,8 +69,8 @@ namespace Toems_Service.Workflows
                 ComputerId = _computer.Id,
                 Direction = _direction,
                 UserId = _userId,
-                ImageProfileId = _imageProfile.Id
-
+                ImageProfileId = _imageProfile.Id,
+                WebTaskToken = Guid.NewGuid().ToString("N").ToUpper()
             };
 
             _activeTask.Type = _direction;
