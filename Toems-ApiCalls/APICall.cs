@@ -396,6 +396,14 @@ namespace Toems_ApiCalls
         {
             get { return new SetupCompleteFileAPI("SetupCompleteFile"); }
         }
+        public ToecDeployJobAPI ToecDeployJobApi
+        {
+            get { return new ToecDeployJobAPI("ToecDeployJob"); }
+        }
+        public ToecDeployTargetListAPI ToecTargetListApi
+        {
+            get { return new ToecDeployTargetListAPI("ToecDeployTargetList"); }
+        }
 
     }
 }

@@ -120,6 +120,10 @@ namespace Toems_DataModel
         private IGenericRepository<EntitySysprepAnswerfile> _sysprepAnswerFilesRepository;
         private IGenericRepository<EntitySetupCompleteFile> _setupCompleteFilesRepository;
         private IGenericRepository<EntityComputerGpuInventory> _computerGpuRepository;
+        private IGenericRepository<EntityToecDeployJob> _toecDeployJobRepository;
+        private IGenericRepository<EntityToecTargetList> _toecTargetListRepository;
+        private IGenericRepository<EntityToecTargetListComputer> _toecTargetListComputerRepository;
+        private IGenericRepository<EntityToecTargetListOu> _toecTargetListOuRepository;
 
 
         private bool disposed;
@@ -128,6 +132,38 @@ namespace Toems_DataModel
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public IGenericRepository<EntityToecDeployJob> ToecDeployJobRepository
+        {
+            get
+            {
+                return _toecDeployJobRepository ?? (_toecDeployJobRepository = new GenericRepository<EntityToecDeployJob>(_context));
+            }
+        }
+
+        public IGenericRepository<EntityToecTargetList> ToecTargetListRepository
+        {
+            get
+            {
+                return _toecTargetListRepository ?? (_toecTargetListRepository = new GenericRepository<EntityToecTargetList>(_context));
+            }
+        }
+
+        public IGenericRepository<EntityToecTargetListComputer> ToecTargetListComputerRepository
+        {
+            get
+            {
+                return _toecTargetListComputerRepository ?? (_toecTargetListComputerRepository = new GenericRepository<EntityToecTargetListComputer>(_context));
+            }
+        }
+
+        public IGenericRepository<EntityToecTargetListOu> ToecTargetListOuRepository
+        {
+            get
+            {
+                return _toecTargetListOuRepository ?? (_toecTargetListOuRepository = new GenericRepository<EntityToecTargetListOu>(_context));
+            }
         }
 
         public IGenericRepository<EntityComputerGpuInventory> ComputerGpuRepository

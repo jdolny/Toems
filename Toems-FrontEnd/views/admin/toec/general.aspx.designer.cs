@@ -7,11 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.admin
+namespace Toems_FrontEnd.views.admin.toec
 {
 
 
-    public partial class client
+    public partial class general
     {
 
         /// <summary>

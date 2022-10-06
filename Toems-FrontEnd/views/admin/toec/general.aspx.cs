@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
-using Toems_Common;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
+using Toems_Common;
 
-namespace Toems_FrontEnd.views.admin
+namespace Toems_FrontEnd.views.admin.toec
 {
-    public partial class client : BasePages.Admin
+    public partial class general : BasePages.Admin
     {
-
         protected void Page_Load(object sender, EventArgs e)
         {
             RequiresAuthorization(AuthorizationStrings.Administrator);
@@ -49,7 +51,7 @@ namespace Toems_FrontEnd.views.admin
             txtDomainUsername.Text = Call.SettingApi.GetSetting(SettingStrings.DomainJoinUser).Value;
             txtDomainName.Text = Call.SettingApi.GetSetting(SettingStrings.DomainJoinName).Value;
         }
-      
+
 
         protected void btnUpdateSettings_OnClick(object sender, EventArgs e)
         {
@@ -79,7 +81,7 @@ namespace Toems_FrontEnd.views.admin
 
             var listSettings = new List<EntitySetting>
             {
-              
+
                 new EntitySetting
                 {
                     Name = SettingStrings.StartupDelayType,
@@ -155,7 +157,7 @@ namespace Toems_FrontEnd.views.admin
 
         private void FillStartupDelays()
         {
-          
+
             var delayType = (EnumPolicy.StartupDelayType)Enum.Parse(typeof(EnumPolicy.StartupDelayType), ddlStartupDelay.SelectedValue);
             if (delayType == EnumPolicy.StartupDelayType.ForXseconds)
             {

@@ -108,6 +108,10 @@ namespace Toems_DataModel
         IGenericRepository<EntitySetupCompleteFile> SetupCompleteFileRepository { get; }
 
         IGenericRepository<EntityComputerGpuInventory> ComputerGpuRepository { get; }
+        IGenericRepository<EntityToecDeployJob> ToecDeployJobRepository { get; }
+        IGenericRepository<EntityToecTargetList> ToecTargetListRepository { get; }
+        IGenericRepository<EntityToecTargetListComputer> ToecTargetListComputerRepository { get; }
+        IGenericRepository<EntityToecTargetListOu> ToecTargetListOuRepository { get; }
 
         void Save();
     }

@@ -151,7 +151,6 @@
     <Content Include="views\admin\about.aspx" />
     <Content Include="views\admin\admin.master" />
     <Content Include="views\admin\certificates.aspx" />
-    <Content Include="views\admin\client.aspx" />
     <Content Include="views\admin\comservers\addcomserver.aspx" />
     <Content Include="views\admin\comservers\addcomservercluster.aspx" />
     <Content Include="views\admin\comservers\comservercluster.aspx" />
@@ -196,6 +195,11 @@
     <Content Include="views\admin\server.aspx" />
     <Content Include="views\admin\storage.aspx" />
     <Content Include="views\admin\taskscheduler.aspx" />
+    <Content Include="views\admin\toec\createtargetlist.aspx" />
+    <Content Include="views\admin\toec\general.aspx" />
+    <Content Include="views\admin\toec\createdeployjob.aspx" />
+    <Content Include="views\admin\toec\searchdeployjobs.aspx" />
+    <Content Include="views\admin\toec\searchtargetlists.aspx" />
     <Content Include="views\admin\wolrelays\create.aspx" />
     <Content Include="views\admin\wolrelays\edit.aspx" />
     <Content Include="views\admin\wolrelays\search.aspx" />
@@ -440,6 +444,7 @@
     <Content Include="views\modules\sysprepmodules\sysprepmodule.master" />
     <Content Include="views\images\profiles\profiles.master" />
     <Content Include="views\admin\imageprep\imageprep.master" />
+    <Content Include="views\admin\toec\toec.master" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1028,13 +1033,6 @@
     <Compile Include="views\admin\chooser.aspx.designer.cs">
       <DependentUpon>chooser.aspx</DependentUpon>
     </Compile>
-    <Compile Include="views\admin\client.aspx.cs">
-      <DependentUpon>client.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="views\admin\client.aspx.designer.cs">
-      <DependentUpon>client.aspx</DependentUpon>
-    </Compile>
     <Compile Include="views\admin\comservers\addcomserver.aspx.cs">
       <DependentUpon>addcomserver.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1398,6 +1396,48 @@
     </Compile>
     <Compile Include="views\admin\taskscheduler.aspx.designer.cs">
       <DependentUpon>taskscheduler.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\toec\createtargetlist.aspx.cs">
+      <DependentUpon>createtargetlist.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\toec\createtargetlist.aspx.designer.cs">
+      <DependentUpon>createtargetlist.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\toec\general.aspx.cs">
+      <DependentUpon>general.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\toec\general.aspx.designer.cs">
+      <DependentUpon>general.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\toec\searchdeployjobs.aspx.cs">
+      <DependentUpon>searchdeployjobs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\toec\searchdeployjobs.aspx.designer.cs">
+      <DependentUpon>searchdeployjobs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\toec\searchtargetlists.aspx.cs">
+      <DependentUpon>searchtargetlists.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\toec\searchtargetlists.aspx.designer.cs">
+      <DependentUpon>searchtargetlists.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\toec\toec.master.cs">
+      <DependentUpon>toec.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\toec\toec.master.designer.cs">
+      <DependentUpon>toec.master</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\toec\createdeployjob.aspx.cs">
+      <DependentUpon>createdeployjob.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\toec\createdeployjob.aspx.designer.cs">
+      <DependentUpon>createdeployjob.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\admin\wolrelays\create.aspx.cs">
       <DependentUpon>create.aspx</DependentUpon>

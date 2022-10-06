@@ -1,24 +1,24 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/admin/admin.master" AutoEventWireup="true" CodeBehind="client.aspx.cs" Inherits="Toems_FrontEnd.views.admin.client" %>
-<asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub1">
-    <li>Toec Client Settings</li>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/theopenem/views/admin/toec/toec.master" AutoEventWireup="true" CodeBehind="general.aspx.cs" Inherits="Toems_FrontEnd.views.admin.toec.general" %>
+<asp:Content ID="Content3" ContentPlaceHolderID="TopBreadCrumbSub2" runat="server">
+    <li><a href="<%= ResolveUrl("~/views/admin/toec/general.aspx") %>?level=2">General Toec Settings</a></li>
 </asp:Content>
-<asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub1">
-    Admin Settings
+<asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub2">
+    General Toec Settings
 </asp:Content>
-<asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub" runat="Server">
-    <li><asp:LinkButton ID="btnUpdateSettings" runat="server" Text="Update Client Settings" OnClick="btnUpdateSettings_OnClick" CssClass="main-action"/></li>
+<asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub2" Runat="Server">
+      <li><asp:LinkButton ID="btnUpdateSettings" runat="server" Text="Update Client Settings" OnClick="btnUpdateSettings_OnClick" CssClass="main-action"/></li>
     <li><asp:LinkButton ID="btnExportMsi" runat="server" Text="Export Client Msi 64-Bit" OnClick="btnExportMsi64_Click" CssClass="main-action"/></li>
       <li><asp:LinkButton ID="btnExportMsi32" runat="server" Text="Export Client Msi 32-Bit" OnClick="btnExportMsi32_Click" CssClass="main-action"/></li>
           <li><asp:LinkButton ID="btnCopyToec" runat="server" Text="Prepare Toec Updates" OnClick="btnCopyToec_Click" CssClass="main-action"/></li>
+
 </asp:Content>
 
 
 
 
-
-<asp:Content ID="Content2" ContentPlaceHolderID="SubContent" runat="Server">
+<asp:Content ID="Content2" ContentPlaceHolderID="SubContent2" Runat="Server">
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#client').addClass("nav-current");
         });
     </script>
@@ -108,8 +108,8 @@
         </div>
         <br class="clear"/>
 </asp:Content>
-<asp:Content runat="server" ContentPlaceHolderID="subHelp">
-    <h5><span style="color: #ff9900;">Startup Delay Type:</span></h5>
+<asp:Content runat="server" ContentPlaceHolderID="subsubHelp">
+        <h5><span style="color: #ff9900;">Startup Delay Type:</span></h5>
 <p>When the Toec service starts, an optional delay can be configured to delay the initial checkin time.  The delay can be specified in seconds or by a file condition.  A file condition means that Toec will not checkin until the specified File Path exists.  An example usage for the File Condition might be a long Sysprep workflow.  You might not want Toec to checkin until everything else is completed.  One of the last steps in your Sysprep workflow would be to create this file and the specified File Path Condition.</p>
 <h5><span style="color: #ff9900;">Threshold Window:</span></h5>
 <p>The threshold window is used to try and prevent all of computers from checking in at the same time.  If the Window value is greater than 0, each client will wait to checkin by selecting a random number b/w 0 and the value specified in seconds before checking in.</p>

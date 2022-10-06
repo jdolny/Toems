@@ -98,6 +98,8 @@
     <Compile Include="CertificateInventoryAPI.cs" />
     <Compile Include="SoftwareInventoryAPI.cs" />
     <Compile Include="ProcessInventoryAPI.cs" />
+    <Compile Include="ToecDeployTargetListAPI.cs" />
+    <Compile Include="ToecDeployJobAPI.cs" />
     <Compile Include="WuModuleAPI.cs" />
     <Compile Include="WolRelayAPI.cs" />
     <Compile Include="ScheduleAPI.cs" />

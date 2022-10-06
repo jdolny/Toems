@@ -134,6 +134,8 @@
     <Compile Include="Entity\ServiceImagingClientId.cs" />
     <Compile Include="Entity\ServicePort.cs" />
     <Compile Include="Entity\ServiceRemoteAccess.cs" />
+    <Compile Include="Entity\ServiceToecDeployTargetList.cs" />
+    <Compile Include="Entity\ServiceToecDeployJob.cs" />
     <Compile Include="PasswordGenerator.cs" />
     <Compile Include="RegParser.cs" />
     <Compile Include="ServiceClientPartition.cs" />

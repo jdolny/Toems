@@ -239,6 +239,10 @@
     <Compile Include="Dto\imageschemafe\DtoVolumeGroup.cs" />
     <Compile Include="Entity\EntityActiveImagingTask.cs" />
     <Compile Include="Entity\EntityActiveMulticastSession.cs" />
+    <Compile Include="Entity\EntityToecTargetListComputer.cs" />
+    <Compile Include="Entity\EntityToecTargetListOu.cs" />
+    <Compile Include="Entity\EntityToecTargetList.cs" />
+    <Compile Include="Entity\EntityToecDeployJob.cs" />
     <Compile Include="Entity\EntityClientImagingId.cs" />
     <Compile Include="Entity\EntityAntivirusInventory.cs" />
     <Compile Include="Entity\EntityComputerLog.cs" />
@@ -338,6 +342,9 @@
     <Compile Include="Entity\EntityUserLockout.cs" />
     <Compile Include="Entity\EntityUserRight.cs" />
     <Compile Include="Entity\EntityVersion.cs" />
+    <Compile Include="Enum\EnumToecDeployTargetComputer.cs" />
+    <Compile Include="Enum\EnumToecDeployTargetList.cs" />
+    <Compile Include="Enum\EnumToecDeployJob.cs" />
     <Compile Include="Enum\EnumCondition.cs" />
     <Compile Include="Enum\EnumCustomAttribute.cs" />
     <Compile Include="Enum\EnumFileDownloader.cs" />

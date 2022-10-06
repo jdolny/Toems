@@ -133,7 +133,7 @@
             </li>
             
               <li id="client" runat="server" clientidmode="Static">
-                <a href="<%= ResolveUrl("~/views/admin/client.aspx") %>">
+                <a href="<%= ResolveUrl("~/views/admin/toec/general.aspx?level=2") %>">
                     <span class="nav-text">Toec</span>
                 </a>
             </li>

@@ -179,6 +179,8 @@
     <Compile Include="Controllers\CertificateInventoryController.cs" />
     <Compile Include="Controllers\SoftwareInventoryController.cs" />
     <Compile Include="Controllers\ProcessInventoryController.cs" />
+    <Compile Include="Controllers\ToecDeployTargetListController.cs" />
+    <Compile Include="Controllers\ToecDeployJobController.cs" />
     <Compile Include="Controllers\WuModuleController.cs" />
     <Compile Include="Controllers\WolRelayController.cs" />
     <Compile Include="Controllers\ScheduleController.cs" />

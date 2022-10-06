@@ -110,6 +110,11 @@ namespace Toems_DataModel
         public DbSet<EntitySysprepAnswerfile> SysprepAnswerFiles { get; set; }
         public DbSet<EntitySetupCompleteFile> SetupCompleteFiles { get; set; }
         public DbSet<EntityComputerGpuInventory> ComputerGpus { get; set; }
+        public DbSet<EntityToecDeployJob> ToecDeployJob { get; set; }
+        public DbSet<EntityToecTargetList> ToecTargetList { get; set; }
+        public DbSet<EntityToecTargetListComputer> ToecTargetListComputer { get; set; }
+        public DbSet<EntityToecTargetListOu> ToecTargetListOu { get; set; }
+
 
     }
 }
