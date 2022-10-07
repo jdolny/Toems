@@ -53,6 +53,20 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<List<EntityGroup>>(Request);
         }
 
+        public IEnumerable<EntityGroup> GetOuGroups()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetOuGroups/", Resource);
+            return new ApiRequest().Execute<List<EntityGroup>>(Request);
+        }
+
+        public IEnumerable<EntityGroup> GetAdSecurityGroups()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetAdSecurityGroups/", Resource);
+            return new ApiRequest().Execute<List<EntityGroup>>(Request);
+        }
+
         public IEnumerable<EntityGroupCategory> GetGroupCategories(int id)
         {
             Request.Method = Method.GET;

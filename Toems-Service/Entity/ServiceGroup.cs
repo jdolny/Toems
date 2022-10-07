@@ -217,6 +217,11 @@ namespace Toems_Service.Entity
             return _uow.GroupRepository.Get(x => x.IsOu).OrderBy(x => x.Name).ToList();
         }
 
+        public List<EntityGroup> GetAllOuGroups()
+        {
+            return _uow.GroupRepository.Get(x => x.IsOu).Where(x=> !x.Dn.ToLower().Contains("cn=system")).OrderBy(x => x.ParentOu).ThenBy(x=> x.Dn).ToList();
+        }
+
         public List<EntityGroup> GetAllAdSecurityGroups()
         {
             return _uow.GroupRepository.Get(x => x.IsSecurityGroup).OrderBy(x => x.Name).ToList();

@@ -45,6 +45,38 @@
         <asp:TextBox ID="txtDomain" runat="server" CssClass="textbox"></asp:TextBox>
     </div>
     <br class="clear"/>
+     <div class="size-4 column">
+        Job Type:
+    </div>
+    <div class="size-5 column">
+       
+        <asp:DropDownList ID="ddlJobType" runat="server" CssClass="ddlist"></asp:DropDownList>
+  
+            </div>
+    <br class="clear"/>
+      <div class="size-4 column">
+        Run Mode:
+    </div>
+    <div class="size-5 column">
+        <asp:DropDownList ID="ddlRunMode" runat="server" CssClass="ddlist"></asp:DropDownList> 
+            </div>
+    <br class="clear"/>
+
+       <div class="size-4 column">
+        Max Workers:
+    </div>
+    <div class="size-5 column">
+        <asp:TextBox ID="txtMaxWorkers" runat="server" CssClass="textbox"></asp:TextBox>
+    </div>
+    <br class="clear"/>
+      <div class="size-4 column">
+        Job Enabled:
+    </div>
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkJobEnabled" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkJobEnabled">Toggle</label>
+        </div>
+     <br class="clear"/>
 
 </asp:Content>
 <asp:Content ID="Content5" ContentPlaceHolderID="subsubHelp" runat="server">

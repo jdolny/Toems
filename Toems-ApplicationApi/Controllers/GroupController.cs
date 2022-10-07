@@ -87,6 +87,18 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [CustomAuth(Permission = AuthorizationStrings.GroupRead)]
+        public IEnumerable<EntityGroup> GetOuGroups()
+        {
+            return _groupServices.GetAllOuGroups();
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.GroupRead)]
+        public IEnumerable<EntityGroup> GetAdSecurityGroups()
+        {
+            return _groupServices.GetAllAdSecurityGroups();
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.GroupRead)]
         [HttpPost]
         public IEnumerable<DtoGroupWithCount> Search(DtoSearchFilterCategories filter)
         {
