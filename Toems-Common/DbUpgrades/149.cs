@@ -119,6 +119,21 @@ ADD CONSTRAINT `fk_targetlist_id`
 ALTER TABLE `toec_deploy_jobs` 
 ADD COLUMN `toec_deploy_job_name` VARCHAR(45) NOT NULL AFTER `toec_deploy_job_is_enabled`;
 
+ALTER TABLE `toec_deploy_target_list_computers` 
+ADD COLUMN `last_status_change_date` DATETIME NULL DEFAULT NULL AFTER `toec_deploy_target_list_id`;
+
+CREATE TABLE `toec_deploy_threads` (
+  `toec_deploy_thread_id` INT NOT NULL AUTO_INCREMENT,
+  `toec_deploy_thread_job_id` INT NOT NULL,
+  `toec_deploy_thread_task_id` INT NOT NULL,
+  `toec_deploy_thread_datetime` DATETIME NULL,
+  PRIMARY KEY (`toec_deploy_thread_id`));
+
+ALTER TABLE `toec_deploy_threads` 
+CHANGE COLUMN `toec_deploy_thread_task_id` `toec_deploy_thread_task_id` VARCHAR(45) NULL ;
+
+ALTER TABLE `toec_deploy_target_list_computers` 
+ADD COLUMN `last_update_details` TEXT NULL AFTER `last_status_change_date`;
 
 
 

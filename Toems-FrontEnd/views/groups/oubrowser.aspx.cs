@@ -26,6 +26,7 @@ namespace Toems_FrontEnd.views.groups
                     root.SelectAction = TreeNodeSelectAction.Expand;
                     root.NavigateUrl = "~/views/groups/general.aspx?groupId=" + rows[i]["Id"];
                     root.Expanded = true;
+                    
                     CreateNode(root, ds.Tables[0]);
                    
                     treeOus.Nodes.Add(root);

@@ -299,6 +299,16 @@ namespace Toems_FrontEnd.BasePages
 
         }
 
+        protected void PopulateToecTargetLists(DropDownList ddl)
+        {
+            ddl.DataSource =
+            Call.ToecTargetListApi.Get().Select(d => new { d.Id, d.Name });
+            ddl.DataValueField = "Id";
+            ddl.DataTextField = "Name";
+            ddl.DataBind();
+
+        }
+
         protected void PopulateImageProfilesDdl(DropDownList ddlImageProfile, int value)
         {
             ddlImageProfile.DataSource = Call.ImageApi.GetImageProfiles(value).Select(i => new { i.Id, i.Name });

@@ -113,6 +113,8 @@ namespace Toems_DataModel
         IGenericRepository<EntityToecTargetListComputer> ToecTargetListComputerRepository { get; }
         IGenericRepository<EntityToecTargetListOu> ToecTargetListOuRepository { get; }
 
+        IGenericRepository<EntityToecDeployThread> ToecDeployThreadRepository { get; }
+
         void Save();
     }
 }

@@ -11,70 +11,97 @@ namespace Toems_FrontEnd.views.admin.toec
 {
 
 
-    public partial class searchdeployjobs
+    public partial class edittargetlist
     {
 
         /// <summary>
-        /// btnDelete control.
+        /// buttonUpdate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnDelete;
+        protected global::System.Web.UI.WebControls.LinkButton buttonUpdate;
 
         /// <summary>
-        /// txtSearch control.
+        /// txtName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSearch;
+        protected global::System.Web.UI.WebControls.TextBox txtName;
 
         /// <summary>
-        /// lblTotal control.
+        /// ddlListType control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTotal;
+        protected global::System.Web.UI.WebControls.DropDownList ddlListType;
 
         /// <summary>
-        /// gvEntries control.
+        /// ous control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvEntries;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl ous;
 
         /// <summary>
-        /// lblTitle control.
+        /// treeOus control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTitle;
+        protected global::System.Web.UI.WebControls.TreeView treeOus;
 
         /// <summary>
-        /// ConfirmButton control.
+        /// lblNoOu control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton ConfirmButton;
+        protected global::System.Web.UI.WebControls.Label lblNoOu;
 
         /// <summary>
-        /// CancelButton control.
+        /// adGroups control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton CancelButton;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl adGroups;
+
+        /// <summary>
+        /// gvAdGroups control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvAdGroups;
+
+        /// <summary>
+        /// computers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl computers;
+
+        /// <summary>
+        /// txtComputers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtComputers;
     }
 }

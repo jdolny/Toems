@@ -5,15 +5,13 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Toems_Common;
-using Toems_Common.Dto;
+using System.Xml.Linq;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
-using Toems_FrontEnd.views.reports.computer;
 
 namespace Toems_FrontEnd.views.admin.toec
 {
-    public partial class createtargetlist : BasePages.Admin
+    public partial class edittargetlist : BasePages.Admin
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -23,9 +21,53 @@ namespace Toems_FrontEnd.views.admin.toec
             {
                 ddlListType.DataSource = Enum.GetNames(typeof(EnumToecDeployTargetList.ListType));
                 ddlListType.DataBind();
+
+                txtName.Text = ToecTargetList.Name;
+                ddlListType.SelectedValue = ToecTargetList.Type.ToString();
+
+                if (ToecTargetList.Type == EnumToecDeployTargetList.ListType.CustomList)
+                {
+                    ous.Visible = false;
+                    adGroups.Visible = false;
+                    computers.Visible = true;
+
+                    var members = Call.ToecTargetListApi.GetMembers(ToecTargetList.Id);
+                    foreach (var computer in members.OrderBy(x => x.Name))
+                    {
+                        txtComputers.Text += computer.Name + "\r\n";
+                    }
+                }
+                else if (ToecTargetList.Type == EnumToecDeployTargetList.ListType.AdGroup)
+                {
+                    ous.Visible = false;
+                    adGroups.Visible = true;
+                    computers.Visible = false;
+                    PopulateAdGroups();
+                    foreach (GridViewRow row in gvAdGroups.Rows)
+                    {
+                        var cb = (CheckBox)row.FindControl("chkSelector");
+                        if (cb == null) continue;
+                        var dataKey = gvAdGroups.DataKeys[row.RowIndex];
+                        if (dataKey == null) continue;
+                        if (ToecTargetList.GroupIds.Contains(Convert.ToInt32(dataKey.Value)))
+                            cb.Checked = true;
+
+                    }
+                }
+                else
+                {
+                    ous.Visible = true;
+                    adGroups.Visible = false;
+                    computers.Visible = false;
+                    PopulateOus();
+
+                  
+                }
             }
         }
-    
+
+
+
         protected void PopulateOus()
         {
             BindTreeViewControl();
@@ -40,16 +82,17 @@ namespace Toems_FrontEnd.views.admin.toec
 
         protected void buttonUpdate_Click(object sender, EventArgs e)
         {
-            var toecTargetList = new EntityToecTargetList();
-            toecTargetList.Name = txtName.Text;
-            toecTargetList.Type = (EnumToecDeployTargetList.ListType)Enum.Parse(typeof(EnumToecDeployTargetList.ListType), ddlListType.SelectedValue);
+
+            ToecTargetList.Name = txtName.Text;
+            ToecTargetList.GroupIds.Clear();
+            ToecTargetList.Type = (EnumToecDeployTargetList.ListType)Enum.Parse(typeof(EnumToecDeployTargetList.ListType), ddlListType.SelectedValue);
 
             var selected = (EnumToecDeployTargetList.ListType)Enum.Parse(typeof(EnumToecDeployTargetList.ListType), ddlListType.SelectedValue);
             if (selected == EnumToecDeployTargetList.ListType.AdOU)
             {
                 foreach (TreeNode node in treeOus.CheckedNodes)
                 {
-                    toecTargetList.GroupIds.Add(Convert.ToInt32(node.Value));
+                    ToecTargetList.GroupIds.Add(Convert.ToInt32(node.Value));
                 }
             }
             else if (selected == EnumToecDeployTargetList.ListType.AdGroup)
@@ -60,7 +103,7 @@ namespace Toems_FrontEnd.views.admin.toec
                     if (cb == null || !cb.Checked) continue;
                     var dataKey = gvAdGroups.DataKeys[row.RowIndex];
                     if (dataKey == null) continue;
-                    toecTargetList.GroupIds.Add(Convert.ToInt32(dataKey.Value));
+                    ToecTargetList.GroupIds.Add(Convert.ToInt32(dataKey.Value));
                 }
 
             }
@@ -69,18 +112,18 @@ namespace Toems_FrontEnd.views.admin.toec
                 var seperator = new string[] { "\r\n" };
                 foreach (var obj in txtComputers.Text.Split(seperator, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    toecTargetList.ComputerNames.Add(obj.Trim());
+                    ToecTargetList.ComputerNames.Add(obj.Trim());
                 }
             }
 
-            var result = Call.ToecTargetListApi.Post(toecTargetList);
+            var result = Call.ToecTargetListApi.Put(ToecTargetList.Id,ToecTargetList);
             if (!result.Success)
             {
-                EndUserMessage = "Could Not create " + txtName.Text + " " + result.ErrorMessage;
+                EndUserMessage = "Could Not Update " + txtName.Text + " " + result.ErrorMessage;
             }
             else
             {
-                EndUserMessage = "Successfully Created " + txtName.Text;
+                EndUserMessage = "Successfully Updated " + txtName.Text;
 
             }
         }
@@ -112,7 +155,7 @@ namespace Toems_FrontEnd.views.admin.toec
 
         private void BindTreeViewControl()
         {
-            if (treeOus.Nodes.Count > 0) return;
+            if (treeOus.Nodes.Count > 0 ) return;
             try
             {
                 DataSet ds = GetDataSet();
@@ -124,7 +167,12 @@ namespace Toems_FrontEnd.views.admin.toec
                     TreeNode root = new TreeNode(rows[i]["Name"].ToString(), rows[i]["Id"].ToString());
                     root.SelectAction = TreeNodeSelectAction.Expand;
                     root.Expanded = true;
+                    if (ToecTargetList.GroupIds.Contains(Convert.ToInt32(root.Value)))
+                    {
+                        root.Checked = true;
 
+
+                    }
                     CreateNode(root, ds.Tables[0]);
 
                     treeOus.Nodes.Add(root);
@@ -133,6 +181,17 @@ namespace Toems_FrontEnd.views.admin.toec
             catch (Exception Ex) { throw Ex; }
         }
 
+        private void ExpandParent(TreeNode node)
+        {
+            node.Expanded = true;
+
+            var parent = node.Parent;
+            if (parent != null)
+            {
+                parent.Expanded = true;
+                ExpandParent(parent);
+            }           
+        }
         public void CreateNode(TreeNode node, DataTable Dt)
         {
             DataRow[] rows = Dt.Select("Convert(ParentId, 'System.Int32') =" + node.Value);
@@ -142,6 +201,12 @@ namespace Toems_FrontEnd.views.admin.toec
             {
                 TreeNode childnode = new TreeNode(rows[i]["Name"].ToString(), rows[i]["Id"].ToString());
                 childnode.SelectAction = TreeNodeSelectAction.Expand;
+                if (ToecTargetList.GroupIds.Contains(Convert.ToInt32(childnode.Value)))
+                {
+                    childnode.Checked = true;
+                    ExpandParent(node);
+
+                }
                 node.ChildNodes.Add(childnode);
                 CreateNode(childnode, Dt);
             }
@@ -150,7 +215,7 @@ namespace Toems_FrontEnd.views.admin.toec
         {
             var groups = Call.GroupApi.GetAdGroups();
 
-            if(groups == null || !groups.Any())
+            if (groups == null || !groups.Any())
             {
                 lblNoOu.Text = "No Organizational Units Were Found.  Ensure Active Directory Sync Is Configured.";
                 return null;
@@ -174,11 +239,5 @@ namespace Toems_FrontEnd.views.admin.toec
             return ds;
 
         }
-
-
-
-      
     }
-
-
 }

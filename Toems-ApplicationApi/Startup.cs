@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web;
 using Hangfire;
 using Hangfire.MySql;
 using Hangfire.SqlServer;
@@ -150,6 +151,9 @@ namespace Toems_ApplicationApi
                             RecurringJob.AddOrUpdate("ImagingTaskTimeout-Job", () => new ServiceActiveImagingTask().CancelTimedOutTasks(),
                       "*/5 * * * *", TimeZoneInfo.Local);
                     }
+
+                    var path = HttpContext.Current.Server.MapPath("~");
+                    RecurringJob.AddOrUpdate("Toec-Deploy-Job", () => new ToecRemoteInstaller().Run(path), "*/15 * * * *", TimeZoneInfo.Local);
 
                     var groupSchedule = ServiceSetting.GetSettingValue(SettingStrings.DynamicGroupSchedule);
                     var ldapSchedule = ServiceSetting.GetSettingValue(SettingStrings.LdapSyncSchedule);

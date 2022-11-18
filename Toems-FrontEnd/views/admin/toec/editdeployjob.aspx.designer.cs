@@ -11,7 +11,7 @@ namespace Toems_FrontEnd.views.admin.toec
 {
 
 
-    public partial class createtargetlist
+    public partial class editdeployjob
     {
 
         /// <summary>
@@ -33,75 +33,84 @@ namespace Toems_FrontEnd.views.admin.toec
         protected global::System.Web.UI.WebControls.TextBox txtName;
 
         /// <summary>
-        /// ddlListType control.
+        /// txtUsername control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlListType;
+        protected global::System.Web.UI.WebControls.TextBox txtUsername;
 
         /// <summary>
-        /// ous control.
+        /// txtPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl ous;
+        protected global::System.Web.UI.WebControls.TextBox txtPassword;
 
         /// <summary>
-        /// treeOus control.
+        /// txtDomain control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TreeView treeOus;
+        protected global::System.Web.UI.WebControls.TextBox txtDomain;
 
         /// <summary>
-        /// lblNoOu control.
+        /// ddlJobType control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblNoOu;
+        protected global::System.Web.UI.WebControls.DropDownList ddlJobType;
 
         /// <summary>
-        /// adGroups control.
+        /// ddlRunMode control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl adGroups;
+        protected global::System.Web.UI.WebControls.DropDownList ddlRunMode;
 
         /// <summary>
-        /// gvAdGroups control.
+        /// ddlTargetList control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvAdGroups;
+        protected global::System.Web.UI.WebControls.DropDownList ddlTargetList;
 
         /// <summary>
-        /// computers control.
+        /// ddlExceptionList control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl computers;
+        protected global::System.Web.UI.WebControls.DropDownList ddlExceptionList;
 
         /// <summary>
-        /// txtComputers control.
+        /// txtMaxWorkers control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtComputers;
+        protected global::System.Web.UI.WebControls.TextBox txtMaxWorkers;
+
+        /// <summary>
+        /// chkJobEnabled control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkJobEnabled;
     }
 }

@@ -22,6 +22,11 @@ namespace Toems_Common.Entity
         [Column("toec_deploy_target_list_id")]
         public int TargetListId { get; set; }
 
+        [Column("last_status_change_date")]
+        public DateTime? LastStatusDate { get; set; }
+
+        [Column("last_update_details")]
+        public string LastUpdateDetails { get; set; }
 
 
 

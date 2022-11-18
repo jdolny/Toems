@@ -145,6 +145,7 @@
     <Compile Include="Dto\DtoSocketServerVerify.cs" />
     <Compile Include="Dto\DtoTaskBootFile.cs" />
     <Compile Include="Dto\DtoTftpServer.cs" />
+    <Compile Include="Dto\DtoToecDeployConfig.cs" />
     <Compile Include="Dto\DtoVersion.cs" />
     <Compile Include="Dto\DtoWebRtc.cs" />
     <Compile Include="Dto\exports\DtoCommandModuleExport.cs" />
@@ -239,6 +240,7 @@
     <Compile Include="Dto\imageschemafe\DtoVolumeGroup.cs" />
     <Compile Include="Entity\EntityActiveImagingTask.cs" />
     <Compile Include="Entity\EntityActiveMulticastSession.cs" />
+    <Compile Include="Entity\EntityToecDeployThread.cs" />
     <Compile Include="Entity\EntityToecTargetListComputer.cs" />
     <Compile Include="Entity\EntityToecTargetListOu.cs" />
     <Compile Include="Entity\EntityToecTargetList.cs" />

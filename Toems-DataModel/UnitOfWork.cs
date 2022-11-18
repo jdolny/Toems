@@ -124,6 +124,7 @@ namespace Toems_DataModel
         private IGenericRepository<EntityToecTargetList> _toecTargetListRepository;
         private IGenericRepository<EntityToecTargetListComputer> _toecTargetListComputerRepository;
         private IGenericRepository<EntityToecTargetListOu> _toecTargetListOuRepository;
+        private IGenericRepository<EntityToecDeployThread> _toecDeployThreadRepository;
 
 
         private bool disposed;
@@ -132,6 +133,14 @@ namespace Toems_DataModel
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public IGenericRepository<EntityToecDeployThread> ToecDeployThreadRepository
+        {
+            get
+            {
+                return _toecDeployThreadRepository ?? (_toecDeployThreadRepository = new GenericRepository<EntityToecDeployThread>(_context));
+            }
         }
 
         public IGenericRepository<EntityToecDeployJob> ToecDeployJobRepository

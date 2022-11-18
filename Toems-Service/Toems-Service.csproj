@@ -220,11 +220,13 @@
     <Compile Include="Entity\ServiceGroupPolicy.cs" />
     <Compile Include="Entity\ServiceGroup.cs" />
     <Compile Include="Entity\ServiceCommandModule.cs" />
+    <Compile Include="ServiceImpersonation.cs" />
     <Compile Include="ServiceMsiUpdater.cs" />
     <Compile Include="ServiceOnlineKernel.cs" />
     <Compile Include="ServiceProvision.cs" />
     <Compile Include="ServiceProxyDhcp.cs" />
     <Compile Include="ServiceRawSql.cs" />
+    <Compile Include="ServiceScManager.cs" />
     <Compile Include="ServiceSymmetricEncryption.cs" />
     <Compile Include="Entity\ServiceSoftwareModule.cs" />
     <Compile Include="Entity\ServiceUploadedFile.cs" />
@@ -274,6 +276,7 @@
     <Compile Include="Workflows\Multicast.cs" />
     <Compile Include="Workflows\SubmitInventory.cs" />
     <Compile Include="Workflows\TaskBootMenu.cs" />
+    <Compile Include="Workflows\ToecRemoteInstaller.cs" />
     <Compile Include="Workflows\Unicast.cs" />
     <Compile Include="Workflows\UpdateDynamicMemberships.cs" />
     <Compile Include="LdapServices.cs" />

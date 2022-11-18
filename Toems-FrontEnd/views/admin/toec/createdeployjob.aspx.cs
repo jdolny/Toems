@@ -4,7 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Toems_Common.Entity;
 using Toems_Common.Enum;
+using Toems_FrontEnd.views.admin.comservers;
 
 namespace Toems_FrontEnd.views.admin.toec
 {
@@ -19,13 +21,42 @@ namespace Toems_FrontEnd.views.admin.toec
 
                 ddlRunMode.DataSource = Enum.GetNames(typeof(EnumToecDeployJob.RunMode));
                 ddlRunMode.DataBind();
-              
+
+                PopulateToecTargetLists(ddlTargetList);
+                ddlTargetList.Items.Insert(0, new ListItem("", ""));
+                ddlTargetList.SelectedIndex = 1;
+
+                PopulateToecTargetLists(ddlExceptionList);
+                ddlExceptionList.Items.Insert(0, new ListItem("", ""));
+                ddlExceptionList.SelectedIndex = 1;
             }
         }
 
         protected void buttonUpdate_Click(object sender, EventArgs e)
         {
 
+            var toecDeployJob = new EntityToecDeployJob();
+            toecDeployJob.Name = txtName.Text;
+            toecDeployJob.Username = txtUsername.Text;
+            toecDeployJob.PasswordEncrypted = txtPassword.Text;
+            toecDeployJob.Domain = txtDomain.Text;
+            toecDeployJob.JobType = (EnumToecDeployJob.JobType)Enum.Parse(typeof(EnumToecDeployJob.JobType), ddlJobType.SelectedValue);
+            toecDeployJob.RunMode = (EnumToecDeployJob.RunMode)Enum.Parse(typeof(EnumToecDeployJob.RunMode), ddlRunMode.SelectedValue);
+            toecDeployJob.TargetListId = Convert.ToInt32(ddlTargetList.SelectedValue);
+            toecDeployJob.ExclusionListId = Convert.ToInt32(ddlExceptionList.SelectedValue);
+            toecDeployJob.MaxWorkers = Convert.ToInt16(txtMaxWorkers.Text);
+            toecDeployJob.Enabled = chkJobEnabled.Checked;
+
+            var result = Call.ToecDeployJobApi.Post(toecDeployJob);
+            if (!result.Success)
+            {
+                EndUserMessage = "Could Not create " + txtName.Text + " " + result.ErrorMessage;
+            }
+            else
+            {
+                EndUserMessage = "Successfully Created " + txtName.Text;
+
+            }
         }
     }
 }

@@ -21,6 +21,7 @@ namespace Toems_Service.Entity
             var validationResult = Validate(toecDeployJob,true);
             if (validationResult.Success)
             {
+                toecDeployJob.PasswordEncrypted = new EncryptionServices().EncryptText(toecDeployJob.PasswordEncrypted);
                 _uow.ToecDeployJobRepository.Insert(toecDeployJob);
                 _uow.Save();
                 actionResult.Success = true;
@@ -66,6 +67,10 @@ namespace Toems_Service.Entity
         {
             var u = GetToecDeployJob(toecDeployJob.Id);
             if (u == null) return new DtoActionResult {ErrorMessage = "Toec Deploy Job Not Found", Id = 0};
+            if (string.IsNullOrEmpty(toecDeployJob.PasswordEncrypted))
+                toecDeployJob.PasswordEncrypted = u.PasswordEncrypted;
+            else
+                toecDeployJob.PasswordEncrypted = new EncryptionServices().EncryptText(toecDeployJob.PasswordEncrypted);
 
             var actionResult = new DtoActionResult();
 

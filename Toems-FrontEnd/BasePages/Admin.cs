@@ -14,10 +14,10 @@ namespace Toems_FrontEnd.BasePages
         public EntityComServerCluster ComServerCluster { get; set; }
         public EntityWolRelay WolRelay { get; set; }
         public EntityCustomBootMenu BootEntry { get; set; }
-
         public EntitySysprepAnswerfile SysprepFile { get; set; }
-
         public EntitySetupCompleteFile SetupCompleteFile { get; set; }
+        public EntityToecDeployJob ToecDeployJob { get; set; }
+        public EntityToecTargetList ToecTargetList { get; set; }
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -46,6 +46,12 @@ namespace Toems_FrontEnd.BasePages
             SetupCompleteFile = !string.IsNullOrEmpty(Request["setupCompleteId"])
              ? Call.SetupCompleteFileApi.Get(Convert.ToInt32(Request.QueryString["setupCompleteId"]))
              : null;
+            ToecDeployJob = !string.IsNullOrEmpty(Request["deployJobId"])
+            ? Call.ToecDeployJobApi.Get(Convert.ToInt32(Request.QueryString["deployJobId"]))
+            : null;
+            ToecTargetList = !string.IsNullOrEmpty(Request["targetListId"])
+           ? Call.ToecTargetListApi.Get(Convert.ToInt32(Request.QueryString["targetListId"]))
+           : null;
 
         }
 

@@ -115,6 +115,8 @@ namespace Toems_DataModel
         public DbSet<EntityToecTargetListComputer> ToecTargetListComputer { get; set; }
         public DbSet<EntityToecTargetListOu> ToecTargetListOu { get; set; }
 
+        public DbSet<EntityToecDeployThread> ToecDeployThread { get; set; }
+
 
     }
 }

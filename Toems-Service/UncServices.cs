@@ -88,6 +88,47 @@ namespace Toems_Service
             return NetUseWithCredentials();
         }
 
+        public bool ConnectWithCredentials(string UNCPath, string User, string Domain, string Password)
+        {
+            sUNCPath = UNCPath.TrimEnd('\\');
+            sUser = User;
+            sPassword = Password;
+            sDomain = Domain;
+            return Connect();
+        }
+
+        public bool Connect()
+        {
+            uint returncode;
+            try
+            {
+                var useinfo = new USE_INFO_2();
+
+                useinfo.ui2_remote = sUNCPath;
+                useinfo.ui2_username = sUser;
+                useinfo.ui2_domainname = sDomain;
+                useinfo.ui2_password = sPassword;
+                useinfo.ui2_asg_type = 0;
+                useinfo.ui2_usecount = 1;
+                uint paramErrorIndex;
+                returncode = NetUseAdd(null, 2, ref useinfo, out paramErrorIndex);
+                LastError = (int)returncode;
+                if (returncode != 1219 && returncode != 0)
+                {
+                    Logger.Error("Could Not Connect To: " + sUNCPath);
+                    Logger.Error("Error Code: " + returncode);
+                }
+                return returncode == 0;
+            }
+            catch (Exception ex)
+            {
+                LastError = Marshal.GetLastWin32Error();
+                Logger.Error("Could Not Connect To Share: " + sUNCPath);
+                Logger.Error(ex.Message);
+                return false;
+            }
+        }
+
         public bool NetUseWithCredentials()
         {
             var settingService = new ServiceSetting();

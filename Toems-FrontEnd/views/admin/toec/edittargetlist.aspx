@@ -1,20 +1,16 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/theopenem/views/admin/toec/toec.master" AutoEventWireup="true" CodeBehind="createtargetlist.aspx.cs" Inherits="Toems_FrontEnd.views.admin.toec.createtargetlist" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/theopenem/views/admin/toec/toec.master" AutoEventWireup="true" CodeBehind="edittargetlist.aspx.cs" Inherits="Toems_FrontEnd.views.admin.toec.edittargetlist" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="TopBreadCrumbSub2" runat="server">
-     <li><a href="<%= ResolveUrl("~/views/admin/toec/createtargetlist.aspx") %>?level=2">Create Target List</a></li>
+     <li><a href="<%= ResolveUrl("~/views/admin/toec/createtargetlist.aspx") %>?level=2">Edit Target List</a></li>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="SubNavTitle_Sub2" runat="server">
-    Create Target List
+    Edit Target List
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="DropDownActionsSub2" runat="server">
 
-     <li><asp:LinkButton ID="buttonUpdate" runat="server" OnClick="buttonUpdate_Click" Text="Create Target List" CssClass="main-action" /></li>
+     <li><asp:LinkButton ID="buttonUpdate" runat="server" OnClick="buttonUpdate_Click" Text="Update Target List" CssClass="main-action" /></li>
 </asp:Content>
 <asp:Content ID="Content4" ContentPlaceHolderID="SubContent2" runat="server">
-     <script type="text/javascript">
-        $(document).ready(function() {
-            $('#createtargetlist').addClass("nav-current");
-        });
-     </script>
+    
 
      <div class="size-4 column">
         Target List Name:

@@ -196,6 +196,8 @@
     <Content Include="views\admin\storage.aspx" />
     <Content Include="views\admin\taskscheduler.aspx" />
     <Content Include="views\admin\toec\createtargetlist.aspx" />
+    <Content Include="views\admin\toec\editdeployjob.aspx" />
+    <Content Include="views\admin\toec\edittargetlist.aspx" />
     <Content Include="views\admin\toec\general.aspx" />
     <Content Include="views\admin\toec\createdeployjob.aspx" />
     <Content Include="views\admin\toec\searchdeployjobs.aspx" />
@@ -1403,6 +1405,20 @@
     </Compile>
     <Compile Include="views\admin\toec\createtargetlist.aspx.designer.cs">
       <DependentUpon>createtargetlist.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\toec\editdeployjob.aspx.cs">
+      <DependentUpon>editdeployjob.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\toec\editdeployjob.aspx.designer.cs">
+      <DependentUpon>editdeployjob.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\toec\edittargetlist.aspx.cs">
+      <DependentUpon>edittargetlist.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\toec\edittargetlist.aspx.designer.cs">
+      <DependentUpon>edittargetlist.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\admin\toec\general.aspx.cs">
       <DependentUpon>general.aspx</DependentUpon>

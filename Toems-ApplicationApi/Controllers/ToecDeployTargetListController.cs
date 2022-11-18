@@ -31,7 +31,7 @@ namespace Toems_ApplicationApi.Controllers
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public EntityToecTargetList Get(int id)
         {
-            var result = _toecTargetList.GetToecDeployJob(id);
+            var result = _toecTargetList.GetToecTargetList(id);
             if (result == null) throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
             return result;
         }
@@ -43,7 +43,13 @@ namespace Toems_ApplicationApi.Controllers
             return _toecTargetList.Search(new DtoSearchFilter());
         }
 
-         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        public IEnumerable<EntityToecTargetListComputer> GetMembers(int id)
+        {
+            return _toecTargetList.GetMembers(id);
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         [HttpPost]
         public IEnumerable<EntityToecTargetList> Search(DtoSearchFilter filter)
         {
