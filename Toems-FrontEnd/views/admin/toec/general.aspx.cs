@@ -50,6 +50,7 @@ namespace Toems_FrontEnd.views.admin.toec
             txtShutdownDelay.Text = Call.SettingApi.GetSetting(SettingStrings.ShutdownDelay).Value;
             txtDomainUsername.Text = Call.SettingApi.GetSetting(SettingStrings.DomainJoinUser).Value;
             txtDomainName.Text = Call.SettingApi.GetSetting(SettingStrings.DomainJoinName).Value;
+            txtMaxWorkers.Text = Call.SettingApi.GetSetting(SettingStrings.ToecRemoteInstallMaxWorkers).Value;
         }
 
 
@@ -124,6 +125,12 @@ namespace Toems_FrontEnd.views.admin.toec
                     Name = SettingStrings.DomainJoinName,
                     Value = txtDomainName.Text,
                     Id = Call.SettingApi.GetSetting(SettingStrings.DomainJoinName).Id
+                },
+                     new EntitySetting
+                {
+                    Name = SettingStrings.ToecRemoteInstallMaxWorkers,
+                    Value = txtMaxWorkers.Text,
+                    Id = Call.SettingApi.GetSetting(SettingStrings.ToecRemoteInstallMaxWorkers).Id
                 },
 
 

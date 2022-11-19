@@ -39,7 +39,7 @@
     </div>
     <br class="clear"/>
      <div class="size-4 column">
-        Domain:
+        Domain (NetBIOS Format):
     </div>
     <div class="size-5 column">
         <asp:TextBox ID="txtDomain" runat="server" CssClass="textbox"></asp:TextBox>
@@ -80,13 +80,7 @@
         <asp:DropDownList ID="ddlExceptionList" runat="server" CssClass="ddlist" ></asp:DropDownList>
             </div>
     </div>
-    <br class="clear"/>
-       <div class="size-4 column">
-        Max Workers:
-    </div>
-    <div class="size-5 column">
-        <asp:TextBox ID="txtMaxWorkers" runat="server" CssClass="textbox"></asp:TextBox>
-    </div>
+  
     <br class="clear"/>
       <div class="size-4 column">
         Job Enabled:

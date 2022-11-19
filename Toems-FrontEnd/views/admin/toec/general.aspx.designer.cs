@@ -114,6 +114,15 @@ namespace Toems_FrontEnd.views.admin.toec
         protected global::System.Web.UI.WebControls.TextBox txtCheckin;
 
         /// <summary>
+        /// txtMaxWorkers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtMaxWorkers;
+
+        /// <summary>
         /// txtShutdownDelay control.
         /// </summary>
         /// <remarks>

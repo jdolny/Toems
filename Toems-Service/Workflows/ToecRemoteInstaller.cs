@@ -10,7 +10,7 @@ using Toems_Service.Entity;
 using Newtonsoft.Json;
 using Toems_Common.Dto;
 using System.IO;
-
+using Toems_Common;
 
 namespace Toems_Service.Workflows
 {
@@ -66,6 +66,23 @@ namespace Toems_Service.Workflows
             BaseSourcePath = Path.Combine(applicationPath, "private", "agent");
             foreach (var job in uow.ToecDeployJobRepository.Get(x => x.Enabled))
             {
+                //reset any computers that might be hung up
+                var computers = uow.ToecTargetListComputerRepository.Get(x => x.TargetListId == job.TargetListId);
+                foreach (var computer in computers)
+                {
+                    if((computer.Status == EnumToecDeployTargetComputer.TargetStatus.Queued
+                        || computer.Status == EnumToecDeployTargetComputer.TargetStatus.Installing
+                        || computer.Status == EnumToecDeployTargetComputer.TargetStatus.Reinstalling
+                        || computer.Status == EnumToecDeployTargetComputer.TargetStatus.Uninstalling)
+                        && DateTime.Now - computer.LastStatusDate >= TimeSpan.FromHours(12))
+                    {
+                        computer.Status = EnumToecDeployTargetComputer.TargetStatus.AwaitingAction;
+                        uow.ToecTargetListComputerRepository.Update(computer, computer.Id);
+                    }
+
+                }
+                uow.Save();
+
                 //check if thread for this job is already running
                 var threads = uow.ToecDeployThreadRepository.Get(x => x.JobId == job.Id);
 
@@ -89,6 +106,7 @@ namespace Toems_Service.Workflows
 
         private async void RunInstallThread(EntityToecDeployJob job)
         {
+            Random rnd = new Random();
             var stopThread = false;
             var threadId = Guid.NewGuid().ToString();
             var uow = new UnitOfWork();
@@ -97,13 +115,19 @@ namespace Toems_Service.Workflows
             {
                 uow = new UnitOfWork();
                 var listTargetComputers = new List<EntityToecTargetListComputer>();
-                if(job.JobType == EnumToecDeployJob.JobType.Install)
+
+                if (job.JobType == EnumToecDeployJob.JobType.Install)
                     listTargetComputers = uow.ToecTargetListComputerRepository.Get(x => x.TargetListId == job.TargetListId && x.Status != EnumToecDeployTargetComputer.TargetStatus.InstallComplete);
-                else if(job.JobType == EnumToecDeployJob.JobType.Reinstall)
+                else if (job.JobType == EnumToecDeployJob.JobType.Install && job.RunMode == EnumToecDeployJob.RunMode.Continuous)
+                    listTargetComputers = uow.ToecTargetListComputerRepository.Get(x => x.TargetListId == job.TargetListId);
+                else if (job.JobType == EnumToecDeployJob.JobType.Reinstall)
                     listTargetComputers = uow.ToecTargetListComputerRepository.Get(x => x.TargetListId == job.TargetListId && x.Status != EnumToecDeployTargetComputer.TargetStatus.ReinstallComplete);
                 else if (job.JobType == EnumToecDeployJob.JobType.Uninstall)
                     listTargetComputers = uow.ToecTargetListComputerRepository.Get(x => x.TargetListId == job.TargetListId && x.Status != EnumToecDeployTargetComputer.TargetStatus.UninstallComplete);
-                
+
+                if (!listTargetComputers.Any())
+                    break;
+
                 var excludedComputers = uow.ToecTargetListComputerRepository.Get(x => x.TargetListId == job.ExclusionListId).Select(x => x.Name);
 
                 foreach (var ex in excludedComputers)
@@ -112,24 +136,24 @@ namespace Toems_Service.Workflows
                 }
 
                 int activeCount = 0;
-
-                if (job.JobType == EnumToecDeployJob.JobType.Install)
-                    activeCount = listTargetComputers.Where(x => (x.Status == EnumToecDeployTargetComputer.TargetStatus.Installing || x.Status == EnumToecDeployTargetComputer.TargetStatus.Queued) && DateTime.Now - x.LastStatusDate < TimeSpan.FromMinutes(5)).Count();
-                else if (job.JobType == EnumToecDeployJob.JobType.Reinstall)
-                    activeCount = listTargetComputers.Where(x => (x.Status == EnumToecDeployTargetComputer.TargetStatus.Reinstalling || x.Status == EnumToecDeployTargetComputer.TargetStatus.Queued) && DateTime.Now - x.LastStatusDate < TimeSpan.FromMinutes(5)).Count();
-                else if (job.JobType == EnumToecDeployJob.JobType.Uninstall)
-                    activeCount = listTargetComputers.Where(x => (x.Status == EnumToecDeployTargetComputer.TargetStatus.Uninstalling || x.Status == EnumToecDeployTargetComputer.TargetStatus.Queued) && DateTime.Now - x.LastStatusDate < TimeSpan.FromMinutes(5)).Count();
-                
+                activeCount = listTargetComputers.Where(x => (x.Status == EnumToecDeployTargetComputer.TargetStatus.Installing
+                || x.Status == EnumToecDeployTargetComputer.TargetStatus.Reinstalling
+                || x.Status == EnumToecDeployTargetComputer.TargetStatus.Uninstalling 
+                || x.Status == EnumToecDeployTargetComputer.TargetStatus.Queued) && DateTime.Now - x.LastStatusDate < TimeSpan.FromMinutes(5)).Count();
+            
                 var activeThreadComputers = new List<EntityToecTargetListComputer>();
-                while (activeCount < job.MaxWorkers)
+                var maxWorkers = uow.SettingRepository.Get(x => x.Name == SettingStrings.ToecRemoteInstallMaxWorkers).FirstOrDefault().Value;
+                while (activeCount < Convert.ToInt16(maxWorkers))
                 {
                     EntityToecTargetListComputer target = null;
-                    if(job.JobType != EnumToecDeployJob.JobType.Uninstall || job.JobType != EnumToecDeployJob.JobType.Reinstall)
-                        target = listTargetComputers.FirstOrDefault(x => x.Status != EnumToecDeployTargetComputer.TargetStatus.Failed || (x.Status == EnumToecDeployTargetComputer.TargetStatus.Failed && DateTime.Now - x.LastStatusDate > TimeSpan.FromHours(4)));
-                    else if(job.JobType != EnumToecDeployJob.JobType.Install)
+                    if (job.JobType == EnumToecDeployJob.JobType.Install && job.RunMode == EnumToecDeployJob.RunMode.Continuous)
+                    {
+                        target = listTargetComputers[rnd.Next(listTargetComputers.Count)];
+                    }
+                    else
                         target = listTargetComputers.FirstOrDefault(x => x.Status == EnumToecDeployTargetComputer.TargetStatus.AwaitingAction || (x.Status == EnumToecDeployTargetComputer.TargetStatus.Failed && DateTime.Now - x.LastStatusDate > TimeSpan.FromHours(4)));
-                   
-                    if (target == null)
+                  
+                    if (target == null && job.RunMode != EnumToecDeployJob.RunMode.Continuous)
                     {
                         stopThread = true;
                         break;
@@ -186,8 +210,14 @@ namespace Toems_Service.Workflows
                                 }
                                 else if (File.Exists($"\\\\{c.Name}\\admin$\\Magaeric Solutions\\{deployId}.failed"))
                                 {
+                                    var errorMessage = "";
+                                    try
+                                    {
+                                        errorMessage = File.ReadAllText($"\\\\{c.Name}\\admin$\\Magaeric Solutions\\{deployId}.failed");
+                                    }
+                                    catch { }//ignored
                                     actionComplete = true;
-                                    SetError(job, c, "Could Not Complete Toec Action: " + "", uow);
+                                    SetError(job, c, "Could Not Complete Toec Action: " + errorMessage, uow);
                                 }
 
                                 if (actionComplete) break;
@@ -217,7 +247,7 @@ namespace Toems_Service.Workflows
                 await Task.Delay(10000);
 
                 if (!UpdateThreadStatusTime(job, threadId, uow)) break;
-                //if (stopThread) break;
+                if (stopThread) break;
             }
 
         }
@@ -318,6 +348,7 @@ namespace Toems_Service.Workflows
 
                         var service = "Toec-Remote-Installer";
                         scManager.OpenService(service);
+                        //todo:  how to determine location of c:\windows on a remote computer? instead of hardcoding?
                         scManager.Install(service, "c:\\windows\\magaeric solutions\\Toec-Remote-Installer.exe");
                         if(scManager.Start())
                         {

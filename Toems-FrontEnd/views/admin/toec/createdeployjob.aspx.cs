@@ -44,7 +44,6 @@ namespace Toems_FrontEnd.views.admin.toec
             toecDeployJob.RunMode = (EnumToecDeployJob.RunMode)Enum.Parse(typeof(EnumToecDeployJob.RunMode), ddlRunMode.SelectedValue);
             toecDeployJob.TargetListId = Convert.ToInt32(ddlTargetList.SelectedValue);
             toecDeployJob.ExclusionListId = Convert.ToInt32(ddlExceptionList.SelectedValue);
-            toecDeployJob.MaxWorkers = Convert.ToInt16(txtMaxWorkers.Text);
             toecDeployJob.Enabled = chkJobEnabled.Checked;
 
             var result = Call.ToecDeployJobApi.Post(toecDeployJob);

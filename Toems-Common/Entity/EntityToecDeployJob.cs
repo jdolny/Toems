@@ -33,10 +33,7 @@ namespace Toems_Common.Entity
         
         [Column("toec_deploy_run_mode")]
         public EnumToecDeployJob.RunMode RunMode { get; set; }
-        
-        [Column("toec_deploy_job_max_workers")]
-        public int MaxWorkers { get; set; }
-        
+                
         [Column("toec_deploy_job_is_enabled")]
         public bool Enabled { get; set; }
 

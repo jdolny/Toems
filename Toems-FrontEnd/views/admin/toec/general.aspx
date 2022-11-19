@@ -64,6 +64,14 @@
         </div>
     
            <br class="clear"/>
+
+          <div class="size-4 column">
+            Toec Remote Install Max Works:
+        </div>
+        <div class="size-5 column">
+            <asp:TextBox ID="txtMaxWorkers" runat="server" CssClass="textbox"></asp:TextBox>
+        </div>
+        <br class="clear"/>
     
           <div class="size-4 column">
             Shutdown Delay (Seconds):

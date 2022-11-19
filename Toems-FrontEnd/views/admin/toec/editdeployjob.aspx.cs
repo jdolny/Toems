@@ -45,7 +45,6 @@ namespace Toems_FrontEnd.views.admin.toec
             ddlRunMode.SelectedValue = ToecDeployJob.RunMode.ToString();
             ddlTargetList.SelectedValue = ToecDeployJob.TargetListId.ToString();
             ddlExceptionList.SelectedValue = ToecDeployJob.ExclusionListId.ToString();
-            txtMaxWorkers.Text = ToecDeployJob.MaxWorkers.ToString();
             chkJobEnabled.Checked = ToecDeployJob.Enabled;
 
 
@@ -62,7 +61,6 @@ namespace Toems_FrontEnd.views.admin.toec
             ToecDeployJob.RunMode = (EnumToecDeployJob.RunMode)Enum.Parse(typeof(EnumToecDeployJob.RunMode), ddlRunMode.SelectedValue);
             ToecDeployJob.TargetListId = Convert.ToInt32(ddlTargetList.SelectedValue);
             ToecDeployJob.ExclusionListId = Convert.ToInt32(ddlExceptionList.SelectedValue);
-            ToecDeployJob.MaxWorkers = Convert.ToInt16(txtMaxWorkers.Text);
             ToecDeployJob.Enabled = chkJobEnabled.Checked;
 
             var result = Call.ToecDeployJobApi.Put(ToecDeployJob.Id, ToecDeployJob);

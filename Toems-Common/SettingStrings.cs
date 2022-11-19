@@ -180,6 +180,8 @@
 
         public const string ForceImagingMfa = "Force Imaging MFA";
 
+        public const string ToecRemoteInstallMaxWorkers = "Toec Remote Install Max Workers";
+
         public const int GlobalVersion = 148;
 
     }

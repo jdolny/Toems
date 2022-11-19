@@ -135,6 +135,8 @@ CHANGE COLUMN `toec_deploy_thread_task_id` `toec_deploy_thread_task_id` VARCHAR(
 ALTER TABLE `toec_deploy_target_list_computers` 
 ADD COLUMN `last_update_details` TEXT NULL AFTER `last_status_change_date`;
 
+INSERT INTO `admin_settings` (`admin_setting_name`, `admin_setting_value`) VALUES ('Toec Remote Install Max Workers', '5');
+
 
 
 "
