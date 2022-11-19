@@ -37,6 +37,14 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpPost]
+        public DtoApiBoolResponse RunToecDeploySingle(DtoSingleToecDeploy job)
+        {
+            new Toems_Service.Workflows.ToecRemoteInstaller().RunSingle(job);
+            return new DtoApiBoolResponse() { Value = true };
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public IEnumerable<EntityToecTargetListComputer> GetTargetComputers(int id)
         {
             return _toecDeployJob.GetTargetComputers(id);

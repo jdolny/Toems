@@ -51,13 +51,13 @@ namespace Toems_FrontEnd.views.admin.toec
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divLevel2;
 
         /// <summary>
-        /// pxesettings control.
+        /// general control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl pxesettings;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl general;
 
         /// <summary>
         /// createdeployjob control.
@@ -103,6 +103,15 @@ namespace Toems_FrontEnd.views.admin.toec
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl deployjobstatus;
+
+        /// <summary>
+        /// singledeployjob control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl singledeployjob;
 
         /// <summary>
         /// SubContent2 control.

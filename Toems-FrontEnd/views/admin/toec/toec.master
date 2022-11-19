@@ -19,7 +19,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="Level2" Runat="Server">
       <div id="divLevel2" runat="server">
     <ul class="ul-secondary-nav">
-    <li id="pxesettings" runat="server" ClientIDMode="Static">
+    <li id="general" runat="server" ClientIDMode="Static">
         <a href="<%= ResolveUrl("~/views/admin/toec/general.aspx") %>?level=2">
             <span class="sub-nav-text">General</span></a>
     </li>
@@ -43,6 +43,11 @@
          <li id="deployjobstatus" runat="server" ClientIDMode="Static">
         <a href="<%= ResolveUrl("~/views/admin/toec/deployjobstatus.aspx") %>?level=2">
             <span class="sub-nav-text">Deploy Job Status</span></a>
+    </li>
+
+           <li id="singledeployjob" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/toec/singledeployjob.aspx") %>?level=2">
+            <span class="sub-nav-text">Deploy Toec To Single Computer</span></a>
     </li>
    
         </ul>

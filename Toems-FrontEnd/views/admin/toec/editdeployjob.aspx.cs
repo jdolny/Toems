@@ -30,12 +30,10 @@ namespace Toems_FrontEnd.views.admin.toec
                 ddlRunMode.DataBind();
 
                 PopulateToecTargetLists(ddlTargetList);
-                ddlTargetList.Items.Insert(0, new ListItem("", "Select A Target List"));
-                ddlTargetList.SelectedIndex = 1;
+                ddlTargetList.Items.Insert(0, new ListItem("Select A Target List", "-1"));
 
                 PopulateToecTargetLists(ddlExceptionList);
-                ddlExceptionList.Items.Insert(0, new ListItem("", "Select An Exception List"));
-                ddlExceptionList.SelectedIndex = 1;
+                ddlExceptionList.Items.Insert(0, new ListItem("Select An Exception List", "-1"));
             }
 
             txtName.Text = ToecDeployJob.Name;
@@ -54,8 +52,10 @@ namespace Toems_FrontEnd.views.admin.toec
         {
             ToecDeployJob.Name = txtName.Text;
             ToecDeployJob.Username = txtUsername.Text;
-            if(!string.IsNullOrEmpty(txtPassword.Text))
+            if (!string.IsNullOrEmpty(txtPassword.Text))
                 ToecDeployJob.PasswordEncrypted = txtPassword.Text;
+            else
+                ToecDeployJob.PasswordEncrypted = null;
             ToecDeployJob.Domain = txtDomain.Text;
             ToecDeployJob.JobType = (EnumToecDeployJob.JobType)Enum.Parse(typeof(EnumToecDeployJob.JobType), ddlJobType.SelectedValue);
             ToecDeployJob.RunMode = (EnumToecDeployJob.RunMode)Enum.Parse(typeof(EnumToecDeployJob.RunMode), ddlRunMode.SelectedValue);

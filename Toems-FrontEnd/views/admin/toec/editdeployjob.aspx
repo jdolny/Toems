@@ -29,7 +29,7 @@
         Password:
     </div>
     <div class="size-5 column">
-        <asp:TextBox ID="txtPassword" runat="server" CssClass="textbox" TextMode="Password"></asp:TextBox>
+        <asp:TextBox ID="txtPassword" runat="server" CssClass="textbox password" TextMode="Password"></asp:TextBox>
     </div>
     <br class="clear"/>
      <div class="size-4 column">

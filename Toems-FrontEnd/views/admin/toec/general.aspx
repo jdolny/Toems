@@ -19,7 +19,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="SubContent2" Runat="Server">
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#client').addClass("nav-current");
+            $('#general').addClass("nav-current");
         });
     </script>
      <div class="size-4 column">

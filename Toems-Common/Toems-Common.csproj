@@ -106,6 +106,7 @@
     <Compile Include="Dto\DtoRepImageCom.cs" />
     <Compile Include="Dto\DtoReplicationProcess.cs" />
     <Compile Include="Dto\DtoServerImageRepStatus.cs" />
+    <Compile Include="Dto\DtoSingleToecDeploy.cs" />
     <Compile Include="Dto\DtoSocketRequest.cs" />
     <Compile Include="Dto\DtoApiBoolResponse.cs" />
     <Compile Include="Dto\DtoApiIntResponse.cs" />

@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Toems_Common.Dto;
 using System.IO;
 using Toems_Common;
+using System.Threading;
 
 namespace Toems_Service.Workflows
 {
@@ -104,6 +105,77 @@ namespace Toems_Service.Workflows
             }
         }
 
+        public void RunSingle(DtoSingleToecDeploy singleJob)
+        {
+            Task.Run(() => RunSingleInstallThread(singleJob));
+         
+        }
+        private async void RunSingleInstallThread(DtoSingleToecDeploy singleJob)
+        {
+
+            Logger.Info("Deploying Toec To Computer: " + singleJob.ComputerName);
+            using (var unc = new UncServices())
+            {
+                var deployId = Guid.NewGuid().ToString();
+                if (unc.ConnectWithCredentials($"\\\\{singleJob.ComputerName}\\admin$", singleJob.Username, singleJob.Domain, singleJob.Password) || unc.LastError == 1219)
+                {
+                    if (!CopyFilesToAdminShare(singleJob.JobType, singleJob.ComputerName, deployId))
+                    {
+                        Logger.Error("Could Not Copy Files To Admin Share ");
+                        return;
+                    }
+
+                    var deployServiceResult = InstallDeployService(singleJob.Username,singleJob.Password,singleJob.Domain, singleJob.ComputerName);
+                    if (deployServiceResult != 0)
+                    {
+                        Logger.Error("Could Not Connect To Service Control Manager: " + deployServiceResult.ToString());
+                        Cleanup(singleJob.Username,singleJob.Password,singleJob.Domain, singleJob.ComputerName);
+                        return;
+                    }
+
+                    var actionComplete = false;
+                    var actionCompleteCounter = 1;
+                    while (true)
+                    {
+                        if (File.Exists($"\\\\{singleJob.ComputerName}\\admin$\\Magaeric Solutions\\{deployId}.success"))
+                        {
+                            actionComplete = true;
+                            Logger.Info("Successfully deployed Toec to: " + singleJob.ComputerName);
+                        }
+                        else if (File.Exists($"\\\\{singleJob.ComputerName}\\admin$\\Magaeric Solutions\\{deployId}.failed"))
+                        {
+                            var errorMessage = "";
+                            try
+                            {
+                                errorMessage = File.ReadAllText($"\\\\{singleJob.ComputerName}\\admin$\\Magaeric Solutions\\{deployId}.failed");
+                            }
+                            catch { }//ignored
+                            actionComplete = true;
+                            Logger.Error("Could Not Complete Toec Action on Computer: " + singleJob.ComputerName + " " + errorMessage);
+                        }
+
+                        if (actionComplete) break;
+
+                        if (actionCompleteCounter > 30)
+                        {
+                            Logger.Error("Toec Installation Result Could Not Be Determined For Computer " + singleJob.ComputerName + " .  5 Minute Timeout exceeded.");
+                            break;
+                        }
+
+                        actionCompleteCounter++;
+                        await Task.Delay(10000);
+                    }
+                }
+                else
+                {
+                    Logger.Debug($"Could Not Connect To {singleJob.ComputerName} Admin Share");
+                    return;
+                }
+
+                Cleanup(singleJob.Username, singleJob.Password, singleJob.Domain, singleJob.ComputerName);
+            }
+        }
+
         private async void RunInstallThread(EntityToecDeployJob job)
         {
             Random rnd = new Random();
@@ -185,17 +257,17 @@ namespace Toems_Service.Workflows
                         var deployId = Guid.NewGuid().ToString();
                         if (unc.ConnectWithCredentials($"\\\\{c.Name}\\admin$", job.Username, job.Domain, new EncryptionServices().DecryptText(job.PasswordEncrypted)) || unc.LastError == 1219)
                         {
-                            if (!CopyFilesToAdminShare(job, c.Name, deployId))
+                            if (!CopyFilesToAdminShare(job.JobType, c.Name, deployId))
                             {
                                 SetError(job, c, "Could Not Copy Files To Admin Share ", uow);
                                 continue;
                             }
 
-                            var deployServiceResult = InstallDeployService(job, c.Name);
+                            var deployServiceResult = InstallDeployService(job.Username, new EncryptionServices().DecryptText(job.PasswordEncrypted),job.Domain, c.Name);
                             if (deployServiceResult != 0)
                             {
                                 SetError(job, c, "Could Not Connect To Service Control Manager: " + deployServiceResult.ToString(), uow);
-                                Cleanup(job,c.Name);
+                                Cleanup(job.Username, new EncryptionServices().DecryptText(job.PasswordEncrypted), job.Domain, c.Name);
                                 continue;
                             }
 
@@ -240,7 +312,7 @@ namespace Toems_Service.Workflows
                             continue;
                         }
 
-                        Cleanup(job,c.Name);
+                        Cleanup(job.Username,new EncryptionServices().DecryptText(job.PasswordEncrypted),job.Domain,c.Name);
                     }
                 }
 
@@ -252,9 +324,9 @@ namespace Toems_Service.Workflows
 
         }
 
-        private void Cleanup(EntityToecDeployJob job, string computerName)
+        private void Cleanup(string username, string password, string domain, string computerName)
         {
-            using (var imp = new ServiceImpersonation(job.Domain, job.Username, new EncryptionServices().DecryptText(job.PasswordEncrypted)))
+            using (var imp = new ServiceImpersonation(domain, username, password))
             {
                 using (var scManager = new ServiceScManager(computerName))
                 {
@@ -293,16 +365,16 @@ namespace Toems_Service.Workflows
             uow.Save();
         }
 
-        private bool CopyFilesToAdminShare(EntityToecDeployJob job, string computerName, string deployId)
+        private bool CopyFilesToAdminShare(EnumToecDeployJob.JobType jobType, string computerName, string deployId)
         {
             var configFileContents = new DtoToecDeployConfig();
             configFileContents.Version = ExpectedClientVersion;
             configFileContents.DeployId = deployId;
-            if (job.JobType == EnumToecDeployJob.JobType.Install)
+            if (jobType == EnumToecDeployJob.JobType.Install)
                 configFileContents.Install = true;
-            else if (job.JobType == EnumToecDeployJob.JobType.Reinstall)
+            else if (jobType == EnumToecDeployJob.JobType.Reinstall)
                 configFileContents.Reinstall = true;
-            else if (job.JobType == EnumToecDeployJob.JobType.Uninstall)
+            else if (jobType == EnumToecDeployJob.JobType.Uninstall)
                 configFileContents.Uninstall = true;
 
             var destinationFolder = $"\\\\{computerName}\\admin$\\Magaeric Solutions\\";
@@ -330,9 +402,9 @@ namespace Toems_Service.Workflows
 
         }
 
-        private int InstallDeployService(EntityToecDeployJob job, string computerName)
+        private int InstallDeployService(string username, string password, string domain, string computerName)
         {
-            using (var imp = new ServiceImpersonation(job.Domain, job.Username, new EncryptionServices().DecryptText(job.PasswordEncrypted)))
+            using (var imp = new ServiceImpersonation(domain, username, password))
             {
                 if (imp.LastError != 0)
                 {

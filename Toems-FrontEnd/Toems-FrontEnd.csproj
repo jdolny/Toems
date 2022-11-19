@@ -203,6 +203,7 @@
     <Content Include="views\admin\toec\createdeployjob.aspx" />
     <Content Include="views\admin\toec\searchdeployjobs.aspx" />
     <Content Include="views\admin\toec\searchtargetlists.aspx" />
+    <Content Include="views\admin\toec\singledeployjob.aspx" />
     <Content Include="views\admin\wolrelays\create.aspx" />
     <Content Include="views\admin\wolrelays\edit.aspx" />
     <Content Include="views\admin\wolrelays\search.aspx" />
@@ -1448,6 +1449,13 @@
     </Compile>
     <Compile Include="views\admin\toec\searchtargetlists.aspx.designer.cs">
       <DependentUpon>searchtargetlists.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\toec\singledeployjob.aspx.cs">
+      <DependentUpon>singledeployjob.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\toec\singledeployjob.aspx.designer.cs">
+      <DependentUpon>singledeployjob.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\admin\toec\toec.master.cs">
       <DependentUpon>toec.master</DependentUpon>

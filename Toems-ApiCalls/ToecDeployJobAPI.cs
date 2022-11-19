@@ -38,5 +38,16 @@ namespace Toems_ApiCalls
                 return result.Value;
             return false;
         }
+
+        public bool RunToecDeploySingle(DtoSingleToecDeploy job)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = string.Format("{0}/RunToecDeploySingle/", Resource);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(job), ParameterType.RequestBody);
+            var result = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
+            if (result != null)
+                return result.Value;
+            return false;
+        }
     }
 }
