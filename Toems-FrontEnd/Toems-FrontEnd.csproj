@@ -196,6 +196,7 @@
     <Content Include="views\admin\storage.aspx" />
     <Content Include="views\admin\taskscheduler.aspx" />
     <Content Include="views\admin\toec\createtargetlist.aspx" />
+    <Content Include="views\admin\toec\deployjobstatus.aspx" />
     <Content Include="views\admin\toec\editdeployjob.aspx" />
     <Content Include="views\admin\toec\edittargetlist.aspx" />
     <Content Include="views\admin\toec\general.aspx" />
@@ -1405,6 +1406,13 @@
     </Compile>
     <Compile Include="views\admin\toec\createtargetlist.aspx.designer.cs">
       <DependentUpon>createtargetlist.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\admin\toec\deployjobstatus.aspx.cs">
+      <DependentUpon>deployjobstatus.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\toec\deployjobstatus.aspx.designer.cs">
+      <DependentUpon>deployjobstatus.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\admin\toec\editdeployjob.aspx.cs">
       <DependentUpon>editdeployjob.aspx</DependentUpon>

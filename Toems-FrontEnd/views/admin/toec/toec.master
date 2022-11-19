@@ -39,6 +39,11 @@
         <a href="<%= ResolveUrl("~/views/admin/toec/searchtargetlists.aspx") %>?level=2">
             <span class="sub-nav-text">Search Target Lists</span></a>
     </li>
+
+         <li id="deployjobstatus" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/toec/deployjobstatus.aspx") %>?level=2">
+            <span class="sub-nav-text">Deploy Job Status</span></a>
+    </li>
    
         </ul>
           </div>

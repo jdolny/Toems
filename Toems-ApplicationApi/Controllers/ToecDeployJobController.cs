@@ -36,6 +36,11 @@ namespace Toems_ApplicationApi.Controllers
             return result;
         }
 
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        public IEnumerable<EntityToecTargetListComputer> GetTargetComputers(int id)
+        {
+            return _toecDeployJob.GetTargetComputers(id);
+        }
 
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public IEnumerable<EntityToecDeployJob> Get()
@@ -54,6 +59,20 @@ namespace Toems_ApplicationApi.Controllers
         public DtoApiStringResponse GetCount()
         {
             return new DtoApiStringResponse {Value = _toecDeployJob.TotalCount()};
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpGet]
+        public DtoApiBoolResponse RestartDeployJobService()
+        {
+            return new DtoApiBoolResponse { Value = _toecDeployJob.RestartDeployJobService() };
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpGet]
+        public DtoApiBoolResponse ResetComputerStatus(int id)
+        {
+            return new DtoApiBoolResponse { Value = _toecDeployJob.ResetComputerStatus(id) };
         }
 
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]

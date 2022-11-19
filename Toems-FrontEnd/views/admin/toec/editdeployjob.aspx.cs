@@ -30,11 +30,11 @@ namespace Toems_FrontEnd.views.admin.toec
                 ddlRunMode.DataBind();
 
                 PopulateToecTargetLists(ddlTargetList);
-                ddlTargetList.Items.Insert(0, new ListItem("", ""));
+                ddlTargetList.Items.Insert(0, new ListItem("", "Select A Target List"));
                 ddlTargetList.SelectedIndex = 1;
 
                 PopulateToecTargetLists(ddlExceptionList);
-                ddlExceptionList.Items.Insert(0, new ListItem("", ""));
+                ddlExceptionList.Items.Insert(0, new ListItem("", "Select An Exception List"));
                 ddlExceptionList.SelectedIndex = 1;
             }
 

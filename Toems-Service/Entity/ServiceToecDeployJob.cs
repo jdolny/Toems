@@ -57,7 +57,35 @@ namespace Toems_Service.Entity
         {
             return _uow.ToecDeployJobRepository.Get(x => x.Name.Contains(filter.SearchText));
         }
+        public List<EntityToecTargetListComputer> GetTargetComputers(int toecDeployJobId)
+        {
+            var u = GetToecDeployJob(toecDeployJobId);
+            if(u != null)
+            {
+                return _uow.ToecTargetListComputerRepository.Get(x => x.TargetListId == u.TargetListId);
+            }
+            return null;
+        }
 
+        public bool RestartDeployJobService()
+        {
+            _uow.ToecDeployThreadRepository.DeleteRange(x => x.Id > 0);
+            _uow.Save();
+            return true;
+        }
+
+        public bool ResetComputerStatus(int computerId)
+        {
+            var computer = _uow.ToecTargetListComputerRepository.GetById(computerId);
+            if (computer == null) return false;
+            computer.Status = Toems_Common.Enum.EnumToecDeployTargetComputer.TargetStatus.AwaitingAction;
+            computer.LastStatusDate = null;
+            computer.LastUpdateDetails = null;
+            _uow.ToecTargetListComputerRepository.Update(computer, computer.Id);
+
+            _uow.Save();
+            return true;
+        }
         public string TotalCount()
         {
             return _uow.ToecDeployJobRepository.Count();
