@@ -116,21 +116,22 @@ namespace Toems_ApplicationApi
             // Hangfire initialization
             GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0 });
             GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(600));
+
             var providerName = System.Configuration.ConfigurationManager.
                 ConnectionStrings["toems"].ProviderName;
 
             if (providerName.Equals("MySql.Data.MySqlClient"))
-            {
+            {              
                 //mysql
                 Hangfire.GlobalConfiguration.Configuration.UseStorage(
-                    new MySqlStorage(System.Configuration.ConfigurationManager.
-                        ConnectionStrings["toems"].ConnectionString));
+                    new MySqlStorage(ConfigurationManager.
+                        ConnectionStrings["toems"].ConnectionString, new MySqlStorageOptions()));
             }
             else
             {
                 //sql server
                 Hangfire.GlobalConfiguration.Configuration.UseStorage(
-                new SqlServerStorage(System.Configuration.ConfigurationManager.
+                new SqlServerStorage(ConfigurationManager.
                     ConnectionStrings["toems"].ConnectionString));
             }
 
