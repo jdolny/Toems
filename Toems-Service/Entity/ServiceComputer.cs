@@ -414,24 +414,10 @@ namespace Toems_Service.Entity
 
         public List<EntityComputer> SearchComputers(DtoSearchFilterCategories filter, int userId)
         {
-            var list = new List<EntityComputer>();
-            var sortMode = new ServiceUser().GetUserComputerSort(userId);
-
-            if (sortMode == null)
-                list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && s.ProvisionStatus != EnumProvisionStatus.Status.Archived && s.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved && s.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly).OrderByDescending(x => x.LastCheckinTime).ToList();
-            else if (sortMode.Equals("Last Checkin"))
-                list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && s.ProvisionStatus != EnumProvisionStatus.Status.Archived && s.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved && s.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly).OrderByDescending(x => x.LastCheckinTime).ToList();
-            else if (sortMode.Equals("Name"))
-                list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && s.ProvisionStatus != EnumProvisionStatus.Status.Archived && s.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved && s.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly).OrderBy(x => x.Name).ToList();
-            else
-                list = _uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && s.ProvisionStatus != EnumProvisionStatus.Status.Archived && s.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved && s.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly).OrderByDescending(x => x.LastCheckinTime).ToList();
-
-            if (list.Count == 0) return list;
-
-            foreach (var comp in list)
-            {
-                comp.LastLoggedInUser = GetUserLogins(comp.Id).OrderByDescending(x => x.Id).Take(1).Select(x => x.UserName).FirstOrDefault();
-            }
+            var list = _uow.ComputerRepository.SearchActiveComputers(filter,userId);
+            
+            if (filter.CategoryType.Equals("Any Category"))
+                return list;
 
             var categoryFilterIds = new List<int>();
             foreach (var catName in filter.Categories)
@@ -442,9 +428,9 @@ namespace Toems_Service.Entity
             }
 
             var toRemove = new List<EntityComputer>();
-            if (filter.CategoryType.Equals("Any Category"))
-                return list.Take(filter.Limit).ToList();
-            else if (filter.CategoryType.Equals("And Category"))
+        
+
+            if (filter.CategoryType.Equals("And Category"))
             {
                 foreach (var computer in list)
                 {
@@ -504,7 +490,7 @@ namespace Toems_Service.Entity
 
            
 
-            return list.Take(filter.Limit).ToList();
+            return list;
         }
 
         public List<EntityComputer> SearchImageOnlyComputers(DtoSearchFilterCategories filter, int userId)

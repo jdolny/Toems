@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
@@ -24,6 +26,63 @@ namespace Toems_DataModel
                 join gr in _context.Groups on gm.GroupId equals gr.Id
                 where c.Id == computerId && gr.PreventShutdown
                 select gr).ToList();
+        }
+
+        public List<EntityComputer> SearchActiveComputers(DtoSearchFilterCategories filter, int userId)
+        {
+            var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
+            var sortMode = "";
+            if (user.ComputerSortMode.Equals("Default"))
+            {
+                var sortModeSetting = _context.Settings.Where(x => x.Name == SettingStrings.ComputerSortMode).FirstOrDefault();
+                sortMode = sortModeSetting == null ? null : sortModeSetting.Value.ToString();
+            }
+            else
+                sortMode = user.ComputerSortMode;
+
+            var computers = (from c in _context.Computers
+                     from u in _context.UserLogins.Where(x => x.ComputerId == c.Id).OrderByDescending(x => x.Id).Take(1).DefaultIfEmpty()
+                     from b in _context.BiosInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
+                     where 
+                     (
+                     b.SerialNumber.Contains(filter.SearchText) || u.UserName.Contains(filter.SearchText) || 
+                     c.Name.Contains(filter.SearchText) || c.Guid.Contains(filter.SearchText) || c.InstallationId.Contains(filter.SearchText) || 
+                     c.UUID.Contains(filter.SearchText) || c.ImagingClientId.Contains(filter.SearchText) || c.LastIp.Contains(filter.SearchText))
+                     
+                     && c.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && c.ProvisionStatus != EnumProvisionStatus.Status.Archived
+                     && c.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved
+                     && c.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly
+
+                     select new 
+                     {
+                         id = c.Id,
+                         name = c.Name,
+                         lastCheckinTime = c.LastCheckinTime,
+                         lastIp = c.LastIp,
+                         clientVersion = c.ClientVersion,
+                         lastUser = u.UserName,
+                         provision = c.ProvisionedTime,
+                     }).AsEnumerable().Select(x => new EntityComputer()
+                     {
+                         Id = x.id,
+                         Name = x.name,
+                         LastCheckinTime = x.lastCheckinTime,
+                         LastIp = x.lastIp,
+                         ClientVersion = x.clientVersion,
+                         LastLoggedInUser = x.lastUser,
+                         ProvisionedTime = x.provision
+                     }).Take(filter.Limit).ToList();
+
+
+            if (string.IsNullOrEmpty(sortMode))
+                return computers.OrderByDescending(x => x.LastCheckinTime).ToList();
+            else if (sortMode.Equals("Last Checkin"))
+                return computers.OrderByDescending(x => x.LastCheckinTime).ToList();
+            else if (sortMode.Equals("Name"))
+                return computers.OrderBy(x => x.Name).ToList();
+            else
+                return computers.OrderByDescending(x => x.LastCheckinTime).ToList();
+
         }
 
         public List<EntityComputer> GetPotentialWOLRelays(string gateway, DateTime dateCutoff)
