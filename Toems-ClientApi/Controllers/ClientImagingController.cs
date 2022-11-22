@@ -102,6 +102,15 @@ namespace Toems_ClientApi.Controllers
 
         [HttpPost]
         [ClientImagingAuth]
+        public HttpResponseMessage GetUploadServerIp()
+        {
+            _response.Content = new StringContent(new ClientImagingServices().GetUploadServerIp(),
+               Encoding.UTF8, "text/plain");
+            return _response;
+        }
+
+        [HttpPost]
+        [ClientImagingAuth]
         public void CloseServerUpload(DtoCloseUpload upload)
         {
             new ClientImagingServices().CloseUpload(upload.taskId, upload.port);

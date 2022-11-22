@@ -1,5 +1,6 @@
 ﻿
 using log4net;
+using log4net.Repository.Hierarchy;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -284,6 +285,48 @@ namespace Toems_Service
             return JsonConvert.SerializeObject(result);
         }
 
+        public string GetUploadServerIp()
+        {
+            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
+            var thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+
+            if (thisComServer == null)
+            {
+                log.Error($"Com Server With Guid {guid} Not Found");
+                return "0";
+            }
+
+            if (!string.IsNullOrEmpty(thisComServer.ImagingIp))
+            {
+                return thisComServer.ImagingIp;
+            }
+
+            else
+            {
+                //get the ip needed for upload
+                var urlHasIp = Regex.Match(thisComServer.Url, @"\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b");
+                if (urlHasIp.Success)
+                {
+                    return urlHasIp.Captures[0].ToString();
+                }
+                else
+                {
+                    //get from dns
+                    var dnsName = thisComServer.Url.Split(new[] { "//" }, StringSplitOptions.None).Last().Split(':').First();
+                    var ipaddresses = Dns.GetHostAddresses(dnsName).Where(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).ToList();
+                    if (ipaddresses.Count > 1)
+                    {
+                        log.Error("More Than 1 Ip Address Has Been Resolved For Com Server.  You Must Add an IP Override.");
+                        return "0";
+                    }
+                    else
+                    {
+                        return ipaddresses.First().ToString();
+                    }
+                }
+            }
+        }
+
         public string CheckIn(string taskId)
         {
             var checkIn = new CheckIn();
@@ -353,55 +396,7 @@ namespace Toems_Service
                                             imageServer.Url + "clientimaging/" + "\"";
                 }
 
-                if(task.Type.Contains("upload"))
-                {
-                    if (!string.IsNullOrEmpty(imageServer.ImagingIp))
-                    {
-                        if (imageProfile.Image.Environment == "winpe")
-                            checkIn.TaskArguments += "upload_server=\"" +
-                                           imageServer.ImagingIp + "\"\r\n";
-                        else
-                            checkIn.TaskArguments += " upload_server=\"" +
-                                          imageServer.ImagingIp + "\"";
-                    }
-
-                    else
-                    {
-                        //get the ip needed for upload
-                        var urlHasIp = Regex.Match(imageServer.Url, @"\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b");
-                        if (urlHasIp.Success)
-                        {
-                            if (imageProfile.Image.Environment == "winpe")
-                                checkIn.TaskArguments +=  "upload_server=\"" +
-                                               urlHasIp.Captures[0] + "\"\r\n";
-                            else
-                                checkIn.TaskArguments += " upload_server=\"" +
-                                              urlHasIp.Captures[0] + "\"";
-                        }
-                        else
-                        {
-                            //get from dns
-                            var dnsName = imageServer.Url.Split(new[] { "//" }, StringSplitOptions.None).Last().Split(':').First();
-                            var ipaddresses = Dns.GetHostAddresses(dnsName).Where(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).ToList();
-                            if (ipaddresses.Count > 1)
-                            {
-                                checkIn.Result = "false";
-                                checkIn.Message = "More Than 1 Ip Address Has Been Resolved For Com Server.  You Must Add an IP Override.";
-                                return JsonConvert.SerializeObject(checkIn);
-                            }
-                            else
-                            {
-                                if (imageProfile.Image.Environment == "winpe")
-                                    checkIn.TaskArguments +=  "upload_server=\"" +
-                                                   ipaddresses.First().ToString() + "\"\r\n";
-                                else
-                                    checkIn.TaskArguments += " upload_server=\"" +
-                                                  ipaddresses.First().ToString() + "\"";
-                            }
-                        }
-                    }
-                    
-                }
+               
 
                 return JsonConvert.SerializeObject(checkIn);
             }
