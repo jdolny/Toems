@@ -236,7 +236,7 @@
         Delete Cache:
     </div>
      <div class="size-setting column hidden-check">
-            <asp:CheckBox ID="chkDeleteCache" runat="server" ClientIDMode="Static"></asp:CheckBox>
+            <asp:CheckBox ID="chkDeleteCache" runat="server" ClientIDMode="Static" Checked="true"></asp:CheckBox>
          <label for="chkDeleteCache"></label>
         </div>
      <br class="clear"/>
