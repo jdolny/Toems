@@ -38,6 +38,9 @@ namespace Toems_Common.Entity
         [Column("datetime_archived_local")]
         public DateTime? ArchiveDateTime { get; set; }
 
+        [Column("filecopy_overwrite")]
+        public bool OverwriteExisting { get; set; }
+
 
     }
 }

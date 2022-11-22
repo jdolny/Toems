@@ -137,6 +137,8 @@ ADD COLUMN `last_update_details` TEXT NULL AFTER `last_status_change_date`;
 
 INSERT INTO `admin_settings` (`admin_setting_name`, `admin_setting_value`) VALUES ('Toec Remote Install Max Workers', '5');
 
+ALTER TABLE `filecopy_modules` 
+ADD COLUMN `filecopy_overwrite` TINYINT(4) NULL DEFAULT 1 AFTER `datetime_archived_local`;
 
 
 "

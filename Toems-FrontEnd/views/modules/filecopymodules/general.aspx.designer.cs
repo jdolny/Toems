@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.modules.filecopymodules {
-    
-    
-    public partial class general {
-        
+namespace Toems_FrontEnd.views.modules.filecopymodules
+{
+
+
+    public partial class general
+    {
+
         /// <summary>
         /// buttonUpdate control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.modules.filecopymodules {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton buttonUpdate;
-        
+
         /// <summary>
         /// txtDisplayName control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.modules.filecopymodules {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtDisplayName;
-        
+
         /// <summary>
         /// txtGuid control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.modules.filecopymodules {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtGuid;
-        
+
         /// <summary>
         /// txtDescription control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.modules.filecopymodules {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtDescription;
-        
+
         /// <summary>
         /// txtDestination control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views.modules.filecopymodules {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtDestination;
-        
+
         /// <summary>
         /// chkUnzip control.
         /// </summary>
@@ -65,5 +67,14 @@ namespace Toems_FrontEnd.views.modules.filecopymodules {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkUnzip;
+
+        /// <summary>
+        /// chkOverwrite control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkOverwrite;
     }
 }

@@ -15,6 +15,7 @@ namespace Toems_Common.Dto.client
         public string Destination { get; set; }
         public int Order { get; set; }
         public bool Unzip { get; set; }
+        public bool Overwrite { get; set; }
         public List<DtoClientFileHash> Files { get; set; }
         public EnumCondition.FailedAction ConditionFailedAction { get; set; }
         public int ConditionNextOrder { get; set; }

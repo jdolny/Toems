@@ -19,6 +19,7 @@ namespace Toems_FrontEnd.views.modules.filecopymodules
                 Description = txtDescription.Text,
                 Destination = txtDestination.Text,
                 DecompressAfterCopy = chkUnzip.Checked,
+                OverwriteExisting = chkOverwrite.Checked
             };
 
 

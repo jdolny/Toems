@@ -327,6 +327,7 @@ namespace Toems_Service.Workflows
             clientFileCopyModule.Destination = fileCopyModule.Destination;
             clientFileCopyModule.Order = policyModule.Order;
             clientFileCopyModule.Unzip = fileCopyModule.DecompressAfterCopy;
+            clientFileCopyModule.Overwrite = fileCopyModule.OverwriteExisting;
             var moduleFiles = new ServiceModule().GetModuleFiles(fileCopyModule.Guid);
             foreach (var file in moduleFiles.OrderBy(x => x.FileName))
             {

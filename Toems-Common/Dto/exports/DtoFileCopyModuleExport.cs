@@ -16,6 +16,7 @@ namespace Toems_Common.Dto.exports
         public string Destination { get; set; }
         public int Order { get; set; }
         public bool Unzip { get; set; }
+        public bool Overwrite { get; set; }
         public string Description { get; set; }
         public string Guid { get; set; }
         public EnumCondition.FailedAction ConditionFailedAction { get; set; }
