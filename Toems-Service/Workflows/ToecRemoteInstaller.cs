@@ -12,6 +12,7 @@ using Toems_Common.Dto;
 using System.IO;
 using Toems_Common;
 using System.Threading;
+using System.Web;
 
 namespace Toems_Service.Workflows
 {
@@ -107,6 +108,7 @@ namespace Toems_Service.Workflows
 
         public void RunSingle(DtoSingleToecDeploy singleJob)
         {
+            BaseSourcePath = Path.Combine(HttpContext.Current.Server.MapPath("~"), "private", "agent");
             Task.Run(() => RunSingleInstallThread(singleJob));
          
         }
@@ -188,10 +190,10 @@ namespace Toems_Service.Workflows
                 uow = new UnitOfWork();
                 var listTargetComputers = new List<EntityToecTargetListComputer>();
 
-                if (job.JobType == EnumToecDeployJob.JobType.Install)
-                    listTargetComputers = uow.ToecTargetListComputerRepository.Get(x => x.TargetListId == job.TargetListId && x.Status != EnumToecDeployTargetComputer.TargetStatus.InstallComplete);
-                else if (job.JobType == EnumToecDeployJob.JobType.Install && job.RunMode == EnumToecDeployJob.RunMode.Continuous)
+                if (job.JobType == EnumToecDeployJob.JobType.Install && job.RunMode == EnumToecDeployJob.RunMode.Continuous)
                     listTargetComputers = uow.ToecTargetListComputerRepository.Get(x => x.TargetListId == job.TargetListId);
+                else if (job.JobType == EnumToecDeployJob.JobType.Install)
+                    listTargetComputers = uow.ToecTargetListComputerRepository.Get(x => x.TargetListId == job.TargetListId && x.Status != EnumToecDeployTargetComputer.TargetStatus.InstallComplete);
                 else if (job.JobType == EnumToecDeployJob.JobType.Reinstall)
                     listTargetComputers = uow.ToecTargetListComputerRepository.Get(x => x.TargetListId == job.TargetListId && x.Status != EnumToecDeployTargetComputer.TargetStatus.ReinstallComplete);
                 else if (job.JobType == EnumToecDeployJob.JobType.Uninstall)
@@ -220,17 +222,23 @@ namespace Toems_Service.Workflows
                     EntityToecTargetListComputer target = null;
                     if (job.JobType == EnumToecDeployJob.JobType.Install && job.RunMode == EnumToecDeployJob.RunMode.Continuous)
                     {
-                        target = listTargetComputers[rnd.Next(listTargetComputers.Count)];
+                        var newTargetComputers = listTargetComputers.Where(x => DateTime.Now - x.LastStatusDate > TimeSpan.FromHours(4)).ToList(); //don't keep retrying same computers if list is very small
+                        if(newTargetComputers.Any())
+                            target = newTargetComputers[rnd.Next(newTargetComputers.Count)];
                     }
                     else
                         target = listTargetComputers.FirstOrDefault(x => x.Status == EnumToecDeployTargetComputer.TargetStatus.AwaitingAction || (x.Status == EnumToecDeployTargetComputer.TargetStatus.Failed && DateTime.Now - x.LastStatusDate > TimeSpan.FromHours(4)));
-                  
-                    if (target == null && job.RunMode != EnumToecDeployJob.RunMode.Continuous)
+
+                    if (target == null && job.RunMode == EnumToecDeployJob.RunMode.Continuous)
+                    {
+                        break;
+                    }
+                    else if (target == null)
                     {
                         stopThread = true;
                         break;
-                        
                     }
+
                     target.Status = EnumToecDeployTargetComputer.TargetStatus.Queued;
                     target.LastStatusDate = DateTime.Now;
                     uow.ToecTargetListComputerRepository.Update(target, target.Id);
@@ -424,7 +432,7 @@ namespace Toems_Service.Workflows
                         scManager.Install(service, "c:\\windows\\magaeric solutions\\Toec-Remote-Installer.exe");
                         if(scManager.Start())
                         {
-                            Logger.Debug("Successfully installed service");
+                            Logger.Debug("Successfully Installed Remote Installer Service");
                             return 0;
                         }
                     }
