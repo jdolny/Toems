@@ -14,6 +14,7 @@ namespace Toems_FrontEnd.BasePages
         public EntityWuModule WuModule { get; set; }
         public EntityMessageModule MessageModule { get; set; }
         public EntitySysprepModule SysprepModule { get; set; }
+        public EntityWinPeModule WinPeModule { get; set; }
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -47,6 +48,9 @@ namespace Toems_FrontEnd.BasePages
             SysprepModule = !string.IsNullOrEmpty(Request["sysprepModuleId"])
               ? Call.SysprepModuleApi.Get(Convert.ToInt32(Request.QueryString["sysprepModuleId"]))
               : null;
+            WinPeModule = !string.IsNullOrEmpty(Request["winPeModuleId"])
+             ? Call.WinPeModuleApi.Get(Convert.ToInt32(Request.QueryString["winPeModuleId"]))
+             : null;
 
         }
 

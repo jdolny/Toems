@@ -36,6 +36,10 @@
              <a href="<%= ResolveUrl("~/views/modules/sysprepmodules/search.aspx") %>">
                  <span class="sub-nav-text">Sysprep Modules</span></a>
          </li>
+           <li id="winpe">
+             <a href="<%= ResolveUrl("~/views/modules/winpemodules/search.aspx") %>">
+                 <span class="sub-nav-text">WinPE Modules</span></a>
+         </li>
         </ul>
 </asp:Content>
 

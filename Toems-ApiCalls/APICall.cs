@@ -165,6 +165,11 @@ namespace Toems_ApiCalls
             get { return new FileCopyModuleAPI("FileCopyModule"); }
         }
 
+        public WinPeModuleAPI WinPeModuleApi
+        {
+            get { return new WinPeModuleAPI("WinPeModule"); }
+        }
+
         public ScriptModuleAPI ScriptModuleApi
         {
             get { return new ScriptModuleAPI("ScriptModule"); }

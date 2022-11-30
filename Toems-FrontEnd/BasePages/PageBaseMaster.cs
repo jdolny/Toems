@@ -299,6 +299,17 @@ namespace Toems_FrontEnd.BasePages
 
         }
 
+        protected void PopulateWinPeModulesDDL(DropDownList ddlModules)
+        {
+            ddlModules.DataSource =
+            Call.WinPeModuleApi.Get().Select(d => new { d.Id, d.Name });
+            ddlModules.DataValueField = "Id";
+            ddlModules.DataTextField = "Name";
+            ddlModules.DataBind();
+            ddlModules.Items.Insert(0, new ListItem("Select WinPE Module", "-1"));
+
+        }
+
         protected void PopulateToecTargetLists(DropDownList ddl)
         {
             ddl.DataSource =

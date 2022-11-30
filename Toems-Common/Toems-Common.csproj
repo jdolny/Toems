@@ -82,6 +82,7 @@
     <Compile Include="Dto\clientpartition\ClientVolumeGroupHelper.cs" />
     <Compile Include="Dto\clientpartition\ExtendedPartitionHelper.cs" />
     <Compile Include="Dto\clientpartition\PartitionHelper.cs" />
+    <Compile Include="Dto\client\DtoClientWinPeModule.cs" />
     <Compile Include="Dto\client\DtoClientMessageModule.cs" />
     <Compile Include="Dto\client\DtoClientModuleCondition.cs" />
     <Compile Include="Dto\DtoActionResult.cs" />
@@ -241,6 +242,7 @@
     <Compile Include="Dto\imageschemafe\DtoVolumeGroup.cs" />
     <Compile Include="Entity\EntityActiveImagingTask.cs" />
     <Compile Include="Entity\EntityActiveMulticastSession.cs" />
+    <Compile Include="Entity\EntityWinPeModule.cs" />
     <Compile Include="Entity\EntityToecDeployThread.cs" />
     <Compile Include="Entity\EntityToecTargetListComputer.cs" />
     <Compile Include="Entity\EntityToecTargetListOu.cs" />

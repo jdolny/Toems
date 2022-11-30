@@ -95,6 +95,9 @@ namespace Toems_Common.Entity
         [Column("pxe_dns")]
         public string PxeDns { get; set; }
 
+        [Column("winpe_module_id")]
+        public int WinPeModuleId { get; set; }
+
         [NotMapped]
         public string LastLoggedInUser {get; set;}
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Web;
+using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -132,6 +133,9 @@ namespace Toems_FrontEnd.views.computers
                     break;
                 case "deploy":
                     PageBaseMaster.EndUserMessage = ComputerBasePage.Call.ComputerApi.StartDeploy(ComputerEntity.Id);
+                    break;
+                case "deployWinPe":
+                    PageBaseMaster.EndUserMessage = ComputerBasePage.Call.ComputerApi.StartDeployWinPe(ComputerEntity.Id);
                     break;
                 case "upload":
                     PageBaseMaster.EndUserMessage = ComputerBasePage.Call.ComputerApi.StartUpload(ComputerEntity.Id);
@@ -291,6 +295,21 @@ namespace Toems_FrontEnd.views.computers
             lblTitle.Text = "Upload Image From " + ComputerEntity.Name + "?";
             Session["action"] = "upload";
             DisplayConfirm();
+
+        }
+
+        protected void btnDeployWinPE_OnClick(object sender, EventArgs e)
+        {
+            var image = new APICall().ComputerApi.GetEffectiveImage(ComputerEntity.Id);
+            if (image != null)
+            {
+                lblTitle.Text = "Are You Sure Want To Deploy The Image: " + image.Image.Name + " To Computer: " + ComputerEntity.Name + "?  If This Computer Is Managed By Theopenem" +
+                    "It Will Automatically Reboot And Begin The Imaging Process.  All Data On The Computer Will Be Overwritten With This Image." ;
+                Session["action"] = "deployWinPE";
+                DisplayConfirm();
+            }
+            else
+                PageBaseMaster.EndUserMessage = "This Computer Does Not Have An Image Assigned.";
 
         }
 

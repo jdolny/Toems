@@ -68,6 +68,13 @@ namespace Toems_DataModel
                 join fileModule in _context.FileCopyModules on policyModule.ModuleId equals fileModule.Id
                 select fileModule;
 
+            var winPe = from p in _context.Policies
+                        where p.Id == policyId
+                        join policyModule in _context.PolicyModules on p.Id equals policyModule.PolicyId
+                        where policyModule.ModuleType == EnumModule.ModuleType.WinPE
+                        join winPeModule in _context.WinPeModules on policyModule.ModuleId equals winPeModule.Id
+                        select winPeModule;
+
             var scripts = from p in _context.Policies
                 where p.Id == policyId
                 join policyModule in _context.PolicyModules on p.Id equals policyModule.PolicyId
@@ -104,6 +111,7 @@ namespace Toems_DataModel
             policyDetailed.SoftwareModules = software.ToList();
             policyDetailed.MessageModules = message.ToList();
             policyDetailed.WuModules = wu.ToList();
+            policyDetailed.WinPeModules = winPe.ToList();
             policyDetailed.Name = policy.Name;
             policyDetailed.CompletedAction = policy.CompletedAction;
             policyDetailed.Description = policy.Description;

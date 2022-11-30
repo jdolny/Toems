@@ -39,6 +39,9 @@ namespace Toems_FrontEnd.views.computers
             ddlComputerImage.SelectedValue = ComputerEntity.ImageId.ToString();
             PopulateProfiles();
             ddlImageProfile.SelectedValue = ComputerEntity.ImageProfileId.ToString();
+            PopulateWinPeModulesDDL(ddlWinPeModule);
+            ddlWinPeModule.SelectedValue = ComputerEntity.WinPeModuleId.ToString();
+
             txtIpAddress.Text = ComputerEntity.PxeIpAddress;
             txtNetMask.Text = ComputerEntity.PxeNetmask;
             txtGateway.Text = ComputerEntity.PxeGateway;
@@ -67,6 +70,7 @@ namespace Toems_FrontEnd.views.computers
                     ? -1
                     : Convert.ToInt32(ddlImageProfile.SelectedValue);
 
+            ComputerEntity.WinPeModuleId = Convert.ToInt32(ddlWinPeModule.SelectedValue);
             ComputerEntity.PxeIpAddress = txtIpAddress.Text;
             ComputerEntity.PxeNetmask = txtNetMask.Text;
             ComputerEntity.PxeGateway = txtGateway.Text;

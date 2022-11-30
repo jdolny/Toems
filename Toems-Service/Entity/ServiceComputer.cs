@@ -144,6 +144,34 @@ namespace Toems_Service.Entity
             return _uow.ComputerRepository.GetComputerModules(computerId);
         }
 
+        public EntityWinPeModule GetEffectiveWinPeModule(int computerId)
+        {
+            var computer = GetComputer(computerId);
+            var winPeModule = new ServiceWinPeModule().GetModule(computer.WinPeModuleId);
+            if (winPeModule != null) return winPeModule;
+
+            //check for an image profile via group since computer doesn't have image directly assigned
+            var computerGroupMemberships = new ServiceComputer().GetAllGroupMemberships(computerId);
+            var computerGroups = _uow.ComputerRepository.GetAllComputerGroups(computerId).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
+
+            if (computerGroups.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                foreach (var group in computerGroups)
+                {
+                    winPeModule = new ServiceWinPeModule().GetModule(group.WinPeModuleId);
+                    if (winPeModule != null) return winPeModule;
+                }
+
+                //no images assigned to any groups
+                return null;
+            }
+
+        }
+
         public ImageProfileWithImage GetEffectiveImage(int computerId)
         {
             var computer = GetComputer(computerId);
@@ -183,7 +211,7 @@ namespace Toems_Service.Entity
             policyRequest.ClientIdentity.Guid = computer.Guid;
             policyRequest.ClientIdentity.Name = computer.Name;
 
-            var policy = new Workflows.GetClientPolicies().Execute(policyRequest);
+            var policy = new Workflows.GetClientPolicies().Execute(policyRequest,computerId);
             return JsonConvert.SerializeObject(policy.Policies, Formatting.Indented);
         }
 
@@ -710,6 +738,7 @@ namespace Toems_Service.Entity
             return true;
         }
 
+
         public bool ForceCheckin(int id)
         {
             var computer = _uow.ComputerRepository.GetById(id);
@@ -1079,6 +1108,64 @@ namespace Toems_Service.Entity
                         x.ComputerId == computerId &&
                         (x.Type == "upload" || x.Type == "deploy" ||
                          x.Type == "multicast"));
+        }
+
+        public string DeployImageViaWindows(int computerId, int userId)
+        {
+            ClearLastSocketResult(computerId);
+            GetStatus(computerId);
+
+            var counter = 0;
+            while (counter < 10)
+            {
+                var lastSocketResult = LastSocketResult(computerId);
+                if (!string.IsNullOrEmpty(lastSocketResult))
+                {
+                    if (!lastSocketResult.Equals("Connected"))
+                        return "Could Not Connect To Computer.  Verify Toec Is Installed And Running On This Computer.";
+                    else
+                        break;
+                }
+                if (counter == 9)
+                {
+                    return "Could Not Connect To Computer.  Verify Toec Is Installed And Running On This Computer.";
+                }
+                System.Threading.Thread.Sleep(1000);
+                counter++;
+            }
+
+            var startImagingTaskResult = new Workflows.Unicast(computerId,"deploy",userId).Start();
+
+            if (!startImagingTaskResult.Contains("Successfully"))
+                return startImagingTaskResult;
+
+            var computer = _uow.ComputerRepository.GetById(computerId);
+
+            var moduleTypeMapping = new DtoGuidTypeMapping();
+
+            var winPeModule = GetEffectiveWinPeModule(computerId);
+            if (winPeModule == null)
+                return "This Computer Does Not Have A WinPE Module Assigned.";
+            
+            moduleTypeMapping.moduleId = winPeModule.Id;
+            moduleTypeMapping.moduleType = EnumModule.ModuleType.WinPE;
+
+            var clientPolicy = new ClientPolicyJson().CreateInstantModule(moduleTypeMapping);
+
+            var socket = _uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            if (socket != null)
+            {
+                var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, new EncryptionServices().DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+                var socketRequest = new DtoSocketRequest();
+                socketRequest.connectionIds.Add(socket.ConnectionId);
+                socketRequest.action = "WinPE_Image";
+                socketRequest.message = JsonConvert.SerializeObject(clientPolicy);
+                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+            }
+            return "Success";
         }
 
         public EntityComputer GetComputerFromClientIdentifier(string clientIdentifier)

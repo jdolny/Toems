@@ -16,6 +16,7 @@ namespace Toems_Common.Dto
             SoftwareModules = new List<DtoClientSoftwareModule>();
             WuModules = new List<DtoClientWuModule>();
             MessageModules = new List<DtoClientMessageModule>();
+            WinPeModules = new List<DtoClientWinPeModule>();
             Condition = new DtoClientModuleCondition();
         }
         public string Name { get; set; }
@@ -51,6 +52,7 @@ namespace Toems_Common.Dto
         public List<DtoClientSoftwareModule> SoftwareModules { get; set; } 
         public List<DtoClientWuModule> WuModules { get; set; }
         public List<DtoClientMessageModule> MessageModules { get; set; }
+        public List<DtoClientWinPeModule> WinPeModules { get; set; }
         public EnumPolicy.WuType WuType { get; set; }
         public EnumPolicy.PolicyComCondition PolicyComCondition { get; set; }
         public EnumCondition.FailedAction ConditionFailedAction { get; set; }

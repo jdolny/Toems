@@ -348,6 +348,13 @@
     <Content Include="views\modules\sysprepmodules\general.aspx" />
     <Content Include="views\modules\sysprepmodules\search.aspx" />
     <Content Include="views\modules\sysprepmodules\usages.aspx" />
+    <Content Include="views\modules\winpemodules\archived.aspx" />
+    <Content Include="views\modules\winpemodules\categories.aspx" />
+    <Content Include="views\modules\winpemodules\create.aspx" />
+    <Content Include="views\modules\winpemodules\general.aspx" />
+    <Content Include="views\modules\winpemodules\search.aspx" />
+    <Content Include="views\modules\winpemodules\uploadfiles.aspx" />
+    <Content Include="views\modules\winpemodules\usages.aspx" />
     <Content Include="views\modules\wumodules\archived.aspx" />
     <Content Include="views\modules\wumodules\categories.aspx" />
     <Content Include="views\modules\wumodules\create.aspx" />
@@ -449,6 +456,7 @@
     <Content Include="views\images\profiles\profiles.master" />
     <Content Include="views\admin\imageprep\imageprep.master" />
     <Content Include="views\admin\toec\toec.master" />
+    <Content Include="views\modules\winpemodules\winpemodule.master" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2639,6 +2647,62 @@
     </Compile>
     <Compile Include="views\modules\sysprepmodules\usages.aspx.designer.cs">
       <DependentUpon>usages.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\archived.aspx.cs">
+      <DependentUpon>archived.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\archived.aspx.designer.cs">
+      <DependentUpon>archived.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\categories.aspx.cs">
+      <DependentUpon>categories.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\categories.aspx.designer.cs">
+      <DependentUpon>categories.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\create.aspx.cs">
+      <DependentUpon>create.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\create.aspx.designer.cs">
+      <DependentUpon>create.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\general.aspx.cs">
+      <DependentUpon>general.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\general.aspx.designer.cs">
+      <DependentUpon>general.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\search.aspx.cs">
+      <DependentUpon>search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\search.aspx.designer.cs">
+      <DependentUpon>search.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\uploadfiles.aspx.cs">
+      <DependentUpon>uploadfiles.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\uploadfiles.aspx.designer.cs">
+      <DependentUpon>uploadfiles.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\usages.aspx.cs">
+      <DependentUpon>usages.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\usages.aspx.designer.cs">
+      <DependentUpon>usages.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\winpemodule.master.cs">
+      <DependentUpon>winpemodule.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\winpemodules\winpemodule.master.designer.cs">
+      <DependentUpon>winpemodule.master</DependentUpon>
     </Compile>
     <Compile Include="views\modules\wumodules\archived.aspx.cs">
       <DependentUpon>archived.aspx</DependentUpon>

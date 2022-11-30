@@ -56,5 +56,6 @@
         PinnedGroupAPI PinnedGroupApi { get; }
         CertificateInventoryAPI CertificateInventoryApi { get; }
         MessageModuleAPI MessageModuleApi { get; }
+        WinPeModuleAPI WinPeModuleApi { get; }
     }
 }

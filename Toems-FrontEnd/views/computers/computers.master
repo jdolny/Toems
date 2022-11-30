@@ -143,6 +143,7 @@
     <hr />
                 <li><asp:LinkButton ID="btnDeploy" runat="server" OnClick="btnDeploy_OnClick" Text="Deploy Image"></asp:LinkButton></li>
                  <li><asp:LinkButton ID="btnUpload" runat="server" OnClick="btnUpload_OnClick" Text="Upload Image"></asp:LinkButton></li>
+                <li><asp:LinkButton ID="btnDeployWinPe" runat="server" OnClick="btnDeployWinPE_OnClick" Text="Deploy WinPE Image"></asp:LinkButton></li>
     <hr />
                 <li><asp:LinkButton ID="btnCheckin" runat="server" OnClick="btnCheckin_OnClick" Text="Force Checkin" OnClientClick="checkin();"></asp:LinkButton></li>
                 <li><asp:LinkButton ID="btnInventory" runat="server" OnClick="btnInventory_OnClick" Text="Collect Inventory" OnClientClick="inventory();"></asp:LinkButton></li>

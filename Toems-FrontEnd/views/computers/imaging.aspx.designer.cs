@@ -42,6 +42,15 @@ namespace Toems_FrontEnd.views.computers
         protected global::System.Web.UI.WebControls.DropDownList ddlImageProfile;
 
         /// <summary>
+        /// ddlWinPeModule control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlWinPeModule;
+
+        /// <summary>
         /// lblImage control.
         /// </summary>
         /// <remarks>
@@ -58,6 +67,15 @@ namespace Toems_FrontEnd.views.computers
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblImageProfile;
+
+        /// <summary>
+        /// lblWinPeModule control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblWinPeModule;
 
         /// <summary>
         /// txtIpAddress control.

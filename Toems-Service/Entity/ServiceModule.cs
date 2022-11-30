@@ -114,6 +114,13 @@ namespace Toems_Service.Entity
                     moduleId = sysprepModule.Id,
                     moduleType = EnumModule.ModuleType.Sysprep
                 };
+            var winPeModule = _uow.WinPeModuleRepository.GetFirstOrDefault(x => x.Guid == moduleGuid);
+            if (winPeModule != null)
+                return new DtoGuidTypeMapping()
+                {
+                    moduleId = winPeModule.Id,
+                    moduleType = EnumModule.ModuleType.WinPE
+                };
             return null;
         }
 
@@ -157,6 +164,25 @@ namespace Toems_Service.Entity
                         _uow.FileCopyModuleRepository.Update(fModule, fModule.Id);
                         _uow.Save();
                         return new DtoActionResult() { Id = fModule.Id, Success = true };
+                    }
+
+                    break;
+                case EnumModule.ModuleType.WinPE:
+                    var winPeModule = _uow.WinPeModuleRepository.GetById(moduleId);
+                    if (winPeModule != null)
+                    {
+                        winPeModule.Archived = false;
+                        winPeModule.Name = winPeModule.Name.Split('#').First();
+                        winPeModule.ArchiveDateTime = null;
+                        if (_uow.WinPeModuleRepository.Exists(x => x.Name.Equals(winPeModule.Name)))
+                            return new DtoActionResult()
+                            {
+                                ErrorMessage = "Could Not Restore Module.  A Module With Name " + winPeModule.Name +
+                                               " Already Exists"
+                            };
+                        _uow.WinPeModuleRepository.Update(winPeModule, winPeModule.Id);
+                        _uow.Save();
+                        return new DtoActionResult() { Id = winPeModule.Id, Success = true };
                     }
 
                     break;
@@ -312,6 +338,19 @@ namespace Toems_Service.Entity
                         _uow.FileCopyModuleRepository.Update(fModule,fModule.Id);
                         _uow.Save();
                         return new DtoActionResult() {Id = moduleId, Success = true };
+                    }
+                    break;
+                case EnumModule.ModuleType.WinPE:
+                    var winPeModule = _uow.WinPeModuleRepository.GetById(moduleId);
+                    if (winPeModule != null)
+                    {
+                        if (winPeModule.Archived) return new DtoActionResult() { Id = moduleId, Success = true };
+                        winPeModule.Archived = true;
+                        winPeModule.Name = winPeModule.Name + "#" + DateTime.Now.ToString("MM-dd-yyyy_HH:mm");
+                        winPeModule.ArchiveDateTime = DateTime.Now;
+                        _uow.WinPeModuleRepository.Update(winPeModule, winPeModule.Id);
+                        _uow.Save();
+                        return new DtoActionResult() { Id = moduleId, Success = true };
                     }
                     break;
                 case EnumModule.ModuleType.Printer:

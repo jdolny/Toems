@@ -22,10 +22,10 @@ CREATE TABLE `computer_gpu_inventory` (
 
     ALTER TABLE `computer_gpu_inventory` 
 ADD INDEX `CGPU_COMPUTER_FK_idx` (`computer_id` ASC);
-ALTER TABLE `theopenem`.`computer_gpu_inventory` 
+ALTER TABLE `computer_gpu_inventory` 
 ADD CONSTRAINT `CGPU_COMPUTER_FK`
   FOREIGN KEY (`computer_id`)
-  REFERENCES `theopenem`.`computers` (`computer_id`)
+  REFERENCES `computers` (`computer_id`)
   ON DELETE CASCADE
   ON UPDATE NO ACTION;
 
@@ -139,6 +139,32 @@ INSERT INTO `admin_settings` (`admin_setting_name`, `admin_setting_value`) VALUE
 
 ALTER TABLE `filecopy_modules` 
 ADD COLUMN `filecopy_overwrite` TINYINT(4) NULL DEFAULT 1 AFTER `datetime_archived_local`;
+
+CREATE TABLE `winpe_modules` (
+  `winpe_module_id` INT NOT NULL AUTO_INCREMENT,
+  `winpe_module_guid` VARCHAR(45) NOT NULL,
+  `winpe_module_name` VARCHAR(45) NOT NULL,
+  `winpe_module_description` TEXT NULL,
+  `is_archived` TINYINT NULL DEFAULT 0,
+  `datetime_archived_local` DATETIME NULL,
+  PRIMARY KEY (`winpe_module_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+ALTER TABLE `winpe_modules` 
+ADD INDEX `PE_MOD_PK_idx` (`winpe_module_guid` ASC);
+ALTER TABLE `winpe_modules` 
+ADD CONSTRAINT `PE_MOD_PK`
+  FOREIGN KEY (`winpe_module_guid`)
+  REFERENCES `modules` (`module_guid`)
+  ON DELETE CASCADE
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `computers` 
+ADD COLUMN `winpe_module_id` INT NOT NULL DEFAULT -1 AFTER `pxe_dns`;
+
+ALTER TABLE `groups` 
+ADD COLUMN `winpe_module_id` INT NOT NULL DEFAULT -1 AFTER `is_hidden`;
 
 
 "

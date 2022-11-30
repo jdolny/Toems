@@ -72,6 +72,9 @@ namespace Toems_Common.Entity
 
         [Column("is_hidden")]
         public bool IsHidden { get; set; }
+
+        [Column("winpe_module_id")]
+        public int WinPeModuleId { get; set; }
     }
 
    

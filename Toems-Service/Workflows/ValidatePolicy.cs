@@ -34,6 +34,7 @@ namespace Toems_Service.Workflows
             _filter.IncludeSoftware = true;
             _filter.IncludeWu = true;
             _filter.IncludeMessage = true;
+            _filter.IncludeWinPe = true;
             _filter.Limit = Int32.MaxValue;
         }
 
@@ -80,6 +81,16 @@ namespace Toems_Service.Workflows
                 else if (policyModule.ModuleType == EnumModule.ModuleType.FileCopy)
                 {
                     verifyResult = VerifyFileCopy(policyModule);
+                    if (verifyResult != null)
+                    {
+                        _result.Success = false;
+                        _result.ErrorMessage = verifyResult;
+                        return _result;
+                    }
+                }
+                else if (policyModule.ModuleType == EnumModule.ModuleType.WinPE)
+                {
+                    verifyResult = VerifyWinPe(policyModule);
                     if (verifyResult != null)
                     {
                         _result.Success = false;
@@ -590,6 +601,68 @@ namespace Toems_Service.Workflows
             return null;
         }
 
+        private string VerifyWinPe(EntityPolicyModules policyModule)
+        {
+            var winPeModule = new ServiceWinPeModule().GetModule(policyModule.ModuleId);
+
+            if (string.IsNullOrEmpty(winPeModule.Name))
+                return "A WinPE Module Has An Invalid Name";
+
+            if (winPeModule.Archived)
+                return "WinPE Module: " + winPeModule.Name + " Is Archived";
+
+            if (string.IsNullOrEmpty(winPeModule.Guid))
+                return "WinPE Module: " + winPeModule.Name + " Has An Invalid GUID";
+
+            int value;
+            if (!int.TryParse(policyModule.Order.ToString(), out value))
+                return "WinPE Module: " + winPeModule.Name + " Has An Invalid Order";
+
+            var uploadedFiles = new ServiceUploadedFile().GetFilesForModule(winPeModule.Guid);
+
+            if (uploadedFiles == null)
+                return "WinPE Module: " + winPeModule.Name + " Does Not Have Any Associated Files";
+
+            try
+            {
+                if (uploadedFiles.Count == 0)
+                    return "WinPE Module: " + winPeModule.Name + " Does Not Have Any Associated Files";
+            }
+            catch
+            {
+                return "WinPE Module: " + winPeModule.Name + " Error While Determining Associated Files";
+            }
+
+            var basePath = Path.Combine(ServiceSetting.GetSettingValue(SettingStrings.StoragePath), "software_uploads");
+            using (var unc = new UncServices())
+            {
+                if (unc.NetUseWithCredentials() || unc.LastError == 1219)
+                {
+                    try
+                    {
+                        foreach (var file in uploadedFiles.OrderBy(x => x.Name))
+                        {
+                            if (string.IsNullOrEmpty(file.Hash))
+                                return "WinPE Module: " + winPeModule.Name + " " + file.Name + " Does Not Have An MD5 Hash";
+                            var fullPath = Path.Combine(basePath, file.Guid, file.Name);
+                            if (!File.Exists(fullPath))
+                                return "WinPE Module: " + winPeModule.Name + " " + fullPath + " Does Not Exist";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Debug(ex.Message);
+                        return "File Copy Module: " + winPeModule.Name + " Unknown Error Trying To Verify Files";
+                    }
+                }
+                else
+                {
+                    return "Could Not Reach Storage Path";
+                }
+            }
+
+            return null;
+        }
         private string VerifyMessage(EntityPolicyModules policyModule)
         {
             var messageModule = new ServiceMessageModule().GetModule(policyModule.ModuleId);

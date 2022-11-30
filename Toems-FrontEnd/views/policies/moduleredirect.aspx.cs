@@ -20,6 +20,8 @@ namespace Toems_FrontEnd.views.policies
                  Response.Redirect("~/views/modules/filecopymodules/general.aspx?fileCopyModuleId=" + id);
             if (type == "Wupdate")
                 Response.Redirect("~/views/modules/wumodules/general.aspx?wuModuleId=" + id);
+            if (type == "WinPE")
+                Response.Redirect("~/views/modules/winpemodules/general.aspx?winPeModuleId=" + id);
 
         }
     }

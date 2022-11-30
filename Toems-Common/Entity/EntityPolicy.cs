@@ -121,6 +121,7 @@ namespace Toems_Common.Entity
         public List<EntityCommandModule> CommandModules { get; set; }
         public List<EntityWuModule> WuModules { get; set; }
         public List<EntityMessageModule> MessageModules { get; set; }
+        public List<EntityWinPeModule> WinPeModules { get; set; }
         public int Order { get; set; }
     }
 

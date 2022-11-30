@@ -114,6 +114,7 @@ namespace Toems_DataModel
         IGenericRepository<EntityToecTargetListOu> ToecTargetListOuRepository { get; }
 
         IGenericRepository<EntityToecDeployThread> ToecDeployThreadRepository { get; }
+        IGenericRepository<EntityWinPeModule> WinPeModuleRepository { get; }
 
         void Save();
     }

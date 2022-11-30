@@ -76,6 +76,11 @@ namespace Toems_ApplicationApi.Controllers
                         auditLog.ObjectName = messageModule.Name;
                         auditLog.ObjectJson = JsonConvert.SerializeObject(messageModule);
                         break;
+                    case EnumModule.ModuleType.WinPE:
+                        var winPeModule = new ServiceWinPeModule().GetModule(moduleId);
+                        auditLog.ObjectName = winPeModule.Name;
+                        auditLog.ObjectJson = JsonConvert.SerializeObject(winPeModule);
+                        break;
                 }
 
 
@@ -137,6 +142,11 @@ namespace Toems_ApplicationApi.Controllers
                         var messageModule = new ServiceMessageModule().GetModule(moduleId);
                         auditLog.ObjectName = messageModule.Name;
                         auditLog.ObjectJson = JsonConvert.SerializeObject(messageModule);
+                        break;
+                    case EnumModule.ModuleType.WinPE:
+                        var winPeModule = new ServiceWinPeModule().GetModule(moduleId);
+                        auditLog.ObjectName = winPeModule.Name;
+                        auditLog.ObjectJson = JsonConvert.SerializeObject(winPeModule);
                         break;
                 }
 

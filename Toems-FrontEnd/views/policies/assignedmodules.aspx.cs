@@ -23,6 +23,7 @@ namespace Toems_FrontEnd.views.policies
                 chkPrinter.Checked = true;
                 chkWu.Checked = true;
                 chkMessage.Checked = true;
+                chkWinPe.Checked = true;
                 PopulateGrid();
             }
         }
@@ -47,6 +48,7 @@ namespace Toems_FrontEnd.views.policies
             filter.IncludeScript = chkScript.Checked;
             filter.IncludeWu = chkWu.Checked;
             filter.IncludeMessage = chkMessage.Checked;
+            filter.IncludeWinPe = chkWinPe.Checked;
             var modules = Call.PolicyApi.GetAssignedModules(Policy.Id, filter);
             gvModules.DataSource = modules;
             gvModules.DataBind();

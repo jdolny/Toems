@@ -80,6 +80,10 @@ namespace Toems_Service.Workflows
             {
                 MessageModule(policyModule);
             }
+            else if (policyModule.ModuleType == EnumModule.ModuleType.WinPE)
+            {
+                WinPeModule(policyModule);
+            }
 
 
             return _clientPolicy;
@@ -96,6 +100,7 @@ namespace Toems_Service.Workflows
             filter.IncludeSoftware = true;
             filter.IncludeWu = true;
             filter.IncludeMessage = true;
+            filter.IncludeWinPe = true;
             filter.Limit = Int32.MaxValue;
             var policyModules = _policyService.SearchAssignedPolicyModules(policyId,filter);
             foreach (var policyModule in policyModules.OrderBy(x => x.Name))
@@ -127,6 +132,10 @@ namespace Toems_Service.Workflows
                 else if (policyModule.ModuleType == EnumModule.ModuleType.Message)
                 {
                     MessageModule(policyModule);
+                }
+                else if (policyModule.ModuleType == EnumModule.ModuleType.WinPE)
+                {
+                    WinPeModule(policyModule);
                 }
             }
 
@@ -365,6 +374,52 @@ namespace Toems_Service.Workflows
 
             }
             _clientPolicy.FileCopyModules.Add(clientFileCopyModule);
+        }
+
+        private void WinPeModule(EntityPolicyModules policyModule)
+        {
+            var clientWinPeModule = new DtoClientWinPeModule();
+            var winPeModule = new ServiceWinPeModule().GetModule(policyModule.ModuleId);
+            clientWinPeModule.Guid = winPeModule.Guid;
+            clientWinPeModule.DisplayName = winPeModule.Name;
+            clientWinPeModule.Order = policyModule.Order;
+            var moduleFiles = new ServiceModule().GetModuleFiles(winPeModule.Guid);
+            foreach (var file in moduleFiles.OrderBy(x => x.FileName))
+            {
+                var clientFile = new DtoClientFileHash();
+                clientFile.FileName = file.FileName;
+                clientFile.FileHash = file.Md5Hash;
+                clientWinPeModule.Files.Add(clientFile);
+            }
+
+            if (policyModule.ConditionId != -1)
+            {
+                var conditionScript = new ServiceScriptModule().GetModule(policyModule.ConditionId);
+                if (conditionScript != null)
+                {
+                    clientWinPeModule.ConditionFailedAction = policyModule.ConditionFailedAction;
+                    clientWinPeModule.ConditionNextOrder = policyModule.ConditionNextModule;
+                    clientWinPeModule.Condition = new DtoClientModuleCondition();
+                    clientWinPeModule.Condition.Arguments = conditionScript.Arguments;
+                    clientWinPeModule.Condition.DisplayName = conditionScript.Name;
+                    clientWinPeModule.Condition.Guid = conditionScript.Guid;
+                    clientWinPeModule.Condition.RedirectError = conditionScript.RedirectStdError;
+                    clientWinPeModule.Condition.RedirectOutput = conditionScript.RedirectStdOut;
+                    if (conditionScript.ImpersonationId != -1)
+                    {
+                        var scriptImpersonationGuid = new ServiceImpersonationAccount().GetGuid(conditionScript.ImpersonationId);
+                        if (!string.IsNullOrEmpty(scriptImpersonationGuid))
+                            clientWinPeModule.Condition.RunAs = scriptImpersonationGuid;
+                    }
+                    clientWinPeModule.Condition.ScriptType = conditionScript.ScriptType;
+                    foreach (var successCode in conditionScript.SuccessCodes.Split(','))
+                        clientWinPeModule.Condition.SuccessCodes.Add(successCode);
+                    clientWinPeModule.Condition.Timeout = conditionScript.Timeout;
+                    clientWinPeModule.Condition.WorkingDirectory = conditionScript.WorkingDirectory;
+                }
+
+            }
+            _clientPolicy.WinPeModules.Add(clientWinPeModule);
         }
 
         private void MessageModule(EntityPolicyModules policyModule)

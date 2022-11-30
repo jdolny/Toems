@@ -6,6 +6,7 @@ using log4net;
 using Newtonsoft.Json;
 using Toems_Common;
 using Toems_Common.Dto;
+using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_DataModel;
 using Toems_Service.Entity;
@@ -22,12 +23,18 @@ namespace Toems_Service.Workflows
             _uow = new UnitOfWork();
         }
 
-        public DtoTriggerResponse Execute(DtoPolicyRequest policyRequest)
+        public DtoTriggerResponse Execute(DtoPolicyRequest policyRequest, int? computerId=null)
         {
             var triggerResponse = new DtoTriggerResponse();
            
             var list = new List<DtoClientPolicy>();
-            var computer = _uow.ComputerRepository.GetFirstOrDefault(x => x.Guid == policyRequest.ClientIdentity.Guid);
+
+            EntityComputer computer = null;
+            if(computerId != null)
+                computer = _uow.ComputerRepository.GetFirstOrDefault(x => x.Id == computerId);
+            else if(policyRequest.ClientIdentity.Guid != null)
+                computer = _uow.ComputerRepository.GetFirstOrDefault(x => x.Guid == policyRequest.ClientIdentity.Guid);
+
             if (computer == null) return null;
 
             if (string.IsNullOrEmpty(policyRequest.CurrentComServer))

@@ -96,6 +96,9 @@ namespace Toems_Service.Entity
             foreach (var m in policyWithModules.MessageModules)
                 if (!moduleService.ArchiveModule(m.Id, EnumModule.ModuleType.Message).Success)
                     moduleArchiveError = true;
+            foreach (var m in policyWithModules.WinPeModules)
+                if (!moduleService.ArchiveModule(m.Id, EnumModule.ModuleType.WinPE).Success)
+                    moduleArchiveError = true;
             _uow.GroupPolicyRepository.DeleteRange(x => x.PolicyId == policyId);
             _uow.Save();
             if (moduleArchiveError)
@@ -325,6 +328,7 @@ namespace Toems_Service.Entity
             searchFilter.IncludeSoftware = true;
             searchFilter.IncludeMessage = true;
             searchFilter.IncludeWu = true;
+            searchFilter.IncludeWinPe = true;
 
             foreach (var module in SearchAssignedPolicyModules(policyId, searchFilter))
             {
@@ -409,6 +413,18 @@ namespace Toems_Service.Entity
                 }).ToList());
             }
 
+            if (filter.IncludeWinPe)
+            {
+                listModules.AddRange(new ServiceWinPeModule().SearchModules(catfilter).Select(winPeModule => new DtoModule
+                {
+                    Id = winPeModule.Id,
+                    Name = winPeModule.Name,
+                    Description = winPeModule.Description,
+                    Guid = winPeModule.Guid,
+                    ModuleType = EnumModule.ModuleType.WinPE
+                }).ToList());
+            }
+
             if (filter.IncludeMessage)
             {
                 listModules.AddRange(new ServiceMessageModule().SearchModules(catfilter).Select(messageModule => new DtoModule
@@ -458,6 +474,11 @@ namespace Toems_Service.Entity
                     }
 
                     foreach (var mod in policyDetailed.FileCopyModules)
+                    {
+                        modulesToRemove.AddRange(listModules.Where(module => mod.Guid == module.Guid));
+                    }
+
+                    foreach (var mod in policyDetailed.WinPeModules)
                     {
                         modulesToRemove.AddRange(listModules.Where(module => mod.Guid == module.Guid));
                     }
@@ -577,6 +598,18 @@ namespace Toems_Service.Entity
                     if (filter.IncludeMessage)
                     {
                         var pModule = new ServiceMessageModule().GetModule(module.ModuleId);
+                        if (pModule != null)
+                        {
+                            module.Name = pModule.Name;
+                            list.Add(module);
+                        }
+                    }
+                }
+                else if (module.ModuleType == EnumModule.ModuleType.WinPE)
+                {
+                    if (filter.IncludeWinPe)
+                    {
+                        var pModule = new ServiceWinPeModule().GetModule(module.ModuleId);
                         if (pModule != null)
                         {
                             module.Name = pModule.Name;

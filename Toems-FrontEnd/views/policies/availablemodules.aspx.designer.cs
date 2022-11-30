@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.policies {
-    
-    
-    public partial class availablemodules {
-        
+namespace Toems_FrontEnd.views.policies
+{
+
+
+    public partial class availablemodules
+    {
+
         /// <summary>
         /// btnSubmit control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnSubmit;
-        
+
         /// <summary>
         /// lblTotal control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblTotal;
-        
+
         /// <summary>
         /// txtSearch control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtSearch;
-        
+
         /// <summary>
         /// ddlLimit control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlLimit;
-        
+
         /// <summary>
         /// chkPrinter control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkPrinter;
-        
+
         /// <summary>
         /// chkSoftware control.
         /// </summary>
@@ -65,7 +67,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkSoftware;
-        
+
         /// <summary>
         /// chkScript control.
         /// </summary>
@@ -74,7 +76,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkScript;
-        
+
         /// <summary>
         /// chkFile control.
         /// </summary>
@@ -83,7 +85,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkFile;
-        
+
         /// <summary>
         /// chkCommand control.
         /// </summary>
@@ -92,7 +94,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkCommand;
-        
+
         /// <summary>
         /// chkWu control.
         /// </summary>
@@ -101,7 +103,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkWu;
-        
+
         /// <summary>
         /// chkMessage control.
         /// </summary>
@@ -110,7 +112,16 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkMessage;
-        
+
+        /// <summary>
+        /// chkWinPe control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkWinPe;
+
         /// <summary>
         /// chkUnassigned control.
         /// </summary>
@@ -119,7 +130,7 @@ namespace Toems_FrontEnd.views.policies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkUnassigned;
-        
+
         /// <summary>
         /// gvModules control.
         /// </summary>

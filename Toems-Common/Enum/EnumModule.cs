@@ -11,7 +11,8 @@
             FileCopy = 4,
             Wupdate = 5,
             Message = 6,
-            Sysprep = 7
+            Sysprep = 7,
+            WinPE = 8
         }
     }
 }

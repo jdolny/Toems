@@ -125,6 +125,7 @@ namespace Toems_DataModel
         private IGenericRepository<EntityToecTargetListComputer> _toecTargetListComputerRepository;
         private IGenericRepository<EntityToecTargetListOu> _toecTargetListOuRepository;
         private IGenericRepository<EntityToecDeployThread> _toecDeployThreadRepository;
+        private IGenericRepository<EntityWinPeModule> _winPeModuleRepository;
 
 
         private bool disposed;
@@ -133,6 +134,14 @@ namespace Toems_DataModel
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public IGenericRepository<EntityWinPeModule> WinPeModuleRepository
+        {
+            get
+            {
+                return _winPeModuleRepository ?? (_winPeModuleRepository = new GenericRepository<EntityWinPeModule>(_context));
+            }
         }
 
         public IGenericRepository<EntityToecDeployThread> ToecDeployThreadRepository

@@ -36,6 +36,15 @@
         <asp:DropDownList ID="ddlImageProfile" runat="server" CssClass="ddlist"/>
     </div>
     <br class="clear"/>
+
+     <div class="size-4 column">
+        WinPE Module (Only Used For Running Imaging Task From Toec):
+    </div>
+    <div class="size-5 column">
+        <asp:DropDownList ID="ddlWinPeModule" runat="server" CssClass="ddlist"/>
+    </div>
+    <br class="clear"/>
+
     <div class="size-4 column">
         Effective Image:
     </div>
@@ -50,6 +59,14 @@
     <div class="size-5 column">
         <asp:Label ID="lblImageProfile" runat="server"/>
     </div>
+
+       <div class="size-4 column">
+        Effective WinPE Module:
+    </div>
+    <div class="size-5 column">
+        <asp:Label ID="lblWinPeModule" runat="server"/>
+    </div>
+
     <br class="clear"/>
     <br class="clear" />
      <br class="clear" />

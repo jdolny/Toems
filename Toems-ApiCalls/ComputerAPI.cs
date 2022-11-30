@@ -511,6 +511,14 @@ namespace Toems_ApiCalls
             return response != null ? response.Value : string.Empty;
         }
 
+        public string StartDeployWinPe(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/StartDeployWinPe/{1}", Resource, id);
+            var response = new ApiRequest().Execute<DtoApiStringResponse>(Request);
+            return response != null ? response.Value : string.Empty;
+        }
+
         public string StartUpload(int id)
         {
             Request.Method = Method.GET;
