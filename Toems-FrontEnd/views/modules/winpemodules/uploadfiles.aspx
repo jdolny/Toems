@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/theopenem/views/modules/winpemodules/winpemodule.master" AutoEventWireup="true" CodeBehind="uploadfiles.aspx.cs" Inherits="Toems_FrontEnd.views.modules.winpemodules.uploadfiles" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/modules/winpemodules/winpemodule.master" AutoEventWireup="true" CodeBehind="uploadfiles.aspx.cs" Inherits="Toems_FrontEnd.views.modules.winpemodules.uploadfiles" %>
 <asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub2">
     <li><%= WinPeModule.Name %></li>
     <li>Upload Files</li>

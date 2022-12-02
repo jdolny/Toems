@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/theopenem/views/admin/toec/toec.master" AutoEventWireup="true" CodeBehind="searchtargetlists.aspx.cs" Inherits="Toems_FrontEnd.views.admin.toec.searchtargetlists" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/admin/toec/toec.master" AutoEventWireup="true" CodeBehind="searchtargetlists.aspx.cs" Inherits="Toems_FrontEnd.views.admin.toec.searchtargetlists" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="TopBreadCrumbSub2" runat="server">
      <li><a href="<%= ResolveUrl("~/views/admin/toec/searchtargetlists.aspx") %>?level=2">Search Target Lists</a></li>
 </asp:Content>

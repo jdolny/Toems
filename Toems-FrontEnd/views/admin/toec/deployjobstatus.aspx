@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/theopenem/views/admin/toec/toec.master" AutoEventWireup="true" CodeBehind="deployjobstatus.aspx.cs" Inherits="Toems_FrontEnd.views.admin.toec.deployjobstatus" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/admin/toec/toec.master" AutoEventWireup="true" CodeBehind="deployjobstatus.aspx.cs" Inherits="Toems_FrontEnd.views.admin.toec.deployjobstatus" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="TopBreadCrumbSub2" runat="server">
      <li><a href="<%= ResolveUrl("~/views/admin/toec/deployjobstatus.aspx") %>?level=2">Deploy Job Status</a></li>
 </asp:Content>

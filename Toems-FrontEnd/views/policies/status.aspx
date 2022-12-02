@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/theopenem/views/policies/policies.master" AutoEventWireup="true" CodeBehind="status.aspx.cs" Inherits="Toems_FrontEnd.views.policies.status" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/policies/policies.master" AutoEventWireup="true" CodeBehind="status.aspx.cs" Inherits="Toems_FrontEnd.views.policies.status" %>
 <asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub1">
     <li>Active Policy Status</li>
 </asp:Content>

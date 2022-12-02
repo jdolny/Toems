@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" MasterPageFile="~/theopenem/views/admin/admin.master" AutoEventWireup="true" CodeBehind="toec.master.cs" Inherits="Toems_FrontEnd.views.admin.toec.toec" %>
+﻿<%@ Master Language="C#" MasterPageFile="~/views/admin/admin.master" AutoEventWireup="true" CodeBehind="toec.master.cs" Inherits="Toems_FrontEnd.views.admin.toec.toec" %>
 <asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub1">
 
     <asp:ContentPlaceHolder runat="server" ID="TopBreadCrumbSub2"></asp:ContentPlaceHolder>

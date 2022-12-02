@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" MasterPageFile="~/theopenem/views/modules/modules.master" AutoEventWireup="true" CodeBehind="winpemodule.master.cs" Inherits="Toems_FrontEnd.views.modules.winpemodules.winpemodule" %>
+﻿<%@ Master Language="C#" MasterPageFile="~/views/modules/modules.master" AutoEventWireup="true" CodeBehind="winpemodule.master.cs" Inherits="Toems_FrontEnd.views.modules.winpemodules.winpemodule" %>
 <asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub1">
      <li>
         <a href="<%= ResolveUrl("~/views/modules/winpemodules/search.aspx") %>">WinPE Modules</a>

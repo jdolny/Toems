@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/theopenem/views/modules/winpemodules/winpemodule.master" AutoEventWireup="true" CodeBehind="archived.aspx.cs" Inherits="Toems_FrontEnd.views.modules.winpemodules.archived" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/modules/winpemodules/winpemodule.master" AutoEventWireup="true" CodeBehind="archived.aspx.cs" Inherits="Toems_FrontEnd.views.modules.winpemodules.archived" %>
 <asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub2">
     <li>Archived</li>
 </asp:Content>

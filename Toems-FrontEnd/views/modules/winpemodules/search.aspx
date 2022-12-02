@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/theopenem/views/modules/winpemodules/winpemodule.master" AutoEventWireup="true" CodeBehind="search.aspx.cs" Inherits="Toems_FrontEnd.views.modules.winpemodules.search" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/modules/winpemodules/winpemodule.master" AutoEventWireup="true" CodeBehind="search.aspx.cs" Inherits="Toems_FrontEnd.views.modules.winpemodules.search" %>
 <asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub2">
     <li>Search</li>
 </asp:Content>

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/theopenem/views/modules/winpemodules/winpemodule.master" AutoEventWireup="true" CodeBehind="usages.aspx.cs" Inherits="Toems_FrontEnd.views.modules.winpemodules.usages" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/modules/winpemodules/winpemodule.master" AutoEventWireup="true" CodeBehind="usages.aspx.cs" Inherits="Toems_FrontEnd.views.modules.winpemodules.usages" %>
 <asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub2">
     <li><%= WinPeModule.Name %></li>
     <li>Usages</li>

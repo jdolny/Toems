@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/theopenem/views/modules/modules.master" AutoEventWireup="true" CodeBehind="all.aspx.cs" Inherits="Toems_FrontEnd.views.modules.all" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/modules/modules.master" AutoEventWireup="true" CodeBehind="all.aspx.cs" Inherits="Toems_FrontEnd.views.modules.all" %>
 <asp:Content runat="server" ContentPlaceHolderID="SubNavTitle_Sub1">
 All Modules List
 </asp:Content>

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/theopenem/views/admin/toec/toec.master" AutoEventWireup="true" CodeBehind="createdeployjob.aspx.cs" Inherits="Toems_FrontEnd.views.admin.toec.createdeployjob" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/admin/toec/toec.master" AutoEventWireup="true" CodeBehind="createdeployjob.aspx.cs" Inherits="Toems_FrontEnd.views.admin.toec.createdeployjob" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="TopBreadCrumbSub2" runat="server">
      <li><a href="<%= ResolveUrl("~/views/admin/toec/createdeployjob.aspx") %>?level=2">Create Deploy Job</a></li>
 </asp:Content>
