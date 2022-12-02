@@ -826,5 +826,10 @@ namespace Toems_Service.Entity
                 new Workflows.GenerateClientGroupPolicy().Execute(policyGroup.GroupId);
             }
         }
+
+        public List<DtoPinnedPolicy> GetAllActiveStatus()
+        {
+            return _uow.PolicyRepository.GetActivePolicyStatus();
+        }
     }
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_DataModel;
@@ -485,6 +487,22 @@ namespace Toems_Service.Entity
                     count++;
             }
             return count;
+        }
+
+        public bool StartGroupWinPeThread(int groupId, int userId)
+        {
+            Task.Run(() => StartGroupWinPe(groupId, userId));
+            return true;
+        }
+
+        public async Task StartGroupWinPe(int groupId, int userId)
+        {
+            await Task.Delay(100);
+            var members = _uow.GroupRepository.GetGroupMembers(groupId, "");
+            foreach (var computer in members)
+            {
+                new ServiceComputer().DeployImageViaWindows(computer.Id, userId);
+            }
         }
     }
 }

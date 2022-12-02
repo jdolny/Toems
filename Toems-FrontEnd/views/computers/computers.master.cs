@@ -36,6 +36,7 @@ namespace Toems_FrontEnd.views.computers
                 btnRemoteControl.Visible = false;
                 btnClearImagingId.Visible = false;
                 btnUptime.Visible = false;
+                btnDeployWinPe.Visible = false;
 
             }
             else
@@ -55,6 +56,7 @@ namespace Toems_FrontEnd.views.computers
                 btnServiceLog.Visible = true;
                 btnRemoteControl.Visible = true;
                 btnUptime.Visible = true;
+                btnDeployWinPe.Visible = true;
             }
         }
 
@@ -134,7 +136,8 @@ namespace Toems_FrontEnd.views.computers
                 case "deploy":
                     PageBaseMaster.EndUserMessage = ComputerBasePage.Call.ComputerApi.StartDeploy(ComputerEntity.Id);
                     break;
-                case "deployWinPe":
+                case "deployWinPE":
+                 
                     PageBaseMaster.EndUserMessage = ComputerBasePage.Call.ComputerApi.StartDeployWinPe(ComputerEntity.Id);
                     break;
                 case "upload":
@@ -142,7 +145,7 @@ namespace Toems_FrontEnd.views.computers
                     break;
             }
 
-            if (action.Equals("deploy") || action.Equals("upload"))
+            if (action.Equals("deploy") || action.Equals("upload") || action.Equals("deployWinPE"))
                 return;
 
             if (result.Success)
@@ -303,14 +306,13 @@ namespace Toems_FrontEnd.views.computers
             var image = new APICall().ComputerApi.GetEffectiveImage(ComputerEntity.Id);
             if (image != null)
             {
-                lblTitle.Text = "Are You Sure Want To Deploy The Image: " + image.Image.Name + " To Computer: " + ComputerEntity.Name + "?  If This Computer Is Managed By Theopenem" +
-                    "It Will Automatically Reboot And Begin The Imaging Process.  All Data On The Computer Will Be Overwritten With This Image." ;
+                lblTitle.Text = "Are You Sure Want To Deploy The Image: " + image.Image.Name + " To Computer: " + ComputerEntity.Name + "?  This Computer Will Immediately Reboot" +
+                    " And Begin The Imaging Process.  All Data On The Computer Will Be Overwritten With This Image." ;
                 Session["action"] = "deployWinPE";
                 DisplayConfirm();
             }
             else
                 PageBaseMaster.EndUserMessage = "This Computer Does Not Have An Image Assigned.";
-
         }
 
         protected void btnDeploy_OnClick(object sender, EventArgs e)

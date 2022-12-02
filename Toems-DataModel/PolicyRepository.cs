@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 
@@ -141,6 +142,66 @@ namespace Toems_DataModel
                     select p).ToList();
         }
 
-       
+        public List<DtoPinnedPolicy> GetActivePolicyStatus()
+        {
+            var activePolicies = (from p in _context.Policies
+                                  join a in _context.ActiveClientPolicies on p.Id equals a.PolicyId
+                                       select p).ToList();
+            if (!activePolicies.Any())
+                return new List<DtoPinnedPolicy>();
+
+            var result = new List<DtoPinnedPolicy>();
+            foreach (var activePolicy in activePolicies)
+            {
+                var history = (from h in _context.Policies
+                               join g in _context.PolicyHistories on h.Id equals g.PolicyId
+                               where (h.Id == activePolicy.Id)
+                               select g).ToList();
+
+                if (!history.Any())
+                {
+                    var p = new DtoPinnedPolicy();
+                    p.PolicyId = activePolicy.Id;
+                    p.PolicyName = activePolicy.Name;
+                    p.Description = activePolicy.Description;
+                    p.FailedCount = 0;
+                    p.SkippedCount = 0;
+                    p.SuccessCount = 0;
+                    result.Add(p);
+                }
+                else
+                {
+                    var policyIds = history.GroupBy(x => x.PolicyId).Select(x => x.Key);
+                    foreach (var id in policyIds)
+                    {
+                        var dtoPinnedHistory = new DtoPinnedPolicy();
+                        dtoPinnedHistory.PolicyId = id;
+                        var policy = (from s in _context.Policies where s.Id == id select s).FirstOrDefault();
+                        if (policy != null)
+                        {
+                            dtoPinnedHistory.PolicyName = policy.Name;
+                            dtoPinnedHistory.Description = policy.Description;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                        dtoPinnedHistory.SuccessCount =
+                            history.Where(x => x.PolicyId == id && x.Result == EnumPolicyHistory.RunResult.Success).ToList().GroupBy(x => x.ComputerId).Count();
+                        dtoPinnedHistory.FailedCount =
+                            history.Where(x => x.PolicyId == id && x.Result == EnumPolicyHistory.RunResult.Failed).ToList().GroupBy(x => x.ComputerId).Count();
+                        dtoPinnedHistory.SkippedCount =
+                            history.Where(x => x.PolicyId == id && x.Result == EnumPolicyHistory.RunResult.Skipped).ToList().GroupBy(x => x.ComputerId).Count();
+
+                        result.Add(dtoPinnedHistory);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+
     }
 }

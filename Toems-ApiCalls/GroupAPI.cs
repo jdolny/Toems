@@ -223,6 +223,14 @@ namespace Toems_ApiCalls
             return response != null ? response.Value : 0;
         }
 
+        public bool StartGroupWinPe(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/StartGroupWinPe/{1}", Resource, id);
+            var response = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
+            return response != null ? response.Value : false;
+        }
+
         public string StartMulticast(int id)
         {
             Request.Method = Method.GET;

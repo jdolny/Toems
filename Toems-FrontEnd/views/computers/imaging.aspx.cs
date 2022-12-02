@@ -50,12 +50,18 @@ namespace Toems_FrontEnd.views.computers
             try
             {
                 var effectiveImage = Call.ComputerApi.GetEffectiveImage(ComputerEntity.Id);
+                var effectiveWinpe = Call.ComputerApi.GetEffectiveWinPe(ComputerEntity.Id);
                 if (effectiveImage != null)
                 {
                     if (!string.IsNullOrEmpty(effectiveImage.Image.Name))
                         lblImage.Text = effectiveImage.Image.Name;
                     if (!string.IsNullOrEmpty(effectiveImage.Name))
                         lblImageProfile.Text = effectiveImage.Name;
+                }
+                if(effectiveWinpe != null)
+                {
+                    if (!string.IsNullOrEmpty(effectiveWinpe.Name))
+                        lblWinPeModule.Text = effectiveWinpe.Name;
                 }
             }
             catch { //ignored

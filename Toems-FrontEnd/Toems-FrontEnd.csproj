@@ -301,6 +301,7 @@
     <Content Include="views\imagingtasks\activeond.aspx" />
     <Content Include="views\imagingtasks\activeunicast.aspx" />
     <Content Include="views\imagingtasks\ondemand.aspx" />
+    <Content Include="views\modules\all.aspx" />
     <Content Include="views\modules\chooser.aspx" />
     <Content Include="views\modules\commandmodules\archived.aspx" />
     <Content Include="views\modules\commandmodules\categories.aspx" />
@@ -378,6 +379,7 @@
     <Content Include="views\policies\search.aspx" />
     <Content Include="views\modules\softwaremodules\create.aspx" />
     <Content Include="views\modules\softwaremodules\search.aspx" />
+    <Content Include="views\policies\status.aspx" />
     <Content Include="views\policies\usages.aspx" />
     <Content Include="views\reports\asset\chooser.aspx" />
     <Content Include="views\reports\asset\custom.aspx" />
@@ -2270,6 +2272,13 @@
     <Compile Include="views\imagingtasks\ondemand.aspx.designer.cs">
       <DependentUpon>ondemand.aspx</DependentUpon>
     </Compile>
+    <Compile Include="views\modules\all.aspx.cs">
+      <DependentUpon>all.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\all.aspx.designer.cs">
+      <DependentUpon>all.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\modules\chooser.aspx.cs">
       <DependentUpon>chooser.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -2885,6 +2894,13 @@
     </Compile>
     <Compile Include="views\modules\softwaremodules\softwaremodule.master.designer.cs">
       <DependentUpon>softwaremodule.master</DependentUpon>
+    </Compile>
+    <Compile Include="views\policies\status.aspx.cs">
+      <DependentUpon>status.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\policies\status.aspx.designer.cs">
+      <DependentUpon>status.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\policies\usages.aspx.cs">
       <DependentUpon>usages.aspx</DependentUpon>

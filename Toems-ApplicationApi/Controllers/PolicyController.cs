@@ -329,5 +329,11 @@ namespace Toems_ApplicationApi.Controllers
             var result = _policyServices.PolicyChangedSinceLastActivation(id);
             return new DtoApiStringResponse() {Value = result};
         }
+
+        [Authorize]
+        public IEnumerable<DtoPinnedPolicy> GetAllActiveStatus()
+        {
+            return _policyServices.GetAllActiveStatus();
+        }
     }
 }

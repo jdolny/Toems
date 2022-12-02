@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.groups {
-    
-    
-    public partial class groups {
-        
+namespace Toems_FrontEnd.views.groups
+{
+
+
+    public partial class groups
+    {
+
         /// <summary>
         /// TopBreadCrumbSub1 control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder TopBreadCrumbSub1;
-        
+
         /// <summary>
         /// SubNavTitle_Sub1 control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder SubNavTitle_Sub1;
-        
+
         /// <summary>
         /// Level1 control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl Level1;
-        
+
         /// <summary>
         /// Level2 control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl Level2;
-        
+
         /// <summary>
         /// dynamic control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl dynamic;
-        
+
         /// <summary>
         /// addmembers control.
         /// </summary>
@@ -65,7 +67,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl addmembers;
-        
+
         /// <summary>
         /// message control.
         /// </summary>
@@ -74,7 +76,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl message;
-        
+
         /// <summary>
         /// categories control.
         /// </summary>
@@ -83,7 +85,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl categories;
-        
+
         /// <summary>
         /// process control.
         /// </summary>
@@ -92,7 +94,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl process;
-        
+
         /// <summary>
         /// imaging control.
         /// </summary>
@@ -101,7 +103,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl imaging;
-        
+
         /// <summary>
         /// DropDownActionsSub control.
         /// </summary>
@@ -110,7 +112,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder DropDownActionsSub;
-        
+
         /// <summary>
         /// btnDelete control.
         /// </summary>
@@ -119,7 +121,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnDelete;
-        
+
         /// <summary>
         /// btnClearImagingId control.
         /// </summary>
@@ -128,7 +130,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnClearImagingId;
-        
+
         /// <summary>
         /// btnPin control.
         /// </summary>
@@ -137,7 +139,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnPin;
-        
+
         /// <summary>
         /// btnUnpin control.
         /// </summary>
@@ -146,7 +148,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnUnpin;
-        
+
         /// <summary>
         /// btnMulticast control.
         /// </summary>
@@ -155,7 +157,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnMulticast;
-        
+
         /// <summary>
         /// btnUnicast control.
         /// </summary>
@@ -164,7 +166,16 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnUnicast;
-        
+
+        /// <summary>
+        /// btnWinPe control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnWinPe;
+
         /// <summary>
         /// btnCheckin control.
         /// </summary>
@@ -173,7 +184,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnCheckin;
-        
+
         /// <summary>
         /// btnInventory control.
         /// </summary>
@@ -182,7 +193,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnInventory;
-        
+
         /// <summary>
         /// btnReboot control.
         /// </summary>
@@ -191,7 +202,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnReboot;
-        
+
         /// <summary>
         /// btnShutdown control.
         /// </summary>
@@ -200,7 +211,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnShutdown;
-        
+
         /// <summary>
         /// btnWakeup control.
         /// </summary>
@@ -209,7 +220,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnWakeup;
-        
+
         /// <summary>
         /// SubContent control.
         /// </summary>
@@ -218,7 +229,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder SubContent;
-        
+
         /// <summary>
         /// lblTitle control.
         /// </summary>
@@ -227,7 +238,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblTitle;
-        
+
         /// <summary>
         /// buttonConfirm control.
         /// </summary>
@@ -236,7 +247,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton buttonConfirm;
-        
+
         /// <summary>
         /// CancelButton control.
         /// </summary>
@@ -245,7 +256,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton CancelButton;
-        
+
         /// <summary>
         /// subHelp control.
         /// </summary>

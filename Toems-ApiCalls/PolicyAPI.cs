@@ -260,5 +260,12 @@ namespace Toems_ApiCalls
             }
             return response;
         }
+
+        public IEnumerable<DtoPinnedPolicy> GetAllActiveStatus()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetAllActiveStatus/", Resource);
+            return new ApiRequest().Execute<List<DtoPinnedPolicy>>(Request);
+        }
     }
 }

@@ -168,6 +168,14 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<ImageProfileWithImage>(Request);
         }
 
+        public EntityWinPeModule GetEffectiveWinPe(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetEffectiveWinPe", Resource);
+            Request.AddParameter("id", id);
+            return new ApiRequest().Execute<EntityWinPeModule>(Request);
+        }
+
         public IEnumerable<EntityGroup> GetComputerGroups(int id)
         {
             Request.Method = Method.GET;

@@ -164,6 +164,15 @@ namespace Toems_Service.Workflows
             }
 
             triggerResponse.Policies = distinctList;
+            //without this, viewing the computer's effective policy, runs the unicast task
+            if (!string.IsNullOrEmpty(policyRequest.ClientVersion) && !string.IsNullOrEmpty(policyRequest.PushURL))
+            {
+                if (triggerResponse.Policies.Any(x => x.WinPeModules.Any()))
+                {
+                    new Unicast(Convert.ToInt32(computer.Id), "deploy", 0).Start();
+                }
+
+            }
             triggerResponse.CheckinTime = Convert.ToInt32(ServiceSetting.GetSettingValue(SettingStrings.CheckinInterval));
             triggerResponse.ShutdownDelay = Convert.ToInt32(ServiceSetting.GetSettingValue(SettingStrings.ShutdownDelay));
             return triggerResponse;

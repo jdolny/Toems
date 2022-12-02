@@ -66,7 +66,7 @@
            <br class="clear"/>
 
           <div class="size-4 column">
-            Toec Remote Install Max Works:
+            Toec Remote Install Max Workers:
         </div>
         <div class="size-5 column">
             <asp:TextBox ID="txtMaxWorkers" runat="server" CssClass="textbox"></asp:TextBox>

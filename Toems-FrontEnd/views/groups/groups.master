@@ -93,6 +93,7 @@
       <hr />
          <li><asp:LinkButton ID="btnMulticast" runat="server" OnClick="btnMulticast_Click" Text="Start Multicast Imaging"></asp:LinkButton></li>
       <li><asp:LinkButton ID="btnUnicast" runat="server" OnClick="btnUnicast_Click" Text="Start Unicast Imaging"></asp:LinkButton></li>
+     <li><asp:LinkButton ID="btnWinPe" runat="server" OnClick="btnWinPe_Click" Text="Start Imaging Via Toec"></asp:LinkButton></li>
       <hr />
     <li><asp:LinkButton ID="btnCheckin" runat="server" OnClick="btnCheckin_OnClick" Text="Force Checkin"></asp:LinkButton></li>
         <li>      <asp:LinkButton ID="btnInventory" runat="server" OnClick="btnInventory_OnClick" Text="Collect Inventory"></asp:LinkButton></li>

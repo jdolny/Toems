@@ -154,6 +154,12 @@ namespace Toems_ApplicationApi.Controllers
             return _computerServices.GetEffectiveImage(id);
         }
 
+        [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        public EntityWinPeModule GetEffectiveWinPe(int id)
+        {
+            return _computerServices.GetEffectiveWinPeModule(id);
+        }
+
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         public IEnumerable<DtoComputerPolicyHistory> GetPolicyHistory(int id)
@@ -527,6 +533,16 @@ namespace Toems_ApplicationApi.Controllers
             return new DtoApiStringResponse
             {
                 Value = new Unicast(id, "deploy", _userId).Start()
+            };
+        }
+
+        [HttpGet]
+        [CustomAuth(Permission = AuthorizationStrings.ImageDeployTask)]
+        public DtoApiStringResponse StartDeployWinPe(int id)
+        {
+            return new DtoApiStringResponse
+            {
+                Value = _computerServices.DeployImageViaWindows(id,_userId)
             };
         }
 

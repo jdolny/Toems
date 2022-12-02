@@ -29,6 +29,10 @@
                 <a href="<%= ResolveUrl("~/views/policies/import.aspx") %>">
                     <span class="sub-nav-text">Import</span></a>
             </li>
+            <li id="status">
+                <a href="<%= ResolveUrl("~/views/policies/status.aspx") %>">
+                    <span class="sub-nav-text">Active Policy Status</span></a>
+            </li>
            
 
            

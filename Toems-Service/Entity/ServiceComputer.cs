@@ -1115,13 +1115,23 @@ namespace Toems_Service.Entity
             ClearLastSocketResult(computerId);
             GetStatus(computerId);
 
+            var winPeModule = GetEffectiveWinPeModule(computerId);
+            if (winPeModule == null)
+                return "This Computer Does Not Have A WinPE Module Assigned.";
+
             var counter = 0;
             while (counter < 10)
             {
-                var lastSocketResult = LastSocketResult(computerId);
-                if (!string.IsNullOrEmpty(lastSocketResult))
+                var socketResult = new UnitOfWork().ComputerRepository.GetById(computerId);
+                if (socketResult == null)
                 {
-                    if (!lastSocketResult.Equals("Connected"))
+                    counter++;
+                    continue;
+                }
+               
+                if (!string.IsNullOrEmpty(socketResult.LastSocketResult))
+                {
+                    if (!socketResult.LastSocketResult.Equals("Connected"))
                         return "Could Not Connect To Computer.  Verify Toec Is Installed And Running On This Computer.";
                     else
                         break;
@@ -1143,9 +1153,7 @@ namespace Toems_Service.Entity
 
             var moduleTypeMapping = new DtoGuidTypeMapping();
 
-            var winPeModule = GetEffectiveWinPeModule(computerId);
-            if (winPeModule == null)
-                return "This Computer Does Not Have A WinPE Module Assigned.";
+         
             
             moduleTypeMapping.moduleId = winPeModule.Id;
             moduleTypeMapping.moduleType = EnumModule.ModuleType.WinPE;

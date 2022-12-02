@@ -29,6 +29,7 @@ namespace Toems_FrontEnd.views.groups
                 btnMulticast.Visible = false;
                 btnUnicast.Visible = false;
                 btnClearImagingId.Visible = false;
+                btnWinPe.Visible = false;
 
             }
             else
@@ -45,6 +46,7 @@ namespace Toems_FrontEnd.views.groups
                 btnMulticast.Visible = true;
                 btnUnicast.Visible = true;
                 btnClearImagingId.Visible = true;
+                btnWinPe.Visible = true;
                 if (GroupEntity.Type == "Dynamic")
                 {
                     dynamic.Visible = true;
@@ -102,12 +104,19 @@ namespace Toems_FrontEnd.views.groups
                     var successCount = GroupBasePage.Call.GroupApi.StartGroupUnicast(GroupEntity.Id);
                     PageBaseMaster.EndUserMessage = "Successfully Started " + successCount + " Tasks";
                     break;
+                case "WinPE":
+                    var winPeResult = GroupBasePage.Call.GroupApi.StartGroupWinPe(GroupEntity.Id);
+                    if(winPeResult)
+                        PageBaseMaster.EndUserMessage = "Successfully Started Group WinPE Toec Imaging Tasks";
+                    else
+                        PageBaseMaster.EndUserMessage = "Could Not Start Group WinPE Toec Imaging Tasks";
+                    break;
                 case "multicast":
                     PageBaseMaster.EndUserMessage = GroupBasePage.Call.GroupApi.StartMulticast(GroupEntity.Id);
                     break;
             }
 
-            if (action.Equals("unicast") || action.Equals("multicast"))
+            if (action.Equals("unicast") || action.Equals("multicast") || action.Equals("WinPE"))
                 return;
 
             if (result.Success)
@@ -194,6 +203,14 @@ namespace Toems_FrontEnd.views.groups
         {
             lblTitle.Text = "Unicast " + GroupEntity.Name + "?";
             Session["action"] = "unicast";
+            DisplayConfirm();
+        }
+
+        protected void btnWinPe_Click(object sender, EventArgs e)
+        {
+            lblTitle.Text = "Are You Sure Want To Deploy The Image To All Computers In The Group: " + GroupEntity.Name + "? These Computers Will Immediately Reboot" +
+                  " And Begin The Imaging Process.  All Data On The Computers Will Be Overwritten With The Assigned Image.";
+            Session["action"] = "WinPE";
             DisplayConfirm();
         }
 

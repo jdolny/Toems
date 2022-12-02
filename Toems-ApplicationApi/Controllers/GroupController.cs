@@ -320,6 +320,16 @@ namespace Toems_ApplicationApi.Controllers
             };
         }
 
+        [HttpGet]
+        [CustomAuth(Permission = AuthorizationStrings.ImageDeployTask)]
+        public DtoApiBoolResponse StartGroupWinPe(int id)
+        {
+            return new DtoApiBoolResponse
+            {
+                Value = _groupServices.StartGroupWinPeThread(id, Convert.ToInt32(_userId))
+            };
+        }
+
         [CustomAuth(Permission = AuthorizationStrings.ImageMulticastTask)]
         [HttpGet]
         public DtoApiStringResponse StartMulticast(int id)
