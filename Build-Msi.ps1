@@ -24,6 +24,7 @@ if ([string]::IsNullOrWhiteSpace($MSBuildPath) -or !(Test-Path -Path $MSBuildPat
 & "$MSBuildPath" "$Root\Toems\Toems-ClientApi" /t:webpublish /p:WebPublishMethod=FileSystem /p:publishUrl="$DesktopPath\Theopenem Installer\Toems Client API\Program Files\Toec-API" /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform=x64
 
 
+
 $client = New-Object System.Net.WebClient
 $client.DownloadFile("https://github.com/theopenem/Toems-MSI/archive/refs/heads/main.zip", "$DesktopPath\Theopenem Installer\msisrc.zip")
 Expand-Archive -Path "$DesktopPath\Theopenem Installer\msisrc.zip" -DestinationPath "$DesktopPath\Theopenem Installer\" -Force
@@ -36,12 +37,17 @@ del msisrc.zip -Force
 
 mkdir "Toems Application\Program Files\Toems-API\private\logs"
 mkdir "Toems Application\Program Files\Toems-API\private\agent"
+mkdir "Toems Application\Program Files\Toems-API\private\agent\RemoteInstaller"
 mkdir "Toems Application\Program Files\Toems-UI\private\logs"
 mkdir "Toems Client API\Program Files\Toec-API\private\logs"
 mkdir "Toems Client API\Program Files\tftpboot\pxelinux.cfg"
 mkdir "Toems Client API\Program Files\tftpboot\proxy\bios\pxelinux.cfg"
 mkdir "Toems Client API\Program Files\tftpboot\proxy\efi32\pxelinux.cfg"
 mkdir "Toems Client API\Program Files\tftpboot\proxy\efi64\pxelinux.cfg"
+
+#Build Toec Remote Installer
+& "$MSBuildPath" "$Root\Toec-Remote-Installer\Toec-Remote-Installer" /t:build /p:DeleteExistingFiles=True /p:Configuration=Release /p:Platform=AnyCPU
+Copy-Item $Root\Toec-Remote-Installer\Toec-Remote-Installer\bin\Release\* -Destination "Toems Application\Program Files\Toems-API\private\agent\RemoteInstaller" -Force -Recurse 
 
 #Build Toec 
 cd "$Root\Toec\Toec-Installer"
