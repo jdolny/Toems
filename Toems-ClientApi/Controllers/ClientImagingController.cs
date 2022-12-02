@@ -100,7 +100,7 @@ namespace Toems_ClientApi.Controllers
             return _response;
         }
 
-        [HttpPost]
+        [HttpGet]
         [ClientImagingAuth]
         public HttpResponseMessage GetUploadServerIp()
         {
