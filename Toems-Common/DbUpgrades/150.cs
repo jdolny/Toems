@@ -40,7 +40,7 @@ ALTER TABLE `groups`
 ADD COLUMN `is_hidden` TINYINT NULL DEFAULT 0 AFTER `is_security_group`;
 
 ALTER TABLE `toems_users` 
-ADD COLUMN `mfa_secret_encrypted` VARCHAR(255) NULL DEFAULT NULL AFTER `default_login_page`,
+ADD COLUMN `mfa_secret_encrypted` VARCHAR(255) NULL DEFAULT NULL AFTER `default_login_page`;
 
 INSERT INTO `admin_settings` (`admin_setting_name`, `admin_setting_value`) VALUES ('Enable MFA', '0');
 INSERT INTO `admin_settings` (`admin_setting_name`, `admin_setting_value`) VALUES ('Force MFA', '0');
