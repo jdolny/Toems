@@ -30,7 +30,7 @@ ADD CONSTRAINT `CGPU_COMPUTER_FK`
   ON UPDATE NO ACTION;
 
 ALTER TABLE `groups` 
-ADD COLUMN `is_security_group` TINYINT NULL DEFAULT NULL AFTER `proxy_bootloader`;
+ADD COLUMN `is_security_group` TINYINT NULL DEFAULT 0 AFTER `proxy_bootloader`;
 
 ALTER TABLE `groups` 
 CHANGE COLUMN `is_ou` `is_ou` TINYINT(4) NULL DEFAULT 0 ,
