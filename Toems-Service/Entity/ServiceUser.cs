@@ -263,7 +263,8 @@ namespace Toems_Service.Entity
         public string GenerateTempMfaSecret(int userId)
         {
             var u = GetUserWithPass(userId);
-            var mfa = new TwoFactorAuth("Theopenem", 6, 60, Algorithm.SHA512);
+            var mfa = new TwoFactorAuth("Theopenem", 6, 60, Algorithm.SHA512, new ToemsQrProvider());
+            
             var secret = mfa.CreateSecret(160);
             u.MfaTempSecret = new EncryptionServices().EncryptText(secret);
             _uow.UserRepository.Update(u, u.Id);
