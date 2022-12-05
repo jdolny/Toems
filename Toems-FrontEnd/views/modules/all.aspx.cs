@@ -51,7 +51,7 @@ namespace Toems_FrontEnd.views.modules
             filter.IncludeFileCopy = true;
             filter.IncludeScript = true;
             filter.IncludeWu = true;
-            filter.IncludeUnassigned = true;
+            filter.IncludeUnassigned = false;
             filter.IncludeMessage = true;
             filter.IncludeWinPe = true;
 
