@@ -25,6 +25,7 @@ namespace Toems_Common.DbUpgrades
             _mapping.Add(148, "1.4.8.0");
             _mapping.Add(150, "1.5.0.0");
             _mapping.Add(151, "1.5.1.0");
+            _mapping.Add(152, "1.5.2.0");
 
 
         }
