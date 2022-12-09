@@ -284,6 +284,10 @@ namespace Toems_Service.Workflows
             {
                 select += @" u." + query.Field + ",";
             }
+            foreach (var query in queries.Where(x => x.Table.Equals("Group")))
+            {
+                select += @" w." + query.Field + ",";
+            }
 
             foreach (var query in queries)
             {
@@ -363,7 +367,11 @@ namespace Toems_Service.Workflows
             }
             if (queries.Any(x => x.Table == "Gpu"))
                 sb.Append("LEFT JOIN computer_gpu_inventory u on a.computer_id = u.computer_id ");
-
+            if (queries.Any(x => x.Table == "Group"))
+            {
+                sb.Append($"LEFT JOIN group_memberships v on a.computer_id = v.computer_id ");
+                sb.Append($"LEFT JOIN groups w on v.group_id = w.group_id ");
+            }
 
             var scriptModuleIds = new List<int>();
             var customAttributeIds = new List<int>();
@@ -452,6 +460,8 @@ namespace Toems_Service.Workflows
                     tableAs = "t";
                 else if (query.Table == "Gpu")
                     tableAs = "u";
+                else if (query.Table == "Group")
+                    tableAs = "w";
                 else
                 {
                     if (query.Table.StartsWith("("))
