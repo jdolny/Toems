@@ -207,6 +207,16 @@ namespace Toems_Service.Entity
             return _uow.ActiveImagingTaskRepository.Get();
         }
 
+        public EntityActiveImagingTask GetFromWebToken(string token)
+        {
+            return _uow.ActiveImagingTaskRepository.GetFirstOrDefault(x => x.WebTaskToken.Equals(token));
+        }
+
+        public EntityActiveImagingTask GetForComputer(int computerId)
+        {
+            return _uow.ActiveImagingTaskRepository.GetFirstOrDefault(x => x.ComputerId.Equals(computerId));
+        }
+
         public List<EntityActiveImagingTask> GetAllOnDemandUnregistered()
         {
             return _uow.ActiveImagingTaskRepository.Get(x => x.ComputerId < -1);

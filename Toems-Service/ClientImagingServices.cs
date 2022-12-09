@@ -156,7 +156,7 @@ namespace Toems_Service
             if (webTaskRequiresLogin.Equals("True")) return string.Empty;
             var computer = new ServiceComputer().GetComputerFromClientIdentifier(clientId);
             if (computer == null) return string.Empty;
-            var task = new ServiceActiveImagingTask().GetAll().Where(x => x.ComputerId == computer.Id).FirstOrDefault();
+            var task = new ServiceActiveImagingTask().GetForComputer(computer.Id);
             if(task == null) return string.Empty;
 
             return task.WebTaskToken;
@@ -171,7 +171,7 @@ namespace Toems_Service
             if (user != null)
                 return true;
 
-            var task = new ServiceActiveImagingTask().GetAll().Where(x => x.WebTaskToken.Equals(token)).FirstOrDefault();
+            var task = new ServiceActiveImagingTask().GetFromWebToken(token);
             if (task != null)
                 return true;
 
@@ -499,6 +499,9 @@ namespace Toems_Service
 
         public string CheckTaskAuth(string task, string token)
         {
+            return "true";
+            //deprecated - just return true;
+            /*
             //only check console tasks, 
             var consoleRequiresLogin = ServiceSetting.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
 
@@ -525,6 +528,7 @@ namespace Toems_Service
             }
 
             return "false";
+            */
 
         }
 
