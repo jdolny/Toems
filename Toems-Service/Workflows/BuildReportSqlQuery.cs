@@ -18,88 +18,65 @@ namespace Toems_Service.Workflows
 
         private string BuildGroupBy(string groupBy)
         {
-            Dictionary<string, int> queryTypeCount = new Dictionary<string, int>();
-            queryTypeCount.Add("Bios", 0);
-            queryTypeCount.Add("System", 0);
-            queryTypeCount.Add("Hard Drive", 0);
-            queryTypeCount.Add("OS", 0);
-            queryTypeCount.Add("Printer", 0);
-            queryTypeCount.Add("Processor", 0);
-            queryTypeCount.Add("Application", 0);
-            queryTypeCount.Add("Windows Update", 0);
-            queryTypeCount.Add("Firewall", 0);
-            queryTypeCount.Add("AntiVirus", 0);
-            queryTypeCount.Add("BitLocker", 0);
-            queryTypeCount.Add("Logical Volumes", 0);
-            queryTypeCount.Add("Network Adapters", 0);
-            queryTypeCount.Add("Certificates", 0);
-            queryTypeCount.Add("Category", 0);
-            queryTypeCount.Add("Gpu", 0);
-            queryTypeCount.Add("Group", 0);
-
             if (string.IsNullOrEmpty(groupBy)) return "";
 
-            if (groupBy.StartsWith("("))
-            {
-                var cia = groupBy.Replace(".value", "");
-                cia = cia.Trim('(').Trim(')');
-                var ciaType = cia.Split('_').First();
-                if (ciaType.Equals("ci"))
+                if (groupBy.StartsWith("("))
                 {
-                    int ciId;
-                    if (int.TryParse(cia.Split('_')[1], out ciId))
+                    var cia = groupBy.Replace(".value", "");
+                    cia = cia.Trim('(').Trim(')');
+                    var ciaType = cia.Split('_').First();
+                    if (ciaType.Equals("ci"))
                     {
-                        return @" GROUP BY ci" + ciId + ".value";
+                        int ciId;
+                        if (int.TryParse(cia.Split('_')[1], out ciId))
+                        {
+                            return @" GROUP BY ci" + ciId + ".value"; 
+                        }
+                    }
+                    else if (ciaType.Equals("ca"))
+                    {
+                        int caId;
+                        if (int.TryParse(cia.Split('_')[1], out caId))
+                        {
+                            return " GROUP BY ca" + caId + ".value"; 
+                    }
                     }
                 }
-                else if (ciaType.Equals("ca"))
+                else
                 {
-                    int caId;
-                    if (int.TryParse(cia.Split('_')[1], out caId))
-                    {
-                        return " GROUP BY ca" + caId + ".value";
-                    }
-                }
-            }
-            else
-            {
+                    var table = groupBy.Split('.').First();
+                    var field = groupBy.Split('.')[1];
 
-                if (groupBy.Split('.')[0] == "Computer")
-                    return " GROUP BY a." + groupBy.Split('.')[1];
-                else if (groupBy.Split('.')[1] == "Bios")
-                    return $" GROUP BY b{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "System")
-                    return $" GROUP BY c{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "Hard Drive")
-                    return $" GROUP BY d{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "OS")
-                    return $" GROUP BY e{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "Printer")
-                    return $" GROUP BY f{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "Processor")
-                    return $" GROUP BY g{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "Application")
-                    return $" GROUP BY i{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "Windows Update")
-                    return $" GROUP BY k{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "Firewall")
-                    return $" GROUP BY l{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "AntiVirus")
-                    return $" GROUP BY m{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "BitLocker")
-                    return $" GROUP BY n{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "Logical Volumes")
-                    return $" GROUP BY o{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "Network Adapters")
-                    return $" GROUP BY p{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "Certificates")
-                    return $" GROUP BY r{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "Category")
-                    return $" GROUP BY t{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "Gpu")
-                    return $" GROUP BY u{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
-                else if (groupBy.Split('.')[1] == "Group")
-                    return $" GROUP BY w{groupBy.Split('.').First()}." + groupBy.Split('.')[2];
+                    if (table == "Computer")
+                        return " GROUP BY a." + field;
+                    else if (table == "Bios")
+                    return " GROUP BY b." + field;
+                else if (table == "System")
+                    return " GROUP BY c." + field;
+                else if (table == "Hard Drive")
+                    return " GROUP BY d." + field;
+                else if (table == "OS")
+                    return " GROUP BY e." + field;
+                else if (table == "Printer")
+                    return " GROUP BY f." + field;
+                else if (table == "Processor")
+                    return " GROUP BY g." + field;
+                else if (table == "Application")
+                    return " GROUP BY i." + field;
+                else if (table == "Windows Update")
+                    return " GROUP BY k." + field;
+                else if (table == "Firewall")
+                    return " GROUP BY l." + field;
+                else if (table == "AntiVirus")
+                    return " GROUP BY m." + field;
+                else if (table == "BitLocker")
+                    return " GROUP BY n." + field;
+                else if (table == "Logical Volumes")
+                    return " GROUP BY o." + field;
+                else if (table == "Network Adapters")
+                        return " GROUP BY p." + field;
+                else if (table == "Certificates")
+                    return " GROUP BY r." + field;
             }
 
             return "";
@@ -225,24 +202,6 @@ namespace Toems_Service.Workflows
                 sqlQuery.Sql = sb.ToString();
                 return sqlQuery;
             }
-            Dictionary<string, int> selectQueryTypeCount = new Dictionary<string, int>();
-            selectQueryTypeCount.Add("Bios", 0);
-            selectQueryTypeCount.Add("System", 0);
-            selectQueryTypeCount.Add("Hard Drive", 0);
-            selectQueryTypeCount.Add("OS", 0);
-            selectQueryTypeCount.Add("Printer", 0);
-            selectQueryTypeCount.Add("Processor", 0);
-            selectQueryTypeCount.Add("Application", 0);
-            selectQueryTypeCount.Add("Windows Update", 0);
-            selectQueryTypeCount.Add("Firewall", 0);
-            selectQueryTypeCount.Add("AntiVirus", 0);
-            selectQueryTypeCount.Add("BitLocker", 0);
-            selectQueryTypeCount.Add("Logical Volumes", 0);
-            selectQueryTypeCount.Add("Network Adapters", 0);
-            selectQueryTypeCount.Add("Certificates", 0);
-            selectQueryTypeCount.Add("Category", 0);
-            selectQueryTypeCount.Add("Gpu", 0);
-            selectQueryTypeCount.Add("Group", 0);
 
             string select = "SELECT a.computer_id, a.computer_name,";
 
@@ -250,104 +209,80 @@ namespace Toems_Service.Workflows
             {
                 if (query.Field.Equals("computer_name")) continue;
                 select += @" a." + query.Field + ",";
-                
             }
 
             foreach (var query in queries.Where(x => x.Table.Equals("Bios")))
             {
-                select += $" b{selectQueryTypeCount["Bios"]}." + query.Field + ",";
-                selectQueryTypeCount["Bios"]++;
+                select += @" b." + query.Field + ",";
             }
 
             foreach (var query in queries.Where(x => x.Table.Equals("System")))
             {
-                select += $" c{selectQueryTypeCount["System"]}." + query.Field + ",";
-                selectQueryTypeCount["System"]++;
+                select += @" c." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("Hard Drive")))
             {
-                select += $" d{selectQueryTypeCount["Hard Drive"]}." + query.Field + ",";
-                selectQueryTypeCount["Hard Drive"]++;
+                select += @" d." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("OS")))
             {
-                select += $" e{selectQueryTypeCount["OS"]}." + query.Field + ",";
-                selectQueryTypeCount["OS"]++;
+                select += @" e." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("Printer")))
             {
-                select += $" f{selectQueryTypeCount["Printer"]}." + query.Field + ",";
-                selectQueryTypeCount["Printer"]++;
+                select += @" f." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("Processor")))
             {
-                select += $" g{selectQueryTypeCount["Processor"]}." + query.Field + ",";
-                selectQueryTypeCount["Processor"]++;
+                select += @" g." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("Application")))
             {
-                select += $" i{selectQueryTypeCount["Application"]}." + query.Field + ",";
-                selectQueryTypeCount["Application"]++;
+                select += @" i." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("Windows Update") && x.Field.Equals("is_installed")))
             {
-                select += $" j{selectQueryTypeCount["Windows Update"]}." + query.Field + ",";
-                selectQueryTypeCount["Windows Update"]++;
+                select += @" j." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("Windows Update") && x.Field.Equals("install_date")))
             {
-                select += $" j{selectQueryTypeCount["Windows Update"]}." + query.Field + ",";
-                selectQueryTypeCount["Windows Update"]++;
+                select += @" j." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("Windows Update") && x.Field.Equals("title")))
             {
-                select += $" k{selectQueryTypeCount["Windows Update"]}." + query.Field + ",";
-                selectQueryTypeCount["Windows Update"]++;
+                select += @" k." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("Firewall")))
             {
-                select += $" l{selectQueryTypeCount["Firewall"]}." + query.Field + ",";
-                selectQueryTypeCount["Firewall"]++;
+                select += @" l." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("AntiVirus")))
             {
-                select += $" m{selectQueryTypeCount["AntiVirus"]}." + query.Field + ",";
-                selectQueryTypeCount["AntiVirus"]++;
+                select += @" m." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("BitLocker")))
             {
-                select += $" n{selectQueryTypeCount["BitLocker"]}." + query.Field + ",";
-                selectQueryTypeCount["BitLocker"]++;
+                select += @" n." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("Logical Volumes")))
             {
-                select += $" o{selectQueryTypeCount["Logical Volumes"]}." + query.Field + ",";
-                selectQueryTypeCount["Logical Volumes"]++;
+                select += @" o." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("Network Adapters")))
             {
-                select += $" p{selectQueryTypeCount["Network Adapters"]}." + query.Field + ",";
-                selectQueryTypeCount["Network Adapters"]++;
+                select += @" p." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("Certificates")))
             {
-                select += $" r{selectQueryTypeCount["Certificates"]}." + query.Field + ",";
-                selectQueryTypeCount["Certificates"]++;
+                select += @" r." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("Category")))
             {
-                select += $" t{selectQueryTypeCount["Category"]}." + query.Field + ",";
-                selectQueryTypeCount["Category"]++;
+                select += @" t." + query.Field + ",";
             }
             foreach (var query in queries.Where(x => x.Table.Equals("Gpu")))
             {
-                select += $" u{selectQueryTypeCount["Gpu"]}." + query.Field + ",";
-                selectQueryTypeCount["Gpu"]++;
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("Group")))
-            {
-                select += $" w{selectQueryTypeCount["Group"]}." + query.Field + ",";
-                selectQueryTypeCount["Group"]++;
+                select += @" u." + query.Field + ",";
             }
 
             foreach (var query in queries)
@@ -384,55 +319,50 @@ namespace Toems_Service.Workflows
             sb.Append(selectTrimmed);
             sb.Append(@" FROM computers as a ");
 
-            for (int i = 0; i < queries.Where(x => x.Table == "Bios").Count(); i++)
-                sb.Append($"LEFT JOIN bios_inventory b{i} on a.computer_id = b{i}.computer_id ");
-            for (int i = 0; i < queries.Where(x => x.Table == "System").Count(); i++)
-                sb.Append($"LEFT JOIN computer_system_inventory c{i} on a.computer_id = c{i}.computer_id ");
-            for (int i = 0; i < queries.Where(x => x.Table == "Hard Drive").Count(); i++)
-                sb.Append($"LEFT JOIN hdd_inventory d{i} on a.computer_id = d{i}.computer_id ");
-            for (int i = 0; i < queries.Where(x => x.Table == "OS").Count(); i++)
-                sb.Append($"LEFT JOIN os_inventory e{i} on a.computer_id = e{i}.computer_id ");
-            for (int i = 0; i < queries.Where(x => x.Table == "Printer").Count(); i++)
-                sb.Append($"LEFT JOIN printer_inventory f{i} on a.computer_id = f{i}.computer_id ");
-            for (int i = 0; i < queries.Where(x => x.Table == "Processor").Count(); i++)
-                sb.Append($"LEFT JOIN processor_inventory g{i} on a.computer_id = g{i}.computer_id ");
-            for (int i = 0; i < queries.Where(x => x.Table == "Application").Count(); i++)
+            if (queries.Any(x => x.Table == "Bios"))
+                sb.Append("LEFT JOIN bios_inventory b on a.computer_id = b.computer_id ");
+            if (queries.Any(x => x.Table == "System"))
+                sb.Append("LEFT JOIN computer_system_inventory c on a.computer_id = c.computer_id ");
+            if (queries.Any(x => x.Table == "Hard Drive"))
+                sb.Append("LEFT JOIN hdd_inventory d on a.computer_id = d.computer_id ");
+            if (queries.Any(x => x.Table == "OS"))
+                sb.Append("LEFT JOIN os_inventory e on a.computer_id = e.computer_id ");
+            if (queries.Any(x => x.Table == "Printer"))
+                sb.Append("LEFT JOIN printer_inventory f on a.computer_id = f.computer_id ");
+            if (queries.Any(x => x.Table == "Processor"))
+                sb.Append("LEFT JOIN processor_inventory g on a.computer_id = g.computer_id ");
+            if (queries.Any(x => x.Table == "Application"))
             {
-                sb.Append($"LEFT JOIN computer_software h{i} on a.computer_id = h{i}.computer_id ");
-                sb.Append($"LEFT JOIN software_inventory i{i} on h{i}.software_id = i{i}.software_inventory_id ");
+                sb.Append("LEFT JOIN computer_software h on a.computer_id = h.computer_id ");
+                sb.Append("LEFT JOIN software_inventory i on h.software_id = i.software_inventory_id ");
             }
-            for (int i = 0; i < queries.Where(x => x.Table == "Windows Update").Count(); i++)
+            if (queries.Any(x => x.Table == "Windows Update"))
             {
-                sb.Append($"LEFT JOIN computer_updates j{i} on a.computer_id = j{i}.computer_id ");
-                sb.Append($"LEFT JOIN wu_inventory k{i} on j{i}.wu_inventory_id = k{i}.wu_inventory_id ");
+                sb.Append("LEFT JOIN computer_updates j on a.computer_id = j.computer_id ");
+                sb.Append("LEFT JOIN wu_inventory k on j.wu_inventory_id = k.wu_inventory_id ");
             }
-            for (int i = 0; i < queries.Where(x => x.Table == "Firewall").Count(); i++)
-                sb.Append($"LEFT JOIN firewall_inventory l{i} on a.computer_id = l{i}.computer_id ");
-            for (int i = 0; i < queries.Where(x => x.Table == "AntiVirus").Count(); i++)
-                sb.Append($"LEFT JOIN antivirus_inventory m{i} on a.computer_id = m{i}.computer_id ");
-            for (int i = 0; i < queries.Where(x => x.Table == "BitLocker").Count(); i++)
-                sb.Append($"LEFT JOIN bitlocker_inventory n{i} on a.computer_id = n{i}.computer_id ");
-            for (int i = 0; i < queries.Where(x => x.Table == "Logical Volumes").Count(); i++)
-                sb.Append($"LEFT JOIN logical_volume_inventory o{i} on a.computer_id = o{i}.computer_id ");
-            for (int i = 0; i < queries.Where(x => x.Table == "Network Adapters").Count(); i++)
-                sb.Append($"LEFT JOIN nic_inventory p{i} on a.computer_id = p{i}.computer_id ");
-            for (int i = 0; i < queries.Where(x => x.Table == "Certificates").Count(); i++)
+            if (queries.Any(x => x.Table == "Firewall"))
+                sb.Append("LEFT JOIN firewall_inventory l on a.computer_id = l.computer_id ");
+            if (queries.Any(x => x.Table == "AntiVirus"))
+                sb.Append("LEFT JOIN antivirus_inventory m on a.computer_id = m.computer_id ");
+            if (queries.Any(x => x.Table == "BitLocker"))
+                sb.Append("LEFT JOIN bitlocker_inventory n on a.computer_id = n.computer_id ");
+            if (queries.Any(x => x.Table == "Logical Volumes"))
+                sb.Append("LEFT JOIN logical_volume_inventory o on a.computer_id = o.computer_id ");
+            if (queries.Any(x => x.Table == "Network Adapters"))
+                sb.Append("LEFT JOIN nic_inventory p on a.computer_id = p.computer_id ");
+            if (queries.Any(x => x.Table == "Certificates"))
             {
-                sb.Append($"LEFT JOIN computer_certificates q{i} on a.computer_id = q{i}.computer_id ");
-                sb.Append($"LEFT JOIN certificate_inventory r{i} on q{i}.certificate_id = r{i}.certificate_inventory_id ");
+                sb.Append("LEFT JOIN computer_certificates q on a.computer_id = q.computer_id ");
+                sb.Append("LEFT JOIN certificate_inventory r on q.certificate_id = r.certificate_inventory_id ");
             }
-            for (int i = 0; i < queries.Where(x => x.Table == "Category").Count(); i++)
+            if (queries.Any(x => x.Table == "Category"))
             {
-                sb.Append($"LEFT JOIN computer_categories s{i} on a.computer_id = s{i}.computer_id ");
-                sb.Append($"LEFT JOIN categories t{i} on s{i}.category_id = t{i}.category_id ");
+                sb.Append("LEFT JOIN computer_categories s on a.computer_id = s.computer_id ");
+                sb.Append("LEFT JOIN categories t on s.category_id = t.category_id ");
             }
-            for (int i = 0; i < queries.Where(x => x.Table == "Gpu").Count(); i++)
-                sb.Append($"LEFT JOIN computer_gpu_inventory u{i} on a.computer_id = u{i}.computer_id ");
-            for (int i = 0; i < queries.Where(x => x.Table == "Group").Count(); i++)
-            {
-                sb.Append($"LEFT JOIN group_memberships v{i} on a.computer_id = v{i}.computer_id ");
-                sb.Append($"LEFT JOIN groups w{i} on v{i}.group_id = w{i}.group_id ");
-            }
+            if (queries.Any(x => x.Table == "Gpu"))
+                sb.Append("LEFT JOIN computer_gpu_inventory u on a.computer_id = u.computer_id ");
 
 
             var scriptModuleIds = new List<int>();
@@ -481,124 +411,47 @@ namespace Toems_Service.Workflows
             sb.Append("WHERE (");
             int counter = 0;
             var parameters = new List<string>();
-            Dictionary<string, int> queryTypeCount = new Dictionary<string, int>();
-            queryTypeCount.Add("Bios", 0);
-            queryTypeCount.Add("System", 0);
-            queryTypeCount.Add("Hard Drive", 0);
-            queryTypeCount.Add("OS", 0);
-            queryTypeCount.Add("Printer", 0);
-            queryTypeCount.Add("Processor", 0);
-            queryTypeCount.Add("Application", 0);
-            queryTypeCount.Add("Windows Update", 0);
-            queryTypeCount.Add("Firewall", 0);
-            queryTypeCount.Add("AntiVirus", 0);
-            queryTypeCount.Add("BitLocker", 0);
-            queryTypeCount.Add("Logical Volumes", 0);
-            queryTypeCount.Add("Network Adapters", 0);
-            queryTypeCount.Add("Certificates", 0);
-            queryTypeCount.Add("Category", 0);
-            queryTypeCount.Add("Gpu", 0);
-            queryTypeCount.Add("Group", 0);
             foreach (var query in queries)
             {
                 var tableAs = "";
                 if (query.Table == "Computer")
                     tableAs = "a";
                 else if (query.Table == "Bios")
-                {
-                    tableAs = $"b{queryTypeCount["Bios"]}";
-                    queryTypeCount["Bios"]++;
-                }
+                    tableAs = "b";
                 else if (query.Table == "System")
-                {
-                    tableAs = $"c{queryTypeCount["System"]}";
-                    queryTypeCount["System"]++;
-                }
+                    tableAs = "c";
                 else if (query.Table == "Hard Drive")
-                {
-                    tableAs = $"d{queryTypeCount["Hard Drive"]}";
-                    queryTypeCount["Hard Drive"]++;
-                }
+                    tableAs = "d";
                 else if (query.Table == "OS")
-                {
-                    tableAs = $"e{queryTypeCount["OS"]}";
-                    queryTypeCount["OS"]++;
-                }
+                    tableAs = "e";
                 else if (query.Table == "Printer")
-                {
-                    tableAs = $"f{queryTypeCount["Printer"]}";
-                    queryTypeCount["Printer"]++;
-                }
+                    tableAs = "f";
                 else if (query.Table == "Processor")
-                {
-                    tableAs = $"g{queryTypeCount["Processor"]}";
-                    queryTypeCount["Processor"]++;
-                }
+                    tableAs = "g";
                 else if (query.Table == "Application")
-                {
-                    tableAs = $"i{queryTypeCount["Application"]}";
-                    queryTypeCount["Application"]++;
-                }
+                    tableAs = "i";
                 else if (query.Table == "Windows Update" && query.Field == "is_installed")
-                {
-                    tableAs = $"j{queryTypeCount["Windows Update"]}";
-                    queryTypeCount["Windows Update"]++;
-                }
+                    tableAs = "j";
                 else if (query.Table == "Windows Update" && query.Field == "install_date")
-                {
-                    tableAs = $"j{queryTypeCount["Windows Update"]}";
-                    queryTypeCount["Windows Update"]++;
-                }
+                    tableAs = "j";
                 else if (query.Table == "Windows Update")
-                {
-                    tableAs = $"k{queryTypeCount["Windows Update"]}";
-                    queryTypeCount["Windows Update"]++;
-                }
+                    tableAs = "k";
                 else if (query.Table == "Firewall")
-                {
-                    tableAs = $"l{queryTypeCount["Firewall"]}";
-                    queryTypeCount["Firewall"]++;
-                }
+                    tableAs = "l";
                 else if (query.Table == "AntiVirus")
-                {
-                    tableAs = $"m{queryTypeCount["AntiVirus"]}";
-                    queryTypeCount["AntiVirus"]++;
-                }
+                    tableAs = "m";
                 else if (query.Table == "BitLocker")
-                {
-                    tableAs = $"n{queryTypeCount["BitLocker"]}";
-                    queryTypeCount["BitLocker"]++;
-                }
+                    tableAs = "n";
                 else if (query.Table == "Logical Volumes")
-                {
-                    tableAs = $"o{queryTypeCount["Logical Volumes"]}";
-                    queryTypeCount["Logical Volumes"]++;
-                }
+                    tableAs = "o";
                 else if (query.Table == "Network Adapters")
-                {
-                    tableAs = $"p{queryTypeCount["Network Adapters"]}";
-                    queryTypeCount["Network Adapters"]++;
-                }
+                    tableAs = "p";
                 else if (query.Table == "Certificates")
-                {
-                    tableAs = $"r{queryTypeCount["Certificates"]}";
-                    queryTypeCount["Certificates"]++;
-                }
+                    tableAs = "r";
                 else if (query.Table == "Category")
-                {
-                    tableAs = $"t{queryTypeCount["Category"]}";
-                    queryTypeCount["Category"]++;
-                }
+                    tableAs = "t";
                 else if (query.Table == "Gpu")
-                {
-                    tableAs = $"u{queryTypeCount["Gpu"]}";
-                    queryTypeCount["Gpu"]++;
-                }
-                else if (query.Table == "Group")
-                {
-                    tableAs = $"w{queryTypeCount["Group"]}";
-                    queryTypeCount["Group"]++;
-                }
+                    tableAs = "u";
                 else
                 {
                     if (query.Table.StartsWith("("))
