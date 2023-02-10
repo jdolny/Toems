@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/theopenem/views/users/user.master" AutoEventWireup="true" CodeBehind="groupimageacls.aspx.cs" Inherits="Toems_FrontEnd.views.users.groupimageacls" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/users/user.master" AutoEventWireup="true" CodeBehind="groupimageacls.aspx.cs" Inherits="Toems_FrontEnd.views.users.groupimageacls" %>
 <asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub1">
      <li>
         <a href="<%= ResolveUrl("~/views/users/searchgroup.aspx") %>">User Groups</a>
