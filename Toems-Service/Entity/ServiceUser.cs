@@ -59,13 +59,6 @@ namespace Toems_Service.Entity
             return actionResult;
         }
 
-        public bool DeleteUserRights(int userId)
-        {
-            _uow.UserRightRepository.DeleteRange(x => x.UserId == userId);
-            _uow.Save();
-            return true;
-        }
-
         public int GetAdminCount()
         {
             return Convert.ToInt32(_uow.UserRepository.Count(u => u.Membership == "Administrator"));
@@ -101,6 +94,28 @@ namespace Toems_Service.Entity
         public string GetUserName(int userId)
         {
             return _uow.UserRepository.GetUserName(userId);
+        }
+
+        public List<EntityUserRight> GetEffectiveUserRights(int userId)
+        {
+            var userGroups = _uow.UserGroupMembershipRepository.Get(x => x.ToemsUserId == userId).ToList();
+            if (!userGroups.Any()) return new List<EntityUserRight>();
+
+            List<EntityUserGroupRight> allUserGroupRights = new List<EntityUserGroupRight>();
+            foreach (var usergroup in userGroups)
+            {
+                allUserGroupRights.AddRange(_uow.UserGroupRightRepository.Get(x => x.UserGroupId == usergroup.UserGroupId));
+            }
+
+            var collectiveUserRights = allUserGroupRights.Select(right => new EntityUserRight { UserId = userId, Right = right.Right }).ToList();
+
+            var userRights = _uow.UserRightRepository.Get(x => x.UserId == userId);
+            if (userRights.Any())
+            {
+                collectiveUserRights.AddRange(userRights);
+            }
+
+            return collectiveUserRights;
         }
 
         public List<EntityAuditLog> GetUserAuditLogs(int userId, DtoSearchFilter filter)
@@ -169,13 +184,135 @@ namespace Toems_Service.Entity
             return _uow.UserRightRepository.Get(x => x.UserId == userId);
         }
 
-      
+        public bool UpdateUsersImagesList(EntityToemsUsersImages image)
+        {
+            _uow.ToemsUsersImagesRepository.Insert(image);
+            _uow.Save();
+            return true;
+        }
+
+        public bool UpdateUsersGroupsList(EntityToemsUsersGroups group)
+        {
+            _uow.ToemsUsersGroupsRepository.Insert(group);
+            _uow.Save();
+            return true;
+        }
+
+
+
+        public DtoUserImageManagement GetAllowedImages(int userId)
+        {
+            var dtoUserImageManagement = new DtoUserImageManagement();
+
+            if (IsAdmin(userId)) return dtoUserImageManagement;
+
+            var userGroupServices = new ServiceUserGroup();
+
+            foreach (var g in GetUsersGroups(userId))
+            {
+                if (g.EnableImageAcls)
+                {
+                    dtoUserImageManagement.ImageManagementEnforced = true;
+                    dtoUserImageManagement.AllowedImageIds.AddRange(userGroupServices.GetManagedImageIds(g.Id));
+                    dtoUserImageManagement.AllowedImageIds.AddRange(_uow.ToemsUsersImagesRepository.Get(x => x.UserId == userId).Select(x => x.ImageId).ToList());
+                }
+            }
+
+            dtoUserImageManagement.AllowedImageIds = dtoUserImageManagement.AllowedImageIds.Distinct().ToList();
+
+            return dtoUserImageManagement;
+
+        }
+
+        public DtoUserGroupManagement GetAllowedGroups(int userId)
+        {
+            var dtoUserGroupManagement = new DtoUserGroupManagement();
+
+            if (IsAdmin(userId)) return dtoUserGroupManagement;
+
+            var userGroupServices = new ServiceUserGroup();
+
+            foreach (var g in GetUsersGroups(userId))
+            {
+                if (g.EnableComputerGroupAcls)
+                {
+                    dtoUserGroupManagement.GroupManagementEnforced = true;
+                    dtoUserGroupManagement.AllowedGroupIds.AddRange(userGroupServices.GetManagedGroupIds(g.Id));
+                    dtoUserGroupManagement.AllowedGroupIds.AddRange(_uow.ToemsUsersGroupsRepository.Get(x => x.UserId == userId).Select(x => x.GroupId).ToList());
+                }
+            }
+
+            dtoUserGroupManagement.AllowedGroupIds = dtoUserGroupManagement.AllowedGroupIds.Distinct().ToList();
+
+            return dtoUserGroupManagement;
+
+        }
+
+        public DtoUserComputerManagement GetAllowedComputers(int userId)
+        {
+            var dtoUserComputerManagement = new DtoUserComputerManagement();
+
+            var deniedComputers = new List<int>();
+            if (IsAdmin(userId)) return dtoUserComputerManagement;
+
+            var userGroupServices = new ServiceUserGroup();
+            var allowedGroupIds = new List<int>();
+            foreach (var g in GetUsersGroups(userId))
+            {
+                if (g.EnableComputerGroupAcls)
+                {
+                    dtoUserComputerManagement.ComputerManagementEnforced = true;
+                    allowedGroupIds.AddRange(userGroupServices.GetManagedGroupIds(g.Id));
+                    allowedGroupIds.AddRange(_uow.ToemsUsersGroupsRepository.Get(x => x.UserId == userId).Select(x => x.GroupId).ToList());
+                }
+            }
+
+            var groupServices = new ServiceGroup();
+
+            foreach(var groupId in allowedGroupIds)
+            {
+                dtoUserComputerManagement.AllowedComputerIds.AddRange(groupServices.GetGroupMembers(groupId).Select(x => x.Id));
+            }
+
+            dtoUserComputerManagement.AllowedComputerIds = dtoUserComputerManagement.AllowedComputerIds.Distinct().ToList();
+
+            return dtoUserComputerManagement;
+
+        }
+
         public bool IsAdmin(int userId)
         {
             var user = GetUser(userId);
-            return user.Membership == "Administrator";
+            if (user.Membership == "Administrator")
+                return true;
+
+            foreach(var group in GetUsersGroups(userId))
+            {
+                if (group.Membership == "Administrator")
+                    return true;
+            }
+
+            return false;
         }
 
+        public List<EntityToemsUserGroup> GetUsersGroups(int userId)
+        {
+            var user = GetUser(userId);
+            List<EntityToemsUserGroup> usersGroups = new List<EntityToemsUserGroup>();
+            if (user == null) return usersGroups;
+
+            var userGroups = _uow.UserGroupMembershipRepository.Get(x => x.ToemsUserId == userId).ToList();
+            foreach(var group in userGroups)
+            {
+                usersGroups.Add(_uow.UserGroupRepository.GetById(group.UserGroupId));
+            }
+            //get legacy group
+            if(user.UserGroupId != -1 && !usersGroups.Select(x => x.Id == user.UserGroupId).Any())
+            {
+                usersGroups.Add(_uow.UserGroupRepository.GetById(user.UserGroupId));
+            }
+            return usersGroups;
+        }
         public List<EntityToemsUser> GetAll()
         {
             var users = _uow.UserRepository.Get();
@@ -188,7 +325,17 @@ namespace Toems_Service.Entity
             return users;
         }
 
-        public List<UserWithUserGroup> SearchUsers(DtoSearchFilter filter)
+        public bool RemoveUserLegacyGroup(int userId)
+        {
+            var u = GetUserWithPass(userId);
+            if (u == null) return false;
+            u.UserGroupId = -1;
+            _uow.UserRepository.Update(u, u.Id);
+            _uow.Save();
+            return true;
+        }
+
+        public List<EntityToemsUser> SearchUsers(DtoSearchFilter filter)
         {
             var users = _uow.UserRepository.Search(filter.SearchText);
             foreach (var user in users)
@@ -370,7 +517,9 @@ namespace Toems_Service.Entity
         public string GetUserComputerView(int userId)
         {
             var user = GetUser(userId);
-            if (user.DefaultComputerView.Equals("Default"))
+            if(user.DefaultComputerView == null)
+                return ServiceSetting.GetSettingValue(SettingStrings.DefaultComputerView);
+            else if (user.DefaultComputerView.Equals("Default"))
                 return ServiceSetting.GetSettingValue(SettingStrings.DefaultComputerView);
             else
                 return user.DefaultComputerView;
@@ -379,7 +528,10 @@ namespace Toems_Service.Entity
         public string GetUserComputerSort(int userId)
         {
             var user = GetUser(userId);
-            if (user.ComputerSortMode.Equals("Default"))
+
+            if (user.ComputerSortMode == null)
+                return ServiceSetting.GetSettingValue(SettingStrings.ComputerSortMode);
+            else if (user.ComputerSortMode.Equals("Default"))
                 return ServiceSetting.GetSettingValue(SettingStrings.ComputerSortMode);
             else
                 return user.ComputerSortMode;
@@ -388,7 +540,9 @@ namespace Toems_Service.Entity
         public string GetUserLoginPage(int userId)
         {
             var user = GetUser(userId);
-            if (user.DefaultLoginPage.Equals("Default"))
+            if (user.DefaultLoginPage == null)
+                return ServiceSetting.GetSettingValue(SettingStrings.DefaultLoginPage);
+            else if (user.DefaultLoginPage.Equals("Default"))
                 return ServiceSetting.GetSettingValue(SettingStrings.DefaultLoginPage);
             else
                 return user.DefaultLoginPage;

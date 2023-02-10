@@ -20,7 +20,6 @@ namespace Toems_Service
             var path = "LDAP://" + ServiceSetting.GetSettingValue(SettingStrings.LdapServer) + ":" +
                        ServiceSetting.GetSettingValue(SettingStrings.LdapPort) + "/" +
                        ServiceSetting.GetSettingValue(SettingStrings.LdapBaseDN);
-            string _filterAttribute = null;
 
             var entry = new DirectoryEntry(path, username, pwd);
 
@@ -41,14 +40,35 @@ namespace Toems_Service
                 search.PropertiesToLoad.Add("memberOf");
 
                 var result = search.FindOne();
-                if (null == result)
+                if (result == null)
                 {
                     return false;
                 }
 
-                // Update the new path to the user in the directory
-                path = result.Path;
-                _filterAttribute = (string) result.Properties["cn"][0];
+                if (ldapGroup != null)
+                {
+                    bool groupMatched = false;
+                    foreach(string membership in result.Properties["memberOf"])
+                    {
+                        var equalsIndex = membership.IndexOf("=", 1);
+                        var commaIndex = membership.IndexOf(",", 1);
+                        if (equalsIndex == -1)
+                        {
+                            groupMatched = false;
+                        }
+                        if (string.Equals(ldapGroup, membership.Substring(equalsIndex + 1,
+                            commaIndex - equalsIndex - 1), StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            groupMatched = true;
+                            break;
+                        }
+                        else
+                            groupMatched = false;
+                    }
+
+                    return groupMatched;
+                  
+                }
             }
             catch (Exception ex)
             {
@@ -56,50 +76,10 @@ namespace Toems_Service
                 return false;
             }
 
-            if (ldapGroup != null)
-            {
-                return GetGroups(_filterAttribute, path, ldapGroup);
-            }
+          
             return true;
         }
 
-        public bool GetGroups(string _filterAttribute, string _path, string ldapGroup)
-        {
-            var search = new DirectorySearcher(_path);
-            search.Filter = "(cn=" + _filterAttribute + ")";
-            search.PropertiesToLoad.Add("memberOf");
-            try
-            {
-                var result = search.FindOne();
-                var propertyCount = result.Properties["memberOf"].Count;
-                string dn;
-                int equalsIndex, commaIndex;
-
-                for (var propertyCounter = 0;
-                    propertyCounter < propertyCount;
-                    propertyCounter++)
-                {
-                    dn = (string) result.Properties["memberOf"][propertyCounter];
-
-                    equalsIndex = dn.IndexOf("=", 1);
-                    commaIndex = dn.IndexOf(",", 1);
-                    if (-1 == equalsIndex)
-                    {
-                        return false;
-                    }
-                    if (string.Equals(ldapGroup, dn.Substring(equalsIndex + 1,
-                        commaIndex - equalsIndex - 1), StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        return true;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error obtaining group names. " + ex.Message);
-                return false;
-            }
-            return false;
-        }
+     
     }
 }

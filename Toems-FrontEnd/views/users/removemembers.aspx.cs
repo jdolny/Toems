@@ -3,6 +3,7 @@ using System.Web.UI.WebControls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_FrontEnd.BasePages;
+using Toems_FrontEnd.views.computers;
 
 namespace Toems_FrontEnd.views.users
 {
@@ -10,6 +11,33 @@ namespace Toems_FrontEnd.views.users
     {
         protected void btnRemoveSelected_OnClick(object sender, EventArgs e)
         {
+            
+            //Don't remove all administrators
+            if (ToemsUserGroup.Membership == "User")
+            {
+                var existingAdminCount = Call.ToemsUserApi.GetAdminCount();
+                var selectedAdminCount = 0;
+                foreach (GridViewRow row in gvUsers.Rows)
+                {
+                    var cb = (CheckBox) row.FindControl("chkSelector");
+                    if (cb == null || !cb.Checked) continue;
+                    var dataKey = gvUsers.DataKeys[row.RowIndex];
+                    if (dataKey != null)
+                    {
+                        var user = Call.ToemsUserApi.Get(Convert.ToInt32(dataKey.Value));
+                        if (user.Membership == "Administrator")
+                            selectedAdminCount++;
+                    }
+                }
+                if (existingAdminCount == selectedAdminCount)
+                {
+                    EndUserMessage = "Cannot Remove Users From Group.  It Would Remove All Administrators From The System";
+                    return;
+                }
+            }
+             
+
+
             var successCount = 0;
             foreach (GridViewRow row in gvUsers.Rows)
             {
@@ -18,10 +46,7 @@ namespace Toems_FrontEnd.views.users
                 var dataKey = gvUsers.DataKeys[row.RowIndex];
                 if (dataKey != null)
                 {
-                    var user = Call.ToemsUserApi.Get(Convert.ToInt32(dataKey.Value));
-                    user.UserGroupId = -1;
-
-                    if (Call.ToemsUserApi.Put(user.Id, user).Success)
+                    if (Call.UserGroupApi.RemoveGroupMember(ToemsUserGroup.Id, Convert.ToInt32(dataKey.Value)))
                         successCount++;
                 }
             }
@@ -45,7 +70,6 @@ namespace Toems_FrontEnd.views.users
         {
             var filter = new DtoSearchFilter();
             filter.Limit = 0;
-            filter.SearchText = txtSearch.Text;
             gvUsers.DataSource = Call.UserGroupApi.GetGroupMembers(ToemsUserGroup.Id, filter);
             gvUsers.DataBind();
             lblTotal.Text = gvUsers.Rows.Count + " Result(s) / " +

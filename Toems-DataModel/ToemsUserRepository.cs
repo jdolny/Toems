@@ -21,11 +21,9 @@ namespace Toems_DataModel
             return (from s in _context.Users where s.Id == id select s.Name).FirstOrDefault();
         }
 
-        public List<UserWithUserGroup> Search(string searchString)
+        public List<EntityToemsUser> Search(string searchString)
         {
             return (from s in _context.Users
-                join d in _context.UserGroups on s.UserGroupId equals d.Id into joined
-                from j in joined.DefaultIfEmpty()
                 where s.Name.Contains(searchString)
                 orderby s.Name
                 select new
@@ -35,14 +33,13 @@ namespace Toems_DataModel
                     membership = s.Membership,
 
                     email = s.Email,
-                    userGroup = j
-                }).AsEnumerable().Select(x => new UserWithUserGroup
+
+                }).AsEnumerable().Select(x => new EntityToemsUser
                 {
                     Id = x.id,
                     Name = x.name,
                     Membership = x.membership,
 
-                    UserGroup = x.userGroup,
                     Email = x.email,
 
                 }).ToList();
@@ -132,6 +129,15 @@ namespace Toems_DataModel
             }
 
             return list;
+        }
+
+        public List<EntityToemsUser> GetGroupMembers(int userGroupId)
+        {
+            return (from h in _context.Users
+                    join g in _context.UserGroupMemberships on h.Id equals g.ToemsUserId
+                    where (g.UserGroupId == userGroupId)
+                    orderby h.Name
+                    select h).ToList();
         }
     }
 }

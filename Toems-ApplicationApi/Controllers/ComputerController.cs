@@ -32,6 +32,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerArchive)]
         [HttpGet]
+        [ComputerAuth]
         public DtoActionResult Restore(int id)
         {
             var result = _computerServices.RestoreComputer(id);
@@ -54,6 +55,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerArchive)]
         [HttpGet]
+        [ComputerAuth]
         public DtoActionResult Archive(int id)
         {
             var computer = _computerServices.GetComputer(id);
@@ -84,6 +86,7 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerDelete)]
+        [ComputerAuth]
         public DtoActionResult Delete(int id)
         {
             var computer = _computerServices.GetComputer(id);
@@ -105,6 +108,7 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        [ComputerAuth]
         public EntityComputer Get(int id)
         {
             var result = _computerServices.GetComputer(id);
@@ -296,6 +300,7 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerUpdate)]
+        [ComputerAuth]
         public DtoActionResult Put(int id, EntityComputer computer)
         {
             computer.Id = id;
@@ -306,6 +311,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerSendMessage)]
         [HttpPost]
+        [ComputerAuth]
         public DtoApiBoolResponse SendMessage(int id, DtoMessage message)
         {
             var response = new DtoApiBoolResponse() { Value = _computerServices.SendMessage(id, message) };
@@ -326,6 +332,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerForceCheckin)]
         [HttpGet]
+        [ComputerAuth]
         public DtoApiBoolResponse ForceCheckin(int id)
         {
             return new DtoApiBoolResponse() { Value = _computerServices.ForceCheckin(id) };
@@ -333,6 +340,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerForceCheckin)]
         [HttpGet]
+        [ComputerAuth]
         public DtoApiBoolResponse CollectInventory(int id)
         {
             return new DtoApiBoolResponse() { Value = _computerServices.CollectInventory(id) };
@@ -340,6 +348,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerForceCheckin)]
         [HttpGet]
+        [ComputerAuth]
         public DtoApiBoolResponse GetUptime(int id)
         {
             return new DtoApiBoolResponse() { Value = _computerServices.GetSystemUptime(id) };
@@ -347,6 +356,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         [HttpGet]
+        [ComputerAuth]
         public DtoApiBoolResponse GetLoggedInUsers(int id)
         {
             return new DtoApiBoolResponse() { Value = _computerServices.GetLoggedInUsers(id) };
@@ -354,6 +364,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         [HttpGet]
+        [ComputerAuth]
         public DtoApiBoolResponse GetStatus(int id)
         {
             return new DtoApiBoolResponse() { Value = _computerServices.GetStatus(id) };
@@ -361,6 +372,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         [HttpGet]
+        [ComputerAuth]
         public DtoApiBoolResponse GetServiceLog(int id)
         {
             return new DtoApiBoolResponse() { Value = _computerServices.GetServiceLog(id) };
@@ -368,6 +380,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerReboot)]
         [HttpGet]
+        [ComputerAuth]
         public DtoApiBoolResponse Reboot(int id)
         {
             var computer = _computerServices.GetComputer(id);
@@ -387,6 +400,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.AllowRemoteControl)]
         [HttpGet]
+        [ComputerAuth]
         public DtoApiBoolResponse StartRemoteControl(int id)
         {
             var computer = _computerServices.GetComputer(id);
@@ -406,6 +420,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerShutdown)]
         [HttpGet]
+        [ComputerAuth]
         public DtoApiBoolResponse Shutdown(int id)
         {
             var computer = _computerServices.GetComputer(id);
@@ -425,6 +440,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerWakeup)]
         [HttpGet]
+        [ComputerAuth]
         public DtoApiBoolResponse Wakeup(int id)
         {
             var computer = _computerServices.GetComputer(id);
@@ -444,6 +460,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         [HttpGet]
+        [ComputerAuth]
         public DtoInventoryCollection GetSystemInfo(int id)
         {
             return _computerServices.GetSystemInfo(id);
@@ -452,6 +469,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         [HttpGet]
+        [ComputerAuth]
         public IEnumerable<EntitySoftwareInventory> GetSoftware(int id, string searchstring = "")
         {
             return string.IsNullOrEmpty(searchstring)
@@ -461,6 +479,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         [HttpGet]
+        [ComputerAuth]
         public IEnumerable<EntityCertificateInventory> GetCertificates(int id, string searchstring = "")
         {
             return string.IsNullOrEmpty(searchstring)
@@ -470,6 +489,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         [HttpGet]
+        [ComputerAuth]
         public IEnumerable<DtoComputerUpdates> GetUpdates(int id, string searchstring = "")
         {
             return string.IsNullOrEmpty(searchstring)
@@ -479,6 +499,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         [HttpGet]
+        [ComputerAuth]
         public IEnumerable<EntityUserLogin> GetUserLogins(int id, string searchstring = "")
         {
             return string.IsNullOrEmpty(searchstring)
@@ -488,18 +509,21 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.CommentAdd)]
         [HttpPost]
+
         public DtoActionResult AddComment(DtoComputerComment comment)
         {
             return _computerServices.AddComment(comment, _userId);
         }
 
         [CustomAuth(Permission = AuthorizationStrings.CommentRead)]
+        [ComputerAuth]
         public List<DtoComputerComment> GetComments(int id)
         {
             return _computerServices.GetComments(id);
         }
 
         [CustomAuth(Permission = AuthorizationStrings.AttachmentRead)]
+        [ComputerAuth]
         public IEnumerable<EntityAttachment> GetAttachments(int id)
         {
             return _computerServices.GetAttachments(id);
@@ -528,6 +552,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [HttpGet]
         [CustomAuth(Permission = AuthorizationStrings.ImageDeployTask)]
+        [ComputerAuth]
         public DtoApiStringResponse StartDeploy(int id)
         {
             return new DtoApiStringResponse
@@ -538,6 +563,8 @@ namespace Toems_ApplicationApi.Controllers
 
         [HttpGet]
         [CustomAuth(Permission = AuthorizationStrings.ImageDeployTask)]
+        [ComputerAuth]
+
         public DtoApiStringResponse StartDeployWinPe(int id)
         {
             return new DtoApiStringResponse
@@ -548,6 +575,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [HttpGet]
         [CustomAuth(Permission = AuthorizationStrings.ImageUploadTask)]
+        [ComputerAuth]
         public DtoApiStringResponse StartUpload(int id)
         {
             return new DtoApiStringResponse
@@ -557,6 +585,7 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        [ComputerAuth]
         public IEnumerable<EntityComputerLog> GetComputerImagingLogs(int id)
         {
             return _computerServices.GetComputerLogs(id);

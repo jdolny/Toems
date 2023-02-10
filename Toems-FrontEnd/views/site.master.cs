@@ -4,6 +4,7 @@ using System.Web;
 using System.Web.Security;
 using Toems_FrontEnd.BasePages;
 using System.Web.UI;
+using Toems_ApiCalls;
 
 namespace Toems_FrontEnd.views
 {
@@ -28,6 +29,28 @@ namespace Toems_FrontEnd.views
         {
             if (!Page.IsPostBack)
             {
+                if (!new APICall().AuthorizationApi.IsAuthorized("moduleRead"))
+                    navModules.Visible = false;
+                if (!new APICall().AuthorizationApi.IsAuthorized("policyRead"))
+                    navPolicies.Visible = false;
+                if (!new APICall().AuthorizationApi.IsAuthorized("groupRead"))
+                    navGroups.Visible = false;
+                if (!new APICall().AuthorizationApi.IsAuthorized("computerRead"))
+                    navHosts.Visible = false;
+                if (!new APICall().AuthorizationApi.IsAuthorized("imageRead"))
+                    navImages.Visible = false;
+                if (!new APICall().AuthorizationApi.IsAuthorized("imageDeployTask"))
+                    navTasks.Visible = false;
+                if (!new APICall().AuthorizationApi.IsAuthorized("assetRead"))
+                    navAssets.Visible = false;
+                if (!new APICall().AuthorizationApi.IsAuthorized("categoryRead"))
+                    navGlobal.Visible = false;
+                if (!new APICall().AuthorizationApi.IsAuthorized("reportRead"))
+                    navReport.Visible = false;
+                if (!new APICall().AuthorizationApi.IsAuthorized("admin"))
+                    navSettings.Visible = false;
+
+
                 var theme = Session["ToemsTheme"];
                 if (theme != null)
                 {

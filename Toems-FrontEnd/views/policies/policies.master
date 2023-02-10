@@ -98,7 +98,7 @@
 <asp:Content ID="MainContent" ContentPlaceHolderID="Content" runat="Server">
     <script type="text/javascript">
         $(document).ready(function() {
-            $('#nav-policies').addClass("nav-current");
+            $('#navPolicies').addClass("nav-current");
         });
     </script>
     <asp:ContentPlaceHolder ID="SubContent" runat="server">

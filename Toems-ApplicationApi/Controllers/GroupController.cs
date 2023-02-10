@@ -31,6 +31,7 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [CustomAuth(Permission = AuthorizationStrings.GroupDelete)]
+        [GroupAuth]
         public DtoActionResult Delete(int id)
         {
             var group = _groupServices.GetGroup(id);
@@ -52,6 +53,7 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [CustomAuth(Permission = AuthorizationStrings.GroupRead)]
+        [GroupAuth]
         public EntityGroup Get(int id)
         {
             var result = _groupServices.GetGroup(id);
@@ -68,11 +70,12 @@ namespace Toems_ApplicationApi.Controllers
         [CustomAuth(Permission = AuthorizationStrings.GroupRead)]
         public IEnumerable<DtoGroupWithCount> Get()
         {
-            return _groupServices.SearchGroups(new DtoSearchFilterCategories());
+            return _groupServices.SearchGroups(new DtoSearchFilterCategories(),_userId);
         }
 
         [CustomAuth(Permission = AuthorizationStrings.GroupUpdate)]
         [HttpGet]
+        [GroupAuth]
         public DtoActionResult ClearImagingIds(int id)
         {
             var result = _groupServices.ClearImagingIds(id);
@@ -102,7 +105,7 @@ namespace Toems_ApplicationApi.Controllers
         [HttpPost]
         public IEnumerable<DtoGroupWithCount> Search(DtoSearchFilterCategories filter)
         {
-            return _groupServices.SearchGroups(filter);
+            return _groupServices.SearchGroups(filter,_userId);
         }
 
         [CustomAuth(Permission = AuthorizationStrings.GroupRead)]
@@ -113,6 +116,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerSendMessage)]
         [HttpPost]
+        [GroupAuth]
         public DtoApiBoolResponse SendMessage(int id, DtoMessage message)
         {
             var response = new DtoApiBoolResponse() { Value = _groupServices.SendMessage(id, message) };
@@ -134,6 +138,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.GroupReboot)]
         [HttpGet]
+        [GroupAuth]
         public DtoApiBoolResponse Reboot(int id)
         {
             var group = _groupServices.GetGroup(id);
@@ -153,6 +158,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.GroupShutdown)]
         [HttpGet]
+        [GroupAuth]
         public DtoApiBoolResponse Shutdown(int id)
         {
             var group = _groupServices.GetGroup(id);
@@ -172,6 +178,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.GroupWakeup)]
         [HttpGet]
+        [GroupAuth]
         public DtoApiBoolResponse Wakeup(int id)
         {
             var group = _groupServices.GetGroup(id);
@@ -191,6 +198,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerForceCheckin)]
         [HttpGet]
+        [GroupAuth]
         public DtoApiBoolResponse ForceCheckin(int id)
         {
             return new DtoApiBoolResponse() { Value = _groupServices.ForceCheckin(id) };
@@ -198,6 +206,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerForceCheckin)]
         [HttpGet]
+        [GroupAuth]
         public DtoApiBoolResponse CollectInventory(int id)
         {
             return new DtoApiBoolResponse() { Value = _groupServices.CollectInventory(id) };
@@ -219,13 +228,16 @@ namespace Toems_ApplicationApi.Controllers
                 auditLog.UserId = _userId;
                 auditLog.AuditType = EnumAuditEntry.AuditType.Create;
                 _auditLogService.AddAuditLog(auditLog);
-                
+
+                new ServiceUser().UpdateUsersGroupsList(new EntityToemsUsersGroups() { GroupId = result.Id, UserId = Convert.ToInt32(_userId) });
+
             }
 
             return result;
         }
 
         [CustomAuth(Permission = AuthorizationStrings.GroupUpdate)]
+        [GroupAuth]
         public DtoActionResult Put(int id, EntityGroup group)
         {
             group.Id = id;
@@ -291,6 +303,8 @@ namespace Toems_ApplicationApi.Controllers
 
         [HttpGet]
         [CustomAuth(Permission = AuthorizationStrings.GroupUpdate)]
+        [GroupAuth]
+        [GroupAuth]
         public DtoApiBoolResponse RemoveGroupMember(int id, int computerId)
         {
             return new DtoApiBoolResponse {Value = _groupServices.DeleteMembership(computerId, id)};
@@ -312,6 +326,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [HttpGet]
         [CustomAuth(Permission = AuthorizationStrings.ImageDeployTask)]
+        [GroupAuth]
         public DtoApiIntResponse StartGroupUnicast(int id)
         {
             return new DtoApiIntResponse
@@ -322,6 +337,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [HttpGet]
         [CustomAuth(Permission = AuthorizationStrings.ImageDeployTask)]
+        [GroupAuth]
         public DtoApiBoolResponse StartGroupWinPe(int id)
         {
             return new DtoApiBoolResponse
@@ -332,6 +348,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.ImageMulticastTask)]
         [HttpGet]
+        [GroupAuth]
         public DtoApiStringResponse StartMulticast(int id)
         {
             return new DtoApiStringResponse

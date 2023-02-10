@@ -49,12 +49,12 @@ namespace Toems_ApiCalls
             return _apiRequest.Execute<EntityToemsUser>(Request);
         }
 
-        public new List<UserWithUserGroup> Search(DtoSearchFilter filter)
+        public new List<EntityToemsUser> Search(DtoSearchFilter filter)
         {
             Request.Method = Method.POST;
             Request.Resource = $"{Resource}/Search";
             Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
-            return new ApiRequest().Execute<List<UserWithUserGroup>>(Request);
+            return new ApiRequest().Execute<List<EntityToemsUser>>(Request);
         }
 
         public int GetAdminCount()
@@ -190,7 +190,18 @@ namespace Toems_ApiCalls
         public bool ResetUserMfaData(int id)
         {
             Request.Method = Method.GET;
-            Request.Resource = string.Format("{0}/ResetUserMfaData/{1}", Resource,id);
+            Request.Resource = string.Format("{0}/ResetUserMfaData/{1}", Resource, id);
+            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
+            if (response == null)
+                return false;
+            else
+                return response.Value;
+        }
+
+        public bool RemoveUserLegacyGroup(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/RemoveUserLegacyGroup/{1}", Resource,id);
             var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
             if (response == null)
                 return false;

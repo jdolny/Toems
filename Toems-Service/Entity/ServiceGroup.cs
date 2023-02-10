@@ -234,7 +234,7 @@ namespace Toems_Service.Entity
             return _uow.GroupRepository.Get(x => x.Type == "Dynamic").OrderBy(x => x.Name).ToList();
         }
 
-        public List<DtoGroupWithCount> SearchGroups(DtoSearchFilterCategories filter)
+        public List<DtoGroupWithCount> SearchGroups(DtoSearchFilterCategories filter, int userId)
         {
             var returnList = new List<DtoGroupWithCount>();
             var list = new List<EntityGroup>();
@@ -255,24 +255,8 @@ namespace Toems_Service.Entity
             var toRemove = new List<EntityGroup>();
             if (filter.CategoryType.Equals("Any Category"))
             {
-                foreach(var group in list)
-                {
-                    var groupWithcount = new DtoGroupWithCount();
-                    groupWithcount.Id = group.Id;
-                    if (!group.IsOu)
-                        groupWithcount.Name = group.Name;
-                    else
-                        groupWithcount.Name = group.Dn;
-                    groupWithcount.Type = group.Type;
-                    groupWithcount.Description = group.Description;
-                    if (group.Id == -1)
-                        groupWithcount.MemberCount = new ServiceComputer().TotalActiveCount();
-                    else
-                        groupWithcount.MemberCount = _uow.GroupMembershipRepository.Count(x => x.GroupId == group.Id);
-                    if (groupWithcount.MemberCount == "0" && group.IsOu) continue;
-                    returnList.Add(groupWithcount);
-                }
-                return returnList.Take(filter.Limit).OrderBy(x => x.Name).ToList();
+                //do nothing, keep all
+
             }
             else if (filter.CategoryType.Equals("And Category"))
             {
@@ -349,7 +333,22 @@ namespace Toems_Service.Entity
                 if (groupWithcount.MemberCount == "0" && group.IsOu) continue;
                 returnList.Add(groupWithcount);
             }
-            return returnList.Take(filter.Limit).OrderBy(x => x.Name).ToList();
+
+            var groupAcl = new ServiceUser().GetAllowedGroups(userId);
+            if (!groupAcl.GroupManagementEnforced)
+                return returnList.Take(filter.Limit).OrderBy(x => x.Name).ToList();
+            else
+            {
+                var userGroups = new List<DtoGroupWithCount>();
+                foreach (var group in returnList)
+                {
+                    if (groupAcl.AllowedGroupIds.Contains(group.Id))
+                        userGroups.Add(group);
+                }
+
+
+                return userGroups.Take(filter.Limit).OrderBy(x => x.Name).ToList();
+            }
         }
 
         public string TotalCount()

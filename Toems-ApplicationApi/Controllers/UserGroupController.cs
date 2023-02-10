@@ -19,12 +19,6 @@ namespace Toems_ApplicationApi.Controllers
             _userGroupServices = new ServiceUserGroup();
         }
 
-        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
-        [HttpGet]
-        public DtoApiBoolResponse AddNewMember(int id, int userId)
-        {
-            return new DtoApiBoolResponse {Value = _userGroupServices.AddNewGroupMember(id, userId)};
-        }
 
        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public DtoActionResult Delete(int id)
@@ -79,9 +73,15 @@ namespace Toems_ApplicationApi.Controllers
             return _userGroupServices.GetGroupMembers(id, filter);
         }
 
+        [HttpGet]
+        [CustomAuth(Permission = AuthorizationStrings.GroupUpdate)]
+        public DtoApiBoolResponse RemoveGroupMember(int id, int userId)
+        {
+            return new DtoApiBoolResponse { Value = _userGroupServices.RemoveMembership(userId, id) };
+        }
 
 
-       [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public DtoApiStringResponse GetMemberCount(int id)
         {
             return new DtoApiStringResponse {Value = _userGroupServices.MemberCount(id)};
@@ -108,13 +108,29 @@ namespace Toems_ApplicationApi.Controllers
             return result;
         }
 
-       [CustomAuth(Permission = AuthorizationStrings.Administrator)]
-        [HttpGet]
-        public DtoApiBoolResponse UpdateMemberAcls(int id)
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        public DtoActionResult UpdateImageManagement(int id, List<EntityUserGroupImages> userGroupImages)
         {
-            return new DtoApiBoolResponse {Value = _userGroupServices.UpdateAllGroupMembersAcls(id)};
+            return new ServiceUserGroupImagesMembership().AddOrUpdate(userGroupImages,id);
         }
 
-     
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        public IEnumerable<int> GetManagedImageIds(int id)
+        {
+            return _userGroupServices.GetManagedImageIds(id);
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        public DtoActionResult UpdateGroupManagement(int id, List<EntityUserGroupComputerGroups> userGroupGroups)
+        {
+            return new ServiceUserGroupComputerGroupMembership().AddOrUpdate(userGroupGroups, id);
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        public IEnumerable<int> GetManagedGroupIds(int id)
+        {
+            return _userGroupServices.GetManagedGroupIds(id);
+        }
+
     }
 }

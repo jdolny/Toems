@@ -88,5 +88,6 @@ var myChart = new Chart(ctx, {
 </asp:Content>
 
 <asp:Content runat="server" ContentPlaceHolderID="Help">
-    <p>The dashboard is used to display some common statistics.  By default, a graph will display the number of endpoint check-ins over the last 12 hours.  You will also see used / available storage for your local and remote store paths after they have been configured.  Finally, all pinned policies and pinned groups will appear on this page.  Pinned polices and groups are specific to the user that pinned them.  A user will only see the policies / groups that they have pinned.</p>
+    <iframe width="100%" height="400" src="https://docs.theopenem.com/latest" frameborder="0" ></iframe>
+    
 </asp:Content>

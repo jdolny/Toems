@@ -9,36 +9,11 @@ namespace Toems_Service.Entity
     public class ServiceUserGroup
     {
         private readonly UnitOfWork _uow;
-        private readonly ServiceUser _userServices;
+
 
         public ServiceUserGroup()
         {
             _uow = new UnitOfWork();
-            _userServices = new ServiceUser();
-        }
-
-        public bool AddNewGroupMember(int userGroupId, int userId)
-        {
-            var user = new ServiceUser().GetUser(userId);
-            var userGroup = GetUserGroup(userGroupId);
-            user.Membership = userGroup.Membership;
-            user.UserGroupId = userGroup.Id;
-          
-            new ServiceUser().UpdateUser(user);
-
-            var rights = GetUserGroupRights(userGroup.Id);
-         
-
-            var userRights =
-                rights.Select(right => new EntityUserRight {UserId = user.Id, Right = right.Right}).ToList();
-            _userServices.DeleteUserRights(user.Id);
-            new ServiceUserRight().AddUserRights(userRights);
-
-        
-
-          
-
-            return true;
         }
 
         public DtoActionResult AddUserGroup(EntityToemsUserGroup userGroup)
@@ -65,8 +40,9 @@ namespace Toems_Service.Entity
             var ug = GetUserGroup(userGroupId);
             if (ug == null) return new DtoActionResult {ErrorMessage = "User Group Not Found", Id = 0};
 
-            var groupMembers = GetGroupMembers(userGroupId, new DtoSearchFilter());
-            foreach (var groupMember in groupMembers)
+            var legacyGroupMembers = _uow.UserRepository.Get(x => x.UserGroupId == userGroupId);
+
+            foreach (var groupMember in legacyGroupMembers)
             {
                 groupMember.UserGroupId = -1;
                 _uow.UserRepository.Update(groupMember,groupMember.Id);
@@ -81,8 +57,16 @@ namespace Toems_Service.Entity
         }
 
      
+        public List<int> GetManagedImageIds(int userGroupId)
+        {
+            return _uow.UserGroupImagesRepository.Get(x => x.UserGroupId == userGroupId).Select(x => x.ImageId).ToList();
+        }
 
-        
+        public List<int> GetManagedGroupIds(int userGroupId)
+        {
+            return _uow.UserGroupComputerGroupsRepository.Get(x => x.UserGroupId == userGroupId).Select(x => x.GroupId).ToList();
+        }
+
 
         public bool DeleteUserGroupRights(int userGroupId)
         {
@@ -93,8 +77,7 @@ namespace Toems_Service.Entity
 
         public List<EntityToemsUser> GetGroupMembers(int userGroupId, DtoSearchFilter filter)
         {
-            return _uow.UserRepository.Get(x => x.UserGroupId == userGroupId && x.Name.Contains(filter.SearchText),
-                q => q.OrderBy(p => p.Name));
+            return _uow.UserRepository.GetGroupMembers(userGroupId);
         }
 
         public List<EntityToemsUserGroup> GetLdapGroups()
@@ -116,7 +99,7 @@ namespace Toems_Service.Entity
 
         public string MemberCount(int userGroupId)
         {
-            return _uow.UserRepository.Count(x => x.UserGroupId == userGroupId);
+            return _uow.UserGroupMembershipRepository.Count(g => g.UserGroupId == userGroupId);
         }
 
         public List<EntityToemsUserGroup> SearchUserGroups(DtoSearchFilter filter)
@@ -158,25 +141,6 @@ namespace Toems_Service.Entity
             return _uow.UserGroupRepository.Count();
         }
 
-        public bool UpdateAllGroupMembersAcls(int userGroupId)
-        {
-            var rights = GetUserGroupRights(userGroupId);
-
-            foreach (var user in GetGroupMembers(userGroupId,new DtoSearchFilter()))
-            {
-                var userRights =
-                    rights.Select(right => new EntityUserRight {UserId = user.Id, Right = right.Right}).ToList();
-                _userServices.DeleteUserRights(user.Id);
-                new ServiceUserRight().AddUserRights(userRights);
-            }
-
-            return true;
-        }
-
-    
-
-     
-
         public DtoActionResult UpdateUserGroup(EntityToemsUserGroup userGroup)
         {
             var ug = GetUserGroup(userGroup.Id);
@@ -196,6 +160,13 @@ namespace Toems_Service.Entity
             }
 
             return actionResult;
+        }
+        public bool RemoveMembership(int userId, int groupId)
+        {
+            _uow.UserGroupMembershipRepository.DeleteRange(
+                g => g.ToemsUserId == userId && g.UserGroupId == groupId);
+            _uow.Save();
+            return true;
         }
 
         private DtoValidationResult ValidateUserGroup(EntityToemsUserGroup userGroup, bool isNewUserGroup)

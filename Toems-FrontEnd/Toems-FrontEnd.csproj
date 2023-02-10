@@ -396,6 +396,8 @@
     <Content Include="views\reports\user\usertracker.aspx" />
     <Content Include="views\site.master" />
     <Content Include="views\users\groupacls.aspx" />
+    <Content Include="views\users\groupcomputergroupacls.aspx" />
+    <Content Include="views\users\groupimageacls.aspx" />
     <Content Include="views\users\history.aspx" />
     <Content Include="views\dashboard\mfa.aspx" />
     <Content Include="views\users\user.master" />
@@ -3083,6 +3085,20 @@
     </Compile>
     <Compile Include="views\users\groupacls.aspx.designer.cs">
       <DependentUpon>groupacls.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\users\groupcomputergroupacls.aspx.cs">
+      <DependentUpon>groupcomputergroupacls.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\users\groupcomputergroupacls.aspx.designer.cs">
+      <DependentUpon>groupcomputergroupacls.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\users\groupimageacls.aspx.cs">
+      <DependentUpon>groupimageacls.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\users\groupimageacls.aspx.designer.cs">
+      <DependentUpon>groupimageacls.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\users\history.aspx.cs">
       <DependentUpon>history.aspx</DependentUpon>

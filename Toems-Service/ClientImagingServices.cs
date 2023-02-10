@@ -104,7 +104,7 @@ namespace Toems_Service
             return JsonConvert.SerializeObject(result);
         }
 
-        public string AddImage(string imageName)
+        public string AddImage(string imageName, string userId)
         {
             var image = new EntityImage
             {
@@ -117,14 +117,18 @@ namespace Toems_Service
             };
             var result = new ServiceImage().Add(image);
             if (result.Success)
+            {
                 result.Id = image.Id;
+                if (userId != null)
+                    new ServiceUser().UpdateUsersImagesList(new EntityToemsUsersImages() { ImageId = result.Id, UserId = Convert.ToInt32(userId) });
+            }
 
             return JsonConvert.SerializeObject(result);
         }
 
 
 
-        public string AddImageWinPEEnv(string imageName)
+        public string AddImageWinPEEnv(string imageName, string userId)
         {
             var image = new EntityImage
             {
@@ -137,7 +141,11 @@ namespace Toems_Service
             };
             var result = new ServiceImage().Add(image);
             if (result.Success)
+            {
                 result.Id = image.Id;
+                if (userId != null)
+                    new ServiceUser().UpdateUsersImagesList(new EntityToemsUsersImages() { ImageId = result.Id, UserId = Convert.ToInt32(userId) });
+            }
 
             return JsonConvert.SerializeObject(result);
         }
@@ -162,26 +170,41 @@ namespace Toems_Service
             return task.WebTaskToken;
         }
 
-        public bool AuthorizeApiCall(string token)
+        public AuthResponseDto AuthorizeApiCall(string token)
         {
-            if (string.IsNullOrEmpty(token)) return false;
+            var response = new AuthResponseDto();
+            if (string.IsNullOrEmpty(token)) return response;
             
 
             var user = new ServiceUser().GetUserFromToken(token);
             if (user != null)
-                return true;
+            {
+                response.IsAuthorized = true;
+                response.Id = user.Id;
+                response.UserType = "user";
+                return response;
+            }
 
             var task = new ServiceActiveImagingTask().GetFromWebToken(token);
             if (task != null)
-                return true;
+            {
+                response.IsAuthorized = true;
+                response.Id = task.Id;
+                response.UserType = "task";
+                return response;
+            }
 
             //check global token
             var globalToken = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingToken);
             if (token.Equals(globalToken) && !string.IsNullOrEmpty(globalToken))
-                return true;
+            {
+                response.IsAuthorized = true;
+                response.UserType = "global";
+                return response;
+            }
 
 
-            return false;
+            return response;
         }
 
         public void ChangeStatusInProgress(int taskId)

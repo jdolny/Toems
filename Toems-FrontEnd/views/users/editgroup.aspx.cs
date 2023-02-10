@@ -10,7 +10,7 @@ namespace Toems_FrontEnd.views.users
         {
             ToemsUserGroup.Name = txtGroupName.Text;
             ToemsUserGroup.GroupLdapName = txtLdapGroupName.Text;
-
+            ToemsUserGroup.Membership = ddlGroupMembership.Text;
             var result = Call.UserGroupApi.Put(ToemsUserGroup.Id, ToemsUserGroup);
             EndUserMessage = !result.Success ? result.ErrorMessage : "Successfully Updated User Group";
         }
@@ -34,7 +34,7 @@ namespace Toems_FrontEnd.views.users
             {
                 lblLdap.Text = "FALSE";
             }
-            ddlGroupMembership.Enabled = false;
+            
             txtGroupName.Text = ToemsUserGroup.Name;
             ddlGroupMembership.Text = ToemsUserGroup.Membership;
         }

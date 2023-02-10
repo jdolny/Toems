@@ -13,17 +13,6 @@ namespace Toems_FrontEnd.views.users
 
         protected void buttonUpdate_OnClick(object sender, EventArgs e)
         {
-            if (ToemsUser.UserGroupId != -1)
-            {
-                EndUserMessage = "Cannot Update. This User's ACL Is Controlled By A Group";
-                return;
-            }
-            var delResult = Call.ToemsUserApi.DeleteRights(ToemsUser.Id);
-            if (!delResult)
-            {
-                EndUserMessage = "Could Not Update User ACLs";
-                return;
-            }
 
             var listOfRights =
                 _listCheckBoxes.Where(x => x.Checked)

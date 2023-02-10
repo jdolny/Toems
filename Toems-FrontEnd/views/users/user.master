@@ -67,6 +67,14 @@
                 <a href="<%= ResolveUrl("~/views/users/groupacls.aspx") %>?groupid=<%= ToemsUserGroup.Id %>">
                     <span class="sub-nav-text">Access Control</span></a>
             </li>
+             <li id="imageacl">
+                <a href="<%= ResolveUrl("~/views/users/groupimageacls.aspx") %>?groupid=<%= ToemsUserGroup.Id %>">
+                    <span class="sub-nav-text">Image Management</span></a>
+            </li>
+               <li id="computeracl">
+                <a href="<%= ResolveUrl("~/views/users/groupcomputergroupacls.aspx") %>?groupid=<%= ToemsUserGroup.Id %>">
+                    <span class="sub-nav-text">Computer Group Management</span></a>
+            </li>
             <li id="addmembers">
                 <a href="<%= ResolveUrl("~/views/users/addmembers.aspx") %>?groupid=<%= ToemsUserGroup.Id %>">
                     <span class="sub-nav-text">Add Members</span></a>

@@ -17,6 +17,7 @@ using System.Web;
 using System.Configuration;
 using Toems_Service.Entity;
 using Toems_Common;
+using System.Linq;
 
 namespace Toems_ClientApi.Controllers
 {
@@ -43,7 +44,8 @@ namespace Toems_ClientApi.Controllers
         [ClientImagingAuth]
         public HttpResponseMessage AddImage(NameDTO nameDto)
         {
-            _response.Content = new StringContent(new ClientImagingServices().AddImage(nameDto.name), Encoding.UTF8,
+            var userId = HttpContext.Current.Response.Headers["client_user_id"];
+             _response.Content = new StringContent(new ClientImagingServices().AddImage(nameDto.name,userId), Encoding.UTF8,
                 "text/plain");
             return _response;
         }
@@ -54,7 +56,8 @@ namespace Toems_ClientApi.Controllers
         [ClientImagingAuth]
         public HttpResponseMessage AddImageWinPEEnv(NameDTO nameDto)
         {
-            _response.Content = new StringContent(new ClientImagingServices().AddImageWinPEEnv(nameDto.name),
+            var userId = HttpContext.Current.Response.Headers["client_user_id"];
+            _response.Content = new StringContent(new ClientImagingServices().AddImageWinPEEnv(nameDto.name,userId),
                 Encoding.UTF8, "text/plain");
             return _response;
         }

@@ -9,6 +9,7 @@
 <asp:Content ID="Breadcrumb" ContentPlaceHolderID="DropDownActionsSub" Runat="Server">
     <li><asp:LinkButton ID="btnSubmit" runat="server" OnClick="btnSubmit_Click" Text="Update User" CssClass="main-action"/></li>
      <li><asp:LinkButton ID="btnResetMfa" runat="server" OnClick="btnResetMfa_Click" Text="Reset Mfa Data" /></li>
+    <li><asp:LinkButton ID="btnRemoveLegacy" runat="server" OnClick="btnRemoveLegacy_Click" Text="Remove Legacy Group Data" /></li>
 </asp:Content>
 
 

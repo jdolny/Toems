@@ -16,12 +16,6 @@ namespace Toems_FrontEnd.views.users
                 return;
             }
 
-            if (ToemsUser.UserGroupId != -1 && ddluserMembership.Text != ToemsUser.Membership)
-            {
-                EndUserMessage = "This User's Role Is Controlled By A Group";
-                return;
-            }
-
             var updatedUser = ToemsUser;
             if (!string.IsNullOrEmpty(txtUserPwd.Text))
             {
@@ -90,6 +84,12 @@ namespace Toems_FrontEnd.views.users
         {
             var result = Call.ToemsUserApi.ResetUserMfaData(ToemsUser.Id);
             EndUserMessage = result ? "Successfully Reset MFA Data" : "Could Not Reset MFA Data";
+        }
+
+        protected void btnRemoveLegacy_Click(object sender, EventArgs e)
+        {
+            var result = Call.ToemsUserApi.RemoveUserLegacyGroup(ToemsUser.Id);
+            EndUserMessage = result ? "Successfully Removed Legacy User Group Data" : "Could Not Remomve Legacy User Group Data";
         }
     }
 }

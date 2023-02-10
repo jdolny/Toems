@@ -713,6 +713,9 @@ namespace Toems_Service.Entity
             var newHash = FormsAuthentication.HashPasswordForStoringInConfigFile(json, "MD5");
 #pragma warning restore CS0618 // Type or member is obsolete
 
+            if (policy.Frequency != EnumPolicy.Frequency.OncePerComputer && policy.Frequency != EnumPolicy.Frequency.OncePerUserPerComputer)
+                return "false"; //only oncepercomputer and onceperuserpercomputer policies need the option to run again
+
             if (originalHash.Equals(newHash))
             {
                 //policy hasn't changed

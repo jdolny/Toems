@@ -131,41 +131,41 @@
                              <li id="nav-dash">
                                 <a href="<%= ResolveUrl("~/views/dashboard/dash.aspx") %>" class="icon-dash tooltip" title="Dashboard"></a>
                             </li>
-                            <li id="nav-modules">
+                            <li id="navModules" runat="server"> 
                                 <a href="<%= ResolveUrl("~/views/modules/chooser.aspx") %>" class="icon-module tooltip" title="Modules"></a>
                             </li>
 
-                            <li id="nav-policies">
+                            <li id="navPolicies" runat="server">
                                 <a href="<%= ResolveUrl("~/views/policies/search.aspx") %>" class="icon-policy tooltip" title="Policies"></a>
                             </li>
 
-                            <li id="nav-groups">
+                            <li id="navGroups" runat="server">
                                 <a href="<%= ResolveUrl("~/views/groups/search.aspx") %>" class="icon-group tooltip" title="Groups"></a>
                             </li>
-                            <li id="nav-hosts">
+                            <li id="navHosts" runat="server">
                                 <a href="<%= ResolveUrl("~/views/computers/computerviewselector.aspx") %>" class="icon-computer tooltip" title="Computers"></a>
                             </li>
-                             <li id="nav-images">
+                             <li id="navImages" runat="server">
                                 <a href="<%= ResolveUrl("~/views/images/search.aspx") %>" class="icon-image tooltip" title="Images"></a>
                             </li>
-                              <li id="nav-tasks">
+                              <li id="navTasks" runat="server">
                                 <a href="<%= ResolveUrl("~/views/imagingtasks/active.aspx") %>" class="icon-tasks tooltip" title="Imaging Tasks"></a>
                             </li>
-                            <li id="nav-assets">
+                            <li id="navAssets" runat="server">
                                 <a href="<%= ResolveUrl("~/views/assets/chooser.aspx") %>" class="icon-asset tooltip" title="Assets"></a>
                             </li>
 
-                            <li id="nav-global">
+                            <li id="navGlobal" runat="server">
                                 <a href="<%= ResolveUrl("~/views/global/chooser.aspx") %>" class="icon-global tooltip" title="Global Properties"></a>
                             </li>
 
-                            <li id="nav-report">
+                            <li id="navReport" runat="server">
                                 <a href="<%= ResolveUrl("~/views/reports/chooser.aspx") %>" class="icon-report tooltip" title="Reports"></a>
                             </li>
-                            <li id="nav-users">
+                            <li id="navUsers">
                                 <a href="<%= ResolveUrl("~/views/users/search.aspx") %>" class="icon-user tooltip" title="Users"></a>
                             </li>
-                            <li id="nav-settings">
+                            <li id="navSettings" runat="server">
                                 <a href="<%= ResolveUrl("~/views/admin/chooser.aspx") %>" class="icon-setting tooltip" title="Admin Settings" ></a>
                             </li>
                             <li id="nav-logout" title="Logout - <%= CurrentUserName %>" class="tooltip">
@@ -237,7 +237,9 @@
                         <div class="size-fullgrid column" id="scrollsave1">
                             <div class="help-content">
                                 <br class="clear"/>
+
                                 <asp:ContentPlaceHolder runat="server" ID="Help"></asp:ContentPlaceHolder>
+
                                 </div>
                             <asp:ContentPlaceHolder ID="Content" runat="server">
                             </asp:ContentPlaceHolder>

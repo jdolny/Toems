@@ -29,9 +29,7 @@
         });
     </script>
   
-    <div class="size-7 column">
-        <asp:TextBox ID="txtSearch" runat="server" CssClass="rounded-search" OnTextChanged="search_Changed"></asp:TextBox>
-    </div>
+
       <p class="total">
         <asp:Label ID="lblTotal" runat="server"></asp:Label>
     </p>

@@ -93,6 +93,10 @@ namespace Toems_Service.Workflows
             if (mode == "proxy" || (pxeType == "grub" && dArch == "efi64") || (pxeType == "winpe" && dArch == "efi64") ||
                 (pxeType == "winpe" && dArch == "efi32") || pxeType == "winpe" && dArch == "bios")
                 destinationRootPath += "proxy" + Path.DirectorySeparatorChar;
+            
+            if (!File.Exists(_sourceRootPath + pxeType + Path.DirectorySeparatorChar + mode +
+                    Path.DirectorySeparatorChar + sArch + Path.DirectorySeparatorChar + sName))
+                return true;
             try
             {
                 File.Copy(
@@ -295,60 +299,61 @@ namespace Toems_Service.Workflows
 
         private bool CopyFilesForProxy()
         {
+            var isError = false;
             var biosFile = ServiceSetting.GetSettingValue(SettingStrings.ProxyBiosBootloader);
             var efi32File = ServiceSetting.GetSettingValue(SettingStrings.ProxyEfi32Bootloader);
             var efi64File = ServiceSetting.GetSettingValue(SettingStrings.ProxyEfi64Bootloader);
 
             foreach (var file in _ipxeBiosFiles)
             {
-                if (!CopyCommand("ipxe", "proxy", "ipxe", "bios", file, file)) return false;
+                if (!CopyCommand("ipxe", "proxy", "ipxe", "bios", file, file)) isError = true;
                 if (biosFile == "ipxe" && file == "undionly.kpxe")
-                    if (!CopyCommand("ipxe", "proxy", "ipxe", "bios", file, BootFile)) return false;
+                    if (!CopyCommand("ipxe", "proxy", "ipxe", "bios", file, BootFile)) isError = true;
             }
             foreach (var file in _ipxeEfiFiles)
             {
-                if (!CopyCommand("ipxe", "proxy", "ipxe_efi_32", "efi32", file, file)) return false;
+                if (!CopyCommand("ipxe", "proxy", "ipxe_efi_32", "efi32", file, file)) isError = true;
                 if ((efi32File == "ipxe_efi" && file == "ipxe.efi") ||
                     (efi32File == "ipxe_efi_snp" && file == "snp.efi")
                     || (efi32File == "ipxe_efi_snponly" && file == "snponly.efi"))
-                    if (!CopyCommand("ipxe", "proxy", "ipxe_efi_32", "efi32", file, BootFile)) return false;
+                    if (!CopyCommand("ipxe", "proxy", "ipxe_efi_32", "efi32", file, BootFile)) isError = true;
             }
             foreach (var file in _ipxeEfiFiles)
             {
-                if (!CopyCommand("ipxe", "proxy", "ipxe_efi_64", "efi64", file, file)) return false;
+                if (!CopyCommand("ipxe", "proxy", "ipxe_efi_64", "efi64", file, file)) isError = true;
                 if ((efi64File == "ipxe_efi" && file == "ipxe.efi") ||
                     (efi64File == "ipxe_efi_snp" && file == "snp.efi")
                     || (efi64File == "ipxe_efi_snponly" && file == "snponly.efi"))
-                    if (!CopyCommand("ipxe", "proxy", "ipxe_efi_64", "efi64", file, BootFile)) return false;
+                    if (!CopyCommand("ipxe", "proxy", "ipxe_efi_64", "efi64", file, BootFile)) isError = true;
             }
 
             foreach (var file in _syslinuxBiosFiles)
             {
-                if (!CopyCommand("syslinux", "proxy", "pxelinux", "bios", file, file)) return false;
+                if (!CopyCommand("syslinux", "proxy", "pxelinux", "bios", file, file)) isError = true;
                 if (biosFile == "pxelinux" && file == "pxelinux.0")
-                    if (!CopyCommand("syslinux", "proxy", "pxelinux", "bios", file, BootFile)) return false;
+                    if (!CopyCommand("syslinux", "proxy", "pxelinux", "bios", file, BootFile)) isError = true;
             }
 
             foreach (var file in _syslinuxEfi32Files)
             {
-                if (!CopyCommand("syslinux", "proxy", "syslinux_efi_32", "efi32", file, file)) return false;
+                if (!CopyCommand("syslinux", "proxy", "syslinux_efi_32", "efi32", file, file)) isError = true;
                 if (efi32File == "syslinux" && file == "syslinux.efi")
-                    if (!CopyCommand("syslinux", "proxy", "syslinux_efi_32", "efi32", file, BootFile)) return false;
+                    if (!CopyCommand("syslinux", "proxy", "syslinux_efi_32", "efi32", file, BootFile)) isError = true;
             }
 
             foreach (var file in _syslinuxEfi64Files)
             {
-                if (!CopyCommand("syslinux", "proxy", "syslinux_efi_64", "efi64", file, file)) return false;
+                if (!CopyCommand("syslinux", "proxy", "syslinux_efi_64", "efi64", file, file)) isError = true;
                 if (efi64File == "syslinux" && file == "syslinux.efi")
-                    if (!CopyCommand("syslinux", "proxy", "syslinux_efi_64", "efi64", file, BootFile)) return false;
+                    if (!CopyCommand("syslinux", "proxy", "syslinux_efi_64", "efi64", file, BootFile)) isError = true;
             }
 
             foreach (var file in _grubEfi64Files)
             {
-                if (!CopyCommand("grub", "", "", "efi64", file, file)) return false;
-                if (!CopyCommand("grub", "", "", "", file, file)) return false;
+                if (!CopyCommand("grub", "", "", "efi64", file, file)) isError = true;
+                if (!CopyCommand("grub", "", "", "", file, file)) isError = true;
                 if (efi64File == "grub" && file == "bootx64.efi")
-                    if (!CopyCommand("grub", "", "", "efi64", file, BootFile)) return false;
+                    if (!CopyCommand("grub", "", "", "efi64", file, BootFile)) isError = true;
             }
 
             if (
@@ -358,33 +363,33 @@ namespace Toems_Service.Workflows
             {
                 foreach (var file in _winPEEfiFiles)
                 {
-                    if (!CopyCommand("winpe", "", "winpe_efi_64", "efi64", file, file)) return false;
-                    if (!CopyCommand("winpe", "", "winpe_efi_32", "efi32", file, file)) return false;
+                    if (!CopyCommand("winpe", "", "winpe_efi_64", "efi64", file, file)) isError = true;
+                    if (!CopyCommand("winpe", "", "winpe_efi_32", "efi32", file, file)) isError = true;
                     if (efi64File == "winpe_efi")
                     {
-                        if (!CopyCommand("winpe", "", "winpe_efi_64", "efi64", file, BootFile)) return false;
+                        if (!CopyCommand("winpe", "", "winpe_efi_64", "efi64", file, BootFile)) isError = true;
                     }
                     if (efi32File == "winpe_efi")
                     {
-                        if (!CopyCommand("winpe", "", "winpe_efi_32", "efi32", file, BootFile)) return false;
+                        if (!CopyCommand("winpe", "", "winpe_efi_32", "efi32", file, BootFile)) isError = true;
                     }
                 }
                 foreach (var file in _winPEBiosFiles)
                 {
                     if (file == "bootmgr.exe")
                     {
-                        if (!CopyCommand("winpe", "", "winpe", "", file, file)) return false;
+                        if (!CopyCommand("winpe", "", "winpe", "", file, file)) isError = true;
                     }
-                    if (!CopyCommand("winpe", "", "winpe", "bios", file, file)) return false;
+                    if (!CopyCommand("winpe", "", "winpe", "bios", file, file)) isError = true;
 
                     if (biosFile == "winpe" && file == "pxeboot.n12")
                     {
-                        if (!CopyCommand("winpe", "", "winpe", "bios", file, BootFile)) return false;
+                        if (!CopyCommand("winpe", "", "winpe", "bios", file, BootFile)) isError = true;
                     }
                 }
             }
 
-            return true;
+            return isError;
         }
 
 

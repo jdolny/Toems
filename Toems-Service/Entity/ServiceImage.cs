@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -163,10 +164,6 @@ namespace Toems_Service.Entity
                     .ToList();
         }
 
-        public List<EntityImage> GetOnDemandImageList()
-        {
-            return _uow.ImageRepository.Get(i => i.IsVisible && i.Enabled, q => q.OrderBy(p => p.Name));
-        }
 
         public List<DtoImageFileInfo> GetPartitionImageFileInfoForGridView(int imageId, string selectedHd,
          string selectedPartition)
@@ -185,7 +182,7 @@ namespace Toems_Service.Entity
             return _uow.ImageRepository.GetById(imageId);
         }
 
-        public List<ImageWithDate> Search(DtoSearchFilterCategories filter)
+        public List<ImageWithDate> Search(DtoSearchFilterCategories filter, int userId)
         {
             if(filter.Limit == 0)
                 filter.Limit = Int32.MaxValue;
@@ -295,9 +292,21 @@ namespace Toems_Service.Entity
                 listWithDate.Add(imageWithDate);
             }
 
-          
+            var imageAcl = new ServiceUser().GetAllowedImages(userId);
+            if(!imageAcl.ImageManagementEnforced)
+                return listWithDate.Take(filter.Limit).ToList();
+            else
+            {
+                var userImages = new List<ImageWithDate>();
+                foreach (var image in listWithDate)
+                {
+                    if (imageAcl.AllowedImageIds.Contains(image.Id))
+                        userImages.Add(image);
+                }
 
-            return listWithDate.Take(filter.Limit).ToList();
+
+                return userImages.Take(filter.Limit).ToList();
+            }
 
 
         }
@@ -310,9 +319,23 @@ namespace Toems_Service.Entity
             }
         }
 
-        public List<EntityImage> GetAll()
+        public List<EntityImage> GetAll(int userId)
         {
-            return _uow.ImageRepository.Get();
+            var images = _uow.ImageRepository.Get();
+
+            var imageAcl = new ServiceUser().GetAllowedImages(userId);
+            if (!imageAcl.ImageManagementEnforced)
+                return images.ToList();
+            else
+            {
+                var userImages = new List<EntityImage>();
+                foreach (var image in images)
+                {
+                    if (imageAcl.AllowedImageIds.Contains(image.Id))
+                        userImages.Add(image);
+                }
+                return userImages.ToList();
+            }
         }
 
         public string TotalCount()
@@ -427,7 +450,23 @@ namespace Toems_Service.Entity
 
         public List<EntityImage> GetOnDemandImageList(string task, int userId = 0)
         {
-                return _uow.ImageRepository.Get(i => i.IsVisible && i.Enabled , q => q.OrderBy(p => p.Name));
+            var images = _uow.ImageRepository.Get(i => i.IsVisible && i.Enabled, q => q.OrderBy(p => p.Name));
+            if (userId == 0)
+                return images;
+
+            var imageAcl = new ServiceUser().GetAllowedImages(userId);
+            if (!imageAcl.ImageManagementEnforced)
+                return images.ToList();
+            else
+            {
+                var userImages = new List<EntityImage>();
+                foreach (var image in images)
+                {
+                    if (imageAcl.AllowedImageIds.Contains(image.Id))
+                        userImages.Add(image);
+                }
+                return userImages.ToList();
+            }
         }
 
 

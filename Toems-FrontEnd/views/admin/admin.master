@@ -10,7 +10,7 @@
 <asp:Content ID="SubNav" ContentPlaceHolderID="SubNav" Runat="Server">
     <script type="text/javascript">
         $(document).ready(function() {
-            $('#nav-settings').addClass("nav-current");
+            $('#navSettings').addClass("nav-current");
         });
     </script>
 

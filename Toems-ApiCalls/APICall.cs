@@ -151,6 +151,11 @@ namespace Toems_ApiCalls
             get { return new GroupMembershipAPI("GroupMembership");}
         }
 
+        public UserGroupMembershipAPI UserGroupMembershipApi
+        {
+            get { return new UserGroupMembershipAPI("UserGroupMembership"); }
+        }
+
         public ComputerAPI ComputerApi
         {
             get { return new ComputerAPI("Computer");}

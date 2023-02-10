@@ -109,7 +109,7 @@
 <asp:Content ID="MainContent" ContentPlaceHolderID="Content" runat="Server">
     <script type="text/javascript">
         $(document).ready(function() {
-            $('#nav-groups').addClass("nav-current");
+            $('#navGroups').addClass("nav-current");
         });
     </script>
     <asp:ContentPlaceHolder ID="SubContent" runat="server">

@@ -30,7 +30,7 @@
 <asp:Content ID="MainContent" ContentPlaceHolderID="Content" Runat="Server">
        <script type="text/javascript">
            $(document).ready(function () {
-               $('#nav-global').addClass("nav-current");
+               $('#navGlobal').addClass("nav-current");
            });
     </script>
     <asp:ContentPlaceHolder ID="SubContent" runat="server">

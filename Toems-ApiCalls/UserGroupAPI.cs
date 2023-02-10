@@ -52,7 +52,14 @@ namespace Toems_ApiCalls
             return _apiRequest.Execute<List<EntityToemsUser>>(Request);
         }
 
-      
+        public bool RemoveGroupMember(int id, int userId)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/RemoveGroupMember/{1}", Resource, id);
+            Request.AddParameter("userId", userId);
+            var response = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
+            return response != null && response.Value;
+        }
 
         public string GetMemberCount(int id)
         {
@@ -69,9 +76,23 @@ namespace Toems_ApiCalls
             return _apiRequest.Execute<List<EntityUserGroupRight>>(Request);
         }
 
-      
+        public IEnumerable<int> GetManagedImageIds(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetManagedImageIds/{1}", Resource, id);
+            return _apiRequest.Execute<List<int>>(Request);
+        }
 
-      
+        public IEnumerable<int> GetManagedGroupIds(int id)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetManagedGroupIds/{1}", Resource, id);
+            return _apiRequest.Execute<List<int>>(Request);
+        }
+
+
+
+
 
         public bool UpdateMemberAcls(int id)
         {
@@ -81,8 +102,51 @@ namespace Toems_ApiCalls
             return response != null && response.Value;
         }
 
-      
+        public DtoActionResult UpdateImageManagement(List<EntityUserGroupImages> images, int userGroupId)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = string.Format("{0}/UpdateImageManagement/{1}", Resource,userGroupId);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(images), ParameterType.RequestBody);
+            var response = new ApiRequest().Execute<DtoActionResult>(Request);
+            if (response != null)
+            {
+                if (response.Id == 0)
+                    response.Success = false;
+            }
+            else
+            {
+                return new DtoActionResult()
+                {
+                    ErrorMessage = "Unknown Exception.  Check The Exception Logs For More Info.",
+                    Success = false
+                };
+            }
+            return response;
+        }
 
-       
+        public DtoActionResult UpdateGroupManagement(List<EntityUserGroupComputerGroups> groups, int userGroupId)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = string.Format("{0}/UpdateGroupManagement/{1}", Resource, userGroupId);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(groups), ParameterType.RequestBody);
+            var response = new ApiRequest().Execute<DtoActionResult>(Request);
+            if (response != null)
+            {
+                if (response.Id == 0)
+                    response.Success = false;
+            }
+            else
+            {
+                return new DtoActionResult()
+                {
+                    ErrorMessage = "Unknown Exception.  Check The Exception Logs For More Info.",
+                    Success = false
+                };
+            }
+            return response;
+        }
+
+
+
     }
 }

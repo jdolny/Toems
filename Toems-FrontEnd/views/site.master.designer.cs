@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views {
-    
-    
-    public partial class SiteMaster {
-        
+namespace Toems_FrontEnd.views
+{
+
+
+    public partial class SiteMaster
+    {
+
         /// <summary>
         /// ThemeSheet control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlLink ThemeSheet;
-        
+
         /// <summary>
         /// form1 control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
-        
+
         /// <summary>
         /// LinkButton1 control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton LinkButton1;
-        
+
         /// <summary>
         /// ScriptManager1 control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.ScriptManager ScriptManager1;
-        
+
         /// <summary>
         /// TopBreadCrumb control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder TopBreadCrumb;
-        
+
         /// <summary>
         /// lblServerId control.
         /// </summary>
@@ -65,7 +67,97 @@ namespace Toems_FrontEnd.views {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblServerId;
-        
+
+        /// <summary>
+        /// navModules control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl navModules;
+
+        /// <summary>
+        /// navPolicies control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl navPolicies;
+
+        /// <summary>
+        /// navGroups control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl navGroups;
+
+        /// <summary>
+        /// navHosts control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl navHosts;
+
+        /// <summary>
+        /// navImages control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl navImages;
+
+        /// <summary>
+        /// navTasks control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl navTasks;
+
+        /// <summary>
+        /// navAssets control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl navAssets;
+
+        /// <summary>
+        /// navGlobal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl navGlobal;
+
+        /// <summary>
+        /// navReport control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl navReport;
+
+        /// <summary>
+        /// navSettings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl navSettings;
+
         /// <summary>
         /// LogOut control.
         /// </summary>
@@ -74,7 +166,7 @@ namespace Toems_FrontEnd.views {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton LogOut;
-        
+
         /// <summary>
         /// SubNavTitle control.
         /// </summary>
@@ -83,7 +175,7 @@ namespace Toems_FrontEnd.views {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder SubNavTitle;
-        
+
         /// <summary>
         /// SubNav control.
         /// </summary>
@@ -92,7 +184,7 @@ namespace Toems_FrontEnd.views {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder SubNav;
-        
+
         /// <summary>
         /// DropDownActions control.
         /// </summary>
@@ -101,7 +193,7 @@ namespace Toems_FrontEnd.views {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder DropDownActions;
-        
+
         /// <summary>
         /// Help control.
         /// </summary>
@@ -110,7 +202,7 @@ namespace Toems_FrontEnd.views {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder Help;
-        
+
         /// <summary>
         /// Content control.
         /// </summary>

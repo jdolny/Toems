@@ -51,12 +51,8 @@
             </asp:TemplateField>
             <asp:BoundField DataField="Id" HeaderText="computerID" SortExpression="computerID" Visible="False"/>
             <asp:BoundField DataField="Name" HeaderText="Name" SortExpression="Name" ItemStyle-CssClass="width_200"></asp:BoundField>
-            <asp:BoundField DataField="Membership" HeaderText="Role" SortExpression="Mac" ItemStyle-CssClass="width_200 mobi-hide-smallest" HeaderStyle-CssClass="mobi-hide-smallest"/>
-            <asp:TemplateField ItemStyle-CssClass="mobi-hide-smaller" HeaderStyle-CssClass="mobi-hide-smaller" HeaderText="Current Group">
-                <ItemTemplate>
-                    <asp:Label ID="lblImage" runat="server" Text='<%# Bind("UserGroup.Name") %>'/>
-                </ItemTemplate>
-            </asp:TemplateField>
+            <asp:BoundField DataField="Membership" HeaderText="Role" />
+            
 
 
         </Columns>

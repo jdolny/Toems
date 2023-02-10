@@ -116,6 +116,11 @@ namespace Toems_DataModel
         public DbSet<EntityToecTargetListOu> ToecTargetListOu { get; set; }
         public DbSet<EntityToecDeployThread> ToecDeployThread { get; set; }
         public DbSet<EntityWinPeModule> WinPeModules { get; set; }
+        public DbSet<EntityUserGroupMembership> UserGroupMemberships { get; set; }
+        public DbSet<EntityUserGroupImages> UserGroupImages { get; set; }
+        public DbSet<EntityUserGroupComputerGroups> UserGroupComputerGroups { get; set; }
+        public DbSet<EntityToemsUsersGroups> ToemsUsersGroups { get; set; }
+        public DbSet<EntityToemsUsersImages> ToemsUsersImages { get; set; }
 
 
     }

@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorizationStrings.cs" />
+    <Compile Include="DbUpgrades\153.cs" />
     <Compile Include="DbUpgrades\152.cs" />
     <Compile Include="DbUpgrades\151.cs" />
     <Compile Include="DbUpgrades\150.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="DbUpgrades\121.cs" />
     <Compile Include="DbUpgrades\IDbScript.cs" />
     <Compile Include="DbUpgrades\VersionMapping.cs" />
+    <Compile Include="Dto\clientimaging\AuthResponseDto.cs" />
     <Compile Include="Dto\clientimaging\CheckIn.cs" />
     <Compile Include="Dto\clientimaging\DetermineTaskDTO.cs" />
     <Compile Include="Dto\clientimaging\FileFolderCopy.cs" />
@@ -150,6 +152,9 @@
     <Compile Include="Dto\DtoTaskBootFile.cs" />
     <Compile Include="Dto\DtoTftpServer.cs" />
     <Compile Include="Dto\DtoToecDeployConfig.cs" />
+    <Compile Include="Dto\DtoUserComputerManagement.cs" />
+    <Compile Include="Dto\DtoUserGroupManagement.cs" />
+    <Compile Include="Dto\DtoUserImageManagement.cs" />
     <Compile Include="Dto\DtoVersion.cs" />
     <Compile Include="Dto\DtoWebRtc.cs" />
     <Compile Include="Dto\exports\DtoCommandModuleExport.cs" />
@@ -244,6 +249,11 @@
     <Compile Include="Dto\imageschemafe\DtoVolumeGroup.cs" />
     <Compile Include="Entity\EntityActiveImagingTask.cs" />
     <Compile Include="Entity\EntityActiveMulticastSession.cs" />
+    <Compile Include="Entity\EntityToemsUsersGroups.cs" />
+    <Compile Include="Entity\EntityUserGroupComputerGroups.cs" />
+    <Compile Include="Entity\EntityUserGroupImages.cs" />
+    <Compile Include="Entity\EntityToemsUsersImages.cs" />
+    <Compile Include="Entity\EntityUserGroupMembership.cs" />
     <Compile Include="Entity\EntityWinPeModule.cs" />
     <Compile Include="Entity\EntityToecDeployThread.cs" />
     <Compile Include="Entity\EntityToecTargetListComputer.cs" />

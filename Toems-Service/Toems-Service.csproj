@@ -127,6 +127,9 @@
     <Compile Include="BcdService.cs" />
     <Compile Include="ClientImagingServices.cs" />
     <Compile Include="Entity\ServiceComputerGpuInventory .cs" />
+    <Compile Include="Entity\ServiceUserGroupComputerGroupMembership.cs" />
+    <Compile Include="Entity\ServiceUserGroupImagesMembership.cs" />
+    <Compile Include="Entity\ServiceUserGroupMembership.cs" />
     <Compile Include="Entity\ServiceWinPeModule.cs" />
     <Compile Include="Entity\ServiceSetupCompleteFile.cs" />
     <Compile Include="Entity\ServiceSysprepAnswerFile.cs" />

@@ -33,12 +33,6 @@ namespace Toems_ApplicationApi.Controllers
             return result;
         }
 
-        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
-        public DtoApiBoolResponse DeleteRights(int id)
-        {
-            return new DtoApiBoolResponse {Value = _userServices.DeleteUserRights(id)};
-        }
-
        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         public EntityToemsUser Get(int id)
         {
@@ -53,6 +47,14 @@ namespace Toems_ApplicationApi.Controllers
         {
             var result = _userServices.ResetUserMfaData(id);
             return new DtoApiBoolResponse() { Value = result};
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpGet]
+        public DtoApiBoolResponse RemoveUserLegacyGroup(int id)
+        {
+            var result = _userServices.RemoveUserLegacyGroup(id);
+            return new DtoApiBoolResponse() { Value = result };
         }
 
         [Authorize]
@@ -95,7 +97,7 @@ namespace Toems_ApplicationApi.Controllers
 
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]
         [HttpPost]
-        public IEnumerable<UserWithUserGroup> Search(DtoSearchFilter filter)
+        public IEnumerable<EntityToemsUser> Search(DtoSearchFilter filter)
         {
             return _userServices.SearchUsers(filter);
         }

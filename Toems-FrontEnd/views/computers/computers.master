@@ -241,7 +241,7 @@
       
 
         $(document).ready(function() {
-            $('#nav-hosts').addClass("nav-current");
+            $('#navHosts').addClass("nav-current");
           
         });
     </script>

@@ -116,6 +116,11 @@ namespace Toems_DataModel
         IGenericRepository<EntityToecDeployThread> ToecDeployThreadRepository { get; }
         IGenericRepository<EntityWinPeModule> WinPeModuleRepository { get; }
 
+        IGenericRepository<EntityUserGroupMembership> UserGroupMembershipRepository { get; }
+        IGenericRepository<EntityUserGroupImages> UserGroupImagesRepository { get; }
+        IGenericRepository<EntityUserGroupComputerGroups> UserGroupComputerGroupsRepository { get; }
+        IGenericRepository<EntityToemsUsersImages> ToemsUsersImagesRepository { get; }
+        IGenericRepository<EntityToemsUsersGroups> ToemsUsersGroupsRepository { get; }
         void Save();
     }
 }

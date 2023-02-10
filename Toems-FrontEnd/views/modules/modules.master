@@ -24,7 +24,7 @@
 <asp:Content ID="MainContent" ContentPlaceHolderID="Content" runat="Server">
     <script type="text/javascript">
         $(document).ready(function() {
-            $('#nav-modules').addClass("nav-current");
+            $('#navModules').addClass("nav-current");
         });
     </script>
     <asp:ContentPlaceHolder ID="SubContent" runat="server">

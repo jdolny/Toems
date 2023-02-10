@@ -126,6 +126,11 @@ namespace Toems_DataModel
         private IGenericRepository<EntityToecTargetListOu> _toecTargetListOuRepository;
         private IGenericRepository<EntityToecDeployThread> _toecDeployThreadRepository;
         private IGenericRepository<EntityWinPeModule> _winPeModuleRepository;
+        private IGenericRepository<EntityUserGroupMembership> _userGroupMembershipRepository;
+        private IGenericRepository<EntityUserGroupImages> _userGroupImagesRepository;
+        private IGenericRepository<EntityUserGroupComputerGroups> _userGroupComputerGroupsRepository;
+        private IGenericRepository<EntityToemsUsersImages> _toemsUsersImagesRepository;
+        private IGenericRepository<EntityToemsUsersGroups> _toemsUsersGroupsRepository;
 
 
         private bool disposed;
@@ -134,6 +139,42 @@ namespace Toems_DataModel
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+        public IGenericRepository<EntityToemsUsersGroups> ToemsUsersGroupsRepository
+        {
+            get
+            {
+                return _toemsUsersGroupsRepository ?? (_toemsUsersGroupsRepository = new GenericRepository<EntityToemsUsersGroups>(_context));
+            }
+        }
+        public IGenericRepository<EntityToemsUsersImages> ToemsUsersImagesRepository
+        {
+            get
+            {
+                return _toemsUsersImagesRepository ?? (_toemsUsersImagesRepository = new GenericRepository<EntityToemsUsersImages>(_context));
+            }
+        }
+        public IGenericRepository<EntityUserGroupComputerGroups> UserGroupComputerGroupsRepository
+        {
+            get
+            {
+                return _userGroupComputerGroupsRepository ?? (_userGroupComputerGroupsRepository = new GenericRepository<EntityUserGroupComputerGroups>(_context));
+            }
+        }
+        public IGenericRepository<EntityUserGroupImages> UserGroupImagesRepository
+        {
+            get
+            {
+                return _userGroupImagesRepository ?? (_userGroupImagesRepository = new GenericRepository<EntityUserGroupImages>(_context));
+            }
+        }
+
+        public IGenericRepository<EntityUserGroupMembership> UserGroupMembershipRepository
+        {
+            get
+            {
+                return _userGroupMembershipRepository ?? (_userGroupMembershipRepository = new GenericRepository<EntityUserGroupMembership>(_context));
+            }
         }
 
         public IGenericRepository<EntityWinPeModule> WinPeModuleRepository

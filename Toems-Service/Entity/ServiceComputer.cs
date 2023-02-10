@@ -367,7 +367,9 @@ namespace Toems_Service.Entity
 
             var toRemove = new List<EntityComputer>();
             if (filter.CategoryType.Equals("Any Category"))
-                return list.Take(filter.Limit).ToList();
+            {
+                //ignore
+            }
             else if (filter.CategoryType.Equals("And Category"))
             {
                 foreach (var computer in list)
@@ -426,7 +428,23 @@ namespace Toems_Service.Entity
                 list.Remove(p);
             }
 
-            return list.Take(filter.Limit).ToList();
+            var computerAcl = new ServiceUser().GetAllowedComputers(userId);
+            if (!computerAcl.ComputerManagementEnforced)
+                return list.Take(filter.Limit).ToList();
+            else
+            {
+                var computers = new List<EntityComputer>();
+                foreach (var c in list)
+                {
+                    if (computerAcl.AllowedComputerIds.Contains(c.Id))
+                        computers.Add(c);
+                }
+
+
+                return computers.Take(filter.Limit).ToList();
+            }
+            
+
         }
 
         public List<EntityComputerCategory> GetComputerCategories(int computerId)
@@ -443,82 +461,100 @@ namespace Toems_Service.Entity
         public List<EntityComputer> SearchComputers(DtoSearchFilterCategories filter, int userId)
         {
             var list = _uow.ComputerRepository.SearchActiveComputers(filter,userId);
-            
+
             if (filter.CategoryType.Equals("Any Category"))
-                return list;
-
-            var categoryFilterIds = new List<int>();
-            foreach (var catName in filter.Categories)
             {
-                var category = _uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
-                if (category != null)
-                    categoryFilterIds.Add(category.Id);
+                //do nothing
             }
-
-            var toRemove = new List<EntityComputer>();
-        
-
-            if (filter.CategoryType.Equals("And Category"))
+            else
             {
-                foreach (var computer in list)
+                var categoryFilterIds = new List<int>();
+                foreach (var catName in filter.Categories)
                 {
-                    var cCategories = GetComputerCategories(computer.Id);
-                    if (cCategories == null) continue;
-
-                    if (filter.Categories.Count == 0)
-                    {
-                        if (cCategories.Count > 0)
-                        {
-                            toRemove.Add(computer);
-                            continue;
-                        }
-                    }
-
-                    foreach (var id in categoryFilterIds)
-                    {
-                        if (cCategories.Any(x => x.CategoryId == id)) continue;
-                        toRemove.Add(computer);
-                        break;
-                    }
+                    var category = _uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
+                    if (category != null)
+                        categoryFilterIds.Add(category.Id);
                 }
-            }
-            else if (filter.CategoryType.Equals("Or Category"))
-            {
-                foreach (var computer in list)
+
+                var toRemove = new List<EntityComputer>();
+
+
+                if (filter.CategoryType.Equals("And Category"))
                 {
-                    var cCategories = GetComputerCategories(computer.Id);
-                    if (cCategories == null) continue;
-                    if (filter.Categories.Count == 0)
+                    foreach (var computer in list)
                     {
-                        if (cCategories.Count > 0)
+                        var cCategories = GetComputerCategories(computer.Id);
+                        if (cCategories == null) continue;
+
+                        if (filter.Categories.Count == 0)
                         {
-                            toRemove.Add(computer);
-                            continue;
+                            if (cCategories.Count > 0)
+                            {
+                                toRemove.Add(computer);
+                                continue;
+                            }
                         }
-                    }
-                    var catFound = false;
-                    foreach (var id in categoryFilterIds)
-                    {
-                        if (cCategories.Any(x => x.CategoryId == id))
+
+                        foreach (var id in categoryFilterIds)
                         {
-                            catFound = true;
+                            if (cCategories.Any(x => x.CategoryId == id)) continue;
+                            toRemove.Add(computer);
                             break;
                         }
-
                     }
-                    if (!catFound)
-                        toRemove.Add(computer);
+                }
+                else if (filter.CategoryType.Equals("Or Category"))
+                {
+                    foreach (var computer in list)
+                    {
+                        var cCategories = GetComputerCategories(computer.Id);
+                        if (cCategories == null) continue;
+                        if (filter.Categories.Count == 0)
+                        {
+                            if (cCategories.Count > 0)
+                            {
+                                toRemove.Add(computer);
+                                continue;
+                            }
+                        }
+                        var catFound = false;
+                        foreach (var id in categoryFilterIds)
+                        {
+                            if (cCategories.Any(x => x.CategoryId == id))
+                            {
+                                catFound = true;
+                                break;
+                            }
+
+                        }
+                        if (!catFound)
+                            toRemove.Add(computer);
+                    }
+                }
+
+                foreach (var p in toRemove)
+                {
+                    list.Remove(p);
                 }
             }
 
-            foreach (var p in toRemove)
+            var computerAcl = new ServiceUser().GetAllowedComputers(userId);
+            if (!computerAcl.ComputerManagementEnforced)
+                return list.ToList();
+            else
             {
-                list.Remove(p);
+                var computers = new List<EntityComputer>();
+                foreach (var c in list)
+                {
+                    if (computerAcl.AllowedComputerIds.Contains(c.Id))
+                        computers.Add(c);
+                }
+
+
+                return computers.ToList();
             }
 
-           
 
-            return list;
         }
 
         public List<EntityComputer> SearchImageOnlyComputers(DtoSearchFilterCategories filter, int userId)
@@ -547,7 +583,9 @@ namespace Toems_Service.Entity
 
             var toRemove = new List<EntityComputer>();
             if (filter.CategoryType.Equals("Any Category"))
-                return list.Take(filter.Limit).ToList();
+            { 
+                //do nothing
+            }
             else if (filter.CategoryType.Equals("And Category"))
             {
                 foreach (var computer in list)
@@ -606,7 +644,22 @@ namespace Toems_Service.Entity
                 list.Remove(p);
             }
 
-            return list.Take(filter.Limit).ToList();
+            var computerAcl = new ServiceUser().GetAllowedComputers(userId);
+            if (!computerAcl.ComputerManagementEnforced)
+                return list.Take(filter.Limit).ToList();
+            else
+            {
+                var computers = new List<EntityComputer>();
+                foreach (var c in list)
+                {
+                    if (computerAcl.AllowedComputerIds.Contains(c.Id))
+                        computers.Add(c);
+                }
+
+
+                return computers.Take(filter.Limit).ToList();
+            }
+
         }
 
         public List<EntityComputer> GetArchived(DtoSearchFilterCategories filter)

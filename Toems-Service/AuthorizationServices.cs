@@ -16,14 +16,13 @@ namespace Toems_Service
         {
             _userServices = new ServiceUser();
             _toemsUser = _userServices.GetUser(userId);
-            _currentUserRights = _userServices.GetUserRights(userId).Select(right => right.Right).ToList();
+            _currentUserRights = _userServices.GetEffectiveUserRights(userId).Select(right => right.Right).ToList();
             _requiredRight = requiredRight;
         }
 
         public bool IsAuthorized()
         {
-            if (_toemsUser.Membership == "Administrator") return true;
-
+            if (_userServices.IsAdmin(_toemsUser.Id)) return true;
             return _currentUserRights.Any(right => right == _requiredRight);
         }
     }

@@ -23,5 +23,11 @@ namespace Toems_Common.Entity
         [Column("toems_user_group_ldapname", Order = 5)]
         public string GroupLdapName { get; set; }
 
+        [Column("enable_image_acls")]
+        public bool EnableImageAcls { get; set; }
+
+        [Column("enable_computergroup_acls")]
+        public bool EnableComputerGroupAcls { get; set; }
+
        }
 }

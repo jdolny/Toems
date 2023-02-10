@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI.WebControls;
 using Toems_Common;
 using Toems_Common.Dto;
+using Toems_Common.Entity;
 using Toems_FrontEnd.BasePages;
+using Toems_FrontEnd.views.computers;
 
 namespace Toems_FrontEnd.views.users
 {
@@ -15,47 +19,21 @@ namespace Toems_FrontEnd.views.users
                 EndUserMessage = "Users Cannot Be Added To LDAP Groups";
                 return;
             }
-
-            //Don't remove all administrators
-            if (ToemsUserGroup.Membership == "User")
-            {
-                var existingAdminCount = Call.ToemsUserApi.GetAdminCount();
-                var selectedAdminCount = 0;
-                foreach (GridViewRow row in gvUsers.Rows)
-                {
-                    var cb = (CheckBox) row.FindControl("chkSelector");
-                    if (cb == null || !cb.Checked) continue;
-                    var dataKey = gvUsers.DataKeys[row.RowIndex];
-                    if (dataKey != null)
-                    {
-                        var user = Call.ToemsUserApi.Get(Convert.ToInt32(dataKey.Value));
-                        if (user.Membership == "Administrator")
-                            selectedAdminCount++;
-                    }
-                }
-                if (existingAdminCount == selectedAdminCount)
-                {
-                    EndUserMessage = "Cannot Move Users To Group.  It Would Remove All Administrators From The System";
-                    return;
-                }
-            }
-
-            var successCount = 0;
-            foreach (GridViewRow row in gvUsers.Rows)
-            {
-                var cb = (CheckBox) row.FindControl("chkSelector");
-                if (cb == null || !cb.Checked) continue;
-                var dataKey = gvUsers.DataKeys[row.RowIndex];
-                if (dataKey != null)
-                {
-                    var user = Call.ToemsUserApi.Get(Convert.ToInt32(dataKey.Value));
-
-                    Call.UserGroupApi.AddNewMember(ToemsUserGroup.Id, user.Id);
-                    successCount++;
-                }
-            }
-            EndUserMessage += "Successfully Added " + successCount + " Users To The Group";
-            PopulateGrid();
+            var memberships = (from GridViewRow row in gvUsers.Rows
+                               let cb = (CheckBox)row.FindControl("chkSelector")
+                               where cb != null && cb.Checked
+                               select gvUsers.DataKeys[row.RowIndex]
+               into dataKey
+                               where dataKey != null
+                               select new EntityUserGroupMembership()
+                               {
+                                   ToemsUserId = Convert.ToInt32(dataKey.Value),
+                                   UserGroupId = ToemsUserGroup.Id
+                               }).ToList();
+            var result = Call.UserGroupMembershipApi.Post(memberships);
+            EndUserMessage = result.Success
+                ? "Successfully Added Group Members"
+                : "Could Not Add Group Members." + result.ErrorMessage;
         }
 
         protected void chkSelectAll_CheckedChanged(object sender, EventArgs e)

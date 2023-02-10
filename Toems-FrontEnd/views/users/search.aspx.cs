@@ -46,7 +46,7 @@ namespace Toems_FrontEnd.views.users
         protected void gridView_Sorting(object sender, GridViewSortEventArgs e)
         {
             PopulateGrid();
-            var listUsers = (List<UserWithUserGroup>) gvUsers.DataSource;
+            var listUsers = (List<EntityToemsUser>) gvUsers.DataSource;
             switch (e.SortExpression)
             {
                 case "Name":

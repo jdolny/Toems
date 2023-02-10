@@ -46,12 +46,8 @@ Users
             <asp:HyperLinkField DataNavigateUrlFields="Id" DataNavigateUrlFormatString="~/views/users/edit.aspx?userid={0}" Text="View" ItemStyle-CssClass="chkboxwidth"/>
             <asp:BoundField DataField="Id" HeaderText="userID" Visible="False"/>
             <asp:BoundField DataField="Name" HeaderText="Name" SortExpression="Name" ItemStyle-CssClass="width_200"/>
-            <asp:BoundField DataField="Membership" HeaderText="Role" SortExpression="Membership" ItemStyle-CssClass="width_200"/>
-            <asp:TemplateField ItemStyle-CssClass="mobi-hide-smaller" HeaderStyle-CssClass="mobi-hide-smaller" HeaderText="Group">
-                <ItemTemplate>
-                    <asp:Label ID="lblImage" runat="server" Text='<%# Bind("UserGroup.Name") %>'/>
-                </ItemTemplate>
-            </asp:TemplateField>
+            <asp:BoundField DataField="Membership" HeaderText="Role" SortExpression="Membership" />
+           
         </Columns>
         <EmptyDataTemplate>
             No Users Found

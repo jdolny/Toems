@@ -58,7 +58,7 @@ namespace Toems_Service
 
         public DtoValidationResult GlobalLogin(string userName, string password, string loginType, string verificationCode = null)
         {
-           
+
             var validationResult = new DtoValidationResult
             {
                 ErrorMessage = "Incorrect Username Or Password",
@@ -80,35 +80,45 @@ namespace Toems_Service
                 //Check For a first time LDAP User Group Login
                 if (ServiceSetting.GetSettingValue(SettingStrings.LdapEnabled) == "1")
                 {
+                    var userCreated = false;
                     foreach (var ldapGroup in _userGroupServices.GetLdapGroups())
                     {
                         if (new LdapServices().Authenticate(userName, password, ldapGroup.GroupLdapName))
                         {
-                            //user is a valid ldap user via ldap group that has not yet logged in.
-                            //Add the user and allow login.                         
-                            var cdUser = new EntityToemsUser
+                            if (!userCreated)
                             {
-                                Name = userName,
-                                Salt = Utility.CreateSalt(64),
-                                IsLdapUser = 1,
-                                Membership = "User",
-                                Theme = "dark",
+                                //user is a valid ldap user via ldap group that has not yet logged in.
+                                //Add the user and allow login.                         
+                                var cdUser = new EntityToemsUser
+                                {
+                                    Name = userName,
+                                    Salt = Utility.CreateSalt(64),
+                                    IsLdapUser = 1,
+                                    UserGroupId = -1,
+                                    Membership = "User",
+                                    Theme = "dark",
+                                    DefaultComputerView = "Default",
+                                    ComputerSortMode = "Default",
+                                    DefaultLoginPage = "Default"
+                                };
+                                //Create a local random db pass, should never actually be possible to use.
+                                cdUser.Password = Utility.CreatePasswordHash(Utility.GenerateKey(), cdUser.Salt);
+                                if (_userServices.AddUser(cdUser).Success)
+                                {
+                                    userCreated = true;
+                                    //add user to group
+                                    user = _userServices.GetUserForLogin(userName);
+                                    new ServiceUserGroupMembership().AddMembership(new EntityUserGroupMembership() { ToemsUserId = user.Id, UserGroupId = ldapGroup.Id });
 
-                                
-                            };
-                            //Create a local random db pass, should never actually be possible to use.
-                            cdUser.Password = Utility.CreatePasswordHash(Utility.GenerateKey(), cdUser.Salt);
-                            if (_userServices.AddUser(cdUser).Success)
+                                    auditLog.UserId = user.Id;
+                                    auditLog.ObjectId = user.Id;
+                                    validationResult.Success = true;
+                                    auditLog.AuditType = EnumAuditEntry.AuditType.SuccessfulLogin;
+                                }
+                            }
+                            else
                             {
-                                //add user to group
-                                var newUser = _userServices.GetUserForLogin(userName);
-                                _userGroupServices.AddNewGroupMember(ldapGroup.Id, newUser.Id);
-                                auditLog.UserId = newUser.Id;
-                                auditLog.ObjectId = newUser.Id;
-                                validationResult.Success = true;
-                                auditLog.AuditType = EnumAuditEntry.AuditType.SuccessfulLogin;
-
-                                break;
+                                 new ServiceUserGroupMembership().AddMembership(new EntityUserGroupMembership() { ToemsUserId = user.Id, UserGroupId = ldapGroup.Id });
                             }
                         }
                     }
@@ -132,9 +142,9 @@ namespace Toems_Service
             if (ServiceSetting.GetSettingValue(SettingStrings.EnableMfa) == "1" && user.MfaSecret == null
                 && (user.EnableWebMfa || ServiceSetting.GetSettingValue(SettingStrings.ForceMfa) == "1"
                 || user.EnableImagingMfa || ServiceSetting.GetSettingValue(SettingStrings.ForceImagingMfa) == "1"))
-            { 
-                validationResult.ErrorMessage = "Mfa setup is required"; 
-                if(loginType.Equals("Console"))
+            {
+                validationResult.ErrorMessage = "Mfa setup is required";
+                if (loginType.Equals("Console"))
                 {
                     validationResult.Success = false;
                     return validationResult;
@@ -174,55 +184,41 @@ namespace Toems_Service
                 }
             }
 
+
+
             //Check against AD
             if (user.IsLdapUser == 1 && ServiceSetting.GetSettingValue(SettingStrings.LdapEnabled) == "1")
             {
-                //Check if user is authenticated against an ldap group
-                if (user.UserGroupId != -1)
+                var ldapGroups = _userGroupServices.GetLdapGroups();
+                if (ldapGroups.Any())
                 {
-                    //user is part of a group, is the group an ldap group?
-                    var userGroup = _userGroupServices.GetUserGroup(user.UserGroupId);
-                    if (userGroup != null)
+                    validationResult.Success = false;
+                    foreach (var ldapGroup in ldapGroups)
                     {
-                        if (userGroup.IsLdapGroup == 1)
+                       
+                        if (new LdapServices().Authenticate(userName, password, ldapGroup.GroupLdapName))
                         {
-                            //the group is an ldap group
-                            //make sure user is still in that ldap group
-                            if (new LdapServices().Authenticate(userName, password, userGroup.GroupLdapName))
-                            {
-                                validationResult.Success = true;
-                            }
-                            else
-                            {
-                                //user is either not in that group anymore, not in the directory, or bad password
-                                validationResult.Success = false;
+                            //put user back in group if removed at some point
 
+                            new ServiceUserGroupMembership().AddMembership(new EntityUserGroupMembership() { ToemsUserId = user.Id, UserGroupId = ldapGroup.Id });
+                            validationResult.Success = true;
 
-                                if (new LdapServices().Authenticate(userName, password))
-                                {
-                                    //password was good but user is no longer in the group
-                                    //delete the user
-                                    _userServices.DeleteUser(user.Id);
-                                }
-                            }
                         }
                         else
                         {
-                            //the group is not an ldap group
-                            //still need to check creds against directory
-                            if (new LdapServices().Authenticate(userName, password)) validationResult.Success = true;
+                            //user is either not in that group anymore, or bad password
+                            if (new LdapServices().Authenticate(userName, password))
+                            {
+                                //password was good but user is no longer in the group
+                                //remove user from group
+                                new ServiceUserGroupMembership().DeleteByIds(user.Id, ldapGroup.Id);
+                            }
                         }
-                    }
-                    else
-                    {
-                        //group didn't exist for some reason
-                        //still need to check creds against directory
-                        if (new LdapServices().Authenticate(userName, password)) validationResult.Success = true;
                     }
                 }
                 else
                 {
-                    //user is not part of a group, check creds against directory
+                    //user is not part of an ldap group, check creds against directory
                     if (new LdapServices().Authenticate(userName, password)) validationResult.Success = true;
                 }
             }
@@ -236,6 +232,28 @@ namespace Toems_Service
             {
                 var hash = Utility.CreatePasswordHash(password, user.Salt);
                 if (user.Password == hash) validationResult.Success = true;
+            }
+
+            //update user role based on group membership at each login
+            var usersGroups = _userServices.GetUsersGroups(user.Id);
+            if (usersGroups.Any())
+            {
+                var userNeedsAdminRole = false;
+                foreach (var userGroup in usersGroups)
+                {
+                    if (userGroup.Membership == "Administrator")
+                    {
+                        userNeedsAdminRole = true;
+                        break;
+                    }
+                }
+
+                if (userNeedsAdminRole)
+                    user.Membership = "Administrator";
+                else
+                    user.Membership = "User";
+
+                _userServices.UpdateUser(user);
             }
 
             if (validationResult.Success)

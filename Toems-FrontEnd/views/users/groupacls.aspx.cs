@@ -13,13 +13,12 @@ namespace Toems_FrontEnd.views.users
 
         protected void buttonUpdate_OnClick(object sender, EventArgs e)
         {
-            Call.UserGroupApi.DeleteRights(ToemsUserGroup.Id);
             var listOfRights =
                 _listCheckBoxes.Where(x => x.Checked)
                     .Select(box => new EntityUserGroupRight { UserGroupId = ToemsUserGroup.Id, Right = box.ID })
                     .ToList();
             Call.UserGroupRightApi.Post(listOfRights);
-            Call.UserGroupApi.UpdateMemberAcls(ToemsUserGroup.Id);
+
             EndUserMessage = "Updated ACLs";
         }
 

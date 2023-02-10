@@ -61,9 +61,5 @@ namespace Toems_Common.Entity
 
     }
 
-    [NotMapped]
-    public class UserWithUserGroup : EntityToemsUser
-    {
-        public EntityToemsUserGroup UserGroup { get; set; }
-    }
+
 }

@@ -31,6 +31,7 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ImageDelete)]
+        [ImageAuth]
         public DtoActionResult Delete(int id)
         {
             var image = _imageService.GetImage(id);
@@ -51,6 +52,7 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ImageRead)]
+        [ImageAuth]
         public EntityImage Get(int id)
         {
             var result = _imageService.GetImage(id);
@@ -62,7 +64,7 @@ namespace Toems_ApplicationApi.Controllers
         [Authorize]
         public IEnumerable<EntityImage> Get()
         {
-            return _imageService.GetAll();
+            return _imageService.GetAll(_userId);
         }
 
 
@@ -76,7 +78,7 @@ namespace Toems_ApplicationApi.Controllers
         [HttpPost]
         public IEnumerable<ImageWithDate> Search(DtoSearchFilterCategories filter)
         {
-            return _imageService.Search(filter);
+            return _imageService.Search(filter,_userId);
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ImageRead)]
@@ -117,11 +119,15 @@ namespace Toems_ApplicationApi.Controllers
                 auditLog.UserId = _userId;
                 auditLog.AuditType = EnumAuditEntry.AuditType.Create;
                 _auditLogService.AddAuditLog(auditLog);
+
+
+                new ServiceUser().UpdateUsersImagesList(new EntityToemsUsersImages() { ImageId = result.Id, UserId = Convert.ToInt32(_userId) });
             }
             return result;
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
+        [ImageAuth]
         public DtoActionResult Put(int id, EntityImage image)
         {
             image.Id = id;
