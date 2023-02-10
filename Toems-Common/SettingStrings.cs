@@ -182,7 +182,7 @@
 
         public const string ToecRemoteInstallMaxWorkers = "Toec Remote Install Max Workers";
 
-        public const int GlobalVersion = 152;
+        public const int GlobalVersion = 153;
 
     }
 }

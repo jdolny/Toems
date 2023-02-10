@@ -50,15 +50,15 @@ DEFAULT CHARACTER SET = utf8;
 ALTER TABLE `toems_user_groups_image_acls` 
 ADD INDEX `FK_UG_IACLS_idx` (`image_id` ASC),
 ADD INDEX `FK_UG_CGACLS_idx` (`user_group_id` ASC);
-ALTER TABLE `theopenem`.`toems_user_groups_image_acls` 
+ALTER TABLE `toems_user_groups_image_acls` 
 ADD CONSTRAINT `FK_UG_IACLS`
   FOREIGN KEY (`image_id`)
-  REFERENCES `theopenem`.`images` (`image_id`)
+  REFERENCES `images` (`image_id`)
   ON DELETE CASCADE
   ON UPDATE NO ACTION,
 ADD CONSTRAINT `FK_UG_uGACLS`
   FOREIGN KEY (`user_group_id`)
-  REFERENCES `theopenem`.`toems_user_groups` (`toems_user_group_id`)
+  REFERENCES `toems_user_groups` (`toems_user_group_id`)
   ON DELETE CASCADE
   ON UPDATE NO ACTION;
 
@@ -72,15 +72,15 @@ DEFAULT CHARACTER SET = utf8;
 ALTER TABLE `toems_user_groups_computer_acls` 
 ADD INDEX `FK_UG_CGACLS_idx` (`group_id` ASC),
 ADD INDEX `FK_UG1_UGACLS_idx` (`user_group_id` ASC);
-ALTER TABLE `theopenem`.`toems_user_groups_computer_acls` 
+ALTER TABLE `toems_user_groups_computer_acls` 
 ADD CONSTRAINT `FK_UG_CGACLS`
   FOREIGN KEY (`group_id`)
-  REFERENCES `theopenem`.`groups` (`group_id`)
+  REFERENCES `groups` (`group_id`)
   ON DELETE CASCADE
   ON UPDATE NO ACTION,
 ADD CONSTRAINT `FK_UG1_UGACLS`
   FOREIGN KEY (`user_group_id`)
-  REFERENCES `theopenem`.`toems_user_groups` (`toems_user_group_id`)
+  REFERENCES `toems_user_groups` (`toems_user_group_id`)
   ON DELETE CASCADE
   ON UPDATE NO ACTION;
 
