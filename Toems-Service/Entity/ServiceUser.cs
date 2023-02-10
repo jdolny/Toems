@@ -162,7 +162,7 @@ namespace Toems_Service.Entity
 
         public EntityToemsUser GetUserWithPass(int userId)
         {
-            return _uow.UserRepository.GetById(userId);
+            return new UnitOfWork().UserRepository.GetById(userId);
 
         }
 
