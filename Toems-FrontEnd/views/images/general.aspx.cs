@@ -26,18 +26,6 @@ namespace Toems_FrontEnd.views.images
             EndUserMessage = result.Success ? "Successfully Updated Image" : result.ErrorMessage;
         }
 
-        protected void ddlEnvironment_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (ddlEnvironment.Text == "winpe")
-            {
-                imageType.Visible = false;
-            }
-            else
-            {
-                imageType.Visible = true;
-            }
-        }
-
         private void PopulateForm()
         {
             chkEnabled.Checked = ImageEntity.Enabled;
@@ -45,20 +33,44 @@ namespace Toems_FrontEnd.views.images
             chkVisible.Checked = ImageEntity.IsVisible;
             txtImageName.Text = ImageEntity.Name;
             txtImageDesc.Text = ImageEntity.Description;
-            ddlImageType.Text = ImageEntity.Type;
             ddlEnvironment.Text = ImageEntity.Environment;
 
-            if (ImageEntity.Environment == "winpe")
+            ImageTypeSwitch();
+            if (ddlEnvironment.Text == "winpe")
             {
-                imageType.Visible = false;
+                ddlImageTypeWinPe.Text = ImageEntity.Type;
+                ddlImageTypeWinPe.Enabled = false;
+            }
+            else
+            {
+                ddlImageTypeLinux.Text = ImageEntity.Type;
+                ddlImageTypeLinux.Enabled = false;
             }
 
-            if (ImageEntity.Protected)
+                if (ImageEntity.Protected)
                 chkProtected.Checked = true;
 
-            //Image types can't be changed after they are created
-            ddlImageType.Enabled = false;
+
+
             ddlEnvironment.Enabled = false;
+        }
+
+        private void ImageTypeSwitch()
+        {
+            if (ddlEnvironment.Text == "winpe")
+            {
+                imageTypeWinPe.Visible = true;
+                imageTypeLinux.Visible = false;
+            }
+            else
+            {
+                imageTypeWinPe.Visible = false;
+                imageTypeLinux.Visible = true;
+            }
+        }
+        protected void ddlEnvironment_OnSelectedIndexChanged(object sender, EventArgs e)
+        {
+            ImageTypeSwitch();
         }
     }
 }

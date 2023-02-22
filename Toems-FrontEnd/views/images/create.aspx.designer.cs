@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.images {
-    
-    
-    public partial class create {
-        
+namespace Toems_FrontEnd.views.images
+{
+
+
+    public partial class create
+    {
+
         /// <summary>
         /// btnDelete control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.images {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnDelete;
-        
+
         /// <summary>
         /// txtImageName control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.images {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtImageName;
-        
+
         /// <summary>
         /// ddlEnvironment control.
         /// </summary>
@@ -38,25 +40,43 @@ namespace Toems_FrontEnd.views.images {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlEnvironment;
-        
+
         /// <summary>
-        /// imageType control.
+        /// imageTypeWinPe control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl imageType;
-        
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl imageTypeWinPe;
+
         /// <summary>
-        /// ddlImageType control.
+        /// ddlImageTypeWinPe control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlImageType;
-        
+        protected global::System.Web.UI.WebControls.DropDownList ddlImageTypeWinPe;
+
+        /// <summary>
+        /// imageTypeLinux control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl imageTypeLinux;
+
+        /// <summary>
+        /// ddlImageTypeLinux control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlImageTypeLinux;
+
         /// <summary>
         /// txtImageDesc control.
         /// </summary>
@@ -65,7 +85,7 @@ namespace Toems_FrontEnd.views.images {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtImageDesc;
-        
+
         /// <summary>
         /// chkProtected control.
         /// </summary>
@@ -74,7 +94,7 @@ namespace Toems_FrontEnd.views.images {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkProtected;
-        
+
         /// <summary>
         /// chkVisible control.
         /// </summary>

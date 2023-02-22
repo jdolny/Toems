@@ -308,6 +308,56 @@ namespace Toems_Service
             return JsonConvert.SerializeObject(result);
         }
 
+        public string CheckHdRequirementsFfu(int profileId, int clientHdNumber, string newHdSize, string imageSchemaDrives)
+        {
+            var result = new HardDriveSchema();
+
+            var imageProfile = new ServiceImageProfile().ReadProfile(profileId);
+            var partitionHelper = new ServiceClientPartition(imageProfile);
+            var imageSchema = partitionHelper.GetImageSchema();
+
+            if (clientHdNumber > imageSchema.HardDrives.Count())
+            {
+                result.IsValid = "false";
+                result.Message = "No Image Exists To Download To This Hard Drive.  There Are More" +
+                                 "Hard Drive's Than The Original Image";
+
+                return JsonConvert.SerializeObject(result);
+            }
+
+            var listSchemaDrives = new List<int>();
+            if (!string.IsNullOrEmpty(imageSchemaDrives))
+                listSchemaDrives.AddRange(imageSchemaDrives.Split(' ').Select(hd => Convert.ToInt32(hd)));
+            result.SchemaHdNumber = partitionHelper.NextActiveHardDrive(listSchemaDrives, clientHdNumber);
+
+            if (result.SchemaHdNumber == -1)
+            {
+                result.IsValid = "false";
+                result.Message = "No Active Hard Drive Images Were Found To Deploy.";
+                return JsonConvert.SerializeObject(result);
+            }
+
+            var newHdBytes = Convert.ToInt64(newHdSize);
+            var minimumSize = imageSchema.HardDrives[result.SchemaHdNumber].Size * imageSchema.HardDrives[result.SchemaHdNumber].Lbs;
+      
+            if (minimumSize > newHdBytes)
+            {
+                log.Error("Error:  " + newHdBytes / 1024 / 1024 +
+                          " MB Is Less Than The Minimum Required HD Size For This Image(" +
+                          minimumSize / 1024 / 1024 + " MB)");
+
+                result.IsValid = "false";
+                result.Message = newHdBytes / 1024 / 1024 +
+                                 " MB Is Less Than The Minimum Required HD Size For This Image(" +
+                                 minimumSize / 1024 / 1024 + " MB)";
+                return JsonConvert.SerializeObject(result);
+            }
+
+
+            result.IsValid = "true";
+            return JsonConvert.SerializeObject(result);
+        }
+
         public string GetUploadServerIp()
         {
             var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
@@ -717,6 +767,7 @@ namespace Toems_Service
                     clientFileFolder.DestinationFolder = clientFileFolder.DestinationFolder.Split(':').Last();
                     clientFileFolder.DestinationFolder = clientFileFolder.DestinationFolder.Replace("\\", "/");
                     clientFileFolder.DestinationPartition = profileFileFolder.DestinationPartition;
+                    clientFileFolder.IsDriver = fileFolder.IsDriver;
                     if (fileFolder.DecompressAfterCopy)
                         clientFileFolder.Unzip = "true";
                     else

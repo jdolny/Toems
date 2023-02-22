@@ -22,7 +22,10 @@ namespace Toems_FrontEnd.views.images
                 Enabled = true,
             };
 
-            image.Type = ddlEnvironment.Text == "winpe" ? "File" : ddlImageType.Text;
+            if(ddlEnvironment.Text == "winpe")
+                image.Type = ddlImageTypeWinPe.Text;
+            else
+                image.Type = ddlImageTypeLinux.Text;
 
             var result = Call.ImageApi.Post(image);
             if (result.Success)
@@ -36,24 +39,28 @@ namespace Toems_FrontEnd.views.images
             }
         }
 
-        protected void ddlEnvironment_OnSelectedIndexChanged(object sender, EventArgs e)
+        private void ImageTypeSwitch()
         {
             if (ddlEnvironment.Text == "winpe")
             {
-                imageType.Visible = false;
+                imageTypeWinPe.Visible = true;
+                imageTypeLinux.Visible = false;
             }
             else
             {
-                imageType.Visible = true;
+                imageTypeWinPe.Visible = false;
+                imageTypeLinux.Visible = true;
             }
         }
-
-
+        protected void ddlEnvironment_OnSelectedIndexChanged(object sender, EventArgs e)
+        {
+            ImageTypeSwitch();
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (IsPostBack) return;
-
+            ImageTypeSwitch();
 
             chkVisible.Checked = true;
         }

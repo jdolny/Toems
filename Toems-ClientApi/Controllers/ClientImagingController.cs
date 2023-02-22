@@ -96,6 +96,17 @@ namespace Toems_ClientApi.Controllers
 
         [HttpPost]
         [ClientImagingAuth]
+        public HttpResponseMessage CheckHdRequirementsFfu(HdReqs hdReqs)
+        {
+            _response.Content =
+                new StringContent(
+                    new ClientImagingServices().CheckHdRequirementsFfu(Convert.ToInt32(hdReqs.profileId),
+                        Convert.ToInt32(hdReqs.clientHdNumber), hdReqs.newHdSize, hdReqs.schemaHds), Encoding.UTF8, "text/plain");
+            return _response;
+        }
+
+        [HttpPost]
+        [ClientImagingAuth]
         public HttpResponseMessage PrepareServerUpload(DtoPrepareUpload upload)
         {
             _response.Content = new StringContent(new UploadImage().Upload(upload.taskId,upload.fileName,upload.profileId,upload.userId,upload.hdNumber),

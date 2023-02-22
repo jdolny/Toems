@@ -43,12 +43,26 @@
     </div>
     <br class="clear"/>
 
-    <div id="imageType" runat="server">
+      <div id="imageTypeWinPe" runat="server">
         <div class="size-4 column">
             Image Type:
         </div>
         <div class="size-5 column">
-            <asp:DropDownList ID="ddlImageType" runat="server" CssClass="ddlist">
+            <asp:DropDownList ID="ddlImageTypeWinPe" runat="server" CssClass="ddlist">
+                <asp:ListItem>Block</asp:ListItem>
+                <asp:ListItem>File</asp:ListItem>
+                <asp:ListItem>Both</asp:ListItem>
+            </asp:DropDownList>
+        </div>
+        <br class="clear"/>
+    </div>
+
+     <div id="imageTypeLinux" runat="server">
+        <div class="size-4 column">
+            Image Type:
+        </div>
+        <div class="size-5 column">
+            <asp:DropDownList ID="ddlImageTypeLinux" runat="server" CssClass="ddlist">
                 <asp:ListItem>Block</asp:ListItem>
                 <asp:ListItem>File</asp:ListItem>
             </asp:DropDownList>
