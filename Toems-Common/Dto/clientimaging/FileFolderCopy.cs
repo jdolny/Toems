@@ -7,5 +7,6 @@
         public string FileName { get; set; }
         public string ModuleGuid { get; set; }
         public string Unzip { get; set; }
+        public bool IsDriver { get; set; }
     }
 }

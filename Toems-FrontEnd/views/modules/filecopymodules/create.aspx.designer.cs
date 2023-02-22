@@ -60,6 +60,15 @@ namespace Toems_FrontEnd.views.modules.filecopymodules
         protected global::System.Web.UI.WebControls.CheckBox chkUnzip;
 
         /// <summary>
+        /// chkDriver control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkDriver;
+
+        /// <summary>
         /// chkOverwrite control.
         /// </summary>
         /// <remarks>

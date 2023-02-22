@@ -62,6 +62,16 @@
             <asp:CheckBox ID="chkUnzip" runat="server" ClientIDMode="Static"></asp:CheckBox>
          <label for="chkUnzip"></label>
         </div>
+      <br class="clear"/>
+      <div class="size-4 column">
+        Is Driver
+    </div>
+
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkDriver" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkDriver"></label>
+        </div>
+
        <br class="clear"/>
          <div class="size-4 column">
         Overwrite Existing Files

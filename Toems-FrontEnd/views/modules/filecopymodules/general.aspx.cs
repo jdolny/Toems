@@ -18,6 +18,7 @@ namespace Toems_FrontEnd.views.modules.filecopymodules
             txtDescription.Text = FileCopyModule.Description;
             txtDestination.Text = FileCopyModule.Destination;
             chkUnzip.Checked = FileCopyModule.DecompressAfterCopy;
+            chkDriver.Checked = FileCopyModule.IsDriver;
             chkOverwrite.Checked = FileCopyModule.OverwriteExisting;
         }
 
@@ -33,6 +34,7 @@ namespace Toems_FrontEnd.views.modules.filecopymodules
             FileCopyModule.Description = txtDescription.Text;
             FileCopyModule.Destination = txtDestination.Text;
             FileCopyModule.DecompressAfterCopy = chkUnzip.Checked;
+            FileCopyModule.IsDriver = chkDriver.Checked;
             FileCopyModule.OverwriteExisting = chkOverwrite.Checked;
             var result = Call.FileCopyModuleApi.Put(FileCopyModule.Id, FileCopyModule);
             EndUserMessage = result.Success ? String.Format("Successfully Updated Module {0}", FileCopyModule.Name) : result.ErrorMessage;

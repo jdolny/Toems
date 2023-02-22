@@ -41,6 +41,9 @@ namespace Toems_Common.Entity
         [Column("filecopy_overwrite")]
         public bool OverwriteExisting { get; set; }
 
+        [Column("is_driver")]
+        public bool IsDriver { get; set; }
+
 
     }
 }

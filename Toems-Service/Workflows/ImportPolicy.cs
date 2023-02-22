@@ -474,6 +474,7 @@ namespace Toems_Service.Workflows
                                      "\r\n" + fileCopyModule.Description;
                 fileCopy.Guid = fileCopyModule.Guid;
                 fileCopy.DecompressAfterCopy = fileCopyModule.Unzip;
+                fileCopy.IsDriver = fileCopyModule.IsDriver;
                 fileCopy.OverwriteExisting = fileCopyModule.Overwrite;
                 fileCopy.Destination = fileCopyModule.Destination;
                 

@@ -217,6 +217,7 @@ namespace Toems_Service.Workflows
             fileCopyModuleExport.Destination = fileCopyModule.Destination;
             fileCopyModuleExport.Order = policyModule.Order;
             fileCopyModuleExport.Unzip = fileCopyModule.DecompressAfterCopy;
+            fileCopyModuleExport.IsDriver = fileCopyModule.IsDriver;
             fileCopyModuleExport.Overwrite = fileCopyModule.OverwriteExisting;
             fileCopyModuleExport.Guid = fileCopyModule.Guid;
             fileCopyModuleExport.ConditionFailedAction = policyModule.ConditionFailedAction;
