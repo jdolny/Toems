@@ -99,7 +99,6 @@ namespace Toems_Service.Entity
         public List<EntityUserRight> GetEffectiveUserRights(int userId)
         {
             var userGroups = _uow.UserGroupMembershipRepository.Get(x => x.ToemsUserId == userId).ToList();
-            if (!userGroups.Any()) return new List<EntityUserRight>();
 
             List<EntityUserGroupRight> allUserGroupRights = new List<EntityUserGroupRight>();
             foreach (var usergroup in userGroups)
