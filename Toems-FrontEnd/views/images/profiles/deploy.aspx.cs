@@ -265,7 +265,7 @@ namespace Toems_FrontEnd.views.images.profiles
             chkRandomize.Checked = ImageProfile.RandomizeGuids;
             chkForceEfi.Checked = ImageProfile.ForceStandardEfi;
             chkForceLegacy.Checked = ImageProfile.ForceStandardLegacy;
-
+            chkbootmgr.Checked = ImageProfile.SetBootmgrFirst;
 
 
             if (ImageEntity.Environment == "winpe")
@@ -274,6 +274,7 @@ namespace Toems_FrontEnd.views.images.profiles
                 divBoot.Visible = false;
                 ForceDiv.Visible = false;
                 DivPartDdlWin.Visible = true;
+                divbootpe.Visible = true;
                 ddlPartitionMethodWin.Text = ImageProfile.PartitionMethod;
             }
             else if (ImageEntity.Environment == "linux" || ImageEntity.Environment == "")
@@ -281,6 +282,7 @@ namespace Toems_FrontEnd.views.images.profiles
                 if (ImageEntity.Type == "File")
                     divExpandVol.Visible = false;
                 DivPartDdlLin.Visible = true;
+                divbootpe.Visible = false;
                 ddlPartitionMethodLin.Text = ImageProfile.PartitionMethod;
                 if (chkDownForceDynamic.Checked) ddlPartitionMethodLin.Enabled = false;
                 ForceDiv.Visible = ddlPartitionMethodLin.Text == "Dynamic";
@@ -396,7 +398,7 @@ namespace Toems_FrontEnd.views.images.profiles
             ImageProfile.RandomizeGuids = chkRandomize.Checked;
             ImageProfile.ForceStandardLegacy = chkForceLegacy.Checked;
             ImageProfile.ForceStandardEfi = chkForceEfi.Checked;
-
+            ImageProfile.SetBootmgrFirst = chkbootmgr.Checked;
             if (ImageEntity.Environment == "winpe")
                 ImageProfile.PartitionMethod = ddlPartitionMethodWin.Text;
             else

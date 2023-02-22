@@ -86,8 +86,8 @@ namespace Toems_Service.Workflows
             AppendString("after_file_scripts=" + afterFileScripts);
             AppendString("file_copy=" + areFilesToCopy);
             AppendString("sysprep_tags=" + sysprepTags);
-
-
+            AppendString("image_type=" + _imageProfile.Image.Type);
+            AppendString("set_bootmgr=" + _imageProfile.SetBootmgrFirst);
             if (Convert.ToBoolean(_imageProfile.WebCancel))
                 AppendString("web_cancel=true");
             AppendString("task_completed_action=" + "\"" + _imageProfile.TaskCompletedAction + "\"");
@@ -97,8 +97,6 @@ namespace Toems_Service.Workflows
 
             if (_direction.Contains("upload"))
             {
-
-                AppendString("image_type=" + _imageProfile.Image.Type);
                 if (Convert.ToBoolean(_imageProfile.RemoveGPT)) AppendString("remove_gpt_structures=true");
                 if (Convert.ToBoolean(_imageProfile.SkipShrinkVolumes)) AppendString("skip_shrink_volumes=true");
                 if (Convert.ToBoolean(_imageProfile.SkipShrinkLvm)) AppendString("skip_shrink_lvm=true");

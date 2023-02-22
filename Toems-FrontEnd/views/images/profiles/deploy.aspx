@@ -33,6 +33,17 @@
         </div>
 <br class="clear"/>
 
+<div id="divbootpe" runat="server">
+    <div class="size-4 column">
+        Set Bootmgr As First Boot Device
+    </div>
+ <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkbootmgr" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkbootmgr">Toggle</label>
+        </div>
+    <br class="clear"/>
+</div>
+
 <div id="divExpandVol" runat="server">
     <div class="size-4 column">
         Don't Expand Volumes
@@ -53,6 +64,8 @@
          <label for="chkAlignBCD">Toggle</label>
         </div>
     <br class="clear"/>
+
+
     
      <div class="size-4 column">
         Randomize GUIDs

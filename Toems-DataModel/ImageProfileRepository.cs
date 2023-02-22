@@ -63,7 +63,8 @@ namespace Toems_DataModel
                         ModelMatch = x.profile.ModelMatch,
                         ModelMatchType = x.profile.ModelMatchType,
                         SkipBitlockerCheck = x.profile.SkipBitlockerCheck,
-                        SkipHibernationCheck = x.profile.SkipHibernationCheck
+                        SkipHibernationCheck = x.profile.SkipHibernationCheck,
+                        SetBootmgrFirst = x.profile.SetBootmgrFirst
                     }).OrderBy(x => x.Name).ToList();
         }
 
@@ -114,7 +115,8 @@ namespace Toems_DataModel
                         ModelMatch = x.profile.ModelMatch,
                         ModelMatchType = x.profile.ModelMatchType,
                         SkipBitlockerCheck = x.profile.SkipBitlockerCheck,
-                        SkipHibernationCheck = x.profile.SkipHibernationCheck
+                        SkipHibernationCheck = x.profile.SkipHibernationCheck,
+                        SetBootmgrFirst = x.profile.SetBootmgrFirst
                     }).FirstOrDefault();
         }
     }

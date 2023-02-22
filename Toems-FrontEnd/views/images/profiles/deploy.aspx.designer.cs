@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.images.profiles {
-    
-    
-    public partial class deploy {
-        
+namespace Toems_FrontEnd.views.images.profiles
+{
+
+
+    public partial class deploy
+    {
+
         /// <summary>
         /// btnUpdate control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnUpdate;
-        
+
         /// <summary>
         /// chkChangeName control.
         /// </summary>
@@ -29,7 +31,25 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkChangeName;
-        
+
+        /// <summary>
+        /// divbootpe control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divbootpe;
+
+        /// <summary>
+        /// chkbootmgr control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkbootmgr;
+
         /// <summary>
         /// divExpandVol control.
         /// </summary>
@@ -38,7 +58,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divExpandVol;
-        
+
         /// <summary>
         /// chkDownNoExpand control.
         /// </summary>
@@ -47,7 +67,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkDownNoExpand;
-        
+
         /// <summary>
         /// divBoot control.
         /// </summary>
@@ -56,7 +76,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divBoot;
-        
+
         /// <summary>
         /// chkAlignBCD control.
         /// </summary>
@@ -65,7 +85,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkAlignBCD;
-        
+
         /// <summary>
         /// chkRandomize control.
         /// </summary>
@@ -74,7 +94,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkRandomize;
-        
+
         /// <summary>
         /// chkRunFixBoot control.
         /// </summary>
@@ -83,7 +103,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkRunFixBoot;
-        
+
         /// <summary>
         /// chkNvram control.
         /// </summary>
@@ -92,7 +112,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkNvram;
-        
+
         /// <summary>
         /// DivPartDdlLin control.
         /// </summary>
@@ -101,7 +121,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl DivPartDdlLin;
-        
+
         /// <summary>
         /// ddlPartitionMethodLin control.
         /// </summary>
@@ -110,7 +130,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlPartitionMethodLin;
-        
+
         /// <summary>
         /// DivPartDdlWin control.
         /// </summary>
@@ -119,7 +139,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl DivPartDdlWin;
-        
+
         /// <summary>
         /// ddlPartitionMethodWin control.
         /// </summary>
@@ -128,7 +148,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlPartitionMethodWin;
-        
+
         /// <summary>
         /// DivStandardOptions control.
         /// </summary>
@@ -137,7 +157,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl DivStandardOptions;
-        
+
         /// <summary>
         /// chkForceEfi control.
         /// </summary>
@@ -146,7 +166,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkForceEfi;
-        
+
         /// <summary>
         /// chkForceLegacy control.
         /// </summary>
@@ -155,7 +175,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkForceLegacy;
-        
+
         /// <summary>
         /// ForceDiv control.
         /// </summary>
@@ -164,7 +184,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl ForceDiv;
-        
+
         /// <summary>
         /// chkDownForceDynamic control.
         /// </summary>
@@ -173,7 +193,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkDownForceDynamic;
-        
+
         /// <summary>
         /// chkModifySchema control.
         /// </summary>
@@ -182,7 +202,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkModifySchema;
-        
+
         /// <summary>
         /// imageSchema control.
         /// </summary>
@@ -191,7 +211,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl imageSchema;
-        
+
         /// <summary>
         /// lnkExport control.
         /// </summary>
@@ -200,7 +220,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton lnkExport;
-        
+
         /// <summary>
         /// gvHDs control.
         /// </summary>
@@ -209,7 +229,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvHDs;
-        
+
         /// <summary>
         /// customScript control.
         /// </summary>
@@ -218,7 +238,7 @@ namespace Toems_FrontEnd.views.images.profiles {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl customScript;
-        
+
         /// <summary>
         /// scriptEditorText control.
         /// </summary>

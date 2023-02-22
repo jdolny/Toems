@@ -8,6 +8,7 @@ namespace Toems_Common.Entity
     [Table("image_profiles")]
     public class EntityImageProfile
     {
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("image_profile_id")]
@@ -117,6 +118,9 @@ namespace Toems_Common.Entity
 
         [Column("skip_bitlocker_check")]
         public bool SkipBitlockerCheck { get; set; }
+
+        [Column("set_bootmgr_first")]
+        public bool SetBootmgrFirst { get; set; } = true;
     }
 
     [NotMapped]
