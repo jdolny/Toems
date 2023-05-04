@@ -51,6 +51,7 @@
                     <asp:BoundField DataField="Status" HeaderText="Status" SortExpression="_taskStatus" ItemStyle-CssClass="width_50"/>
                     <asp:BoundField DataField="Type" HeaderText="Type" SortExpression="_taskStatus" ItemStyle-CssClass="width_50"/>
                     <asp:BoundField DataField="QueuePosition" HeaderText="Queue Position" SortExpression="_taskStatus" ItemStyle-CssClass="width_50"/>
+                    <asp:BoundField DataField="ComServerName" HeaderText="Com Server" ItemStyle-CssClass="width_50"/>
                     <asp:BoundField DataField="Partition" HeaderText="Partition" ItemStyle-CssClass="mobi-hide-smaller" HeaderStyle-CssClass="mobi-hide-smaller"/>
                     <asp:BoundField DataField="Elapsed" HeaderText="Elapsed" ItemStyle-CssClass="mobi-hide-small" HeaderStyle-CssClass="mobi-hide-small"/>
                     <asp:BoundField DataField="Remaining" HeaderText="Remaining" ItemStyle-CssClass="mobi-hide-small" HeaderStyle-CssClass="mobi-hide-small"/>

@@ -15,14 +15,16 @@ namespace Toems_Service.Workflows
     {
         private readonly EntityComputer _computer;
         private readonly string _task;
+        private readonly string _comServers;
         private readonly Random _random;
         private readonly UnitOfWork _uow;
         //private EntityComServerCluster _cluster;
 
-        public GetBestCompImageServer(EntityComputer computer, string task)
+        public GetBestCompImageServer(EntityComputer computer, string task, string comServers)
         {
             _computer = computer;
             _task = task;
+            _comServers = comServers;
             _random = new Random();
             _uow = new UnitOfWork();
         }
@@ -41,32 +43,45 @@ namespace Toems_Service.Workflows
                 return imagingServers.First().Id;
 
 
-            //if computer is null, probably unregistered on demand, find default group
-            if (_computer == null)
+            //if _comservers is not null, user has restricted imaging to these servers from tftp/usb boot config, no need to check
+            if (_comServers != null)
             {
-                //use default
-                var clusterImagingServers = _uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id).Where(x => x.Role.Equals("Active")).ToList();
-                if (clusterImagingServers != null)
+                foreach (var cs in _comServers.Split(','))
                 {
-                    if (clusterImagingServers.Count > 0)
-                    {
-                        foreach (var serverId in clusterImagingServers.Select(x => x.ComServerId).ToList())
-                        {
-                            var comServer = _uow.ClientComServerRepository.GetById(serverId);
-                            listOfImagingServers.Add(comServer);
-                        }
-                    }
-                    else
-                        return -1; //default cluster has no imaging servers
+                    var comServer = _uow.ClientComServerRepository.Get(x => x.Url.ToLower().Equals(cs.ToLower())).FirstOrDefault();
+                    if (comServer != null)
+                    listOfImagingServers.Add(comServer);
                 }
-                else
-                    return -1; //result was null for some reason
             }
             else
             {
-                listOfImagingServers = new GetCompImagingServers().Run(_computer.Id);
-            }
 
+                //if computer is null, should be unregistered on demand 
+                if (_computer == null)
+                {
+                    //use default
+                    var clusterImagingServers = _uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id).Where(x => x.Role.Equals("Active")).ToList();
+                    if (clusterImagingServers != null)
+                    {
+                        if (clusterImagingServers.Count > 0)
+                        {
+                            foreach (var serverId in clusterImagingServers.Select(x => x.ComServerId).ToList())
+                            {
+                                var comServer = _uow.ClientComServerRepository.GetById(serverId);
+                                listOfImagingServers.Add(comServer);
+                            }
+                        }
+                        else
+                            return -1; //default cluster has no imaging servers
+                    }
+                    else
+                        return -1; //result was null for some reason
+                }
+                else
+                {
+                    listOfImagingServers = new GetCompImagingServers().Run(_computer.Id);
+                }
+            }
 
             var queueSizesDict = new Dictionary<int, int>();
             var toRemove = new List<EntityClientComServer>();

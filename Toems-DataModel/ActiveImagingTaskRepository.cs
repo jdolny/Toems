@@ -22,6 +22,8 @@ namespace Toems_DataModel
             return (from h in _context.ActiveImagingTasks
                     join t in _context.Computers on h.ComputerId equals t.Id into joined
                     from p in joined.DefaultIfEmpty()
+                    join c in _context.ClientComServers on h.ComServerId equals c.Id into jcs
+                    from d in jcs.DefaultIfEmpty()
                     where h.UserId == userId
                     select new
                     {
@@ -39,7 +41,8 @@ namespace Toems_DataModel
                         multicastId = h.MulticastId,
                         userId = h.UserId,
                         comServerId = h.ComServerId,
-                        computer = p
+                        computer = p,
+                        comServerName = d.DisplayName,
                     }).AsEnumerable().Select(x => new TaskWithComputer
                     {
                         Id = x.id,
@@ -56,6 +59,7 @@ namespace Toems_DataModel
                         MulticastId = x.multicastId,
                         UserId = x.userId,
                         ComServerId = x.comServerId,
+                        ComServerName = x.comServerName ?? "",
                         Computer = x.computer ?? new EntityComputer() { Name = x.arguments }
                     }).OrderBy(x => x.Computer.Name).ToList();
         }
@@ -65,7 +69,8 @@ namespace Toems_DataModel
             return (from h in _context.ActiveImagingTasks
                     join t in _context.Computers on h.ComputerId equals t.Id into joined
                     from p in joined.DefaultIfEmpty()
-
+                    join c in _context.ClientComServers on h.ComServerId equals c.Id into jcs
+                    from d in jcs.DefaultIfEmpty()
                     select new
                     {
                         id = h.Id,
@@ -82,7 +87,8 @@ namespace Toems_DataModel
                         multicastId = h.MulticastId,
                         userId = h.UserId,
                         comServerId = h.ComServerId,
-                        computer = p
+                        computer = p,
+                        comServerName = d.DisplayName,
                     }).AsEnumerable().Select(x => new TaskWithComputer
                     {
                         Id = x.id,
@@ -99,6 +105,7 @@ namespace Toems_DataModel
                         MulticastId = x.multicastId,
                         UserId = x.userId,
                         ComServerId = x.comServerId,
+                        ComServerName = x.comServerName ?? "",
                         Computer = x.computer ?? new EntityComputer() { Name = x.arguments }
                     }).OrderBy(x => x.Computer.Name).ToList();
         }
@@ -125,7 +132,7 @@ namespace Toems_DataModel
                         multicastId = h.MulticastId,
                         userId = h.UserId,
                         comServerId = h.ComServerId,
-                        computer = p
+                        computer = p,
                     }).AsEnumerable().Select(x => new TaskWithComputer
                     {
                         Id = x.id,
@@ -153,7 +160,9 @@ namespace Toems_DataModel
             return (from h in _context.ActiveImagingTasks
                     join t in _context.Computers on h.ComputerId equals t.Id into joined
                     from p in joined.DefaultIfEmpty()
-                    where (h.Type == "upload" || h.Type == "deploy") && h.UserId == userId && h.ComputerId > -1
+                    join c in _context.ClientComServers on h.ComServerId equals c.Id into jcs
+                    from d in jcs.DefaultIfEmpty()
+                    where (h.Type == "upload" || h.Type == "deploy" || h.Type == "onddeploy" || h.Type == "ondupload") && h.UserId == userId && h.ComputerId > -1
                     select new
                     {
                         id = h.Id,
@@ -170,7 +179,8 @@ namespace Toems_DataModel
                         multicastId = h.MulticastId,
                         userId = h.UserId,
                         comServerId = h.ComServerId,
-                        computer = p
+                        computer = p,
+                        comServerName = d.DisplayName
                     }).AsEnumerable().Select(x => new TaskWithComputer
                     {
                         Id = x.id,
@@ -187,7 +197,8 @@ namespace Toems_DataModel
                         MulticastId = x.multicastId,
                         UserId = x.userId,
                         ComServerId = x.comServerId,
-                        Computer = x.computer
+                        Computer = x.computer,
+                        ComServerName = x.comServerName ?? ""
                     }).OrderBy(x => x.Computer.Name).ToList();
         }
 
@@ -196,7 +207,9 @@ namespace Toems_DataModel
             return (from h in _context.ActiveImagingTasks
                     join t in _context.Computers on h.ComputerId equals t.Id into joined
                     from p in joined.DefaultIfEmpty()
-                    where (h.Type == "upload" || h.Type == "deploy") && h.ComputerId > -1
+                    join c in _context.ClientComServers on h.ComServerId equals c.Id into jcs
+                    from d in jcs.DefaultIfEmpty()
+                    where (h.Type == "upload" || h.Type == "deploy" || h.Type == "onddeploy" || h.Type == "ondupload") && h.ComputerId > -1
                     select new
                     {
                         id = h.Id,
@@ -213,7 +226,8 @@ namespace Toems_DataModel
                         multicastId = h.MulticastId,
                         userId = h.UserId,
                         comServerId = h.ComServerId,
-                        computer = p
+                        computer = p,
+                        comServerName = d.DisplayName
                     }).AsEnumerable().Select(x => new TaskWithComputer
                     {
                         Id = x.id,
@@ -230,7 +244,8 @@ namespace Toems_DataModel
                         MulticastId = x.multicastId,
                         UserId = x.userId,
                         ComServerId = x.comServerId,
-                        Computer = x.computer
+                        Computer = x.computer,
+                        ComServerName = x.comServerName ?? ""
                     }).OrderBy(x => x.Computer.Name).ToList();
         }
 

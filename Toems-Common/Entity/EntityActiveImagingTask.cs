@@ -72,12 +72,16 @@ namespace Toems_Common.Entity
         [NotMapped]
         public string Direction { get; set; }
 
+        [NotMapped]
+        public string ComServerName { get; set; }
+
     }
 
     [NotMapped]
     public class TaskWithComputer : EntityActiveImagingTask
     {
         public EntityComputer Computer { get; set; }
+
     }
 }
 

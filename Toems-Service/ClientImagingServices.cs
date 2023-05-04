@@ -166,7 +166,7 @@ namespace Toems_Service
             if (computer == null) return string.Empty;
             var task = new ServiceActiveImagingTask().GetForComputer(computer.Id);
             if(task == null) return string.Empty;
-
+            if (task.WebTaskToken == null) return string.Empty;
             return task.WebTaskToken;
         }
 
@@ -400,7 +400,7 @@ namespace Toems_Service
             }
         }
 
-        public string CheckIn(string taskId)
+        public string CheckIn(string taskId, string comServers)
         {
             var checkIn = new CheckIn();
             var computerServices = new ServiceComputer();
@@ -422,7 +422,7 @@ namespace Toems_Service
                 return JsonConvert.SerializeObject(checkIn);
             }
 
-            var comServerId = new GetBestCompImageServer(computer, task.Type).Run();
+            var comServerId = new GetBestCompImageServer(computer, task.Type,comServers).Run();
 
             task.Status = EnumTaskStatus.ImagingStatus.CheckedIn;
             task.ComServerId = comServerId;
@@ -1038,7 +1038,7 @@ namespace Toems_Service
             return result;
         }
 
-        public string OnDemandCheckIn(string mac, int objectId, string task, string userId, string computerId)
+        public string OnDemandCheckIn(string mac, int objectId, string task, string userId, string computerId, string comServers)
         {
             var checkIn = new CheckIn();
             var computerServices = new ServiceComputer();
@@ -1107,7 +1107,7 @@ namespace Toems_Service
             int imageDistributionPoint = -1;
             try
             {
-                imageDistributionPoint = new GetBestCompImageServer(computer, task).Run();
+                imageDistributionPoint = new GetBestCompImageServer(computer, task,comServers).Run();
             }
             catch
             {

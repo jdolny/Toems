@@ -7,5 +7,6 @@
         public string objectId { get; set; }
         public string task { get; set; }
         public string userId { get; set; }
+        public string comServers { get; set; }
     }
 }

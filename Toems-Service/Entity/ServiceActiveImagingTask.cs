@@ -219,7 +219,15 @@ namespace Toems_Service.Entity
 
         public List<EntityActiveImagingTask> GetAllOnDemandUnregistered()
         {
-            return _uow.ActiveImagingTaskRepository.Get(x => x.ComputerId < -1);
+            var tasks = _uow.ActiveImagingTaskRepository.Get(x => x.ComputerId < -1);
+            foreach(var task in tasks)
+            {
+                var c = _uow.ClientComServerRepository.GetById(task.ComServerId);
+                if (c != null)
+                    task.ComServerName = c.DisplayName;
+            }
+
+            return tasks;
         }
 
         public int GetCurrentQueue(EntityActiveImagingTask activeTask)

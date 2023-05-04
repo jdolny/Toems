@@ -134,7 +134,7 @@ namespace Toems_ClientApi.Controllers
         [ClientImagingAuth]
         public HttpResponseMessage CheckIn(ActiveTaskDTO activeTaskDto)
         {
-            _response.Content = new StringContent(new ClientImagingServices().CheckIn(activeTaskDto.taskId),
+            _response.Content = new StringContent(new ClientImagingServices().CheckIn(activeTaskDto.taskId,activeTaskDto.comServers),
                 Encoding.UTF8, "text/plain");
             return _response;
         }
@@ -467,7 +467,7 @@ namespace Toems_ClientApi.Controllers
                 new StringContent(
                     new ClientImagingServices().OnDemandCheckIn(onDemandDto.mac,
                         Convert.ToInt32(onDemandDto.objectId), onDemandDto.task, onDemandDto.userId,
-                        onDemandDto.computerId), Encoding.UTF8, "text/plain");
+                        onDemandDto.computerId,onDemandDto.comServers), Encoding.UTF8, "text/plain");
             return _response;
         }
 
