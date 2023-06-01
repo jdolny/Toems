@@ -58,7 +58,7 @@ namespace Toems_FrontEnd.views.modules.wumodules
 
         protected void ButtonConfirm_Click(object sender, EventArgs e)
         {
-            Call.FilesystemApi.SyncStorageServers();
+            Call.HangfireTriggerApi.StartFolderSync();
             EndUserMessage = "Storage Replication Started.";
             Response.Redirect("~/views/modules/wumodules/uploadfiles.aspx?wuModuleId=" + WuModule.Id);
         }

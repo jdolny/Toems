@@ -57,7 +57,7 @@ namespace Toems_FrontEnd.views.modules.filecopymodules
 
         protected void ButtonConfirm_Click(object sender, EventArgs e)
         {
-            Call.FilesystemApi.SyncStorageServers();
+            Call.HangfireTriggerApi.StartFolderSync();
             EndUserMessage = "Storage Replication Started.";
             Response.Redirect("~/views/modules/filecopymodules/uploadfiles.aspx?fileCopyModuleId=" + FileCopyModule.Id);
         }
