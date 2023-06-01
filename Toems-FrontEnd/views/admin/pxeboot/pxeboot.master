@@ -31,9 +31,13 @@
                    <a href="<%= ResolveUrl("~/views/admin/pxeboot/bootmenueditor.aspx") %>?level=2">
             <span class="sub-nav-text">Boot Menu Editor</span></a>
                         </li>
+     <li id="wie" runat="server" ClientIDMode="Static">
+        <a href="<%= ResolveUrl("~/views/admin/pxeboot/wiegen.aspx") %>?level=2">
+            <span class="sub-nav-text">WIE Generator</span></a>
+    </li>
     <li id="iso" runat="server" ClientIDMode="Static">
         <a href="<%= ResolveUrl("~/views/admin/pxeboot/isogen.aspx") %>?level=2">
-            <span class="sub-nav-text">ISO / USB Boot Generator</span></a>
+            <span class="sub-nav-text">LIE Generator</span></a>
     </li>
      <li id="createbootentry" runat="server" ClientIDMode="Static">
         <a href="<%= ResolveUrl("~/views/admin/pxeboot/createbootentry.aspx") %>?level=2">

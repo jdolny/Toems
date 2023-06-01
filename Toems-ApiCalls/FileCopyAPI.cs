@@ -30,7 +30,13 @@ namespace Toems_ApiCalls
             Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
             return new ApiRequest().Execute<List<EntityFileCopyModule>>(Request);
         }
-      
-       
+
+        public List<EntityFileCopyModule> GetDriverList()
+        {
+            Request.Resource = string.Format("{0}/GetDriverList", Resource);
+            return new ApiRequest().Execute<List<EntityFileCopyModule>>(Request);
+        }
+
+
     }
 }

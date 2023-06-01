@@ -121,6 +121,9 @@ namespace Toems_DataModel
         public DbSet<EntityUserGroupComputerGroups> UserGroupComputerGroups { get; set; }
         public DbSet<EntityToemsUsersGroups> ToemsUsersGroups { get; set; }
         public DbSet<EntityToemsUsersImages> ToemsUsersImages { get; set; }
+        public DbSet<EntityImageReplicationServer> ImageReplicationServers { get; set; }
+        public DbSet<EntityDefaultImageReplicationServer> DefaultImageReplicationServers { get; set; }
+        public DbSet<EntityWieBuild> WieBuilds { get; set; }
 
 
     }

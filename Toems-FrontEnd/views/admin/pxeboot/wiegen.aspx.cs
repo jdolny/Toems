@@ -1,0 +1,115 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Toems_Common;
+using Toems_Common.Dto;
+using Toems_Common.Entity;
+
+namespace Toems_FrontEnd.views.admin.pxeboot
+{
+    public partial class wiegen : BasePages.Admin
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            RequiresAuthorization(AuthorizationStrings.PxeISOGen);
+            if(!IsPostBack)
+            {
+                PopulateForm();
+            }
+        }
+
+        private void PopulateForm()
+        {
+            txtTimezone.Text = "Eastern Standard Time";
+            txtInput.Text = "0409:00000409";
+            txtLanguage.Text = "en-us";
+            gvServers.DataSource = Call.ClientComServerApi.Get();
+            gvServers.DataBind();
+
+            gvDrivers.DataSource = Call.FileCopyModuleApi.GetDriverList();
+            gvDrivers.DataBind();
+
+            ddlImpersonation.DataSource =
+               Call.ImpersonationAccountApi.GetForDropDown().Select(d => new { d.Id, d.Username });
+            ddlImpersonation.DataValueField = "Id";
+            ddlImpersonation.DataTextField = "Username";
+            ddlImpersonation.DataBind();
+            ddlImpersonation.Items.Insert(0, new ListItem("Select An Impersonation Account", "-1"));
+            PopulateProcess();
+        }
+
+
+        private void PopulateProcess()
+        {
+            var latestBuild = Call.WieBuildApi.GetLastBuild();
+            if(latestBuild != null)
+            {
+                lblBuildDate.Text = latestBuild.EndTime.ToString();
+                lblBuildOptions.Text = latestBuild.BuildOptions;
+            }
+
+            gvProcess.DataSource = Call.WieBuildApi.GetProcess();
+            gvProcess.DataBind();
+
+        }
+        protected void btnCancel_Click(object sender, EventArgs e)
+        {
+            var control = sender as Control;
+            if (control != null)
+            {
+                var gvRow = (GridViewRow)control.Parent.Parent;
+                var dataKey = gvProcess.DataKeys[gvRow.RowIndex];
+                if (dataKey != null)
+                    Call.ClientComServerApi.KillReplicationProcess(ComServer.Id, Convert.ToInt32(dataKey.Value));
+            }
+            PopulateProcess();
+        }
+
+        protected void Timer_Tick(object sender, EventArgs e)
+        {
+            PopulateProcess();
+            Call.WieBuildApi.UpdateStatus();
+            UpdatePanel1.Update();
+        }
+
+        protected void buttonUpdate_Click(object sender, EventArgs e)
+        {
+            var config = new DtoWieConfig();
+            config.Timezone = txtTimezone.Text;
+            config.InputLocale = txtInput.Text;
+            config.Language = txtLanguage.Text;
+            config.Token = txtToken.Text;
+            config.ImpersonationId = Convert.ToInt32(ddlImpersonation.SelectedValue);
+
+            foreach (GridViewRow row in gvServers.Rows)
+            {
+                var cb = (CheckBox)row.FindControl("chkSelector");
+                if (cb == null || !cb.Checked) continue;
+                var dataKey = gvServers.DataKeys[row.RowIndex];
+                if (dataKey == null) continue;
+                var comServer = Call.ClientComServerApi.Get(Convert.ToInt32(dataKey.Value));
+                if (comServer != null)
+                    config.ComServers += "," + comServer.Url;
+            }
+
+           foreach (GridViewRow row in gvDrivers.Rows)
+            {
+                var cb = (CheckBox)row.FindControl("chkSelector");
+                if (cb == null || !cb.Checked) continue;
+                var dataKey = gvDrivers.DataKeys[row.RowIndex];
+                if (dataKey == null) continue;
+                config.Drivers.Add(Convert.ToInt32(dataKey.Value));
+            }
+
+            config.ComServers = config.ComServers.Trim(',');
+            var result = Call.SettingApi.GenerateWie(config);
+            if (result.Success)
+                EndUserMessage = "Successfully Started Build.  The Build We Be Available In A Few Minutes.";
+            else
+                EndUserMessage = result.ErrorMessage;
+        }
+    }
+}

@@ -110,6 +110,69 @@ namespace Toems_ApiCalls
             return response.Data;
         }
 
+        public bool DownloadWinPeDriver(RestRequest request, string destination, string serverName, string interComKey)
+        {
+            //Calculate UNIX time
+            var epochStart = new DateTime(1970, 01, 01, 0, 0, 0, 0, DateTimeKind.Utc);
+            var timeSpan = DateTime.UtcNow - epochStart;
+            var requestTimeStamp = Convert.ToUInt64(timeSpan.TotalSeconds).ToString();
+
+            var nonce = Guid.NewGuid().ToString("N");
+
+            var url =
+                HttpUtility.UrlEncode(_client.BaseUrl + request.Resource.ToLower());
+
+            var body = request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
+            var requestContentBase64String = string.Empty;
+            if (body != null)
+            {
+                var content = Encoding.ASCII.GetBytes(body.Value.ToString());
+                var md5 = MD5.Create();
+                var requestContentHash = md5.ComputeHash(content);
+                requestContentBase64String = Convert.ToBase64String(requestContentHash);
+            }
+
+            var signatureRawData = string.Format("{0}{1}{2}{3}{4}{5}", serverName, request.Method, url,
+                requestTimeStamp, nonce, requestContentBase64String);
+
+
+            var signature = Encoding.UTF8.GetBytes(signatureRawData);
+            string requestSignatureBase64String;
+            using (var hmac = new HMACSHA256(Encoding.ASCII.GetBytes(interComKey)))
+            {
+                var signatureBytes = hmac.ComputeHash(signature);
+                requestSignatureBase64String = Convert.ToBase64String(signatureBytes);
+            }
+
+            request.AddHeader("Authorization",
+                "amx " +
+                string.Format("{0}:{1}:{2}:{3}", serverName, requestSignatureBase64String, nonce, requestTimeStamp));
+
+            try
+            {
+                _log.Debug(request.Resource);
+                using (var stream = System.IO.File.Create(destination, 4096))
+                {
+                    request.ResponseWriter = (responseStream) => responseStream.CopyTo(stream);
+                    _client.DownloadData(request);
+                    if (stream.Length == 0)
+                    {
+                        //something went wrong, rest sharp can't display any other info with downloaddata, so we don't know why
+                        return false;
+
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _log.Error("Could Not Save File: " + destination);
+                _log.Error(ex.Message);
+                return false;
+            }
+
+        }
+
         public TClass ExecuteHMACInterCom<TClass>(RestRequest request, string serverName, string interComKey) where TClass : new()
         {
             //Calculate UNIX time

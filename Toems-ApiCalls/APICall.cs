@@ -415,5 +415,10 @@ namespace Toems_ApiCalls
             get { return new ToecDeployTargetListAPI("ToecDeployTargetList"); }
         }
 
+        public WieBuildAPI WieBuildApi
+        {
+            get { return new WieBuildAPI("WieBuild"); }
+        }
+
     }
 }

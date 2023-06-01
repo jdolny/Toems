@@ -191,6 +191,7 @@
     <Content Include="views\admin\pxeboot\isogen.aspx" />
     <Content Include="views\admin\pxeboot\pxesettings.aspx" />
     <Content Include="views\admin\pxeboot\searchbootentry.aspx" />
+    <Content Include="views\admin\pxeboot\wiegen.aspx" />
     <Content Include="views\admin\remoteaccess.aspx" />
     <Content Include="views\admin\server.aspx" />
     <Content Include="views\admin\storage.aspx" />
@@ -257,6 +258,7 @@
     <Content Include="views\assets\attributes\edit.aspx" />
     <Content Include="views\assets\attributes\search.aspx" />
     <Content Include="dbupdate.aspx" />
+    <Content Include="views\dashboard\keepalive.aspx" />
     <Content Include="views\global\categories\create.aspx" />
     <Content Include="views\global\categories\edit.aspx" />
     <Content Include="views\global\categories\search.aspx" />
@@ -1378,6 +1380,13 @@
     <Compile Include="views\admin\pxeboot\searchbootentry.aspx.designer.cs">
       <DependentUpon>searchbootentry.aspx</DependentUpon>
     </Compile>
+    <Compile Include="views\admin\pxeboot\wiegen.aspx.cs">
+      <DependentUpon>wiegen.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\admin\pxeboot\wiegen.aspx.designer.cs">
+      <DependentUpon>wiegen.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\admin\remoteaccess.aspx.cs">
       <DependentUpon>remoteaccess.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1916,6 +1925,13 @@
     </Compile>
     <Compile Include="dbupdate.aspx.designer.cs">
       <DependentUpon>dbupdate.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\dashboard\keepalive.aspx.cs">
+      <DependentUpon>keepalive.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\dashboard\keepalive.aspx.designer.cs">
+      <DependentUpon>keepalive.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\global\categories\categories.master.cs">
       <DependentUpon>categories.master</DependentUpon>

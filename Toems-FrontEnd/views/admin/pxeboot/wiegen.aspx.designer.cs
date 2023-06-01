@@ -11,115 +11,133 @@ namespace Toems_FrontEnd.views.admin.pxeboot
 {
 
 
-    public partial class pxeboot
+    public partial class wiegen
     {
 
         /// <summary>
-        /// TopBreadCrumbSub2 control.
+        /// buttonUpdate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ContentPlaceHolder TopBreadCrumbSub2;
+        protected global::System.Web.UI.WebControls.LinkButton buttonUpdate;
 
         /// <summary>
-        /// SubNavTitle_Sub2 control.
+        /// UpdatePanel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ContentPlaceHolder SubNavTitle_Sub2;
+        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
 
         /// <summary>
-        /// DropDownActionsSub2 control.
+        /// lblBuildDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ContentPlaceHolder DropDownActionsSub2;
+        protected global::System.Web.UI.WebControls.Label lblBuildDate;
 
         /// <summary>
-        /// divLevel2 control.
+        /// lblBuildOptions control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divLevel2;
+        protected global::System.Web.UI.WebControls.Label lblBuildOptions;
 
         /// <summary>
-        /// pxesettings control.
+        /// Timer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl pxesettings;
+        protected global::System.Web.UI.Timer Timer;
 
         /// <summary>
-        /// bootmenu control.
+        /// gvProcess control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl bootmenu;
+        protected global::System.Web.UI.WebControls.GridView gvProcess;
 
         /// <summary>
-        /// wie control.
+        /// ddlImpersonation control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl wie;
+        protected global::System.Web.UI.WebControls.DropDownList ddlImpersonation;
 
         /// <summary>
-        /// iso control.
+        /// txtTimezone control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl iso;
+        protected global::System.Web.UI.WebControls.TextBox txtTimezone;
 
         /// <summary>
-        /// createbootentry control.
+        /// txtInput control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl createbootentry;
+        protected global::System.Web.UI.WebControls.TextBox txtInput;
 
         /// <summary>
-        /// searchbootentry control.
+        /// txtLanguage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl searchbootentry;
+        protected global::System.Web.UI.WebControls.TextBox txtLanguage;
 
         /// <summary>
-        /// SubContent2 control.
+        /// gvServers control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ContentPlaceHolder SubContent2;
+        protected global::System.Web.UI.WebControls.GridView gvServers;
 
         /// <summary>
-        /// subsubHelp control.
+        /// txtToken control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ContentPlaceHolder subsubHelp;
+        protected global::System.Web.UI.WebControls.TextBox txtToken;
+
+        /// <summary>
+        /// chkRestrictComServers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkRestrictComServers;
+
+        /// <summary>
+        /// gvDrivers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvDrivers;
     }
 }

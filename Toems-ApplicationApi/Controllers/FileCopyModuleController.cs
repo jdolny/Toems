@@ -130,5 +130,12 @@ namespace Toems_ApplicationApi.Controllers
             }
             return result;
         }
+
+        [Authorize]
+        public List<EntityFileCopyModule> GetDriverList()
+        {
+            var driverModules = _fileCopyModuleServices.SearchModules(new DtoSearchFilterCategories());
+            return driverModules.Where(x => x.IsDriver).ToList();
+        }
     }
 }

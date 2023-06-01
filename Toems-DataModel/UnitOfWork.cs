@@ -131,6 +131,9 @@ namespace Toems_DataModel
         private IGenericRepository<EntityUserGroupComputerGroups> _userGroupComputerGroupsRepository;
         private IGenericRepository<EntityToemsUsersImages> _toemsUsersImagesRepository;
         private IGenericRepository<EntityToemsUsersGroups> _toemsUsersGroupsRepository;
+        private IGenericRepository<EntityImageReplicationServer> _imageReplicationServerRepository;
+        private IGenericRepository<EntityDefaultImageReplicationServer> _defaultImageReplicationServerRepository;
+        private IGenericRepository<EntityWieBuild> _wieBuildRepository;
 
 
         private bool disposed;
@@ -139,6 +142,30 @@ namespace Toems_DataModel
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public IGenericRepository<EntityWieBuild> WieBuildRepository
+        {
+            get
+            {
+                return _wieBuildRepository ?? (_wieBuildRepository = new GenericRepository<EntityWieBuild>(_context));
+            }
+        }
+
+        public IGenericRepository<EntityDefaultImageReplicationServer> DefaultImageReplicationServerRepository
+        {
+            get
+            {
+                return _defaultImageReplicationServerRepository ?? (_defaultImageReplicationServerRepository = new GenericRepository<EntityDefaultImageReplicationServer>(_context));
+            }
+        }
+
+        public IGenericRepository<EntityImageReplicationServer> ImageReplicationServerRepository
+        {
+            get
+            {
+                return _imageReplicationServerRepository ?? (_imageReplicationServerRepository = new GenericRepository<EntityImageReplicationServer>(_context));
+            }
         }
         public IGenericRepository<EntityToemsUsersGroups> ToemsUsersGroupsRepository
         {

@@ -158,6 +158,7 @@
     <Compile Include="Dto\DtoUserImageManagement.cs" />
     <Compile Include="Dto\DtoVersion.cs" />
     <Compile Include="Dto\DtoWebRtc.cs" />
+    <Compile Include="Dto\DtoWieConfig.cs" />
     <Compile Include="Dto\exports\DtoCommandModuleExport.cs" />
     <Compile Include="Dto\exports\DtoExternalFileExport.cs" />
     <Compile Include="Dto\exports\DtoFileCopyModuleExport.cs" />
@@ -250,6 +251,9 @@
     <Compile Include="Dto\imageschemafe\DtoVolumeGroup.cs" />
     <Compile Include="Entity\EntityActiveImagingTask.cs" />
     <Compile Include="Entity\EntityActiveMulticastSession.cs" />
+    <Compile Include="Entity\EntityDefaultImageReplicationServer.cs" />
+    <Compile Include="Entity\EntityImageReplicationServer.cs" />
+    <Compile Include="Entity\EntityWieBuild.cs" />
     <Compile Include="Entity\EntityToemsUsersGroups.cs" />
     <Compile Include="Entity\EntityUserGroupComputerGroups.cs" />
     <Compile Include="Entity\EntityUserGroupImages.cs" />
@@ -360,6 +364,7 @@
     <Compile Include="Entity\EntityUserLockout.cs" />
     <Compile Include="Entity\EntityUserRight.cs" />
     <Compile Include="Entity\EntityVersion.cs" />
+    <Compile Include="Enum\EnumImageReplication.cs" />
     <Compile Include="Enum\EnumToecDeployTargetComputer.cs" />
     <Compile Include="Enum\EnumToecDeployTargetList.cs" />
     <Compile Include="Enum\EnumToecDeployJob.cs" />

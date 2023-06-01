@@ -224,5 +224,13 @@ namespace Toems_ApplicationApi.Controllers
             result.Content.Headers.ContentLength = dataStream.Length;
             return result;
         }
+
+        [CustomAuth(Permission = AuthorizationStrings.PxeISOGen)]
+        [HttpPost]
+        public DtoActionResult GenerateWie(DtoWieConfig wieConfig)
+        {
+            return new GenerateWie(wieConfig).Run();
+        }
+
     }
 }

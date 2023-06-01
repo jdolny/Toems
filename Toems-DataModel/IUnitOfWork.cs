@@ -121,6 +121,9 @@ namespace Toems_DataModel
         IGenericRepository<EntityUserGroupComputerGroups> UserGroupComputerGroupsRepository { get; }
         IGenericRepository<EntityToemsUsersImages> ToemsUsersImagesRepository { get; }
         IGenericRepository<EntityToemsUsersGroups> ToemsUsersGroupsRepository { get; }
+        IGenericRepository<EntityImageReplicationServer> ImageReplicationServerRepository { get; }
+        IGenericRepository<EntityDefaultImageReplicationServer> DefaultImageReplicationServerRepository { get; }
+        IGenericRepository<EntityWieBuild> WieBuildRepository { get; }
         void Save();
     }
 }
