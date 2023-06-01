@@ -59,6 +59,16 @@ namespace Toems_Service.Entity
             return true;
         }
 
+        public bool UpdateSetting(string name, string value)
+        {
+            var setting = new EntitySetting();
+            setting.Name = name;
+            setting.Value = value;
+            setting.Id = GetSetting(name).Id;
+            _uow.SettingRepository.Update(setting, setting.Id);
+            _uow.Save();
+            return true;
+        }
         public bool UpdateSetting(List<EntitySetting> listSettings)
         {
           

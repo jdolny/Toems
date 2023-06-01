@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Toems_Common.Enum;
 
 namespace Toems_Common.Entity
 {
@@ -36,6 +37,9 @@ namespace Toems_Common.Entity
 
         [Column("image_type")]
         public string Type { get; set; }
+
+        [Column("replication_mode")]
+        public EnumImageReplication.ReplicationType ReplicationMode { get; set; }
     }
 
     [NotMapped]

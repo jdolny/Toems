@@ -469,6 +469,45 @@ namespace Toems_Service.Entity
             }
         }
 
+        public List<EntityImageReplicationServer> GetImageReplicationComServers(int imageId)
+        {
+            return _uow.ImageReplicationServerRepository.Get(x => x.ImageId == imageId);
+        }
+
+        public DtoActionResult AddOrUpdateImageReplicationServers(List<EntityImageReplicationServer> imageComServers)
+        {
+            var first = imageComServers.FirstOrDefault();
+            if (first == null) return new DtoActionResult { ErrorMessage = "No Images Were In The List", Id = 0 };
+            var allSame = imageComServers.All(x => x.ImageId == first.ImageId);
+            if (!allSame) return new DtoActionResult { ErrorMessage = "The List Must Be For A Single Image.", Id = 0 };
+            var actionResult = new DtoActionResult();
+            var pToRemove = _uow.ImageReplicationServerRepository.Get(x => x.ImageId == first.ImageId);
+            foreach (var imageComServer in imageComServers)
+            {
+                var existing = _uow.ImageReplicationServerRepository.GetFirstOrDefault(x => x.ImageId == imageComServer.ImageId && x.ComServerId == imageComServer.ComServerId);
+                if (existing == null)
+                {
+                    _uow.ImageReplicationServerRepository.Insert(imageComServer);
+                }
+                else
+                {
+                    pToRemove.Remove(existing);
+                }
+
+                actionResult.Id = 1;
+            }
+
+            //anything left in pToRemove does not exist anymore
+            foreach (var p in pToRemove)
+            {
+                _uow.ImageReplicationServerRepository.Delete(p.Id);
+            }
+
+            _uow.Save();
+            actionResult.Success = true;
+            return actionResult;
+        }
+
 
     }
 }

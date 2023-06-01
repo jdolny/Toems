@@ -182,6 +182,14 @@
 
         public const string ToecRemoteInstallMaxWorkers = "Toec Remote Install Max Workers";
 
+        public const string DefaultImageReplication = "Default Image Replication";
+
+        public const string ImageReplicationTime = "Image Replication Time";
+
+        public const string ReplicationInProgress = "Replication In Progress";
+
+        public const string WebUiTimeout = "Web UI Timeout";
+
         public const int GlobalVersion = 153;
 
     }

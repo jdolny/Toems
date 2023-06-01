@@ -25,6 +25,11 @@ namespace Toems_Service.Workflows
 
         public bool RunAllServers()
         {
+            if (ServiceSetting.GetSettingValue(SettingStrings.ReplicationInProgress).Equals("True"))
+            {
+                Logger.Info("A Replication process is already in progress.");
+                return true;
+            }
             FromCom();
             ToCom();
 
@@ -110,25 +115,52 @@ namespace Toems_Service.Workflows
 
             //find com servers that need this image
 
-            var comServers = uow.ClientComServerRepository.Get(x => x.IsImagingServer);
+            var comServers = uow.ClientComServerRepository.Get(x => x.IsImagingServer && x.ReplicateStorage);
             var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
-
             var comImageList = new List<DtoRepImageCom>();
 
+            var globalReplicationMode = ServiceSetting.GetSettingValue(SettingStrings.DefaultImageReplication);
+            var globalReplicationServers = new ServiceDefaultReplicationServer().GetDefaultImageReplicationComServers();
             foreach (var com in comServers)
             {
+                Logger.Debug("Checking if com server " + com.DisplayName + " Needs any images");
                 foreach (var image in imagesToReplicate)
                 {
-
+                    Logger.Debug("Checking " + image.Name);
+                    if (image.ReplicationMode == Toems_Common.Enum.EnumImageReplication.ReplicationType.None || (image.ReplicationMode == Toems_Common.Enum.EnumImageReplication.ReplicationType.GlobalDefault && globalReplicationMode == "None"))
+                    {
+                        Logger.Debug("Image is not set to replicate to any com servers, skipping");
+                        continue;
+                    }
+                    else if (image.ReplicationMode == Toems_Common.Enum.EnumImageReplication.ReplicationType.Selective)
+                    {
+                        var imageReplicationServers = uow.ImageReplicationServerRepository.Get(x => x.ImageId == image.Id && x.ComServerId == com.Id);
+                        if (!imageReplicationServers.Any())
+                        {
+                            Logger.Debug("Image is not set to replicate to this com server, skipping");
+                            continue;
+                        }
+                    }
+                    else if (image.ReplicationMode == Toems_Common.Enum.EnumImageReplication.ReplicationType.GlobalDefault && globalReplicationMode == "Selective")
+                    {
+                        var imageReplicationServers = uow.DefaultImageReplicationServerRepository.Get(x => x.ComServerId == com.Id);
+                        if (!imageReplicationServers.Any())
+                        {
+                            Logger.Debug("Image is not set to replicate to this com server, skipping");
+                            continue;
+                        }
+                    }
                     var hasImage = new APICall().ClientComServerApi.CheckImageExists(com.Url, "", decryptedKey, image.Id);
                     if (hasImage)
                     {
+                        Logger.Debug("Com server already has this image, skipping.");
                         continue; //already has image move to next com server
 
                     }
                     else
                     {
+                        Logger.Info("Adding " + image.Name + " to replication list for " + com.DisplayName);
                         var comImage = new DtoRepImageCom();
                         comImage.ComServerId = com.Id;
                         comImage.ImageId = image.Id;
@@ -153,7 +185,9 @@ namespace Toems_Service.Workflows
                     thisComImageList.Add(imageId.ImageId);
 
                 var comServer = new ServiceClientComServer().GetServer(comServerId);
+                Logger.Info("Starting Robocopy on " + comServer.DisplayName);
                 new APICall().ClientComServerApi.SyncSmbToCom(comServer.Url, "", decryptedKey, thisComImageList);
+                Logger.Info("Finished Image Replication on " + comServer.DisplayName);
             }
             return true;
         }
@@ -162,7 +196,7 @@ namespace Toems_Service.Workflows
         {
             var uow = new UnitOfWork();
             var imagesToReplicate = new List<EntityImage>();
-            Logger.Info("Starting Image Replication From Com Servers");
+            Logger.Info("Starting Image Replication From Com Servers To SMB Share");
             if (!ServiceSetting.GetSettingValue(SettingStrings.StorageType).Equals("SMB")) return true;
             if (ServiceSetting.GetSettingValue(SettingStrings.ImageDirectSmb).Equals("True"))
             {
@@ -244,7 +278,7 @@ namespace Toems_Service.Workflows
 
             //find com servers with the image to replicate
 
-            var comServers = uow.ClientComServerRepository.Get(x => x.IsImagingServer);
+            var comServers = uow.ClientComServerRepository.Get(x => x.IsImagingServer && x.ReplicateStorage);
             var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
 
@@ -276,7 +310,9 @@ namespace Toems_Service.Workflows
                     thisComImageList.Add(imageId);
 
                 var comServer = new ServiceClientComServer().GetServer(comServerId);
+                Logger.Info("Starting Robocopy on " + comServer.DisplayName);
                 new APICall().ClientComServerApi.SyncComToSmb(comServer.Url, "", decryptedKey, thisComImageList);
+                Logger.Info("Image Sync to SMB Share Complete");
             }
             return true;
         }
@@ -305,6 +341,7 @@ namespace Toems_Service.Workflows
                         if (string.IsNullOrEmpty(image.Name)) continue;
                         var sourcePath = Path.Combine(thisComServer.LocalStoragePath, "images", image.Name);
                         var destPath = Path.Combine(ServiceSetting.GetSettingValue(SettingStrings.StoragePath),"images",image.Name).TrimEnd('\\');
+                        Logger.Info($"Replicating Image {image.Name} From {sourcePath} on {thisComServer.DisplayName} to {destPath} ");
                         using (RoboCommand backup = new RoboCommand())
                         {
                             // events
@@ -333,20 +370,26 @@ namespace Toems_Service.Workflows
                             backup.RetryOptions.RetryCount = 3;
                             backup.RetryOptions.RetryWaitTime = 60;
 
-                            backup.Start().Wait();
-                            if(backup.Results.Status.ExitCodeValue == 0 || backup.Results.Status.ExitCodeValue == 1)
+                            try
                             {
-                                //backup succesful, copy the guid now
-                                try
+                                new ServiceSetting().UpdateSetting(SettingStrings.ReplicationInProgress, "True");
+                                backup.Start().Wait();
+
+                                if (backup.Results.Status.ExitCodeValue == 0 || backup.Results.Status.ExitCodeValue == 1)
                                 {
+                                    //backup succesful, copy the guid now
                                     var guidPath = Path.Combine(sourcePath, "guid");
                                     File.Copy(guidPath, destPath + Path.DirectorySeparatorChar + "guid");
                                 }
-                                catch(Exception ex)
-                                {
-                                    Logger.Error(ex.Message);
-                                    Logger.Error("Could Not Replicate Image " + image.Name);
-                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error("Could Not Complete Replication");
+                                Logger.Error(ex.Message);
+                            }
+                            finally
+                            {
+                                new ServiceSetting().UpdateSetting(SettingStrings.ReplicationInProgress, "False");
                             }
                         }
                     }
@@ -381,9 +424,10 @@ namespace Toems_Service.Workflows
                     {
                         var image = new ServiceImage().GetImage(imageId);
                         if (string.IsNullOrEmpty(image.Name)) continue;
+
                         var sourcePath = Path.Combine(ServiceSetting.GetSettingValue(SettingStrings.StoragePath), "images", image.Name);
                         var destPath = Path.Combine(thisComServer.LocalStoragePath, "images", image.Name).TrimEnd('\\');
-                       
+                        Logger.Info($"Replicating Image {image.Name} From {sourcePath} to {destPath} on {thisComServer.DisplayName}");
                         using (RoboCommand backup = new RoboCommand())
                         {
                             // events
@@ -412,20 +456,26 @@ namespace Toems_Service.Workflows
                             backup.RetryOptions.RetryCount = 3;
                             backup.RetryOptions.RetryWaitTime = 60;
 
-                            backup.Start().Wait();
-                            if (backup.Results.Status.ExitCodeValue == 0 || backup.Results.Status.ExitCodeValue == 1)
+                            try
                             {
-                                //backup succesful, copy the guid now
-                                try
+                                new ServiceSetting().UpdateSetting(SettingStrings.ReplicationInProgress, "True");
+                                backup.Start().Wait();
+
+                                if (backup.Results.Status.ExitCodeValue == 0 || backup.Results.Status.ExitCodeValue == 1)
                                 {
+                                    //backup succesful, copy the guid now
                                     var guidPath = Path.Combine(sourcePath, "guid");
                                     File.Copy(guidPath, destPath + Path.DirectorySeparatorChar + "guid");
                                 }
-                                catch (Exception ex)
-                                {
-                                    Logger.Error(ex.Message);
-                                    Logger.Error("Could Not Replicate Image " + image.Name);
-                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error("Could Not Complete Replication");
+                                Logger.Error(ex.Message);
+                            }
+                            finally
+                            {
+                                new ServiceSetting().UpdateSetting(SettingStrings.ReplicationInProgress, "False");
                             }
                         }
                     }
@@ -442,6 +492,7 @@ namespace Toems_Service.Workflows
         {
             Logger.Error($"Image Replication Failed.");
             Logger.Error(e.ErrorCode + " " + e.Error);
+            new ServiceSetting().UpdateSetting(SettingStrings.ReplicationInProgress, "False");
         }
 
 

@@ -4,6 +4,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web.Http;
+using System.Web.Http.Cors;
+using System.Xml.Linq;
 using Toems_ApplicationApi.Controllers.Authorization;
 using Toems_Common;
 using Toems_Common.Dto;
@@ -30,6 +32,8 @@ namespace Toems_ApplicationApi.Controllers
         }
 
         [HttpGet]
+        [EnableCors("*", "*", "*")]
+
         public bool KeepAlive()
         {
             return true;
@@ -232,5 +236,17 @@ namespace Toems_ApplicationApi.Controllers
             return new GenerateWie(wieConfig).Run();
         }
 
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        public IEnumerable<EntityDefaultImageReplicationServer> GetDefaultImageReplicationComServers()
+        {
+            return new ServiceDefaultReplicationServer().GetDefaultImageReplicationComServers();
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpPost]
+        public DtoActionResult UpdateDefaultReplicationServers(List<EntityDefaultImageReplicationServer> imageReplicationServers)
+        {
+            return new ServiceDefaultReplicationServer().AddOrUpdateDefaultImageReplicationServers(imageReplicationServers);
+        }
     }
 }

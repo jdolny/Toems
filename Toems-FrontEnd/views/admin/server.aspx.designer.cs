@@ -33,6 +33,15 @@ namespace Toems_FrontEnd.views.admin
         protected global::System.Web.UI.WebControls.TextBox txtOrganization;
 
         /// <summary>
+        /// txtWebTimeout control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtWebTimeout;
+
+        /// <summary>
         /// ddlComputerView control.
         /// </summary>
         /// <remarks>
@@ -58,5 +67,41 @@ namespace Toems_FrontEnd.views.admin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlLoginPage;
+
+        /// <summary>
+        /// ddlImageReplication control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlImageReplication;
+
+        /// <summary>
+        /// divComServers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divComServers;
+
+        /// <summary>
+        /// gvServers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvServers;
+
+        /// <summary>
+        /// ddlReplicationTime control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlReplicationTime;
     }
 }

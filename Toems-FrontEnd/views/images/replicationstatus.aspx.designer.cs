@@ -7,11 +7,22 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.images {
-    
-    
-    public partial class replicationstatus {
-        
+namespace Toems_FrontEnd.views.images
+{
+
+
+    public partial class replicationstatus
+    {
+
+        /// <summary>
+        /// buttonUpdate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton buttonUpdate;
+
         /// <summary>
         /// lblLocal control.
         /// </summary>
@@ -20,7 +31,7 @@ namespace Toems_FrontEnd.views.images {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLocal;
-        
+
         /// <summary>
         /// gvCom control.
         /// </summary>
@@ -29,5 +40,32 @@ namespace Toems_FrontEnd.views.images {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvCom;
+
+        /// <summary>
+        /// ddlReplicationMode control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlReplicationMode;
+
+        /// <summary>
+        /// divComServers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divComServers;
+
+        /// <summary>
+        /// gvServers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvServers;
     }
 }

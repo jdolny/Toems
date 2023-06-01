@@ -279,6 +279,35 @@ namespace Toems_ApiCalls
 
         }
 
+        public IEnumerable<EntityDefaultImageReplicationServer> GetDefaultImageReplicationComServers()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetDefaultImageReplicationComServers/", Resource);
+            return new ApiRequest().Execute<List<EntityDefaultImageReplicationServer>>(Request);
+        }
+
+        public DtoActionResult UpdateDefaultReplicationServers(List<EntityDefaultImageReplicationServer> imageReplicationServers)
+        {
+            Request.Method = Method.POST;
+            Request.Resource = string.Format("{0}/UpdateDefaultReplicationServers/", Resource);
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(imageReplicationServers), ParameterType.RequestBody);
+            var response = new ApiRequest().Execute<DtoActionResult>(Request);
+            if (response != null)
+            {
+                if (response.Id == 0)
+                    response.Success = false;
+            }
+            else
+            {
+                return new DtoActionResult()
+                {
+                    ErrorMessage = "Unknown Exception.  Check The Exception Logs For More Info.",
+                    Success = false
+                };
+            }
+            return response;
+        }
+
 
     }
 }

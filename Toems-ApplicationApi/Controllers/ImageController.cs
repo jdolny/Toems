@@ -165,5 +165,18 @@ namespace Toems_ApplicationApi.Controllers
         {
             return _imageService.GetImageAuditLogs(id, limit);
         }
+
+        [CustomAuth(Permission = AuthorizationStrings.ImageRead)]
+        public IEnumerable<EntityImageReplicationServer> GetImageReplicationComServers(int id)
+        {
+            return _imageService.GetImageReplicationComServers(id);
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.ImageUpdate)]
+        [HttpPost]
+        public DtoActionResult UpdateReplicationServers(List<EntityImageReplicationServer> imageReplicationServers)
+        {
+            return _imageService.AddOrUpdateImageReplicationServers(imageReplicationServers);
+        }
     }
 }
