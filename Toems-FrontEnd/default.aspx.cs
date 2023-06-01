@@ -76,6 +76,21 @@ namespace Toems_FrontEnd
         }
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
+                ClearSession();
+
+                if (Request.QueryString["session"] == "expired")
+                {
+                    SessionExpired.Visible = true;
+                    return;
+                }
+            }
+            else
+            {
+                SessionExpired.Visible = false;
+            }
+
             //check for db upgrades here
             CheckDbUpdate();
 
@@ -85,17 +100,7 @@ namespace Toems_FrontEnd
                 (WebLogin.FindControl("VerifyCode") as TextBox).Visible = true; ;
             }
 
-            if (!IsPostBack)
-            {
-                ClearSession();
-
-                if (Request.QueryString["session"] == "expired")
-                    SessionExpired.Visible = true;
-            }
-            else
-            {
-                SessionExpired.Visible = false;
-            }
+          
 
             if (Request.IsAuthenticated)
             {

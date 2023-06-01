@@ -86,10 +86,18 @@ namespace Toems_ApplicationApi
             {
                 AllowInsecureHttp = true,
                 TokenEndpointPath = new PathString("/token"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromHours(4),
+                AccessTokenExpireTimeSpan = TimeSpan.FromHours(1),
                 Provider = new SimpleAuthorizationServerProvider()
             };
 
+            var webTimeout = ServiceSetting.GetSettingValue(SettingStrings.WebUiTimeout);
+            if(!string.IsNullOrEmpty(webTimeout))
+            {
+                int timeoutInt = 0;
+                bool result = int.TryParse(webTimeout, out timeoutInt);
+                if (result)
+                    OAuthServerOptions.AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(timeoutInt);
+            }
             // Token Generation
             app.UseOAuthAuthorizationServer(OAuthServerOptions);
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions()

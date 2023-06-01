@@ -255,6 +255,13 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+            var keepAlive = {
+                refresh: function () {
+                    $.get(window.location.origin + '/views/dashboard/keepalive.aspx');
+                    setTimeout(keepAlive.refresh, 3000 * 60);
+                }
+            };
+            $(document).ready(keepAlive.refresh());
 
             $('.rounded-search').watermark('Search', { useNative: false });
             $('.txt-generate').watermark('Password', { useNative: false });
