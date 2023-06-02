@@ -46,6 +46,22 @@ namespace Toems_ApiCalls
             return new ApiRequest(new Uri(url)).DownloadWinPeDriver(Request, outputPath,serverName,interComKey);
         }
 
+        public byte[] ExportWie()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/ExportWie/", Resource);
+            return new ApiRequest().ExecuteRaw(Request);
 
+        }
+
+        public bool CheckIsoExists()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/CheckIsoExists/", Resource);
+            var result = new ApiRequest().Execute<DtoApiBoolResponse>(Request);
+            if (result == null)
+                return false;
+            return result.Value;
+        }
     }
 }

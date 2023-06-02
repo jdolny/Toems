@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,5 +17,6 @@ namespace Toems_Common.Dto
         public bool RestrictComServers { get; set; }
         public List<int> Drivers { get; set; } = new List<int>();
         public int ImpersonationId { get; set; }
+        public bool SkipAdkCheck { get; set; } = false;
     }
 }

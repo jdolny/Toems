@@ -70,5 +70,21 @@ namespace Toems_Service.Entity
             }
             return list;
         }
+
+        public byte[] GetWieIso()
+        {
+            var filePath = Path.Combine(HttpContext.Current.Server.MapPath("~"), "private", "wie_builder","Builds","ISO", "WinPE 10 x64 WinPE.iso");
+
+            return File.ReadAllBytes(filePath);
+
+        }
+
+        public bool CheckIsoExists()
+        {
+            var filePath = Path.Combine(HttpContext.Current.Server.MapPath("~"), "private", "wie_builder", "Builds", "ISO", "WinPE 10 x64 WinPE.iso");
+            if (File.Exists(filePath))
+                return true;
+            return false;
+        }
     }
 }

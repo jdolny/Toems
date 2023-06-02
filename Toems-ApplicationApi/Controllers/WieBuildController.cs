@@ -16,6 +16,7 @@ using Toems_Common.Dto;
 using Toems_Common.Dto.client;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
+using Toems_Service;
 using Toems_Service.Entity;
 
 namespace Toems_ApplicationApi.Controllers
@@ -54,7 +55,28 @@ namespace Toems_ApplicationApi.Controllers
             return result;
         }
 
-       
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpGet]
+        public HttpResponseMessage ExportWie()
+        {
+            var msi = _wieBuildServices.GetWieIso();
+            var dataStream = new MemoryStream(msi);
+            var result = new HttpResponseMessage(HttpStatusCode.OK);
+            result.Content = new StreamContent(dataStream);
+            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+            result.Content.Headers.ContentDisposition.FileName = "WIE.iso";
+            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            result.Content.Headers.ContentLength = dataStream.Length;
+            return result;
+        }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpGet]
+        public DtoApiBoolResponse CheckIsoExists()
+        {
+            return new DtoApiBoolResponse() { Value = _wieBuildServices.CheckIsoExists() };
+        }
+
 
 
     }

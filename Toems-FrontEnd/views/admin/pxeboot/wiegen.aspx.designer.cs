@@ -24,6 +24,15 @@ namespace Toems_FrontEnd.views.admin.pxeboot
         protected global::System.Web.UI.WebControls.LinkButton buttonUpdate;
 
         /// <summary>
+        /// btnDownloadIso control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnDownloadIso;
+
+        /// <summary>
         /// UpdatePanel1 control.
         /// </summary>
         /// <remarks>
@@ -139,5 +148,14 @@ namespace Toems_FrontEnd.views.admin.pxeboot
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvDrivers;
+
+        /// <summary>
+        /// chkAdk control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkAdk;
     }
 }

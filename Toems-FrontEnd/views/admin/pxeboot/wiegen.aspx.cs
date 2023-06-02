@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -82,6 +83,8 @@ namespace Toems_FrontEnd.views.admin.pxeboot
             config.InputLocale = txtInput.Text;
             config.Language = txtLanguage.Text;
             config.Token = txtToken.Text;
+            config.RestrictComServers = chkRestrictComServers.Checked;
+            config.SkipAdkCheck = chkAdk.Checked;
             config.ImpersonationId = Convert.ToInt32(ddlImpersonation.SelectedValue);
 
             foreach (GridViewRow row in gvServers.Rows)
@@ -107,9 +110,35 @@ namespace Toems_FrontEnd.views.admin.pxeboot
             config.ComServers = config.ComServers.Trim(',');
             var result = Call.SettingApi.GenerateWie(config);
             if (result.Success)
-                EndUserMessage = "Successfully Started Build.  The Build We Be Available In A Few Minutes.";
+                EndUserMessage = "Successfully Started Build.  The Build Will Be Available In A Few Minutes.";
             else
                 EndUserMessage = result.ErrorMessage;
+        }
+
+        protected void btnDownloadIso_Click(object sender, EventArgs e)
+        {
+            if(!Call.WieBuildApi.CheckIsoExists())
+            {
+                EndUserMessage = "WIE Iso could not be found.  Ensure the build has finished running.";
+                return;
+            }
+            var iso = Call.WieBuildApi.ExportWie();
+       
+            Response.Clear();
+            var ms = new MemoryStream(iso);
+            Response.ContentType = "application/octet-stream";
+            Response.AddHeader("content-disposition", $"attachment;filename=WIE.iso");
+
+
+            Response.Buffer = true;
+            ms.WriteTo(Response.OutputStream);
+            Response.End();
+            EndUserMessage = "Download Complete.";
+        }
+
+        protected void btnDownloadTftp_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

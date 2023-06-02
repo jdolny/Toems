@@ -8,6 +8,7 @@
 <asp:Content ID="Content3" ContentPlaceHolderID="DropDownActionsSub2" runat="server">
 
      <li><asp:LinkButton ID="buttonUpdate" runat="server" OnClick="buttonUpdate_Click" OnClientClick="status();" Text="Generate WIE" CssClass="main-action" /></li>
+      <li><asp:LinkButton ID="btnDownloadIso" runat="server" OnClick="btnDownloadIso_Click" Text="Download ISO" OnClientClick="iso();"  /></li>
 </asp:Content>
 <asp:Content ID="Content4" ContentPlaceHolderID="SubContent2" runat="server">
      <script type="text/javascript">
@@ -16,7 +17,15 @@
                  title: 'Please Wait',
                  text: 'Attempting To Start Wie Builder',
                  showConfirmButton: false,
-                 
+
+
+             })
+         }
+         function iso() {
+             Swal.fire({
+                 title: 'Please Wait',
+                 text: 'Downloading ISO',
+
 
              })
          }
@@ -29,8 +38,8 @@
   
    <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <h1>Last Build Details</h1>
-                        <br class="clear" />
+            <h2>Last Build Details</h2>
+
                <div class="size-4 column">
         Build Date
     </div>
@@ -38,7 +47,7 @@
     <div class="size-5 column">
         <asp:Label runat="server" ID="lblBuildDate"></asp:Label>
     </div>
-                        <br class="clear" />
+
               <div class="size-4 column">
         Build Options
     </div>
@@ -47,7 +56,7 @@
         <asp:Label runat="server" ID="lblBuildOptions"></asp:Label>
     </div>
                         <br class="clear" />
-              <h1>Active Build Processes</h1>
+              <h2>Active Build Processes</h2>
 
             <asp:Timer ID="Timer" runat="server" Interval="4000" OnTick="Timer_Tick">
             </asp:Timer>
@@ -67,8 +76,11 @@
             </asp:GridView>
 
         </ContentTemplate>
+      
     </asp:UpdatePanel>
-
+     <br class="clear" />
+       <hr />
+        <br class="clear" />
          <div class="size-4 column">
         Run As
     </div>
@@ -169,6 +181,14 @@
             No File Copy Driver Modules Found
         </EmptyDataTemplate>
     </asp:GridView>
+    <br class="clear"/>
+     <div class="size-4 column">
+        Skip ADK Check
+    </div>
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkAdk" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkAdk">Toggle</label>
+        </div>
     <br class="clear"/>
     </asp:Content>
 
