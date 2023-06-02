@@ -77,6 +77,15 @@ namespace Toems_Service.Workflows
                 return "No Com Servers Were Selected";
 
 
+            if(!_config.SkipAdkCheck)
+            {
+                if (!File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\Windows Kits\10\Assessment and Deployment Kit\Windows Preinstallation Environment\copype.cmd") &&
+                    !File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + @"\Windows Kits\10\Assessment and Deployment Kit\Windows Preinstallation Environment\copype.cmd"))
+                {
+                    return "Windows ADK must be installed before building the WIE.";
+                }
+            }
+
             if (new ServiceWieBuild().GetWieProcess().Any())
                 return "An Active Build Process Is Currently Running";
 
