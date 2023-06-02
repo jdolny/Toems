@@ -73,8 +73,19 @@
         <asp:CheckBox ID="chkDirectSMB" runat="server" ClientIDMode="Static"></asp:CheckBox>
         <label for="chkDirectSMB"></label>
     </div>
+
+       <div class="size-4 column">
+        Default WIE Image Type:
+    </div>
+    <div class="size-5 column">
+        <asp:DropDownList ID="ddlWieImageType" runat="server" CssClass="ddlist" >
+            <asp:ListItem>File</asp:ListItem>
+            <asp:ListItem>Block</asp:ListItem>
+            <asp:ListItem>Both</asp:ListItem>
+        </asp:DropDownList>
+    </div>
   
-  
+  <br class="clear"/><br class="clear"/><br class="clear"/>
 
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">

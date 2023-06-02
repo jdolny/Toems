@@ -78,6 +78,8 @@ CREATE TABLE `wie_builds` (
 ALTER TABLE `wie_builds` 
 ADD COLUMN `pid` VARCHAR(45) NULL AFTER `build_options`;
 
+INSERT INTO `admin_settings` (`admin_setting_name`, `admin_setting_value`) VALUES ('Default WIE Image Type', 'File');
+
 "
 
 

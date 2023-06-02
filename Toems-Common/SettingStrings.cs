@@ -190,6 +190,8 @@
 
         public const string WebUiTimeout = "Web UI Timeout";
 
+        public const string DefaultWieImageType = "Default WIE Image Type";
+
         public const int GlobalVersion = 154;
 
     }

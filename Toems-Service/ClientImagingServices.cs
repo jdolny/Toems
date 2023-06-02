@@ -139,6 +139,11 @@ namespace Toems_Service
                 IsVisible = true,
                 Description = "",
             };
+
+            var imageType = ServiceSetting.GetSettingValue(SettingStrings.DefaultWieImageType);
+            if(!string.IsNullOrEmpty(imageType))
+                image.Type = imageType;
+
             var result = new ServiceImage().Add(image);
             if (result.Success)
             {

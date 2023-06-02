@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Toems_Common;
 using Toems_Common.Entity;
 
 namespace Toems_FrontEnd.views.images
@@ -43,6 +44,9 @@ namespace Toems_FrontEnd.views.images
         {
             if (ddlEnvironment.Text == "winpe")
             {
+                var imageType = GetSetting(SettingStrings.DefaultWieImageType);
+                if (!string.IsNullOrEmpty(imageType))
+                    ddlImageTypeWinPe.Text = imageType;
                 imageTypeWinPe.Visible = true;
                 imageTypeLinux.Visible = false;
             }

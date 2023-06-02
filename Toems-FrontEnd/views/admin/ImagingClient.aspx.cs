@@ -72,6 +72,12 @@ namespace Toems_FrontEnd.views.admin
                 Value = chkDirectSMB.Checked.ToString(),
                 Id = Call.SettingApi.GetSetting(SettingStrings.ImageDirectSmb).Id
                     },
+                   new EntitySetting
+            {
+                Name = SettingStrings.DefaultWieImageType,
+                Value = ddlWieImageType.Text,
+                Id = Call.SettingApi.GetSetting(SettingStrings.DefaultWieImageType).Id
+                    },
             };
 
             EndUserMessage = Call.SettingApi.UpdateSettings(listSettings)
@@ -91,6 +97,7 @@ namespace Toems_FrontEnd.views.admin
                 chkIpxeSsl.Checked = true;
             ddlRegistration.Text = GetSetting(SettingStrings.RegistrationEnabled);
             ddlKeepNamePrompt.Text = GetSetting(SettingStrings.DisabledRegNamePrompt);
+            ddlWieImageType.Text = GetSetting(SettingStrings.DefaultWieImageType);
             if (GetSetting(SettingStrings.ImageDirectSmb) == "True")
                 chkDirectSMB.Checked = true;
         }
