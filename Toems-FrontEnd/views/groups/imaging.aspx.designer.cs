@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.groups {
-    
-    
-    public partial class imaging {
-        
+namespace Toems_FrontEnd.views.groups
+{
+
+
+    public partial class imaging
+    {
+
         /// <summary>
         /// btnUpdate control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnUpdate;
-        
+
         /// <summary>
         /// ddlComputerImage control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlComputerImage;
-        
+
         /// <summary>
         /// ddlImageProfile control.
         /// </summary>
@@ -38,7 +40,16 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlImageProfile;
-        
+
+        /// <summary>
+        /// ddlWinPeModule control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlWinPeModule;
+
         /// <summary>
         /// ddlBootFile control.
         /// </summary>
@@ -47,7 +58,7 @@ namespace Toems_FrontEnd.views.groups {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlBootFile;
-        
+
         /// <summary>
         /// txtPriority control.
         /// </summary>

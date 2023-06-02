@@ -39,6 +39,8 @@ namespace Toems_FrontEnd.views.groups
             PopulateImagesDdl(ddlComputerImage);
             ddlComputerImage.SelectedValue = GroupEntity.ImageId.ToString();
             PopulateProfiles();
+            PopulateWinPeModulesDDL(ddlWinPeModule);
+            ddlWinPeModule.SelectedValue = GroupEntity.WinPeModuleId.ToString();
             ddlImageProfile.SelectedValue = GroupEntity.ImageProfileId.ToString();
             txtPriority.Text = GroupEntity.ImagingPriority.ToString();
             ddlBootFile.Text = GroupEntity.ProxyBootloader;
@@ -60,7 +62,7 @@ namespace Toems_FrontEnd.views.groups
             }
             GroupEntity.ImagingPriority = priority;
             GroupEntity.ProxyBootloader = ddlBootFile.Text;
-
+            GroupEntity.WinPeModuleId = Convert.ToInt32(ddlWinPeModule.SelectedValue);
             var result = Call.GroupApi.Put(GroupEntity.Id, GroupEntity);
             EndUserMessage = result.Success ? String.Format("Successfully Updated Group {0}", GroupEntity.Name) : result.ErrorMessage;
         }

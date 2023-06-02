@@ -34,6 +34,14 @@
     <div class="size-5 column">
         <asp:DropDownList ID="ddlImageProfile" runat="server" CssClass="ddlist"/>
     </div>
+     <br class="clear"/>
+
+     <div class="size-4 column">
+        WinPE Module (Only Used For Running Imaging Task From Toec):
+    </div>
+    <div class="size-5 column">
+        <asp:DropDownList ID="ddlWinPeModule" runat="server" CssClass="ddlist"/>
+    </div>
     <br class="clear"/>
     <div class="size-4 column">
     Proxy Bootloader:
