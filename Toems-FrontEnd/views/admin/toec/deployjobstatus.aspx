@@ -26,7 +26,7 @@
     <br class="clear"/>
   
 
-         <asp:GridView ID="gvComputers" runat="server" AllowSorting="True" DataKeyNames="Id"  AutoGenerateColumns="False" CssClass="Gridview" AlternatingRowStyle-CssClass="alt">
+         <asp:GridView ID="gvComputers" runat="server" AllowSorting="True" DataKeyNames="Id"  AutoGenerateColumns="False" CssClass="Gridview" AlternatingRowStyle-CssClass="alt" OnSorting="gridView_Sorting">
         <Columns>
             <asp:TemplateField>
                 <ItemStyle CssClass="chkboxwidth"></ItemStyle>

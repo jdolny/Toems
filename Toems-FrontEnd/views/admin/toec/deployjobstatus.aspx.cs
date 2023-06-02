@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Toems_Common.Entity;
 
 namespace Toems_FrontEnd.views.admin.toec
 {
@@ -30,10 +31,14 @@ namespace Toems_FrontEnd.views.admin.toec
                 EndUserMessage = "Could Not Restart Service";
         }
 
-        protected void ddlJobs_SelectedIndexChanged(object sender, EventArgs e)
+        private void PopulateGrid()
         {
             gvComputers.DataSource = Call.ToecDeployJobApi.GetTargetComputers(Convert.ToInt32(ddlJobs.SelectedValue));
             gvComputers.DataBind();
+        }
+        protected void ddlJobs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            PopulateGrid();
         }
 
         protected void buttonResetStatus_Click(object sender, EventArgs e)
@@ -48,6 +53,41 @@ namespace Toems_FrontEnd.views.admin.toec
                 if (Call.ToecDeployJobApi.ResetComputerStatus(Convert.ToInt32(dataKey.Value))) count++;
             }
             EndUserMessage = "Successfully Reset " + count + " Computers";
+        }
+
+        protected void gridView_Sorting(object sender, GridViewSortEventArgs e)
+        {
+            PopulateGrid();
+
+            var listComputers = (List<EntityToecTargetListComputer>)gvComputers.DataSource;
+            switch (e.SortExpression)
+            {
+                case "Name":
+                    listComputers = GetSortDirection(e.SortExpression) == "Desc"
+                        ? listComputers.OrderByDescending(h => h.Name).ToList()
+                        : listComputers.OrderBy(h => h.Name).ToList();
+                    break;
+                case "Status":
+                    listComputers = GetSortDirection(e.SortExpression) == "Desc"
+                        ? listComputers.OrderByDescending(h => h.Status).ToList()
+                        : listComputers.OrderBy(h => h.Status).ToList();
+                    break;
+                case "LastStatusDate":
+                    listComputers = GetSortDirection(e.SortExpression) == "Desc"
+                        ? listComputers.OrderByDescending(h => h.LastStatusDate).ToList()
+                        : listComputers.OrderBy(h => h.LastStatusDate).ToList();
+                    break;
+                case "LastUpdateDetails":
+                    listComputers = GetSortDirection(e.SortExpression) == "Desc"
+                        ? listComputers.OrderByDescending(h => h.LastUpdateDetails).ToList()
+                        : listComputers.OrderBy(h => h.LastUpdateDetails).ToList();
+                    break;
+              
+
+            }
+
+            gvComputers.DataSource = listComputers;
+            gvComputers.DataBind();
         }
     }
 }
