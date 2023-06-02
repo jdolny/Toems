@@ -190,7 +190,7 @@
 
         public const string WebUiTimeout = "Web UI Timeout";
 
-        public const int GlobalVersion = 153;
+        public const int GlobalVersion = 154;
 
     }
 }
