@@ -61,12 +61,12 @@ namespace Toems_Service.Entity
             if(filter.Limit == 0)
                 filter.Limit = Int32.MaxValue;
             
-            return _uow.CategoryRepository.Get(x => x.Name.Contains(filter.SearchText)).Take(filter.Limit).ToList();
+            return _uow.CategoryRepository.Get(x => x.Name.Contains(filter.SearchText)).Take(filter.Limit).OrderBy(x => x.Name).ToList();
         }
 
         public List<EntityCategory> GetAll()
         {
-            return _uow.CategoryRepository.Get();
+            return _uow.CategoryRepository.Get().OrderBy(x => x.Name).ToList(); ;
         }
 
         public string TotalCount()
