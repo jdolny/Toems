@@ -119,7 +119,7 @@ namespace Toems_FrontEnd.views.modules.wumodules
                     var result = Call.UploadedFileApi.Delete(Convert.ToInt32(dataKey.Value));
                     if (result.Success) EndUserMessage = "Successfully Removed " + name;
                     else EndUserMessage = result.ErrorMessage;
-                    PopulateGrid();
+                    Response.Redirect("~/views/modules/wumodules/uploadfiles.aspx?wuModuleId=" + WuModule.Id);
                 }
             }
         }

@@ -118,7 +118,7 @@ namespace Toems_FrontEnd.views.modules.filecopymodules
                     var result = Call.UploadedFileApi.Delete(Convert.ToInt32(dataKey.Value));
                     if (result.Success) EndUserMessage = "Successfully Removed " + name;
                     else EndUserMessage = result.ErrorMessage;
-                    PopulateGrid();
+                    Response.Redirect("~/views/modules/filecopymodules/uploadfiles.aspx?fileCopyModuleId=" + FileCopyModule.Id);
                 }
             }
         }
