@@ -433,7 +433,8 @@ namespace Toems_Service.Entity
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
-                user.ImagingToken = Guid.NewGuid().ToString("N").ToUpper() + Guid.NewGuid().ToString("N").ToUpper(); //create new token each time user is updated
+                //todo: next line breaks imaging login when logging into multiple computers with the same user, need to figure out a better way to randomly change token
+                //user.ImagingToken = Guid.NewGuid().ToString("N").ToUpper() + Guid.NewGuid().ToString("N").ToUpper(); //create new token each time user is updated
                 if(string.IsNullOrEmpty(user.Password) && string.IsNullOrEmpty(user.Salt))
                 {
                     user.Salt = u.Salt;
