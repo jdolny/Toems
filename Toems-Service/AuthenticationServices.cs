@@ -32,7 +32,7 @@ namespace Toems_Service
         public string ConsoleLogin(string username, string password, string task, string ip)
         {
             log.Info("Console Login Request Received: " + username + " "  + task + " " + ip);
-            log.Debug("Password Debug: " + password);
+
             var result = new Dictionary<string, string>();
 
             var validationResult = GlobalLogin(username, password, "Console");
