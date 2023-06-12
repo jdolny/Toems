@@ -38,8 +38,15 @@ namespace Toems_ApplicationApi.Controllers
         {
             return true;
         }
+        
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpGet]
+        public DtoApiBoolResponse RunWinGetImporter()
+        {
+            return new DtoApiBoolResponse() { Value = new Toems_Service.Workflows.WinGetManifestImporter().Run() };
+        }
 
-        [Authorize]
+            [Authorize]
         [HttpGet]
         public DtoApiBoolResponse CheckExpiredToken()
         {
