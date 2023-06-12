@@ -68,14 +68,6 @@ namespace Toems_ApiCalls
             return _apiRequest.Execute<EntitySetting>(Request);
         }
 
-        public bool RunWinGetImporter()
-        {
-            Request.Method = Method.GET;
-            Request.Resource = string.Format("{0}/RunWinGetImporter/", Resource);
-            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
-            return response != null && response.Value;
-        }
-
         public bool SendEmailTest()
         {
             Request.Method = Method.GET;

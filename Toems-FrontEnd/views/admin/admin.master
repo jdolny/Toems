@@ -146,11 +146,6 @@
                     <span class="nav-text">WOL Relays</span>
                 </a>
             </li>
-                 <li id="winget" runat="server" clientidmode="Static">
-                <a href="<%= ResolveUrl("~/views/admin/winget.aspx/") %>">
-                    <span class="nav-text">WinGet</span>
-                </a>
-            </li>
              
 
           
