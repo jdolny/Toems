@@ -192,7 +192,7 @@
 
         public const string DefaultWieImageType = "Default WIE Image Type";
 
-        public const int GlobalVersion = 154;
+        public const int GlobalVersion = 155;
 
     }
 }
