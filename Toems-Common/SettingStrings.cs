@@ -78,6 +78,8 @@
 
         public const string LowDiskSchedule = "Low Disk Cron";
 
+        public const string WingetManifestSchedule = "Winget Manifest Cron";
+
         public const string CertificateOrganization = "Certificate Organization";
 
         public const string PreProvisionRequiresApproval = "PreProvision Requires Approval";

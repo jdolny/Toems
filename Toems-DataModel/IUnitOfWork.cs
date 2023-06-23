@@ -124,6 +124,11 @@ namespace Toems_DataModel
         IGenericRepository<EntityImageReplicationServer> ImageReplicationServerRepository { get; }
         IGenericRepository<EntityDefaultImageReplicationServer> DefaultImageReplicationServerRepository { get; }
         IGenericRepository<EntityWieBuild> WieBuildRepository { get; }
+        IGenericRepository<EntityWingetManifestDownload> WingetManifestDownloadRepository { get; }
+        IGenericRepository<EntityWingetInstallerManifest> WingetInstallerManifestRepository { get; }
+        IGenericRepository<EntityWingetVersionManifest> WingetVersionManifestRepository { get; }
+        WingetLocaleRepository WingetLocaleManifestRepository { get; }
+        IGenericRepository<EntityWingetModule> WingetModuleRepository { get; }
         void Save();
     }
 }

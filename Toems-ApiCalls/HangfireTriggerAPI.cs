@@ -78,6 +78,14 @@ namespace Toems_ApiCalls
             return response != null && response.Value;
         }
 
+        public bool StartManifestImport()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/StartManifestImport", Resource);
+            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
+            return response != null && response.Value;
+        }
+
         public List<DtoRecurringJobStatus> GetJobStatus()
         {
             Request.Method = Method.GET;

@@ -101,6 +101,7 @@ namespace Toems_Service.Workflows
             filter.IncludeWu = true;
             filter.IncludeMessage = true;
             filter.IncludeWinPe = true;
+            filter.IncludeWinget = true;
             filter.Limit = Int32.MaxValue;
             var policyModules = _policyService.SearchAssignedPolicyModules(policyId,filter);
             foreach (var policyModule in policyModules.OrderBy(x => x.Name))

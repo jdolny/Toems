@@ -61,6 +61,12 @@ namespace Toems_FrontEnd.views.admin
                     Value = txtLowDiskSpace.Text,
                     Id = Call.SettingApi.GetSetting(SettingStrings.LowDiskSchedule).Id
                 },
+                   new EntitySetting
+                {
+                    Name = SettingStrings.WingetManifestSchedule,
+                    Value = txtWingetManifest.Text,
+                    Id = Call.SettingApi.GetSetting(SettingStrings.WingetManifestSchedule).Id
+                },
 
 
             };
@@ -108,6 +114,7 @@ namespace Toems_FrontEnd.views.admin
             txtSmart.Text = Call.SettingApi.GetSetting(SettingStrings.SmartReportSchedule).Value;
             txtDataCleanup.Text = Call.SettingApi.GetSetting(SettingStrings.DataCleanupSchedule).Value;
             txtLowDiskSpace.Text = Call.SettingApi.GetSetting(SettingStrings.LowDiskSchedule).Value;
+            txtWingetManifest.Text = Call.SettingApi.GetSetting(SettingStrings.WingetManifestSchedule).Value;
 
             var jobs = Call.HangfireTriggerApi.GetJobStatus();
             foreach (var job in jobs)
@@ -162,6 +169,12 @@ namespace Toems_FrontEnd.views.admin
                     lblLowDiskStatus.Text = string.IsNullOrEmpty(job.Status) ? "N/A" : job.Status;
                     lblLowDiskNextRun.Text = string.IsNullOrEmpty(job.NextRun) ? "N/A" : job.NextRun;
                 }
+                else if (job.Name.Equals("WingetManifest-Job"))
+                {
+                    lblWingetLastRun.Text = string.IsNullOrEmpty(job.LastRun) ? "N/A" : job.LastRun;
+                    lblWingetStatus.Text = string.IsNullOrEmpty(job.Status) ? "N/A" : job.Status;
+                    lblWingetNextRun.Text = string.IsNullOrEmpty(job.NextRun) ? "N/A" : job.NextRun;
+                }
 
             }
         }
@@ -210,11 +223,14 @@ namespace Toems_FrontEnd.views.admin
 
         protected void btnLowDisk_OnClick(object sender, EventArgs e)
         {
-            Call.HangfireTriggerApi.StartDataCleanup();
+            Call.HangfireTriggerApi.StartLowDiskReport();
             EndUserMessage = "Task Started";
         }
 
-
-
+        protected void btnWingetManifest_Click(object sender, EventArgs e)
+        {
+            Call.HangfireTriggerApi.StartManifestImport();
+            EndUserMessage = "Task Started";
+        }
     }
 }

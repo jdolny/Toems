@@ -208,6 +208,20 @@ float:left;
     line-height: 40px;
     width: 400px;
 }
+.container .size-lbl3.column {
+    color: #83cce9;
+    font-size: 18px;
+    font-weight: bold;
+    width: 200px;
+    line-height: 40px;
+}
+
+.container .size-lbl4.column {
+    color: #e4e5e6;
+    font-size: 18px;
+    line-height: 40px;
+    width: 500px;
+}
 .container .size-cron.column {
     color: #fff;
     background:#555;

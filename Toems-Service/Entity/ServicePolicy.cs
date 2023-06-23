@@ -329,6 +329,7 @@ namespace Toems_Service.Entity
             searchFilter.IncludeMessage = true;
             searchFilter.IncludeWu = true;
             searchFilter.IncludeWinPe = true;
+            searchFilter.IncludeWinget = true;
 
             foreach (var module in SearchAssignedPolicyModules(policyId, searchFilter))
             {
@@ -398,6 +399,18 @@ namespace Toems_Service.Entity
                     Description = commandModule.Description,
                     Guid = commandModule.Guid,
                     ModuleType = EnumModule.ModuleType.Command
+                }).ToList());
+            }
+
+            if (filter.IncludeWinget)
+            {
+                listModules.AddRange(new ServiceWingetModule().SearchModules(catfilter).Select(wingetModule => new DtoModule
+                {
+                    Id = wingetModule.Id,
+                    Name = wingetModule.Name,
+                    Description = wingetModule.Description,
+                    Guid = wingetModule.Guid,
+                    ModuleType = EnumModule.ModuleType.Winget
                 }).ToList());
             }
 

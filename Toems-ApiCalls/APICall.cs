@@ -420,5 +420,10 @@ namespace Toems_ApiCalls
             get { return new WieBuildAPI("WieBuild"); }
         }
 
+        public WingetModuleAPI WingetModuleApi
+        {
+            get { return new WingetModuleAPI("WingetModule"); }
+        }
+
     }
 }

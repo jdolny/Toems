@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.admin {
-    
-    
-    public partial class taskscheduler {
-        
+namespace Toems_FrontEnd.views.admin
+{
+
+
+    public partial class taskscheduler
+    {
+
         /// <summary>
         /// btnUpdateSettings control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnUpdateSettings;
-        
+
         /// <summary>
         /// Label4 control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label4;
-        
+
         /// <summary>
         /// Label1 control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label1;
-        
+
         /// <summary>
         /// Label2 control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label2;
-        
+
         /// <summary>
         /// Label3 control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label3;
-        
+
         /// <summary>
         /// txtFolderSync control.
         /// </summary>
@@ -65,7 +67,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtFolderSync;
-        
+
         /// <summary>
         /// lblLastRun control.
         /// </summary>
@@ -74,7 +76,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLastRun;
-        
+
         /// <summary>
         /// lblStatus control.
         /// </summary>
@@ -83,7 +85,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblStatus;
-        
+
         /// <summary>
         /// lblNextRun control.
         /// </summary>
@@ -92,7 +94,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblNextRun;
-        
+
         /// <summary>
         /// btnFolderSync control.
         /// </summary>
@@ -101,7 +103,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnFolderSync;
-        
+
         /// <summary>
         /// txtLdap control.
         /// </summary>
@@ -110,7 +112,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtLdap;
-        
+
         /// <summary>
         /// lblLdapLastRun control.
         /// </summary>
@@ -119,7 +121,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLdapLastRun;
-        
+
         /// <summary>
         /// lblLdapStatus control.
         /// </summary>
@@ -128,7 +130,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLdapStatus;
-        
+
         /// <summary>
         /// lblLdapNextRun control.
         /// </summary>
@@ -137,7 +139,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLdapNextRun;
-        
+
         /// <summary>
         /// btnLdapSync control.
         /// </summary>
@@ -146,7 +148,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnLdapSync;
-        
+
         /// <summary>
         /// txtGroup control.
         /// </summary>
@@ -155,7 +157,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtGroup;
-        
+
         /// <summary>
         /// lblGroupLastRun control.
         /// </summary>
@@ -164,7 +166,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblGroupLastRun;
-        
+
         /// <summary>
         /// lblGroupStatus control.
         /// </summary>
@@ -173,7 +175,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblGroupStatus;
-        
+
         /// <summary>
         /// lblGroupNextRun control.
         /// </summary>
@@ -182,7 +184,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblGroupNextRun;
-        
+
         /// <summary>
         /// btnGroup control.
         /// </summary>
@@ -191,7 +193,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnGroup;
-        
+
         /// <summary>
         /// txtReset control.
         /// </summary>
@@ -200,7 +202,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtReset;
-        
+
         /// <summary>
         /// lblResetLastRun control.
         /// </summary>
@@ -209,7 +211,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblResetLastRun;
-        
+
         /// <summary>
         /// lblResetStatus control.
         /// </summary>
@@ -218,7 +220,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblResetStatus;
-        
+
         /// <summary>
         /// lblResetNextRun control.
         /// </summary>
@@ -227,7 +229,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblResetNextRun;
-        
+
         /// <summary>
         /// btnReset control.
         /// </summary>
@@ -236,7 +238,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnReset;
-        
+
         /// <summary>
         /// txtApproval control.
         /// </summary>
@@ -245,7 +247,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtApproval;
-        
+
         /// <summary>
         /// lblApprovalLastRun control.
         /// </summary>
@@ -254,7 +256,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblApprovalLastRun;
-        
+
         /// <summary>
         /// lblApprovalStatus control.
         /// </summary>
@@ -263,7 +265,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblApprovalStatus;
-        
+
         /// <summary>
         /// lblApprovalNextRun control.
         /// </summary>
@@ -272,7 +274,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblApprovalNextRun;
-        
+
         /// <summary>
         /// btnApproval control.
         /// </summary>
@@ -281,7 +283,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnApproval;
-        
+
         /// <summary>
         /// txtSmart control.
         /// </summary>
@@ -290,7 +292,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtSmart;
-        
+
         /// <summary>
         /// lblSmartLastRun control.
         /// </summary>
@@ -299,7 +301,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblSmartLastRun;
-        
+
         /// <summary>
         /// lblSmartStatus control.
         /// </summary>
@@ -308,7 +310,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblSmartStatus;
-        
+
         /// <summary>
         /// lblSmartNextRun control.
         /// </summary>
@@ -317,7 +319,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblSmartNextRun;
-        
+
         /// <summary>
         /// btnSmart control.
         /// </summary>
@@ -326,7 +328,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnSmart;
-        
+
         /// <summary>
         /// txtDataCleanup control.
         /// </summary>
@@ -335,7 +337,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtDataCleanup;
-        
+
         /// <summary>
         /// lblDataCleanupLastRun control.
         /// </summary>
@@ -344,7 +346,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblDataCleanupLastRun;
-        
+
         /// <summary>
         /// lblDataCleanupStatus control.
         /// </summary>
@@ -353,7 +355,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblDataCleanupStatus;
-        
+
         /// <summary>
         /// lblDataCleanupNextRun control.
         /// </summary>
@@ -362,7 +364,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblDataCleanupNextRun;
-        
+
         /// <summary>
         /// btnDataCleanup control.
         /// </summary>
@@ -371,7 +373,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnDataCleanup;
-        
+
         /// <summary>
         /// txtLowDiskSpace control.
         /// </summary>
@@ -380,7 +382,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtLowDiskSpace;
-        
+
         /// <summary>
         /// lblLowDiskLastRun control.
         /// </summary>
@@ -389,7 +391,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLowDiskLastRun;
-        
+
         /// <summary>
         /// lblLowDiskStatus control.
         /// </summary>
@@ -398,7 +400,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLowDiskStatus;
-        
+
         /// <summary>
         /// lblLowDiskNextRun control.
         /// </summary>
@@ -407,7 +409,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLowDiskNextRun;
-        
+
         /// <summary>
         /// btnLowDisk control.
         /// </summary>
@@ -416,5 +418,50 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnLowDisk;
+
+        /// <summary>
+        /// txtWingetManifest control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtWingetManifest;
+
+        /// <summary>
+        /// lblWingetLastRun control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblWingetLastRun;
+
+        /// <summary>
+        /// lblWingetStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblWingetStatus;
+
+        /// <summary>
+        /// lblWingetNextRun control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblWingetNextRun;
+
+        /// <summary>
+        /// btnWingetManifest control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnWingetManifest;
     }
 }

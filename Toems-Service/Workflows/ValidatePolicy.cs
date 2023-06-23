@@ -35,6 +35,7 @@ namespace Toems_Service.Workflows
             _filter.IncludeWu = true;
             _filter.IncludeMessage = true;
             _filter.IncludeWinPe = true;
+            _filter.IncludeWinget = true;
             _filter.Limit = Int32.MaxValue;
         }
 

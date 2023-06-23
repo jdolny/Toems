@@ -1,0 +1,1 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/modules/wingetmodules/wingetmodule.master" AutoEventWireup="true" CodeBehind="assigned.aspx.cs" Inherits="Toems_FrontEnd.views.modules.wingetmodules.assigned" %>

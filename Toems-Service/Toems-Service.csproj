@@ -131,6 +131,8 @@
   <ItemGroup>
     <Compile Include="BcdService.cs" />
     <Compile Include="ClientImagingServices.cs" />
+    <Compile Include="Entity\ServiceWingetModule.cs" />
+    <Compile Include="Entity\ServiceManifestDownload.cs" />
     <Compile Include="Entity\ServiceWieBuild.cs" />
     <Compile Include="Entity\ServiceDefaultReplicationServer.cs" />
     <Compile Include="Entity\ServiceComputerGpuInventory .cs" />

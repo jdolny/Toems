@@ -12,7 +12,8 @@
             Wupdate = 5,
             Message = 6,
             Sysprep = 7,
-            WinPE = 8
+            WinPE = 8,
+            Winget = 9
         }
     }
 }

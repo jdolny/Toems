@@ -134,6 +134,11 @@ namespace Toems_DataModel
         private IGenericRepository<EntityImageReplicationServer> _imageReplicationServerRepository;
         private IGenericRepository<EntityDefaultImageReplicationServer> _defaultImageReplicationServerRepository;
         private IGenericRepository<EntityWieBuild> _wieBuildRepository;
+        private IGenericRepository<EntityWingetManifestDownload> _wingetManifestDownloadRepository;
+        private IGenericRepository<EntityWingetInstallerManifest> _wingetInstallerManifestRepository;
+        private IGenericRepository<EntityWingetVersionManifest> _wingetVersionManifestRepository;
+        private WingetLocaleRepository _wingetLocaleManifestRepository;
+        private IGenericRepository<EntityWingetModule> _wingetModuleRepository;
 
 
         private bool disposed;
@@ -143,7 +148,47 @@ namespace Toems_DataModel
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+        public IGenericRepository<EntityWingetModule> WingetModuleRepository
+        {
+            get
+            {
+                return _wingetModuleRepository ?? (_wingetModuleRepository = new GenericRepository<EntityWingetModule>(_context));
+            }
 
+        }
+        public IGenericRepository<EntityWingetInstallerManifest> WingetInstallerManifestRepository
+        {
+            get
+            {
+                return _wingetInstallerManifestRepository ?? (_wingetInstallerManifestRepository = new GenericRepository<EntityWingetInstallerManifest>(_context));
+            }
+
+        }
+        public IGenericRepository<EntityWingetVersionManifest> WingetVersionManifestRepository
+        {
+            get
+            {
+                return _wingetVersionManifestRepository ?? (_wingetVersionManifestRepository = new GenericRepository<EntityWingetVersionManifest>(_context));
+            }
+
+        }
+        public WingetLocaleRepository WingetLocaleManifestRepository
+        {
+            get
+            {
+                return _wingetLocaleManifestRepository ?? (_wingetLocaleManifestRepository = new WingetLocaleRepository(_context));
+            }
+
+        }
+
+        public IGenericRepository<EntityWingetManifestDownload> WingetManifestDownloadRepository
+        {
+            get
+            {
+                return _wingetManifestDownloadRepository ?? (_wingetManifestDownloadRepository = new GenericRepository<EntityWingetManifestDownload>(_context));
+            }
+
+        }
         public IGenericRepository<EntityWieBuild> WieBuildRepository
         {
             get

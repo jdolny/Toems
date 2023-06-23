@@ -61,6 +61,7 @@
     <Compile Include="APICall.cs" />
     <Compile Include="ApiRequest.cs" />
     <Compile Include="ApprovalRequestAPI.cs" />
+    <Compile Include="WingetModuleApi.cs" />
     <Compile Include="UserGroupMembershipAPI.cs" />
     <Compile Include="WieBuildAPI.cs" />
     <Compile Include="WinPeModuleAPI.cs" />

@@ -114,6 +114,15 @@ namespace Toems_FrontEnd.views.policies
         protected global::System.Web.UI.WebControls.CheckBox chkWinPe;
 
         /// <summary>
+        /// chkWinget control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkWinget;
+
+        /// <summary>
         /// gvModules control.
         /// </summary>
         /// <remarks>

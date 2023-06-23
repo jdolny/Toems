@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorizationStrings.cs" />
+    <Compile Include="DbUpgrades\156.cs" />
     <Compile Include="DbUpgrades\155.cs" />
     <Compile Include="DbUpgrades\154.cs" />
     <Compile Include="DbUpgrades\153.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="Dto\DtoDomainJoinCredentials.cs" />
     <Compile Include="Dto\DtoIsoGenOptions.cs" />
     <Compile Include="Dto\DtoLogContentRequest.cs" />
+    <Compile Include="Dto\DtoWingetSearchFilter.cs" />
     <Compile Include="Dto\DtoMulticastArgs.cs" />
     <Compile Include="Dto\DtoOnlineKernel.cs" />
     <Compile Include="Dto\DtoOrderedGroup.cs" />
@@ -252,7 +254,11 @@
     <Compile Include="Dto\imageschemafe\DtoVolumeGroup.cs" />
     <Compile Include="Entity\EntityActiveImagingTask.cs" />
     <Compile Include="Entity\EntityActiveMulticastSession.cs" />
+    <Compile Include="Entity\EntityWingetLocaleManifest.cs" />
+    <Compile Include="Entity\EntityWingetInstallerManifest.cs" />
+    <Compile Include="Entity\EntityWingetVersionManifest.cs" />
     <Compile Include="Entity\EntityDefaultImageReplicationServer.cs" />
+    <Compile Include="Entity\EntityWingetManifestDownload.cs" />
     <Compile Include="Entity\EntityImageReplicationServer.cs" />
     <Compile Include="Entity\EntityWieBuild.cs" />
     <Compile Include="Entity\EntityToemsUsersGroups.cs" />
@@ -316,6 +322,7 @@
     <Compile Include="Entity\EntitySetupCompleteFile.cs" />
     <Compile Include="Entity\EntitySysprepAnswerfile.cs" />
     <Compile Include="Entity\EntitySysprepModule.cs" />
+    <Compile Include="Entity\EntityWingetModule.cs" />
     <Compile Include="Entity\EntityWuModule.cs" />
     <Compile Include="Entity\EntityWolRelay.cs" />
     <Compile Include="Entity\EntityCommandModule.cs" />
@@ -365,7 +372,9 @@
     <Compile Include="Entity\EntityUserLockout.cs" />
     <Compile Include="Entity\EntityUserRight.cs" />
     <Compile Include="Entity\EntityVersion.cs" />
+    <Compile Include="Enum\EnumManifestImport.cs" />
     <Compile Include="Enum\EnumImageReplication.cs" />
+    <Compile Include="Enum\EnumWingetInstallType.cs" />
     <Compile Include="Enum\EnumToecDeployTargetComputer.cs" />
     <Compile Include="Enum\EnumToecDeployTargetList.cs" />
     <Compile Include="Enum\EnumToecDeployJob.cs" />

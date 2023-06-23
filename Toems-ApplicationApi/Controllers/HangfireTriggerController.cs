@@ -78,6 +78,14 @@ namespace Toems_ApplicationApi.Controllers
             return new DtoApiBoolResponse() { Value = true };
         }
 
+        [HttpGet]
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        public DtoApiBoolResponse StartManifestImport()
+        {
+            new RecurringJobManager().TriggerJob("WingetManifest-Job");
+            return new DtoApiBoolResponse() { Value = true };
+        }
+
 
         [HttpGet]
         [CustomAuth(Permission = AuthorizationStrings.Administrator)]

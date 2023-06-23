@@ -47,6 +47,7 @@ namespace Toems_FrontEnd.views.policies
             filter.IncludeWu = chkWu.Checked;
             filter.IncludeUnassigned = chkUnassigned.Checked;
             filter.IncludeMessage = chkMessage.Checked;
+            filter.IncludeWinget = chkWinget.Checked;
             filter.IncludeWinPe = chkWinPe.Checked;
 
             var modules = Call.PolicyApi.GetAllModules(filter);

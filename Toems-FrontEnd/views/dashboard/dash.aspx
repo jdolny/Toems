@@ -88,6 +88,6 @@ var myChart = new Chart(ctx, {
 </asp:Content>
 
 <asp:Content runat="server" ContentPlaceHolderID="Help">
-    <iframe width="100%" height="400" src="https://docs.theopenem.com/latest" frameborder="0" ></iframe>
+    <iframe width="100%" height="400" src="https://docs.theopenem.com/ui/dashboard.html" frameborder="0" ></iframe>
     
 </asp:Content>

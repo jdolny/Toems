@@ -10,6 +10,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Toems_ApiCalls;
 using Toems_Common.Entity;
+using Toems_Common.Enum;
 
 namespace Toems_FrontEnd.BasePages
 {
@@ -279,6 +280,11 @@ namespace Toems_FrontEnd.BasePages
 
         }
 
+        protected void PopulateWingetType(DropDownList ddl)
+        {
+            ddl.DataSource = Enum.GetNames(typeof(EnumWingetInstallType.WingetInstallType));
+            ddl.DataBind();
+        }
         protected void PopulateMulticastComServers(DropDownList ddlComServers)
         {
             ddlComServers.DataSource =

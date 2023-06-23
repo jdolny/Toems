@@ -39,6 +39,7 @@ namespace Toems_FrontEnd.views.computers
             filter.IncludePrinter = chkPrinter.Checked;
             filter.IncludeSoftware = chkSoftware.Checked;
             filter.IncludeCommand = chkCommand.Checked;
+            filter.IncludeWinget = chkWinget.Checked;
             filter.IncludeFileCopy = chkFile.Checked;
             filter.IncludeScript = chkScript.Checked;
             filter.IncludeWu = chkWu.Checked;

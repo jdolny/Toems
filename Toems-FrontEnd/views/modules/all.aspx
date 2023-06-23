@@ -40,6 +40,10 @@ All Modules List
              <a href="<%= ResolveUrl("~/views/modules/winpemodules/search.aspx") %>">
                  <span class="sub-nav-text">WinPE Modules</span></a>
          </li>
+           <li id="winget">
+             <a href="<%= ResolveUrl("~/views/modules/wingetmodules/search.aspx") %>">
+                 <span class="sub-nav-text">Winget Modules</span></a>
+         </li>
           <li id="all">
              <a href="<%= ResolveUrl("~/views/modules/all.aspx") %>">
                  <span class="sub-nav-text">All Modules List</span></a>

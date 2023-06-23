@@ -16,7 +16,7 @@ namespace Toems_FrontEnd.views.admin
 
         protected void btnRunWinGet_Click(object sender, EventArgs e)
         {
-            Call.SettingApi.RunWinGetImporter();
+
         }
     }
 }

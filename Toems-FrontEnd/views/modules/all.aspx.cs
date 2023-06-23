@@ -54,6 +54,7 @@ namespace Toems_FrontEnd.views.modules
             filter.IncludeUnassigned = false;
             filter.IncludeMessage = true;
             filter.IncludeWinPe = true;
+            filter.IncludeWinget = true;
 
             var modules = Call.PolicyApi.GetAllModules(filter);
             gvModules.DataSource = modules;

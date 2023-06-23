@@ -166,6 +166,7 @@
     <Compile Include="Controllers\Authorization\ComputerAuth.cs" />
     <Compile Include="Controllers\Authorization\GroupAuth.cs" />
     <Compile Include="Controllers\Authorization\ImageAuth.cs" />
+    <Compile Include="Controllers\WingetModuleController.cs" />
     <Compile Include="Controllers\UserGroupMembershipController.cs" />
     <Compile Include="Controllers\WieBuildController.cs" />
     <Compile Include="Controllers\WinPeModuleController.cs" />

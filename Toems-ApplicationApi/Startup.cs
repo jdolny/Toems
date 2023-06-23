@@ -172,6 +172,7 @@ namespace Toems_ApplicationApi
                     var smartSchedule = ServiceSetting.GetSettingValue(SettingStrings.SmartReportSchedule);
                     var dataCleanupSchedule = ServiceSetting.GetSettingValue(SettingStrings.DataCleanupSchedule);
                     var lowDiskSchedule = ServiceSetting.GetSettingValue(SettingStrings.LowDiskSchedule);
+                    var wingetSchedule = ServiceSetting.GetSettingValue(SettingStrings.WingetManifestSchedule);
 
                     RecurringJob.AddOrUpdate("DynamicGroupUpdate-Job", () => new UpdateDynamicMemberships().All(),
                         groupSchedule, TimeZoneInfo.Local);
@@ -211,6 +212,12 @@ namespace Toems_ApplicationApi
                             dataCleanupSchedule, TimeZoneInfo.Local);
                     else
                         RecurringJob.RemoveIfExists("DataCleanup-Job");
+
+                    if(!string.IsNullOrEmpty(wingetSchedule))
+                        RecurringJob.AddOrUpdate("WingetManifest-Job", () => new WinGetManifestImporter().Run(path),
+                            wingetSchedule, TimeZoneInfo.Local);
+                    else
+                        RecurringJob.RemoveIfExists("WingetManifest-Job");
                 }
 
             }

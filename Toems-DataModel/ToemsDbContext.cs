@@ -124,6 +124,12 @@ namespace Toems_DataModel
         public DbSet<EntityImageReplicationServer> ImageReplicationServers { get; set; }
         public DbSet<EntityDefaultImageReplicationServer> DefaultImageReplicationServers { get; set; }
         public DbSet<EntityWieBuild> WieBuilds { get; set; }
+        public DbSet<EntityWingetManifestDownload> WingetManifestDownloads { get; set; }
+        public DbSet<EntityWingetInstallerManifest> WingetInstallerManifests { get; set; }
+        public DbSet<EntityWingetVersionManifest> WingetVersionManifests { get; set; }
+        public DbSet<EntityWingetLocaleManifest> WingetLocaleManifests { get; set; }
+        public DbSet<EntityWingetModule> WingetModules { get; set; }
+
 
 
     }

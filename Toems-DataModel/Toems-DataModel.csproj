@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActiveImagingTaskRepository.cs" />
+    <Compile Include="WingetLocaleRepository.cs" />
     <Compile Include="AssetGroupRepository.cs" />
     <Compile Include="CustomAttributeRepository.cs" />
     <Compile Include="AssetRepository.cs" />

@@ -352,6 +352,14 @@
     <Content Include="views\modules\sysprepmodules\general.aspx" />
     <Content Include="views\modules\sysprepmodules\search.aspx" />
     <Content Include="views\modules\sysprepmodules\usages.aspx" />
+    <Content Include="views\modules\wingetmodules\archived.aspx" />
+    <Content Include="views\modules\wingetmodules\assigned.aspx" />
+    <Content Include="views\modules\wingetmodules\available.aspx" />
+    <Content Include="views\modules\wingetmodules\categories.aspx" />
+    <Content Include="views\modules\wingetmodules\create.aspx" />
+    <Content Include="views\modules\wingetmodules\general.aspx" />
+    <Content Include="views\modules\wingetmodules\search.aspx" />
+    <Content Include="views\modules\wingetmodules\usages.aspx" />
     <Content Include="views\modules\winpemodules\archived.aspx" />
     <Content Include="views\modules\winpemodules\categories.aspx" />
     <Content Include="views\modules\winpemodules\create.aspx" />
@@ -464,6 +472,7 @@
     <Content Include="views\admin\imageprep\imageprep.master" />
     <Content Include="views\admin\toec\toec.master" />
     <Content Include="views\modules\winpemodules\winpemodule.master" />
+    <Content Include="views\modules\wingetmodules\wingetmodule.master" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2682,6 +2691,69 @@
     </Compile>
     <Compile Include="views\modules\sysprepmodules\usages.aspx.designer.cs">
       <DependentUpon>usages.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\archived.aspx.cs">
+      <DependentUpon>archived.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\archived.aspx.designer.cs">
+      <DependentUpon>archived.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\assigned.aspx.cs">
+      <DependentUpon>assigned.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\assigned.aspx.designer.cs">
+      <DependentUpon>assigned.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\available.aspx.cs">
+      <DependentUpon>available.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\available.aspx.designer.cs">
+      <DependentUpon>available.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\categories.aspx.cs">
+      <DependentUpon>categories.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\categories.aspx.designer.cs">
+      <DependentUpon>categories.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\create.aspx.cs">
+      <DependentUpon>create.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\create.aspx.designer.cs">
+      <DependentUpon>create.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\general.aspx.cs">
+      <DependentUpon>general.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\general.aspx.designer.cs">
+      <DependentUpon>general.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\search.aspx.cs">
+      <DependentUpon>search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\search.aspx.designer.cs">
+      <DependentUpon>search.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\usages.aspx.cs">
+      <DependentUpon>usages.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\usages.aspx.designer.cs">
+      <DependentUpon>usages.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\wingetmodule.master.cs">
+      <DependentUpon>wingetmodule.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\modules\wingetmodules\wingetmodule.master.designer.cs">
+      <DependentUpon>wingetmodule.master</DependentUpon>
     </Compile>
     <Compile Include="views\modules\winpemodules\archived.aspx.cs">
       <DependentUpon>archived.aspx</DependentUpon>

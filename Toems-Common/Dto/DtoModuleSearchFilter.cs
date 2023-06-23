@@ -12,6 +12,7 @@
         public bool IncludeWu { get; set; }
         public bool IncludeMessage { get; set; }
         public bool IncludeWinPe { get; set; }
+        public bool IncludeWinget { get; set; }
         public bool IncludeUnassigned { get; set; }
     }
 }

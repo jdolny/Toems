@@ -86,6 +86,10 @@
         WinPE
         <asp:CheckBox runat="server" ID="chkWinPe" Text="Command" AutoPostBack="True" OnCheckedChanged="chkFilter_OnCheckedChanged"/>
     </div>
+     <div class="size-10 column hidden-check">
+        Winget
+        <asp:CheckBox runat="server" ID="chkWinget" Text="Winget" AutoPostBack="True" OnCheckedChanged="chkFilter_OnCheckedChanged"/>
+    </div>
       <div class="size-10 column hidden-check">
           Unassigned
         <asp:CheckBox runat="server" ID="chkUnassigned" Text="Unassigned" AutoPostBack="True" OnCheckedChanged="chkFilter_OnCheckedChanged"/>

@@ -22,6 +22,8 @@ namespace Toems_FrontEnd.views.policies
                 Response.Redirect("~/views/modules/wumodules/general.aspx?wuModuleId=" + id);
             if (type == "WinPE")
                 Response.Redirect("~/views/modules/winpemodules/general.aspx?winPeModuleId=" + id);
+            if (type == "Winget")
+                Response.Redirect("~/views/modules/wingetmodules/general.aspx?wingetModuleId=" + id);
 
         }
     }
