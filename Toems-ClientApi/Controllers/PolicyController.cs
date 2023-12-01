@@ -51,6 +51,15 @@ namespace Toems_ClientApi.Controllers
 
         [CertificateAuth]
         [HttpGet]
+        public List<EntityWingetModule> GetComputerWingetModules()
+        {
+            var clientGuid = RequestContext.Principal.Identity.Name;
+            return new ServiceComputer().GetComputerWingetUpgrades(clientGuid);
+
+        }
+
+        [CertificateAuth]
+        [HttpGet]
         public DtoApiStringResponse GetRemotelyInstallArgs()
         {
             return new DtoApiStringResponse() { Value = new ServiceRemoteAccess().GetRemotelyInstallArgs() };

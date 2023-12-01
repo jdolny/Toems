@@ -126,6 +126,8 @@ namespace Toems_FrontEnd.views.policies
             txtDomainOU.Text = Policy.DomainOU;
             chkImagePrepCleanup.Checked = Policy.ImagePrepCleanup;
             chkDeleteCache.Checked = Policy.RemoveInstallCache;
+            chkWingetUpdates.Checked = Policy.IsWingetUpdate;
+            chkWingetDownloadConnections.Checked = Policy.WingetUseMaxConnections;
             ddlExecType.SelectedValue = Policy.ExecutionType.ToString();
             ddlErrorAction.SelectedValue = Policy.ErrorAction.ToString();
             ddlWinUpdates.SelectedValue = Policy.WuType.ToString();
@@ -230,7 +232,8 @@ namespace Toems_FrontEnd.views.policies
             Policy.PolicyComCondition= (EnumPolicy.PolicyComCondition)Enum.Parse(typeof(EnumPolicy.PolicyComCondition), ddlComCondition.SelectedValue);
             Policy.SkipServerResult = chkSkipResult.Checked;
             Policy.RunApplicationMonitor = chkApplicationMonitor.Checked;
-
+            Policy.WingetUseMaxConnections = chkWingetDownloadConnections.Checked;
+            Policy.IsWingetUpdate = chkWingetUpdates.Checked;
             Policy.AutoArchiveType = (EnumPolicy.AutoArchiveType)Enum.Parse(typeof(EnumPolicy.AutoArchiveType), ddlAutoArchive.SelectedValue);
             if (Policy.AutoArchiveType == EnumPolicy.AutoArchiveType.AfterXdays)
                 Policy.AutoArchiveSub = txtAutoArchiveDays.Text;
@@ -273,12 +276,6 @@ namespace Toems_FrontEnd.views.policies
             EndUserMessage = result.Success ? String.Format("Successfully Updated Policy {0}", Policy.Name) : result.ErrorMessage;
         }
 
-
-
-    
-
-      
-       
 
         protected void ddlAutoArchive_OnSelectedIndexChanged(object sender, EventArgs e)
         {

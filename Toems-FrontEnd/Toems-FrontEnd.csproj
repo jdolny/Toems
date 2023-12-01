@@ -353,7 +353,6 @@
     <Content Include="views\modules\sysprepmodules\search.aspx" />
     <Content Include="views\modules\sysprepmodules\usages.aspx" />
     <Content Include="views\modules\wingetmodules\archived.aspx" />
-    <Content Include="views\modules\wingetmodules\assigned.aspx" />
     <Content Include="views\modules\wingetmodules\available.aspx" />
     <Content Include="views\modules\wingetmodules\categories.aspx" />
     <Content Include="views\modules\wingetmodules\create.aspx" />
@@ -2698,13 +2697,6 @@
     </Compile>
     <Compile Include="views\modules\wingetmodules\archived.aspx.designer.cs">
       <DependentUpon>archived.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="views\modules\wingetmodules\assigned.aspx.cs">
-      <DependentUpon>assigned.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="views\modules\wingetmodules\assigned.aspx.designer.cs">
-      <DependentUpon>assigned.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\modules\wingetmodules\available.aspx.cs">
       <DependentUpon>available.aspx</DependentUpon>

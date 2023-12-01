@@ -169,7 +169,7 @@ namespace Toems_Service
                         return validationResult;
                     }
                 }
-                if (ServiceSetting.GetSettingValue(SettingStrings.EnableMfa) == "1" && user.MfaSecret != null
+                if (ServiceSetting.GetSettingValue(SettingStrings.EnableMfa) == "1" && !string.IsNullOrEmpty(user.MfaSecret)
                    && loginType.Equals("Web") && (user.EnableWebMfa || ServiceSetting.GetSettingValue(SettingStrings.ForceMfa) == "1"))
 
                 {

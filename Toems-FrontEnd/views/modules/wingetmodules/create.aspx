@@ -50,7 +50,16 @@
             <asp:CheckBox ID="chkAutoUpdate" runat="server" ClientIDMode="Static"></asp:CheckBox>
          <label for="chkAutoUpdate">Toggle</label>
         </div>
+       <br class="clear"/>
+      <div class="size-4 column">
+        Install Latest Version
+    </div>
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkLatest" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkLatest">Toggle</label>
+        </div>
      <br class="clear"/>
+
        <div class="size-4 column">
         Install Type
     </div>

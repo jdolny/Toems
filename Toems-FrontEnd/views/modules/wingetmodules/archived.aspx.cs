@@ -46,7 +46,7 @@ namespace Toems_FrontEnd.views.modules.wingetmodules
         {
             PopulateGrid();
 
-            var listModules = (List<EntityCommandModule>)gvModules.DataSource;
+            var listModules = (List<EntityWingetModule>)gvModules.DataSource;
             switch (e.SortExpression)
             {
                 case "Name":

@@ -51,6 +51,24 @@ namespace Toems_FrontEnd.views.modules.wingetmodules
         protected global::System.Web.UI.WebControls.TextBox txtDescription;
 
         /// <summary>
+        /// txtPackageIdentifier control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label txtPackageIdentifier;
+
+        /// <summary>
+        /// txtPackageVersion control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtPackageVersion;
+
+        /// <summary>
         /// txtArguments control.
         /// </summary>
         /// <remarks>
@@ -76,6 +94,15 @@ namespace Toems_FrontEnd.views.modules.wingetmodules
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkAutoUpdate;
+
+        /// <summary>
+        /// chkLatest control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkLatest;
 
         /// <summary>
         /// ddlInstallType control.

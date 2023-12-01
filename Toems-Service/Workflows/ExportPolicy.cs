@@ -78,6 +78,10 @@ namespace Toems_Service.Workflows
                 {
                     CopyMessageModule(policyModule);
                 }
+                else if (policyModule.ModuleType == EnumModule.ModuleType.Winget)
+                {
+                    CopyWingetModule(policyModule);
+                }
             }
 
             return _policyExport;
@@ -104,6 +108,8 @@ namespace Toems_Service.Workflows
             _policyExport.LogLevel = _policy.LogLevel;
             _policyExport.SkipServerResult = _policy.SkipServerResult;
             _policyExport.IsApplicationMonitor = _policy.RunApplicationMonitor;
+            _policyExport.IsWingetUpdate = _policy.IsWingetUpdate;
+            _policyExport.WingetUseMaxConnections = _policy.WingetUseMaxConnections;
             _policyExport.WuType = _policy.WuType;
             _policyExport.ConditionFailedAction = _policy.ConditionFailedAction;
             if(_policy.ConditionId != -1)
@@ -397,6 +403,35 @@ namespace Toems_Service.Workflows
             scriptModuleExport.Guid = condition.Guid;
 
             return scriptModuleExport;
+        }
+
+        private void CopyWingetModule(EntityPolicyModules policyModule)
+        {
+            var wingetModuleExport = new DtoWingetModuleExport();
+            var wingetModule = new ServiceWingetModule().GetModule(policyModule.ModuleId);
+            wingetModuleExport.Description = wingetModule.Description;
+            wingetModuleExport.Order = policyModule.Order;
+            wingetModuleExport.PackageIdentifier = wingetModule.PackageId;
+            wingetModuleExport.PackageVersion = wingetModule.PackageVersion;
+            wingetModuleExport.InstallLatest = wingetModule.InstallLatest;
+            wingetModuleExport.KeepUpdated = wingetModule.KeepUpdated;
+            wingetModuleExport.Override = wingetModule.Override;
+            wingetModuleExport.Arguments = wingetModule.Arguments;
+            wingetModuleExport.DisplayName = wingetModule.Name;
+            wingetModuleExport.Timeout = wingetModule.Timeout;
+            wingetModuleExport.RedirectOutput = wingetModule.RedirectStdOut;
+            wingetModuleExport.RedirectError = wingetModule.RedirectStdError;
+            wingetModuleExport.Guid = wingetModule.Guid;
+            wingetModuleExport.ConditionFailedAction = policyModule.ConditionFailedAction;
+            wingetModuleExport.ConditionNextOrder = policyModule.ConditionNextModule;
+
+            if (policyModule.ConditionId != -1)
+            {
+                wingetModuleExport.Condition = GetCondition(policyModule.ConditionId);
+            }
+
+
+            _policyExport.WingetModules.Add(wingetModuleExport);
         }
     }
 }

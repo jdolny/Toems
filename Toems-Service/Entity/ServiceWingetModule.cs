@@ -201,7 +201,7 @@ namespace Toems_Service.Entity
 
             if (isNew)
             {
-                if (_uow.CommandModuleRepository.Exists(h => h.Name == module.Name))
+                if (_uow.WingetModuleRepository.Exists(h => h.Name == module.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Module With This Name Already Exists";
@@ -210,10 +210,10 @@ namespace Toems_Service.Entity
             }
             else
             {
-                var originalModule = _uow.CommandModuleRepository.GetById(module.Id);
+                var originalModule = _uow.WingetModuleRepository.GetById(module.Id);
                 if (originalModule.Name != module.Name)
                 {
-                    if (_uow.CommandModuleRepository.Exists(h => h.Name == module.Name))
+                    if (_uow.WingetModuleRepository.Exists(h => h.Name == module.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Module With This Name Already Exists";

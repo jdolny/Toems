@@ -144,6 +144,12 @@ namespace Toems_Service.Entity
             return _uow.ComputerRepository.GetComputerModules(computerId);
         }
 
+        public List<EntityWingetModule> GetComputerWingetUpgrades(string clientGuid)
+        {
+            var client = _uow.ComputerRepository.GetFirstOrDefault(x => x.Guid == clientGuid);
+            return _uow.ComputerRepository.GetComputerWingetUpdateModules(client.Id);
+        }
+
         public EntityWinPeModule GetEffectiveWinPeModule(int computerId)
         {
             var computer = GetComputer(computerId);

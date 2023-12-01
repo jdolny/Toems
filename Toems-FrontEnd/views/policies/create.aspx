@@ -169,7 +169,22 @@
          <label for="chkLoginTracker">Toggle</label>
         </div>
      <br class="clear"/>
-    
+      <div class="size-4 column">
+        Run Winget Updates:
+    </div>
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkWingetUpdates" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkWingetUpdates"></label>
+        </div>
+    <br class="clear"/>
+     <div class="size-4 column">
+        Winget Use Download Connections:
+    </div>
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkWingetDownloadConnections" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkWingetDownloadConnections"></label>
+        </div>
+    <br class="clear"/>
      <div class="size-4 column">
         Application Monitor:
     </div>

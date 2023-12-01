@@ -26,11 +26,15 @@ namespace Toems_FrontEnd.views.modules.wingetmodules
             txtTimeout.Text = WingetModule.Timeout.ToString();
             txtArguments.Text = WingetModule.Arguments;
             chkAutoUpdate.Checked = WingetModule.KeepUpdated;
+            chkLatest.Checked = WingetModule.InstallLatest;
             ddlInstallType.SelectedValue = WingetModule.InstallType.ToString();
             chkStdOut.Checked = WingetModule.RedirectStdOut;
             chkStdError.Checked = WingetModule.RedirectStdError;
             txtOverride.Text = WingetModule.Override;
             ddlRunAs.SelectedValue = WingetModule.ImpersonationId.ToString();
+            txtPackageIdentifier.Text = WingetModule.PackageId;
+            txtPackageVersion.Text = WingetModule.PackageVersion;
+
         }
 
         protected void buttonUpdate_OnClick(object sender, EventArgs e)
@@ -51,9 +55,11 @@ namespace Toems_FrontEnd.views.modules.wingetmodules
             WingetModule.Name = txtDisplayName.Text;
             WingetModule.Description = txtDescription.Text;
             WingetModule.Timeout = Convert.ToInt32(txtTimeout.Text);
+            WingetModule.PackageVersion = txtPackageVersion.Text;
             WingetModule.Arguments = txtArguments.Text;
             WingetModule.Override = txtOverride.Text;
             WingetModule.KeepUpdated = chkAutoUpdate.Checked;
+            WingetModule.InstallLatest = chkLatest.Checked;
             WingetModule.InstallType = (EnumWingetInstallType.WingetInstallType)Enum.Parse(typeof(EnumWingetInstallType.WingetInstallType), ddlInstallType.SelectedValue);
             WingetModule.RedirectStdOut = chkStdOut.Checked;
             WingetModule.RedirectStdError = chkStdError.Checked;

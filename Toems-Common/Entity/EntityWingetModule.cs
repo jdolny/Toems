@@ -62,6 +62,8 @@ namespace Toems_Common.Entity
         [Column("impersonation_id")]
         public int ImpersonationId { get; set; }
 
+        [Column("winget_install_latest")]
+        public bool InstallLatest { get; set; }
 
     }
 }

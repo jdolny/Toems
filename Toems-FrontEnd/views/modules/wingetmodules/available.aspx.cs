@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -51,24 +52,7 @@ namespace Toems_FrontEnd.views.modules.wingetmodules
             PopulateGrid();
         }
 
-        protected void gridView_Sorting(object sender, GridViewSortEventArgs e)
-        {
-            PopulateGrid();
-
-            var listModules = (List<EntityWingetLocaleManifest>)gvManifests.DataSource;
-            switch (e.SortExpression)
-            {
-                case "PackageIdentifier":
-                    listModules = GetSortDirection(e.SortExpression) == "PackageIdentifier"
-                        ? listModules.OrderByDescending(h => h.PackageIdentifier).ToList()
-                        : listModules.OrderBy(h => h.PackageIdentifier).ToList();
-                    break;
-
-            }
-
-            gvManifests.DataSource = listModules;
-            gvManifests.DataBind();
-        }
+       
 
 
         protected void chkFilter_OnCheckedChanged(object sender, EventArgs e)
@@ -102,6 +86,31 @@ namespace Toems_FrontEnd.views.modules.wingetmodules
             divModal.Visible = false;
         }
 
+        protected void btnAssignPackage_Click(object sender, EventArgs e)
+        {
+            int count = 0;
+            int id = 0;
+            foreach (GridViewRow row in gvManifests.Rows)
+            {
+                var cb = (CheckBox)row.FindControl("chkSelector");
+                if (cb == null || !cb.Checked) continue;
+                var dataKey = gvManifests.DataKeys[row.RowIndex];
+                if (dataKey == null) continue;
+                id = Convert.ToInt32(dataKey.Value);
+                count++;
+            }
+            if (count == 0)
+                EndUserMessage = "No packages were selected.";
+            if (count > 1)
+                EndUserMessage = "Only 1 package may be selected.";
 
+            var manifest = Call.WingetModuleApi.GetLocaleManifest(id);
+
+            WingetModule.PackageId = manifest.PackageIdentifier;
+            WingetModule.PackageVersion = manifest.PackageVersion;
+
+            var result = Call.WingetModuleApi.Put(WingetModule.Id, WingetModule);
+            EndUserMessage = result.Success ? String.Format("Successfully Updated Module {0}", WingetModule.Name) : result.ErrorMessage;
+        }
     }
 }

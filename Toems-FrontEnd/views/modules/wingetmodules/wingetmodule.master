@@ -34,11 +34,7 @@
                  <a href="<%= ResolveUrl("~/views/modules/wingetmodules/general.aspx") %>?wingetModuleId=<%= WingetModule.Id %>">
                     <span class="sub-nav-text">General</span></a>
             </li>
-       <li id="assigned">
-                 <a href="<%= ResolveUrl("~/views/modules/wingetmodules/assigned.aspx") %>?wingetModuleId=<%= WingetModule.Id %>">
-                     <span class="sub-nav-text">Assigned Winget Package</span></a>
-             </li>
-       <li id="available">
+           <li id="available">
                  <a href="<%= ResolveUrl("~/views/modules/wingetmodules/available.aspx") %>?wingetModuleId=<%= WingetModule.Id %>">
                      <span class="sub-nav-text">Available Winget Packages</span></a>
              </li>

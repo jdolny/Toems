@@ -17,6 +17,7 @@ namespace Toems_Common.Dto
             WuModules = new List<DtoClientWuModule>();
             MessageModules = new List<DtoClientMessageModule>();
             WinPeModules = new List<DtoClientWinPeModule>();
+            WingetModules = new List<DtoClientWingetModule>();
             Condition = new DtoClientModuleCondition();
         }
         public string Name { get; set; }
@@ -53,9 +54,12 @@ namespace Toems_Common.Dto
         public List<DtoClientWuModule> WuModules { get; set; }
         public List<DtoClientMessageModule> MessageModules { get; set; }
         public List<DtoClientWinPeModule> WinPeModules { get; set; }
+        public List<DtoClientWingetModule> WingetModules { get; set; }
         public EnumPolicy.WuType WuType { get; set; }
         public EnumPolicy.PolicyComCondition PolicyComCondition { get; set; }
         public EnumCondition.FailedAction ConditionFailedAction { get; set; }
         public DtoClientModuleCondition Condition { get; set; }
+        public bool IsWingetUpdate { get; set; }
+        public bool WingetUseMaxConnections { get; set; }
     }
 }

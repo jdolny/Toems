@@ -231,6 +231,33 @@ namespace Toems_FrontEnd.views.policies
         protected global::System.Web.UI.WebControls.CheckBox chkApplicationMonitor;
 
         /// <summary>
+        /// chkWingetUpdates control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkWingetUpdates;
+
+        /// <summary>
+        /// chkWingetDownloadConnections control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkWingetDownloadConnections;
+
+        /// <summary>
+        /// CheckBox2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox CheckBox2;
+
+        /// <summary>
         /// ddlRemoteAccess control.
         /// </summary>
         /// <remarks>

@@ -383,7 +383,45 @@ namespace Toems_DataModel
                     dto.Id = module.Id;
                     list.Add(dto);
                 }
-               
+                foreach (var module in policyModule.WingetModules)
+                {
+                    var dto = new DtoModule();
+                    dto.ModuleType = EnumModule.ModuleType.Winget;
+                    dto.Guid = module.Guid;
+                    dto.Name = module.Name;
+                    dto.Id = module.Id;
+                    list.Add(dto);
+                }
+
+            }
+            return list;
+        }
+        public List<EntityWingetModule> GetComputerWingetUpdateModules(int computerId)
+        {
+            var policies = (from h in _context.GroupMemberships
+                            join i in _context.GroupPolicies on h.GroupId equals i.GroupId
+                            join j in _context.Policies on i.PolicyId equals j.Id
+                            join a in _context.ActiveClientPolicies on i.PolicyId equals a.PolicyId
+                            where h.ComputerId == computerId
+                            select j).ToList();
+
+
+            var allComputersGroupPolicies = (from i in _context.GroupPolicies
+                                             join j in _context.Policies on i.PolicyId equals j.Id
+                                             where i.GroupId == -1
+                                             select j).ToList();
+            policies.AddRange(allComputersGroupPolicies);
+
+            var policyModules = policies.Select(policy => new PolicyRepository(_context).GetDetailed(policy.Id)).ToList();
+
+            var list = new List<EntityWingetModule>();
+            foreach (var policyModule in policyModules)
+            {
+                foreach (var module in policyModule.WingetModules.Where(x => x.InstallType == EnumWingetInstallType.WingetInstallType.Install && x.KeepUpdated))
+                {
+                    list.Add(module);
+                }
+
             }
             return list;
         }

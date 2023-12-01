@@ -15,6 +15,7 @@ namespace Toems_Common.Dto.exports
             SoftwareModules = new List<DtoSoftwareModuleExport>();
             WuModules = new List<DtoWuModuleExport>();
             MessageModules = new List<DtoMessageModuleExport>();
+            WingetModules = new List<DtoWingetModuleExport>();
 
         }
         public string Name { get; set; }
@@ -33,6 +34,8 @@ namespace Toems_Common.Dto.exports
         public EnumPolicy.InventoryAction IsInventory { get; set; }
         public bool IsLoginTracker { get; set; }
         public bool IsApplicationMonitor { get; set; }
+        public bool IsWingetUpdate { get; set; }
+        public bool WingetUseMaxConnections { get; set; }
         public EnumPolicy.FrequencyMissedAction FrequencyMissedAction { get; set; }
         public EnumPolicy.LogLevel LogLevel { get; set; }
         public bool SkipServerResult { get; set; }
@@ -42,6 +45,7 @@ namespace Toems_Common.Dto.exports
         public List<DtoScriptModuleExport> ScriptModules { get; set; }
         public List<DtoSoftwareModuleExport> SoftwareModules { get; set; }
         public List<DtoWuModuleExport> WuModules { get; set; }
+        public List<DtoWingetModuleExport> WingetModules { get; set; }
         public List<DtoMessageModuleExport> MessageModules { get; set; }
         public EnumPolicy.WuType WuType { get; set; }
         public EnumCondition.FailedAction ConditionFailedAction { get; set; }

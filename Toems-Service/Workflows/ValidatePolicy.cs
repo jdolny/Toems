@@ -149,6 +149,16 @@ namespace Toems_Service.Workflows
                         return _result;
                     }
                 }
+                else if (policyModule.ModuleType == EnumModule.ModuleType.Winget)
+                {
+                    verifyResult = VerifyWinget(policyModule);
+                    if (verifyResult != null)
+                    {
+                        _result.Success = false;
+                        _result.ErrorMessage = verifyResult;
+                        return _result;
+                    }
+                }
             }
 
             _result.Success = true;
@@ -1012,6 +1022,45 @@ namespace Toems_Service.Workflows
                     return "Could Not Reach Storage Path";
                 }
             }
+
+            return null;
+        }
+
+        private string VerifyWinget(EntityPolicyModules policyModule)
+        {
+            var wingetModule = new ServiceWingetModule().GetModule(policyModule.ModuleId);
+            if (wingetModule == null) return "An Assigned Winget Module No Longer Exists";
+
+            if (string.IsNullOrEmpty(wingetModule.Name))
+                return "A Winget Module Has An Invalid Name";
+
+            if (wingetModule.Archived)
+                return "Winget Module: " + wingetModule.Name + " Is Archived";
+
+            if (string.IsNullOrEmpty(wingetModule.Guid))
+                return "Winget Module: " + wingetModule.Name + " Has An Invalid GUID";
+
+            if (string.IsNullOrEmpty(wingetModule.PackageId))
+                return "Winget Module: " + wingetModule.Name + " Has An Invalid Package Identifier";
+
+            if (string.IsNullOrEmpty(wingetModule.PackageVersion) && !wingetModule.InstallLatest)
+                return "Winget Module: " + wingetModule.Name + " Must Have A Version Or Install Latest Version Enabled";
+
+            int value;
+            if (!int.TryParse(wingetModule.Timeout.ToString(), out value))
+                return "Command Module: " + wingetModule.Name + " Has An Invalid Timeout";
+
+
+            if (wingetModule.ImpersonationId != -1)
+            {
+                var impAccount = new ServiceImpersonationAccount().GetAccount(wingetModule.ImpersonationId);
+                if (impAccount == null) return "Winget Module: " + wingetModule.Name + " Has An Invalid Impersonation Account";
+            }
+
+            if (!int.TryParse(policyModule.Order.ToString(), out value))
+                return "Winget Module: " + wingetModule.Name + " Has An Invalid Order";
+
+           
 
             return null;
         }

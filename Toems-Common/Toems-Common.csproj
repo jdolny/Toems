@@ -89,6 +89,7 @@
     <Compile Include="Dto\clientpartition\ClientVolumeGroupHelper.cs" />
     <Compile Include="Dto\clientpartition\ExtendedPartitionHelper.cs" />
     <Compile Include="Dto\clientpartition\PartitionHelper.cs" />
+    <Compile Include="Dto\client\DtoClientWingetModule.cs" />
     <Compile Include="Dto\client\DtoClientWinPeModule.cs" />
     <Compile Include="Dto\client\DtoClientMessageModule.cs" />
     <Compile Include="Dto\client\DtoClientModuleCondition.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Dto\DtoVersion.cs" />
     <Compile Include="Dto\DtoWebRtc.cs" />
     <Compile Include="Dto\DtoWieConfig.cs" />
+    <Compile Include="Dto\exports\DtoWingetModuleExport.cs" />
     <Compile Include="Dto\exports\DtoCommandModuleExport.cs" />
     <Compile Include="Dto\exports\DtoExternalFileExport.cs" />
     <Compile Include="Dto\exports\DtoFileCopyModuleExport.cs" />

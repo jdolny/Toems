@@ -6,7 +6,7 @@
  Available Winget Packages
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="DropDownActionsSub2" Runat="Server">
-
+     <li><asp:LinkButton ID="btnAssignPackage" runat="server" OnClick="btnAssignPackage_Click" Text="Assign Selected Package" CssClass="main-action"/></li>
 </asp:Content>
 
 
@@ -79,16 +79,18 @@
      <p class="total">
         <asp:Label ID="lblTotal" runat="server"></asp:Label>
     </p>
-    <asp:GridView ID="gvManifests" runat="server" AllowSorting="True" DataKeyNames="Id" OnSorting="gridView_Sorting" AutoGenerateColumns="False" CssClass="Gridview" AlternatingRowStyle-CssClass="alt">
+    <asp:GridView ID="gvManifests" runat="server" AllowSorting="True" DataKeyNames="Id"  AutoGenerateColumns="False" CssClass="Gridview" AlternatingRowStyle-CssClass="alt">
         <Columns>
-
-            <asp:TemplateField>
-
-                <ItemStyle CssClass="chkboxwidth"></ItemStyle>
+               <asp:TemplateField>
+                                   <ItemStyle CssClass="chkboxwidth"></ItemStyle>
                
                 <ItemTemplate>
                     <asp:CheckBox ID="chkSelector" runat="server"/>
                 </ItemTemplate>
+                   </asp:TemplateField>
+            <asp:TemplateField>
+                   <ItemStyle CssClass="chkboxwidth"></ItemStyle>
+
                 <ItemTemplate>
                     <asp:LinkButton runat="server" ID="lnkCustDetails"
                 Text='Details'

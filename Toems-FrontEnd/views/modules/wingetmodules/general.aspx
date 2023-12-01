@@ -44,7 +44,22 @@
         <asp:TextBox ID="txtDescription" runat="server" CssClass="descbox" TextMode="MultiLine"></asp:TextBox>
     </div>
       <br class="clear"/>
-     
+     <div class="size-4 column">
+        Assigned Package Identifier
+    </div>
+
+     <div class="size-5 column">
+        <asp:Label ID="txtPackageIdentifier" runat="server" CssClass="textbox" ClientIDMode="Static"></asp:Label>
+    </div>
+      <br class="clear"/>
+     <div class="size-4 column">
+        Assigned Package Version
+    </div>
+
+     <div class="size-5 column">
+        <asp:TextBox ID="txtPackageVersion" runat="server" CssClass="textbox" ClientIDMode="Static"></asp:TextBox>
+    </div>
+      <br class="clear"/>
      <div class="size-4 column">
         Arguments
     </div>
@@ -69,6 +84,13 @@
          <label for="chkAutoUpdate">Toggle</label>
         </div>
      <br class="clear"/>
+      <div class="size-4 column">
+        Install Latest Version
+    </div>
+     <div class="size-setting column hidden-check">
+            <asp:CheckBox ID="chkLatest" runat="server" ClientIDMode="Static"></asp:CheckBox>
+         <label for="chkLatest">Toggle</label>
+        </div>
        <div class="size-4 column">
         Install Type
     </div>

@@ -516,6 +516,10 @@ namespace Toems_Service.Entity
                     {
                         modulesToRemove.AddRange(listModules.Where(module => mod.Guid == module.Guid));
                     }
+                    foreach (var mod in policyDetailed.WingetModules)
+                    {
+                        modulesToRemove.AddRange(listModules.Where(module => mod.Guid == module.Guid));
+                    }
                 }
 
                 foreach (var m in modulesToRemove)
@@ -623,6 +627,18 @@ namespace Toems_Service.Entity
                     if (filter.IncludeWinPe)
                     {
                         var pModule = new ServiceWinPeModule().GetModule(module.ModuleId);
+                        if (pModule != null)
+                        {
+                            module.Name = pModule.Name;
+                            list.Add(module);
+                        }
+                    }
+                }
+                else if (module.ModuleType == EnumModule.ModuleType.Winget)
+                {
+                    if (filter.IncludeWinget)
+                    {
+                        var pModule = new ServiceWingetModule().GetModule(module.ModuleId);
                         if (pModule != null)
                         {
                             module.Name = pModule.Name;

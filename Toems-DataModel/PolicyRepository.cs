@@ -97,6 +97,13 @@ namespace Toems_DataModel
                 join wuModule in _context.WindowsUpdateModules on policyModule.ModuleId equals wuModule.Id
                 select wuModule;
 
+            var winget = from p in _context.Policies
+                     where p.Id == policyId
+                     join policyModule in _context.PolicyModules on p.Id equals policyModule.PolicyId
+                     where policyModule.ModuleType == EnumModule.ModuleType.Winget
+                     join wingetModule in _context.WingetModules on policyModule.ModuleId equals wingetModule.Id
+                     select wingetModule;
+
             var message = from p in _context.Policies
                           where p.Id == policyId
                           join policyModule in _context.PolicyModules on p.Id equals policyModule.PolicyId
@@ -113,6 +120,7 @@ namespace Toems_DataModel
             policyDetailed.MessageModules = message.ToList();
             policyDetailed.WuModules = wu.ToList();
             policyDetailed.WinPeModules = winPe.ToList();
+            policyDetailed.WingetModules = winget.ToList();
             policyDetailed.Name = policy.Name;
             policyDetailed.CompletedAction = policy.CompletedAction;
             policyDetailed.Description = policy.Description;
@@ -129,6 +137,8 @@ namespace Toems_DataModel
             policyDetailed.RunLoginTracker = policy.RunLoginTracker;
             policyDetailed.ConditionId = policy.ConditionId;
             policyDetailed.ConditionFailedAction = policy.ConditionFailedAction;
+            policyDetailed.IsWingetUpdate = policy.IsWingetUpdate;
+            policyDetailed.WingetUseMaxConnections = policy.WingetUseMaxConnections;
 
             return policyDetailed;
         }

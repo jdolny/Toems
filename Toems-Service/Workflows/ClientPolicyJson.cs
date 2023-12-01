@@ -84,6 +84,10 @@ namespace Toems_Service.Workflows
             {
                 WinPeModule(policyModule);
             }
+            else if (policyModule.ModuleType == EnumModule.ModuleType.Winget)
+            {
+                WingetModule(policyModule);
+            }
 
 
             return _clientPolicy;
@@ -138,6 +142,10 @@ namespace Toems_Service.Workflows
                 {
                     WinPeModule(policyModule);
                 }
+                else if (policyModule.ModuleType == EnumModule.ModuleType.Winget)
+                {
+                    WingetModule(policyModule);
+                }
             }
 
             return _clientPolicy;
@@ -159,6 +167,8 @@ namespace Toems_Service.Workflows
             _clientPolicy.RemoteAccess = _policy.RemoteAccess;
             _clientPolicy.IsLoginTracker = _policy.RunLoginTracker;
             _clientPolicy.JoinDomain = _policy.JoinDomain;
+            _clientPolicy.WingetUseMaxConnections = _policy.WingetUseMaxConnections;
+            _clientPolicy.IsWingetUpdate = _policy.IsWingetUpdate;
             _clientPolicy.ImagePrepCleanup = _policy.ImagePrepCleanup;
             _clientPolicy.FrequencyMissedAction = _policy.MissedAction;
             _clientPolicy.LogLevel = _policy.LogLevel;
@@ -614,6 +624,61 @@ namespace Toems_Service.Workflows
             }
 
             _clientPolicy.WuModules.Add(clientWuModule);
+        }
+
+        private void WingetModule(EntityPolicyModules policyModule)
+        {
+            var clientWingetModule = new DtoClientWingetModule();
+            var wingetModule = new ServiceWingetModule().GetModule(policyModule.ModuleId);
+            clientWingetModule.Order = policyModule.Order;
+            clientWingetModule.Guid = wingetModule.Guid;
+            clientWingetModule.PackageId = wingetModule.PackageId;
+            clientWingetModule.PackageVersion = wingetModule.PackageVersion;
+            clientWingetModule.InstallLatest = wingetModule.InstallLatest;
+            clientWingetModule.KeepUpdated = wingetModule.KeepUpdated;
+            clientWingetModule.InstallType = wingetModule.InstallType;
+            clientWingetModule.Arguments = wingetModule.Arguments;
+            clientWingetModule.Override = wingetModule.Override;
+            clientWingetModule.DisplayName = wingetModule.Name;
+            clientWingetModule.Timeout = wingetModule.Timeout;
+            clientWingetModule.RedirectOutput = wingetModule.RedirectStdOut;
+            clientWingetModule.RedirectError = wingetModule.RedirectStdError;
+
+            if (wingetModule.ImpersonationId != -1)
+            {
+                var impersonationGuid = new ServiceImpersonationAccount().GetGuid(wingetModule.ImpersonationId);
+                if (!string.IsNullOrEmpty(impersonationGuid))
+                    clientWingetModule.RunAs = impersonationGuid;
+            }
+
+            if (policyModule.ConditionId != -1)
+            {
+                var conditionScript = new ServiceScriptModule().GetModule(policyModule.ConditionId);
+                if (conditionScript != null)
+                {
+                    clientWingetModule.ConditionFailedAction = policyModule.ConditionFailedAction;
+                    clientWingetModule.ConditionNextOrder = policyModule.ConditionNextModule;
+                    clientWingetModule.Condition = new DtoClientModuleCondition();
+                    clientWingetModule.Condition.Arguments = conditionScript.Arguments;
+                    clientWingetModule.Condition.DisplayName = conditionScript.Name;
+                    clientWingetModule.Condition.Guid = conditionScript.Guid;
+                    clientWingetModule.Condition.RedirectError = conditionScript.RedirectStdError;
+                    clientWingetModule.Condition.RedirectOutput = conditionScript.RedirectStdOut;
+                    if (conditionScript.ImpersonationId != -1)
+                    {
+                        var scriptImpersonationGuid = new ServiceImpersonationAccount().GetGuid(conditionScript.ImpersonationId);
+                        if (!string.IsNullOrEmpty(scriptImpersonationGuid))
+                            clientWingetModule.Condition.RunAs = scriptImpersonationGuid;
+                    }
+                    clientWingetModule.Condition.ScriptType = conditionScript.ScriptType;
+                    foreach (var successCode in conditionScript.SuccessCodes.Split(','))
+                        clientWingetModule.Condition.SuccessCodes.Add(successCode);
+                    clientWingetModule.Condition.Timeout = conditionScript.Timeout;
+                    clientWingetModule.Condition.WorkingDirectory = conditionScript.WorkingDirectory;
+                }
+
+            }
+            _clientPolicy.WingetModules.Add(clientWingetModule);
         }
     }
 }

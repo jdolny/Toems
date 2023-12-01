@@ -76,6 +76,8 @@ namespace Toems_FrontEnd.views.policies
             policy.WuType = (EnumPolicy.WuType)Enum.Parse(typeof(EnumPolicy.WuType), ddlWinUpdates.SelectedValue);
             policy.SkipServerResult = chkSkipResult.Checked;
             policy.RunApplicationMonitor = chkApplicationMonitor.Checked;
+            policy.WingetUseMaxConnections = chkWingetDownloadConnections.Checked;
+            policy.IsWingetUpdate = chkWingetUpdates.Checked;
             policy.AutoArchiveType = (EnumPolicy.AutoArchiveType)Enum.Parse(typeof(EnumPolicy.AutoArchiveType), ddlAutoArchive.SelectedValue);
             policy.PolicyComCondition = (EnumPolicy.PolicyComCondition)Enum.Parse(typeof(EnumPolicy.PolicyComCondition), ddlComCondition.SelectedValue);
             if (policy.AutoArchiveType == EnumPolicy.AutoArchiveType.AfterXdays)

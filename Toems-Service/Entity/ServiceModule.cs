@@ -121,6 +121,13 @@ namespace Toems_Service.Entity
                     moduleId = winPeModule.Id,
                     moduleType = EnumModule.ModuleType.WinPE
                 };
+            var wingetModule = _uow.WingetModuleRepository.GetFirstOrDefault(x => x.Guid == moduleGuid);
+            if (wingetModule != null)
+                return new DtoGuidTypeMapping()
+                {
+                    moduleId = wingetModule.Id,
+                    moduleType = EnumModule.ModuleType.Winget
+                };
             return null;
         }
 
@@ -300,6 +307,25 @@ namespace Toems_Service.Entity
                     }
 
                     break;
+                case EnumModule.ModuleType.Winget:
+                    var wingetModule = _uow.WingetModuleRepository.GetById(moduleId);
+                    if (wingetModule != null)
+                    {
+                        wingetModule.Archived = false;
+                        wingetModule.Name = wingetModule.Name.Split('#').First();
+                        wingetModule.ArchiveDateTime = null;
+                        if (_uow.WingetModuleRepository.Exists(x => x.Name.Equals(wingetModule.Name)))
+                            return new DtoActionResult()
+                            {
+                                ErrorMessage = "Could Not Restore Module.  A Module With Name " + wingetModule.Name +
+                                               " Already Exists"
+                            };
+                        _uow.WingetModuleRepository.Update(wingetModule, wingetModule.Id);
+                        _uow.Save();
+                        return new DtoActionResult() { Id = wingetModule.Id, Success = true };
+                    }
+
+                    break;
             }
 
             return new DtoActionResult()
@@ -428,6 +454,19 @@ namespace Toems_Service.Entity
                         sysprepModule.Name = sysprepModule.Name + "#" + DateTime.Now.ToString("MM-dd-yyyy_HH:mm");
                         sysprepModule.ArchiveDateTime = DateTime.Now;
                         _uow.SysprepModuleRepository.Update(sysprepModule, sysprepModule.Id);
+                        _uow.Save();
+                        return new DtoActionResult() { Id = moduleId, Success = true };
+                    }
+                    break;
+                case EnumModule.ModuleType.Winget:
+                    var wingetModule = _uow.WingetModuleRepository.GetById(moduleId);
+                    if (wingetModule != null)
+                    {
+                        if (wingetModule.Archived) return new DtoActionResult() { Id = moduleId, Success = true };
+                        wingetModule.Archived = true;
+                        wingetModule.Name = wingetModule.Name + "#" + DateTime.Now.ToString("MM-dd-yyyy_HH:mm");
+                        wingetModule.ArchiveDateTime = DateTime.Now;
+                        _uow.WingetModuleRepository.Update(wingetModule, wingetModule.Id);
                         _uow.Save();
                         return new DtoActionResult() { Id = moduleId, Success = true };
                     }

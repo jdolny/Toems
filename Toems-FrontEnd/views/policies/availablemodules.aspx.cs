@@ -22,6 +22,7 @@ namespace Toems_FrontEnd.views.policies
                 chkWu.Checked = true;
                 chkMessage.Checked = true;
                 chkWinPe.Checked = true;
+                chkWinget.Checked = true;
                 PopulateGrid();
             }
         }

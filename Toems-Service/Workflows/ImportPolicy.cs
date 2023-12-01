@@ -87,6 +87,13 @@ namespace Toems_Service.Workflows
                 return new DtoImportResult() { ErrorMessage = result.ErrorMessage };
             }
 
+            result = CreateWingets();
+            if (!result.Success)
+            {
+                _policyService.DeletePolicy(_policy.Id);
+                return new DtoImportResult() { ErrorMessage = result.ErrorMessage };
+            }
+
             _uow.Save();
 
             if(_export.Instructions.Contains("[skip-policy-create]"))
@@ -131,6 +138,8 @@ namespace Toems_Service.Workflows
             _policy.RunApplicationMonitor = _export.IsApplicationMonitor;
             _policy.RunInventory = _export.IsInventory;
             _policy.RunLoginTracker = _export.IsLoginTracker;
+            _policy.WingetUseMaxConnections = _export.WingetUseMaxConnections;
+            _policy.IsWingetUpdate = _export.IsWingetUpdate;
             _policy.SkipServerResult = _export.SkipServerResult;
             _policy.SubFrequency = _export.SubFrequency;
             _policy.Trigger = _export.Trigger;
@@ -668,6 +677,81 @@ namespace Toems_Service.Workflows
                     policyModule.ConditionId = conditionId;
                 else
                     policyModule.ConditionId = -1;
+                _uow.PolicyModulesRepository.Insert(policyModule);
+
+            }
+
+            return new DtoActionResult() { Success = true };
+        }
+
+        private DtoActionResult CreateWingets()
+        {
+            foreach (var wingetModule in _export.WingetModules)
+            {
+                if (_export.Instructions.Contains("[generate-module-guid]"))
+                {
+                    wingetModule.Guid = Guid.NewGuid().ToString();
+                }
+
+                if (_uow.WingetModuleRepository.Exists(h => h.Guid.Equals(wingetModule.Guid)))
+                {
+                    return new DtoActionResult() { ErrorMessage = "A Winget Module With This Guid Already Exists.  " + wingetModule.Guid };
+                }
+
+                var winget = new EntityWingetModule();
+                winget.Name = wingetModule.DisplayName;
+                winget.Description = "Added Via Policy Template " + _export.Name + "  On " + DateTime.Now +
+                                     "\r\n" + wingetModule.Description;
+                winget.Guid = wingetModule.Guid;
+                winget.Arguments = wingetModule.Arguments;
+                winget.Override = wingetModule.Override;
+                winget.PackageId = wingetModule.PackageIdentifier;
+                winget.PackageVersion = wingetModule.PackageVersion;
+                winget.KeepUpdated = wingetModule.KeepUpdated;
+                winget.InstallLatest = wingetModule.InstallLatest;
+                winget.RedirectStdError = wingetModule.RedirectError;
+                winget.RedirectStdOut = wingetModule.RedirectOutput;
+                winget.Timeout = wingetModule.Timeout;
+                winget.ImpersonationId = -1;
+
+            
+
+                if (_uow.WingetModuleRepository.Exists(h => h.Name.Equals(winget.Name)))
+                {
+                    for (var c = 1; c <= 100; c++)
+                    {
+                        if (c == 100)
+                            return new DtoActionResult() { ErrorMessage = "Could Not Determine A Winget Name" };
+
+                        var newName = winget.Name + "_" + c;
+                        if (!_uow.WingetModuleRepository.Exists(h => h.Name == newName))
+                        {
+                            winget.Name = newName;
+                            break;
+                        }
+                    }
+                }
+
+                var addResult = new ServiceWingetModule().AddModule(winget);
+                if (!addResult.Success) return addResult;
+
+                var policyModule = new EntityPolicyModules();
+                policyModule.Guid = winget.Guid;
+                policyModule.ModuleId = addResult.Id;
+                policyModule.ModuleType = EnumModule.ModuleType.Winget;
+                policyModule.Name = winget.Name;
+                policyModule.Order = wingetModule.Order;
+                policyModule.PolicyId = _policy.Id;
+                policyModule.ConditionFailedAction = wingetModule.ConditionFailedAction;
+                policyModule.ConditionNextModule = wingetModule.ConditionNextOrder;
+
+
+                var conditionId = CreateCondition(wingetModule.Condition);
+                if (conditionId != 0)
+                    policyModule.ConditionId = conditionId;
+                else
+                    policyModule.ConditionId = -1;
+
                 _uow.PolicyModulesRepository.Insert(policyModule);
 
             }

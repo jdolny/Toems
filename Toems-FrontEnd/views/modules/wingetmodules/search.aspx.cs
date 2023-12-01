@@ -56,11 +56,11 @@ namespace Toems_FrontEnd.views.modules.wingetmodules
         {
             PopulateGrid();
 
-            var listModules = (List<EntityCommandModule>)gvModules.DataSource;
+            var listModules = (List<EntityWingetModule>)gvModules.DataSource;
             switch (e.SortExpression)
             {
                 case "Name":
-                    listModules = GetSortDirection(e.SortExpression) == "Desc"
+                    listModules = GetSortDirection(e.SortExpression) == "Name"
                         ? listModules.OrderByDescending(h => h.Name).ToList()
                         : listModules.OrderBy(h => h.Name).ToList();
                     break;

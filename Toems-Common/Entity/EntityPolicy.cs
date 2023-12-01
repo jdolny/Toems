@@ -109,6 +109,12 @@ namespace Toems_Common.Entity
 
         [Column("domain_ou")]
         public string DomainOU { get; set; }
+
+        [Column("is_winget_update")]
+        public bool IsWingetUpdate { get; set; }
+
+        [Column("winget_use_max_connections")]
+        public bool WingetUseMaxConnections { get; set; }
     }
 
     [NotMapped]
@@ -120,6 +126,7 @@ namespace Toems_Common.Entity
         public List<EntityScriptModule> ScriptModules { get; set; }
         public List<EntityCommandModule> CommandModules { get; set; }
         public List<EntityWuModule> WuModules { get; set; }
+        public List<EntityWingetModule> WingetModules { get; set; }
         public List<EntityMessageModule> MessageModules { get; set; }
         public List<EntityWinPeModule> WinPeModules { get; set; }
         public int Order { get; set; }

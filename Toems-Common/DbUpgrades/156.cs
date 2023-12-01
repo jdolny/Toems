@@ -91,6 +91,13 @@ ADD COLUMN `minor` INT NULL DEFAULT 0 AFTER `major`,
 ADD COLUMN `build` INT NULL DEFAULT 0 AFTER `minor`,
 ADD COLUMN `revision` INT NULL DEFAULT 0 AFTER `build`;
 
+ALTER TABLE `winget_modules` 
+ADD COLUMN `winget_install_latest` TINYINT NULL DEFAULT 0 AFTER `impersonation_id`;
+
+ALTER TABLE `policies` 
+ADD COLUMN `is_winget_update` TINYINT NULL DEFAULT 0 AFTER `domain_ou`,
+ADD COLUMN `winget_use_max_connections` TINYINT NULL DEFAULT 0 AFTER `is_winget_update`;
+
 
 "
             ;

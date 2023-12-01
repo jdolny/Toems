@@ -21,6 +21,7 @@ namespace Toems_FrontEnd.views.computers
                 chkPrinter.Checked = true;
                 chkWu.Checked = true;
                 chkMessage.Checked = true;
+                chkWinget.Checked = true;
                 PopulateGrid();
             }
         }
