@@ -28,7 +28,6 @@ namespace Toems_Service.Workflows
         private string _configOutPath;
         private DtoIsoGenOptions _isoOptions;
         private EntityClientComServer _thisComServer;
-        private string _globalComputerArgs;
         private string _rootfsPath;
         private string _outputPath;
         private string _grubPath;
@@ -73,6 +72,8 @@ namespace Toems_Service.Workflows
         {
             var uow = new UnitOfWork();
             _isoOptions = isoOptions;
+            _isoOptions.arguments += $" display_sleep_time={ServiceSetting.GetSettingValue(SettingStrings.LieSleepTime)} ";
+            _isoOptions.arguments += $" {ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingArguments)} ";
             var mode = ServiceSetting.GetSettingValue(SettingStrings.PxeBootloader);
             var imageServers = new List<DtoClientComServers>();
             var defaultCluster = uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
@@ -112,7 +113,6 @@ namespace Toems_Service.Workflows
             else
                 _userToken = "";
 
-            _globalComputerArgs = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingArguments);
 
             _webPath = "\"";
             foreach (var imageServer in imageServers)

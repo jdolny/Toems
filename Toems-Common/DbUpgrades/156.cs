@@ -11,7 +11,7 @@ namespace Toems_Common.DbUpgrades
         public string Get()
         {
             return
-@"UPDATE `toems_version` SET `expected_app_version` = '1.5.6.0', `database_version` = '1.5.6.0', `expected_toecapi_version` = '1.5.6.0', `latest_client_version` = '1.5.4.0' WHERE (`toems_version_id` = '1');
+@"UPDATE `toems_version` SET `expected_app_version` = '1.5.6.0', `database_version` = '1.5.6.0', `expected_toecapi_version` = '1.5.6.0', `latest_client_version` = '1.5.6.0' WHERE (`toems_version_id` = '1');
 
 CREATE TABLE `winget_manifest_downloads` (
   `winget_manifest_download_id` INT NOT NULL AUTO_INCREMENT,

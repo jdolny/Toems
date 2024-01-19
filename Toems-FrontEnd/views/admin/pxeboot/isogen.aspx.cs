@@ -24,7 +24,7 @@ namespace Toems_FrontEnd.views.admin.pxeboot
                 ddlBootImage.DataBind();
                 ddlKernel.SelectedValue = SettingStrings.DefaultKernel64;
                 ddlBootImage.SelectedValue = SettingStrings.DefaultInit;
-                chkSecureBoot.Checked = true;
+                chkSecureBoot.Checked = false;
             }
         }
 

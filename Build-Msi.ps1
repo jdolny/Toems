@@ -5,9 +5,9 @@ $AdvInstallerPath = "C:\Program Files (x86)\Caphyon\Advanced Installer 15.1\bin\
 $Root = (Get-Item -Path $PSScriptRoot).Parent.FullName
 $DesktopPath = [Environment]::GetFolderPath("Desktop")
 $WixDir = "C:\Program Files (x86)\WiX Toolset v3.11\bin\"
-$Version = "1.5.5.0"
-$versionDisplay = "1.5.5"
-$ToecVersion = "1.5.4.0"
+$Version = "1.5.6.0"
+$versionDisplay = "1.5.6"
+$ToecVersion = "1.5.6.0"
 
 if ([string]::IsNullOrWhiteSpace($MSBuildPath) -or !(Test-Path -Path $MSBuildPath)) {
     Write-Host
