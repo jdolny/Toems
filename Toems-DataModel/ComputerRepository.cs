@@ -42,17 +42,22 @@ namespace Toems_DataModel
             if (string.IsNullOrEmpty(sortMode))
                 sortMode = "Last Checkin";
 
+
+            var customAttribSearch = "zzkjfjekrhwlhhw";
+            if(!string.IsNullOrEmpty(filter.SearchText))
+                customAttribSearch = filter.SearchText;
+
             if (sortMode.Equals("Last Checkin"))
             {
                 return (from c in _context.Computers
                                  from u in _context.UserLogins.Where(x => x.ComputerId == c.Id).OrderByDescending(x => x.Id).Take(1).DefaultIfEmpty()
                                  from b in _context.BiosInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
-                                 from cu in _context.CustomComputerAttributes.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
+                                 from cu in _context.CustomComputerAttributes.Where(x => x.ComputerId == c.Id && x.Value.Contains(customAttribSearch)).DefaultIfEmpty()
                                  where
                                  (
                                  b.SerialNumber.Contains(filter.SearchText) || u.UserName.Contains(filter.SearchText) ||
                                  c.Name.Contains(filter.SearchText) || c.Guid.Contains(filter.SearchText) || c.InstallationId.Contains(filter.SearchText) ||
-                                 c.UUID.Contains(filter.SearchText) || c.ImagingClientId.Contains(filter.SearchText) || c.LastIp.Contains(filter.SearchText) || cu.Value.Contains(filter.SearchText))
+                                 c.UUID.Contains(filter.SearchText) || c.ImagingClientId.Contains(filter.SearchText) || c.LastIp.Contains(filter.SearchText) || cu.Value.Contains(customAttribSearch))
 
                                  && c.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && c.ProvisionStatus != EnumProvisionStatus.Status.Archived
                                  && c.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved
@@ -83,12 +88,12 @@ namespace Toems_DataModel
                 return (from c in _context.Computers
                         from u in _context.UserLogins.Where(x => x.ComputerId == c.Id).OrderByDescending(x => x.Id).Take(1).DefaultIfEmpty()
                         from b in _context.BiosInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
-                        from cu in _context.CustomComputerAttributes.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
+                        from cu in _context.CustomComputerAttributes.Where(x => x.ComputerId == c.Id && x.Value.Contains(customAttribSearch)).DefaultIfEmpty()
                         where
                         (
                         b.SerialNumber.Contains(filter.SearchText) || u.UserName.Contains(filter.SearchText) ||
                         c.Name.Contains(filter.SearchText) || c.Guid.Contains(filter.SearchText) || c.InstallationId.Contains(filter.SearchText) ||
-                        c.UUID.Contains(filter.SearchText) || c.ImagingClientId.Contains(filter.SearchText) || c.LastIp.Contains(filter.SearchText) || cu.Value.Contains(filter.SearchText))
+                        c.UUID.Contains(filter.SearchText) || c.ImagingClientId.Contains(filter.SearchText) || c.LastIp.Contains(filter.SearchText) || cu.Value.Contains(customAttribSearch))
 
                         && c.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && c.ProvisionStatus != EnumProvisionStatus.Status.Archived
                         && c.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved
