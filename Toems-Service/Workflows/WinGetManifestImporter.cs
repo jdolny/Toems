@@ -13,13 +13,15 @@ using System.IO.Compression;
 using log4net;
 using Toems_DataModel;
 using YamlDotNet.Core;
+using Toems_Common;
+using System.Diagnostics;
 
 namespace Toems_Service.Workflows
 {
     public class WinGetManifestImporter
     {
         private WebClient _webClient;
-        private const string _ManifestDownloadUrl = "https://github.com/microsoft/winget-pkgs/archive/refs/heads/master.zip";
+        private string _manifestDownloadUrl;
         private EntityWingetManifestDownload _manifestDownload;
         private string _basePath;
         private ServiceManifestDownload _serviceManifestDownload;
@@ -35,7 +37,8 @@ namespace Toems_Service.Workflows
         public void Run(string path = null)
         {
             Logger.Info("Starting Winget Manifest Import Process");
-
+            _manifestDownloadUrl = ServiceSetting.GetSettingValue(SettingStrings.WingetPackageSource);
+            Logger.Debug("Manifest package url set to: " +  _manifestDownloadUrl);
             if (path == null)
                 _basePath = HttpContext.Current.Server.MapPath("~");
             _basePath = Path.Combine(path, "private", "winget_manifests");
@@ -122,14 +125,14 @@ namespace Toems_Service.Workflows
         {
             Logger.Info("Downloading Updated Manifests");
 
-            _manifestDownload.Url = _ManifestDownloadUrl;
+            _manifestDownload.Url = _manifestDownloadUrl;
             _manifestDownload.Status = EnumManifestImport.ImportStatus.Downloading;
             _serviceManifestDownload.Add(_manifestDownload);
             try
             {
                 using (_webClient = new WebClient())
                 {
-                    _webClient.DownloadFile(new Uri(_ManifestDownloadUrl), Path.Combine(_basePath, "master.zip"));
+                    _webClient.DownloadFile(new Uri(_manifestDownloadUrl), Path.Combine(_basePath, "master.zip"));
                 }
                 return true;
             }
