@@ -15,7 +15,11 @@
                  <span class="nav-text">Categories</span>
              </a>
          </li>
-    
+           <li id="attributes" runat="server" clientidmode="Static">
+             <a href="<%= ResolveUrl("~/views/global/attributes/search.aspx?level=2") %>">
+                 <span class="nav-text">Custom Attributes</span>
+             </a>
+         </li>
        
         </ul>
 </asp:Content>

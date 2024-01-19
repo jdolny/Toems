@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/assets/attributes/attributes.master" AutoEventWireup="true" CodeBehind="create.aspx.cs" Inherits="Toems_FrontEnd.views.global.attributes.create" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/global/attributes/attributes.master" AutoEventWireup="true" CodeBehind="create.aspx.cs" Inherits="Toems_FrontEnd.views.global.attributes.create" %>
 <asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub2">
     <li>New</li>
 </asp:Content>
@@ -35,13 +35,7 @@
         <asp:DropDownList ID="ddlTextMode" runat="server" CssClass="ddlist" ClientIDMode="Static"></asp:DropDownList>
     </div>
     <br class="clear"/>
-    <div class="size-4 column">
-        Usage Type:
-    </div>
-    <div class="size-5 column">
-        <asp:DropDownList ID="ddlUsageType" runat="server" CssClass="ddlist" ClientIDMode="Static">
-        </asp:DropDownList>
-    </div>
+   
        <div class="size-4 column">
         Available To Imaging Client:
     </div>

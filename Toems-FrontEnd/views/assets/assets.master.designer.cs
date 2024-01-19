@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.assets {
-    
-    
-    public partial class assets {
-        
+namespace Toems_FrontEnd.views.assets
+{
+
+
+    public partial class assets
+    {
+
         /// <summary>
         /// TopBreadCrumbSub1 control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.assets {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder TopBreadCrumbSub1;
-        
+
         /// <summary>
         /// SubNavTitle_Sub1 control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.assets {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder SubNavTitle_Sub1;
-        
+
         /// <summary>
         /// Level1 control.
         /// </summary>
@@ -38,16 +40,7 @@ namespace Toems_FrontEnd.views.assets {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl Level1;
-        
-        /// <summary>
-        /// attributes control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl attributes;
-        
+
         /// <summary>
         /// Level2 control.
         /// </summary>
@@ -56,7 +49,7 @@ namespace Toems_FrontEnd.views.assets {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder Level2;
-        
+
         /// <summary>
         /// DropDownActionsSub control.
         /// </summary>
@@ -65,7 +58,7 @@ namespace Toems_FrontEnd.views.assets {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder DropDownActionsSub;
-        
+
         /// <summary>
         /// SubContent control.
         /// </summary>
@@ -74,7 +67,7 @@ namespace Toems_FrontEnd.views.assets {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder SubContent;
-        
+
         /// <summary>
         /// subHelp control.
         /// </summary>

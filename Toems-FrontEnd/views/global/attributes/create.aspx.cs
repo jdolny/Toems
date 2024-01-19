@@ -9,14 +9,13 @@ using Toems_Common.Enum;
 
 namespace Toems_FrontEnd.views.global.attributes
 {
-    public partial class create : BasePages.Assets
+    public partial class create : BasePages.Global
     {
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
                 PopulateTextMode(ddlTextMode);
-                PopulateCustomAttributeUsageType(ddlUsageType);
             }
         }
 
@@ -26,7 +25,7 @@ namespace Toems_FrontEnd.views.global.attributes
             ca.Name = txtName.Text;
             ca.Description = txtDescription.Text;
             ca.TextMode = (EnumCustomAttribute.TextMode)Enum.Parse(typeof(EnumCustomAttribute.TextMode), ddlTextMode.SelectedValue);
-            ca.UsageType = Convert.ToInt32(ddlUsageType.SelectedValue);
+            ca.UsageType = -3;
             ca.ClientImagingAvailable = chkImaging.Checked;
             var result = Call.CustomAttributeApi.Post(ca);
             if (!result.Success)
@@ -34,7 +33,7 @@ namespace Toems_FrontEnd.views.global.attributes
             else
             {
                 EndUserMessage = "Successfully Created Custom Attribute";
-                Response.Redirect("~/views/assets/attributes/edit.aspx?level=2&attributeId=" + result.Id);
+                Response.Redirect("~/views/global/attributes/edit.aspx?level=2&attributeId=" + result.Id);
             }
         }
     }

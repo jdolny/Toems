@@ -12,7 +12,7 @@ namespace Toems_FrontEnd.BasePages
         public EntityCustomAssetType AssetType { get; set; }
         public EntityAsset Asset { get; set; }
         public EntityAssetGroup AssetGroup { get; set; }
-        public EntityCustomAttribute CustomAttribute { get; set; }
+        
 
         protected override void OnInit(EventArgs e)
         {
@@ -26,26 +26,12 @@ namespace Toems_FrontEnd.BasePages
             AssetGroup = !string.IsNullOrEmpty(Request.QueryString["assetGroupId"])
                 ? Call.AssetGroupApi.Get(Convert.ToInt32(Request.QueryString["assetGroupId"]))
                 : null;
-            CustomAttribute = !string.IsNullOrEmpty(Request["attributeId"])
-              ? Call.CustomAttributeApi.Get(Convert.ToInt32(Request.QueryString["attributeId"]))
-              : null;
+           
 
 
         }
 
-        protected void PopulateTextMode(DropDownList ddl)
-        {
-            ddl.DataSource = Enum.GetNames(typeof(EnumCustomAttribute.TextMode));
-            ddl.DataBind();
-        }
-
-        protected void PopulateCustomAttributeUsageType(DropDownList ddlUsageType)
-        {
-            ddlUsageType.DataSource = Call.CustomAssetTypeApi.Get().Select(d => new { d.Id, d.Name });
-            ddlUsageType.DataValueField = "Id";
-            ddlUsageType.DataTextField = "Name";
-            ddlUsageType.DataBind();
-        }
+       
 
         protected void PopulateAssetTypes(DropDownList ddlAssetTypes)
         {

@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.global.attributes {
-    
-    
-    public partial class create {
-        
+namespace Toems_FrontEnd.views.global.attributes
+{
+
+
+    public partial class create
+    {
+
         /// <summary>
         /// buttonAdd control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.global.attributes {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton buttonAdd;
-        
+
         /// <summary>
         /// txtName control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.global.attributes {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtName;
-        
+
         /// <summary>
         /// txtDescription control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.global.attributes {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtDescription;
-        
+
         /// <summary>
         /// ddlTextMode control.
         /// </summary>
@@ -47,16 +49,7 @@ namespace Toems_FrontEnd.views.global.attributes {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlTextMode;
-        
-        /// <summary>
-        /// ddlUsageType control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlUsageType;
-        
+
         /// <summary>
         /// chkImaging control.
         /// </summary>

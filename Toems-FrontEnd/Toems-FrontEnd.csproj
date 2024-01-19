@@ -255,9 +255,9 @@
     <Content Include="views\computers\updates.aspx" />
     <Content Include="views\computers\usages.aspx" />
     <Content Include="views\computers\userhistory.aspx" />
-    <Content Include="views\assets\attributes\create.aspx" />
-    <Content Include="views\assets\attributes\edit.aspx" />
-    <Content Include="views\assets\attributes\search.aspx" />
+    <Content Include="views\global\attributes\create.aspx" />
+    <Content Include="views\global\attributes\edit.aspx" />
+    <Content Include="views\global\attributes\search.aspx" />
     <Content Include="dbupdate.aspx" />
     <Content Include="views\dashboard\keepalive.aspx" />
     <Content Include="views\global\categories\create.aspx" />
@@ -379,6 +379,7 @@
     <Content Include="views\policies\availablemodules.aspx" />
     <Content Include="views\policies\categories.aspx" />
     <Content Include="views\policies\clienthistory.aspx" />
+    <Content Include="views\policies\conditions.aspx" />
     <Content Include="views\policies\create.aspx" />
     <Content Include="views\policies\export.aspx" />
     <Content Include="views\policies\general.aspx" />
@@ -389,7 +390,9 @@
     <Content Include="views\policies\search.aspx" />
     <Content Include="views\modules\softwaremodules\create.aspx" />
     <Content Include="views\modules\softwaremodules\search.aspx" />
+    <Content Include="views\policies\specialties.aspx" />
     <Content Include="views\policies\status.aspx" />
+    <Content Include="views\policies\triggers.aspx" />
     <Content Include="views\policies\usages.aspx" />
     <Content Include="views\reports\asset\chooser.aspx" />
     <Content Include="views\reports\asset\custom.aspx" />
@@ -453,7 +456,7 @@
     <Content Include="views\modules\wumodules\wumodule.master" />
     <Content Include="views\global\categories\categories.master" />
     <Content Include="views\assets\assets.master" />
-    <Content Include="views\assets\attributes\attributes.master" />
+    <Content Include="views\global\attributes\attributes.master" />
     <Content Include="views\assets\assettypes\assettypes.master" />
     <Content Include="views\assets\customassets\customassets.master" />
     <Content Include="views\assets\assetgroups\assetgroups.master" />
@@ -1907,32 +1910,32 @@
     <Compile Include="default.aspx.designer.cs">
       <DependentUpon>default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="views\assets\attributes\attributes.master.cs">
+    <Compile Include="views\global\attributes\attributes.master.cs">
       <DependentUpon>attributes.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="views\assets\attributes\attributes.master.designer.cs">
+    <Compile Include="views\global\attributes\attributes.master.designer.cs">
       <DependentUpon>attributes.master</DependentUpon>
     </Compile>
-    <Compile Include="views\assets\attributes\create.aspx.cs">
+    <Compile Include="views\global\attributes\create.aspx.cs">
       <DependentUpon>create.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="views\assets\attributes\create.aspx.designer.cs">
+    <Compile Include="views\global\attributes\create.aspx.designer.cs">
       <DependentUpon>create.aspx</DependentUpon>
     </Compile>
-    <Compile Include="views\assets\attributes\edit.aspx.cs">
+    <Compile Include="views\global\attributes\edit.aspx.cs">
       <DependentUpon>edit.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="views\assets\attributes\edit.aspx.designer.cs">
+    <Compile Include="views\global\attributes\edit.aspx.designer.cs">
       <DependentUpon>edit.aspx</DependentUpon>
     </Compile>
-    <Compile Include="views\assets\attributes\search.aspx.cs">
+    <Compile Include="views\global\attributes\search.aspx.cs">
       <DependentUpon>search.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="views\assets\attributes\search.aspx.designer.cs">
+    <Compile Include="views\global\attributes\search.aspx.designer.cs">
       <DependentUpon>search.aspx</DependentUpon>
     </Compile>
     <Compile Include="dbupdate.aspx.cs">
@@ -2901,6 +2904,13 @@
     <Compile Include="views\policies\clienthistory.aspx.designer.cs">
       <DependentUpon>clienthistory.aspx</DependentUpon>
     </Compile>
+    <Compile Include="views\policies\conditions.aspx.cs">
+      <DependentUpon>conditions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\policies\conditions.aspx.designer.cs">
+      <DependentUpon>conditions.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\policies\create.aspx.cs">
       <DependentUpon>create.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -2985,12 +2995,26 @@
     <Compile Include="views\modules\softwaremodules\softwaremodule.master.designer.cs">
       <DependentUpon>softwaremodule.master</DependentUpon>
     </Compile>
+    <Compile Include="views\policies\specialties.aspx.cs">
+      <DependentUpon>specialties.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\policies\specialties.aspx.designer.cs">
+      <DependentUpon>specialties.aspx</DependentUpon>
+    </Compile>
     <Compile Include="views\policies\status.aspx.cs">
       <DependentUpon>status.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="views\policies\status.aspx.designer.cs">
       <DependentUpon>status.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="views\policies\triggers.aspx.cs">
+      <DependentUpon>triggers.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="views\policies\triggers.aspx.designer.cs">
+      <DependentUpon>triggers.aspx</DependentUpon>
     </Compile>
     <Compile Include="views\policies\usages.aspx.cs">
       <DependentUpon>usages.aspx</DependentUpon>

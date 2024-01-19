@@ -8,14 +8,13 @@ using Toems_Common.Enum;
 
 namespace Toems_FrontEnd.views.global.attributes
 {
-    public partial class edit : BasePages.Assets
+    public partial class edit : BasePages.Global
     {
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
                 PopulateTextMode(ddlTextMode);
-                PopulateCustomAttributeUsageType(ddlUsageType);
                 PopulateForm();
             }
         }
@@ -24,7 +23,6 @@ namespace Toems_FrontEnd.views.global.attributes
         {
             txtName.Text = CustomAttribute.Name;
             txtDescription.Text = CustomAttribute.Description;
-            ddlUsageType.Text = CustomAttribute.UsageType.ToString();
             ddlTextMode.SelectedValue = CustomAttribute.TextMode.ToString();
             chkImaging.Checked = CustomAttribute.ClientImagingAvailable;
         }
@@ -34,7 +32,6 @@ namespace Toems_FrontEnd.views.global.attributes
             CustomAttribute.Name = txtName.Text;
             CustomAttribute.Description = txtDescription.Text;
             CustomAttribute.TextMode = (EnumCustomAttribute.TextMode)Enum.Parse(typeof(EnumCustomAttribute.TextMode), ddlTextMode.SelectedValue);
-            CustomAttribute.UsageType = Convert.ToInt32(ddlUsageType.SelectedValue);
             CustomAttribute.ClientImagingAvailable = chkImaging.Checked;
 
 

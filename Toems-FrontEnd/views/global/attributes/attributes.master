@@ -1,7 +1,7 @@
-﻿<%@ Master Language="C#" MasterPageFile="~/views/assets/assets.master" AutoEventWireup="true" CodeBehind="attributes.master.cs" Inherits="Toems_FrontEnd.views.global.attributes.attributes" %>
+﻿<%@ Master Language="C#" MasterPageFile="~/views/global/global.master" AutoEventWireup="true" CodeBehind="attributes.master.cs" Inherits="Toems_FrontEnd.views.global.attributes.attributes" %>
 <asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub1">
      <li >
-        <a href="<%= ResolveUrl("~/views/assets/attributes/search.aspx?level=2") %>">Custom Attributes</a>
+        <a href="<%= ResolveUrl("~/views/global/attributes/search.aspx") %>">Custom Attributes</a>
     </li>
     <asp:ContentPlaceHolder runat="server" ID="TopBreadCrumbSub2">
     </asp:ContentPlaceHolder>
@@ -15,38 +15,37 @@
    
     <asp:ContentPlaceHolder runat="server" ID="DropDownActionsSub2">
     </asp:ContentPlaceHolder>
-    <li><asp:LinkButton ID="btnDelete" runat="server" OnClick="btnDelete_OnClick" Text="Delete Attribute"></asp:LinkButton></li>
+    <li><asp:LinkButton ID="btnDelete" runat="server" OnClick="btnDelete_OnClick" Text="Delete Custom Attribute"></asp:LinkButton></li>
 </asp:Content>
 
-
-<asp:Content ID="Content2" ContentPlaceHolderID="Level2" Runat="Server">
-    <div id="divLevel2" runat="server">
+<asp:Content runat="server" ID="Content4" ContentPlaceHolderID="SubNavLevel1">
+    <div id="Level1" runat="server">
         <ul class="ul-secondary-nav">
             <li id="search">
-                <a href="<%= ResolveUrl("~/views/assets/attributes/search.aspx") %>?level=2">
+                <a href="<%= ResolveUrl("~/views/global/attributes/search.aspx") %>?level=2">
                     <span class="sub-nav-text">Search</span></a>
             </li>
             <li id="create">
-                <a href="<%= ResolveUrl("~/views/assets/attributes/create.aspx") %>?level=2">
+                <a href="<%= ResolveUrl("~/views/global/attributes/create.aspx") %>?level=2">
                     <span class="sub-nav-text">New</span></a>
             </li>
         </ul>
-    </div>
-    
-    <div id="divLevel3" runat="server">
+        </div>
+    <div id="Level2" runat="server">
         <ul class="ul-secondary-nav">
              <li id="general">
-                <a href="<%= ResolveUrl("~/views/assets/attributes/edit.aspx") %>?level=2&attributeId=<%=CustomAttribute.Id %>">
+                <a href="<%= ResolveUrl("~/views/global/attributes/edit.aspx") %>?level=2&attributeId=<%=CustomAttribute.Id %>">
                     <span class="sub-nav-text">General</span></a>
             </li>
+               
         </ul>
+
     </div>
 </asp:Content>
 
-
 <asp:Content ID="Content3" ContentPlaceHolderID="SubContent" Runat="Server">
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#attributes').addClass("nav-current");
         });
     </script>

@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.global {
-    
-    
-    public partial class chooser {
-        
+namespace Toems_FrontEnd.views.global
+{
+
+
+    public partial class chooser
+    {
+
         /// <summary>
         /// schedules control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.global {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl schedules;
-        
+
         /// <summary>
         /// categories control.
         /// </summary>
@@ -29,5 +31,14 @@ namespace Toems_FrontEnd.views.global {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl categories;
+
+        /// <summary>
+        /// attributes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl attributes;
     }
 }

@@ -28,7 +28,10 @@ namespace Toems_FrontEnd.BasePages
             Category = !string.IsNullOrEmpty(Request["categoryId"])
                 ? Call.CategoryApi.Get(Convert.ToInt32(Request.QueryString["categoryId"]))
                 : null;
-          
+            CustomAttribute = !string.IsNullOrEmpty(Request["attributeId"])
+             ? Call.CustomAttributeApi.Get(Convert.ToInt32(Request.QueryString["attributeId"]))
+             : null;
+
         }
 
         protected void PopulateScheduleHour(DropDownList ddl)
@@ -68,9 +71,21 @@ namespace Toems_FrontEnd.BasePages
             ddl.Items.Insert(3, new ListItem("45", "45"));
         }
 
-     
+        protected void PopulateTextMode(DropDownList ddl)
+        {
+            ddl.DataSource = Enum.GetNames(typeof(EnumCustomAttribute.TextMode));
+            ddl.DataBind();
+        }
 
-      
+        protected void PopulateCustomAttributeUsageType(DropDownList ddlUsageType)
+        {
+            ddlUsageType.DataSource = Call.CustomAssetTypeApi.Get().Select(d => new { d.Id, d.Name });
+            ddlUsageType.DataValueField = "Id";
+            ddlUsageType.DataTextField = "Name";
+            ddlUsageType.DataBind();
+        }
+
+
 
     }
 }

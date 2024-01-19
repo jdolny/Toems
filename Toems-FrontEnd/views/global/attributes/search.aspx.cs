@@ -8,7 +8,7 @@ using Toems_Common.Dto;
 
 namespace Toems_FrontEnd.views.global.attributes
 {
-    public partial class search : BasePages.Assets
+    public partial class search : BasePages.Global
     {
         protected void ButtonConfirmDelete_Click(object sender, EventArgs e)
         {

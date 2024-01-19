@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/assets/attributes/attributes.master" AutoEventWireup="true" CodeBehind="search.aspx.cs" Inherits="Toems_FrontEnd.views.global.attributes.search" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/views/global/attributes/attributes.master" AutoEventWireup="true" CodeBehind="search.aspx.cs" Inherits="Toems_FrontEnd.views.global.attributes.search" %>
 <asp:Content runat="server" ContentPlaceHolderID="TopBreadCrumbSub2">
     <li>Search</li>
 </asp:Content>
@@ -42,7 +42,7 @@ Custom Attributes
                     <asp:CheckBox ID="chkSelector" runat="server"/>
                 </ItemTemplate>
             </asp:TemplateField>
-            <asp:HyperLinkField DataNavigateUrlFields="AttributeId" DataNavigateUrlFormatString="~/views/assets/attributes/edit.aspx?level=2&attributeId={0}" Text="View" ItemStyle-CssClass="chkboxwidth"/>
+            <asp:HyperLinkField DataNavigateUrlFields="AttributeId" DataNavigateUrlFormatString="~/views/global/attributes/edit.aspx?level=2&attributeId={0}" Text="View" ItemStyle-CssClass="chkboxwidth"/>
             <asp:BoundField DataField="AttributeId" HeaderText="Id" SortExpression="Id" Visible="False"/>
             <asp:BoundField DataField="Name" HeaderText="Name" ItemStyle-CssClass="width_200"></asp:BoundField>
             <asp:BoundField DataField="UsageType" HeaderText="Usage Type" ItemStyle-CssClass="width_200"></asp:BoundField>

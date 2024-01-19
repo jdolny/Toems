@@ -14,22 +14,25 @@ namespace Toems_FrontEnd.views.global.attributes
     public partial class attributes : BasePages.MasterBaseMaster
     {
         public EntityCustomAttribute CustomAttribute { get; set; }
-        private BasePages.Assets AssetsBasePage { get; set; }
+        private BasePages.Global GlobalBasePage { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            AssetsBasePage = Page as BasePages.Assets;
-            AssetsBasePage.RequiresAuthorization(AuthorizationStrings.CustomAttributeRead);
-            CustomAttribute = AssetsBasePage.CustomAttribute;
-            if (CustomAttribute == null)
+            GlobalBasePage = Page as BasePages.Global;
+            GlobalBasePage.RequiresAuthorization(AuthorizationStrings.CustomAttributeRead);
+            CustomAttribute = GlobalBasePage.CustomAttribute;
+            if (CustomAttribute != null)
             {
-                divLevel3.Visible = false;
-                btnDelete.Visible = false;
+                Level1.Visible = false;
+                Level2.Visible = true;
+                btnDelete.Visible = true;
+
             }
             else
             {
-                divLevel2.Visible = false;
-                btnDelete.Visible = true;
+                Level1.Visible = true;
+                Level2.Visible = false;
+                btnDelete.Visible = false;
             }
 
         }
@@ -42,12 +45,12 @@ namespace Toems_FrontEnd.views.global.attributes
         protected void buttonConfirm_Click(object sender, EventArgs e)
         {
             var result = new DtoActionResult();
-            result = AssetsBasePage.Call.CustomAttributeApi.Delete(CustomAttribute.Id);
+            result = GlobalBasePage.Call.CustomAttributeApi.Delete(CustomAttribute.Id);
 
             if (result.Success)
             {
                 PageBaseMaster.EndUserMessage = "Successfully Deleted Custom Attribute: " + CustomAttribute.Name;
-                Response.Redirect("~/views/assets/attributes/search.aspx");
+                Response.Redirect("~/views/global/attributes/search.aspx");
             }
             else
                 PageBaseMaster.EndUserMessage = result.ErrorMessage;
