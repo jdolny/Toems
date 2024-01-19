@@ -60,6 +60,15 @@ namespace Toems_FrontEnd.views.admin
         protected global::System.Web.UI.WebControls.TextBox txtImagingTimeout;
 
         /// <summary>
+        /// txtImagingSleep control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtImagingSleep;
+
+        /// <summary>
         /// ddlRegistration control.
         /// </summary>
         /// <remarks>

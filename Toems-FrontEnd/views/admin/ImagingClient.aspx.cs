@@ -78,6 +78,13 @@ namespace Toems_FrontEnd.views.admin
                 Value = ddlWieImageType.Text,
                 Id = Call.SettingApi.GetSetting(SettingStrings.DefaultWieImageType).Id
                     },
+              new EntitySetting
+            {
+                Name = SettingStrings.LieSleepTime,
+                Value = txtImagingSleep.Text,
+                Id = Call.SettingApi.GetSetting(SettingStrings.LieSleepTime).Id
+                    },
+
             };
 
             EndUserMessage = Call.SettingApi.UpdateSettings(listSettings)
@@ -98,6 +105,7 @@ namespace Toems_FrontEnd.views.admin
             ddlRegistration.Text = GetSetting(SettingStrings.RegistrationEnabled);
             ddlKeepNamePrompt.Text = GetSetting(SettingStrings.DisabledRegNamePrompt);
             ddlWieImageType.Text = GetSetting(SettingStrings.DefaultWieImageType);
+            txtImagingSleep.Text = GetSetting(SettingStrings.LieSleepTime);
             if (GetSetting(SettingStrings.ImageDirectSmb) == "True")
                 chkDirectSMB.Checked = true;
         }

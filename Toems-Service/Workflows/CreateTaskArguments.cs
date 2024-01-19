@@ -88,6 +88,7 @@ namespace Toems_Service.Workflows
             AppendString("sysprep_tags=" + sysprepTags);
             AppendString("image_type=" + _imageProfile.Image.Type);
             AppendString("set_bootmgr=" + _imageProfile.SetBootmgrFirst);
+            AppendString("display_sleep_time=" + ServiceSetting.GetSettingValue(SettingStrings.LieSleepTime));
             if (Convert.ToBoolean(_imageProfile.WebCancel))
                 AppendString("web_cancel=true");
             AppendString("task_completed_action=" + "\"" + _imageProfile.TaskCompletedAction + "\"");

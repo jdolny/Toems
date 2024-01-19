@@ -194,6 +194,10 @@
 
         public const string DefaultWieImageType = "Default WIE Image Type";
 
+        public const string WingetPackageSource = "Winget Package Source";
+
+        public const string LieSleepTime = "LIE Sleep Time";
+
         public const int GlobalVersion = 155;
 
     }

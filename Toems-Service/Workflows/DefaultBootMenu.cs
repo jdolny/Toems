@@ -72,7 +72,7 @@ namespace Toems_Service.Workflows
 
             _bootEntryServices = new ServiceCustomBootMenu();
             _globalComputerArgs = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingArguments);
-
+            _globalComputerArgs += $" display_sleep_time={ServiceSetting.GetSettingValue(SettingStrings.LieSleepTime)} ";
             var defaultCluster = new UnitOfWork().ComServerClusterRepository.Get(x => x.IsDefault).FirstOrDefault();
             var defaultImagingServers = new UnitOfWork().ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
 

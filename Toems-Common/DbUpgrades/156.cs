@@ -98,6 +98,8 @@ ALTER TABLE `policies`
 ADD COLUMN `is_winget_update` TINYINT NULL DEFAULT 0 AFTER `domain_ou`,
 ADD COLUMN `winget_use_max_connections` TINYINT NULL DEFAULT 0 AFTER `is_winget_update`;
 
+INSERT INTO `admin_settings` (`admin_setting_name`, `admin_setting_value`) VALUES ('Winget Package Source', 'https://github.com/microsoft/winget-pkgs/archive/refs/heads/master.zip');
+INSERT INTO `admin_settings` (`admin_setting_name`, `admin_setting_value`) VALUES ('LIE Sleep Time', '5');
 
 "
             ;
