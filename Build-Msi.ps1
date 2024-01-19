@@ -37,6 +37,7 @@ del msisrc.zip -Force
 
 mkdir "Toems Application\Program Files\Toems-API\private\logs"
 mkdir "Toems Application\Program Files\Toems-API\private\agent"
+mkdir "Toems Application\Program Files\Toems-API\private\winget_manifests"
 mkdir "Toems Application\Program Files\Toems-API\private\agent\RemoteInstaller"
 mkdir "Toems Application\Program Files\Toems-UI\private\logs"
 mkdir "Toems Client API\Program Files\Toec-API\private\logs"
