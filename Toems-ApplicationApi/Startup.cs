@@ -96,7 +96,10 @@ namespace Toems_ApplicationApi
                 int timeoutInt = 0;
                 bool result = int.TryParse(webTimeout, out timeoutInt);
                 if (result)
+                {
+                    if (timeoutInt == 0) timeoutInt = 99999;
                     OAuthServerOptions.AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(timeoutInt);
+                }
             }
             // Token Generation
             app.UseOAuthAuthorizationServer(OAuthServerOptions);
