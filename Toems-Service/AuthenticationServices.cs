@@ -139,7 +139,7 @@ namespace Toems_Service
 
 
             //MFA
-            if (ServiceSetting.GetSettingValue(SettingStrings.EnableMfa) == "1" && user.MfaSecret == null
+            if (ServiceSetting.GetSettingValue(SettingStrings.EnableMfa) == "1" && string.IsNullOrEmpty(user.MfaSecret)
                 && (user.EnableWebMfa || ServiceSetting.GetSettingValue(SettingStrings.ForceMfa) == "1"
                 || user.EnableImagingMfa || ServiceSetting.GetSettingValue(SettingStrings.ForceImagingMfa) == "1"))
             {
@@ -154,7 +154,7 @@ namespace Toems_Service
             }
             else
             {
-                if (ServiceSetting.GetSettingValue(SettingStrings.EnableMfa) == "1" && user.MfaSecret != null
+                if (ServiceSetting.GetSettingValue(SettingStrings.EnableMfa) == "1" && !string.IsNullOrEmpty(user.MfaSecret)
                    && loginType.Equals("Console") && (user.EnableImagingMfa || ServiceSetting.GetSettingValue(SettingStrings.ForceImagingMfa) == "1"))
                 {
                     var code = password.Substring(password.Length - 6);

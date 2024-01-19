@@ -260,7 +260,8 @@ namespace Toems_ApiCalls
                 _log.Error("Could Not Execute API Request.  The Request was empty." + new TClass().GetType());
                 return default(TClass);
             }
-            request.AddHeader("Authorization", "bearer " + _token);
+            if(_token != null)
+                request.AddHeader("Authorization", "bearer " + _token);
 
             var response = _client.Execute<TClass>(request);
 

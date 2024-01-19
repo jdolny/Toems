@@ -40,13 +40,6 @@ namespace Toems_FrontEnd.views.dashboard
             if (Request.QueryString["access"] == "denied")
             {
                 lblDenied.Text = "You Are Not Authorized For That Action<br><br>";
-                var tokenExpired = new APICall().SettingApi.CheckExpiredToken();
-                if (tokenExpired)
-                {
-                    HttpContext.Current.Session.Abandon();
-                    FormsAuthentication.SignOut();
-                    Response.Redirect("~/?session=expired", true);
-                }
             }
 
           

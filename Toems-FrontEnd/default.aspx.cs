@@ -76,13 +76,19 @@ namespace Toems_FrontEnd
         }
         protected void Page_Load(object sender, EventArgs e)
         {
+            var mfaEnabled = string.Empty;
             if (!IsPostBack)
             {
                 ClearSession();
-
+                SetBaseUrlCookie();
                 if (Request.QueryString["session"] == "expired")
                 {
                     SessionExpired.Visible = true;
+                    mfaEnabled = new APICall().SettingApi.CheckMfaEnabled();
+                    if (mfaEnabled.Equals("1"))
+                    {
+                        (WebLogin.FindControl("VerifyCode") as TextBox).Visible = true; ;
+                    }
                     return;
                 }
             }
@@ -91,10 +97,10 @@ namespace Toems_FrontEnd
                 SessionExpired.Visible = false;
             }
 
-            //check for db upgrades here
+            
             CheckDbUpdate();
 
-            var mfaEnabled = new APICall().SettingApi.CheckMfaEnabled();
+            mfaEnabled = new APICall().SettingApi.CheckMfaEnabled();
             if(mfaEnabled.Equals("1"))
             {
                 (WebLogin.FindControl("VerifyCode") as TextBox).Visible = true; ;
@@ -110,29 +116,8 @@ namespace Toems_FrontEnd
 
         protected void WebLogin_Authenticate(object sender, AuthenticateEventArgs e)
         {
-            HttpCookie baseUrlCookie = Request.Cookies["toemsBaseUrl"];
-            if (baseUrlCookie == null)
-            {
-                var applicationApiUrl = ConfigurationManager.AppSettings["ApplicationApiUrl"];
-                if (!applicationApiUrl.EndsWith("/"))
-                    applicationApiUrl = applicationApiUrl + "/";
-                baseUrlCookie = new HttpCookie("toemsBaseUrl")
-            {
-                Value = applicationApiUrl,
-                HttpOnly = true
-            };
-                Response.Cookies.Add(baseUrlCookie);
-                Request.Cookies.Add(baseUrlCookie);
-            }
-            else
-            {
-                var applicationApiUrl = ConfigurationManager.AppSettings["ApplicationApiUrl"];
-                if (!applicationApiUrl.EndsWith("/"))
-                    applicationApiUrl = applicationApiUrl + "/";
-                baseUrlCookie.Value = applicationApiUrl;
-                Response.Cookies.Add(baseUrlCookie);
-                Request.Cookies.Add(baseUrlCookie);
-            }
+            e.Authenticated = false;
+           
 
             //Get token
             var verificationCode = WebLogin.FindControl("VerifyCode") as TextBox;
@@ -168,7 +153,7 @@ namespace Toems_FrontEnd
                 if (result == null)
                 {
                     lblError.Text = "Could Not Contact Application API";
-                    e.Authenticated = false;
+                    ClearSession();
                     lblError.Visible = true;
                 }
                 else if (!result.Success)
@@ -176,7 +161,7 @@ namespace Toems_FrontEnd
                     lblError.Text = result.ErrorMessage == "Forbidden"
                         ? "Token Does Not Match Requested User"
                         : result.ErrorMessage;
-                    e.Authenticated = false;
+                    ClearSession();
                     lblError.Visible = true;
                 }
                 else if (result.Success)
@@ -190,19 +175,45 @@ namespace Toems_FrontEnd
                 }
                 else
                 {
-                    e.Authenticated = false;
+                    ClearSession();
                     lblError.Text = result.ErrorMessage;
                     lblError.Visible = true;
                 }
             }
             else
             {
-                e.Authenticated = false;
+                ClearSession();
                 lblError.Text = token.error_description;
                 lblError.Visible = true;
             }
         }
 
+        private void SetBaseUrlCookie()
+        {
+            HttpCookie baseUrlCookie = Request.Cookies["toemsBaseUrl"];
+            if (baseUrlCookie == null)
+            {
+                var applicationApiUrl = ConfigurationManager.AppSettings["ApplicationApiUrl"];
+                if (!applicationApiUrl.EndsWith("/"))
+                    applicationApiUrl = applicationApiUrl + "/";
+                baseUrlCookie = new HttpCookie("toemsBaseUrl")
+                {
+                    Value = applicationApiUrl,
+                    HttpOnly = true
+                };
+                Response.Cookies.Add(baseUrlCookie);
+                Request.Cookies.Add(baseUrlCookie);
+            }
+            else
+            {
+                var applicationApiUrl = ConfigurationManager.AppSettings["ApplicationApiUrl"];
+                if (!applicationApiUrl.EndsWith("/"))
+                    applicationApiUrl = applicationApiUrl + "/";
+                baseUrlCookie.Value = applicationApiUrl;
+                Response.Cookies.Add(baseUrlCookie);
+                Request.Cookies.Add(baseUrlCookie);
+            }
+        }
        
     }
 }

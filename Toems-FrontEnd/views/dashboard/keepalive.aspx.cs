@@ -12,6 +12,7 @@ namespace Toems_FrontEnd.views.dashboard
         protected void Page_Load(object sender, EventArgs e)
         {
             Call.SettingApi.CheckExpiredToken();
+
         }
     }
 }

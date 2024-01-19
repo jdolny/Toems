@@ -10,19 +10,20 @@ namespace Toems_FrontEnd.views
 {
     public partial class SiteMaster : MasterBaseMaster
     {
-        
-
-        protected void Page_PreInit(object sender, EventArgs e)
-        {
-        
-
-        }
         public string CurrentUserName { get; set; }
 
         public void Page_Init(object sender, EventArgs e)
         {
+            var tokenExpired = new APICall().SettingApi.CheckExpiredToken();
+            if (tokenExpired)
+            {
+                Response.Redirect("~/?session=expired", true);
+            }
+
             if (!Request.IsAuthenticated)
                 Response.Redirect("~/", true);
+
+            
         }
 
         public void Page_Load(object sender, EventArgs e)
@@ -78,6 +79,6 @@ namespace Toems_FrontEnd.views
             Response.Redirect("~/", true);
         }
 
-       
+
     }
 }

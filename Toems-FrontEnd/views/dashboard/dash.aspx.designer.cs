@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.dashboard {
-    
-    
-    public partial class Dashboard {
-        
+namespace Toems_FrontEnd.views.dashboard
+{
+
+
+    public partial class Dashboard
+    {
+
         /// <summary>
         /// lblDenied control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.dashboard {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblDenied;
-        
+
         /// <summary>
         /// pinnedPolicyHolder control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.dashboard {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder pinnedPolicyHolder;
-        
+
         /// <summary>
         /// pinnedGroupsHolder control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.dashboard {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder pinnedGroupsHolder;
-        
+
         /// <summary>
         /// divLocalStorage control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.dashboard {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divLocalStorage;
-        
+
         /// <summary>
         /// comServerStorageHolder control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views.dashboard {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder comServerStorageHolder;
-        
+
         /// <summary>
         /// divRemoteStorage control.
         /// </summary>
@@ -65,7 +67,7 @@ namespace Toems_FrontEnd.views.dashboard {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divRemoteStorage;
-        
+
         /// <summary>
         /// lblDPfree control.
         /// </summary>
@@ -74,7 +76,7 @@ namespace Toems_FrontEnd.views.dashboard {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblDPfree;
-        
+
         /// <summary>
         /// lblDpTotal control.
         /// </summary>
@@ -83,7 +85,7 @@ namespace Toems_FrontEnd.views.dashboard {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblDpTotal;
-        
+
         /// <summary>
         /// lblRemotePercent control.
         /// </summary>
