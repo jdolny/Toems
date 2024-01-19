@@ -734,9 +734,8 @@ input[type="checkbox"] { display: inline; }
     height: 35px;
     width: 100%;
     background: #555;
-    border: none;
-    border-bottom: 1px solid #a6b7da;
     color: #e4e5e6;
+    padding-left:2px;
 }
 
 option{

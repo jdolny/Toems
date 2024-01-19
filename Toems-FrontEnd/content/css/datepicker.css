@@ -26,6 +26,7 @@
   z-index: -1;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
+  color:black;
 }
 
 .datepicker-container::before,
