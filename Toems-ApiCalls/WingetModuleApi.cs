@@ -46,6 +46,14 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<List<EntityWingetLocaleManifest>>(Request);
         }
 
+        public string GetLastWingetImportTime()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetLastWingetImportTime", Resource);
+            var responseData = new ApiRequest().Execute<DtoApiStringResponse>(Request);
+            return responseData != null ? responseData.Value : string.Empty;
+
+        }
 
 
     }

@@ -308,19 +308,7 @@ namespace Toems_Service.Entity
                 list.AddRange(tempList);
                 list.AddRange(list1);
             }
-            /*else if (!filter.ExactMatch)
-            {
-                list = _uow.WingetLocaleManifestRepository.Get(x => x.PackageIdentifier.ToLower().StartsWith(packageIdSearch) || x.PackageName.ToLower().StartsWith(packageNameSearch)
-                || x.Publisher.ToLower().StartsWith(packagePublisherSearch) || x.Tags.ToLower().StartsWith(packageTagSearch) || x.Moniker.ToLower().StartsWith(packageMonikerSearch));
 
-                list = list.OrderBy(x => x.PackageName).ThenByDescending(x => x.Major).ThenByDescending(x => x.Minor).ThenByDescending(x => x.Build).ThenByDescending(x => x.Revision).ToList();
-
-                var list2 = _uow.WingetLocaleManifestRepository.Get(x => x.PackageIdentifier.ToLower().Contains(packageIdSearch) || x.PackageName.ToLower().Contains(packageNameSearch)
-                || x.Publisher.ToLower().Contains(packagePublisherSearch) || x.Tags.ToLower().Contains(packageTagSearch) || x.Moniker.ToLower().Contains(packageMonikerSearch));
-                list2 = list2.OrderBy(x => x.PackageName).ThenByDescending(x => x.Major).ThenByDescending(x => x.Minor).ThenByDescending(x => x.Build).ThenByDescending(x => x.Revision).ToList();
-
-                list.AddRange(list2);
-            }*/
 
             if (filter.LatestVersionOnly)
                 list = list.GroupBy(x => x.PackageIdentifier).Select(x => x.First()).Take(filter.Limit).ToList();
@@ -341,6 +329,13 @@ namespace Toems_Service.Entity
         public EntityWingetLocaleManifest GetLocaleManifest(int id)
         {
             return _uow.WingetLocaleManifestRepository.GetById(id);
+        }
+
+        public string GetLastImportTime()
+        {
+            var result =_uow.WingetManifestDownloadRepository.Get(x => x.Status == EnumManifestImport.ImportStatus.Complete).OrderByDescending(x => x.Id).FirstOrDefault();
+            if (result != null) return result.DateDownloaded.ToString();
+            return string.Empty;
         }
     }
 }

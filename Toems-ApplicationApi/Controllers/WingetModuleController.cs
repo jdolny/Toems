@@ -142,5 +142,11 @@ namespace Toems_ApplicationApi.Controllers
         {
             return _wingetModuleServices.GetLocaleManifest(id);
         }
+
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        public DtoApiStringResponse GetLastWingetImportTime()
+        {
+            return new DtoApiStringResponse { Value = _wingetModuleServices.GetLastImportTime() };
+        }
     }
 }

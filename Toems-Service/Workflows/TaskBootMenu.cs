@@ -123,6 +123,7 @@ namespace Toems_Service.Workflows
             if (computer.PxeIpAddress != null)
                 globalComputerArgs += $" cd_net_ip={computer.PxeIpAddress} cd_net_netmask={computer.PxeNetmask} cd_net_gateway={computer.PxeGateway} cd_net_dns={computer.PxeDns} ";
 
+            globalComputerArgs += $" display_sleep_time={ServiceSetting.GetSettingValue(SettingStrings.LieSleepTime)} ";
             var compTftpServers = new Workflows.GetCompTftpServers().Run(computer.Id);
 
             if (compTftpServers == null)

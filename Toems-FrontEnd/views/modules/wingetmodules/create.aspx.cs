@@ -13,37 +13,24 @@ namespace Toems_FrontEnd.views.modules.wingetmodules
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-            {
-                PopulateImpersonationDdl(ddlRunAs);
-                PopulateWingetType(ddlInstallType);
-            }
+
         }
 
         protected void btnAdd_OnClick(object sender, EventArgs e)
         {
-            int timeout = 0;
-            var parseResult = Int32.TryParse(txtTimeout.Text, out timeout);
-            if (!parseResult)
-            {
-                EndUserMessage = "Timeout Is Not Valid";
-                return;
-            }
 
             var module = new EntityWingetModule()
             {
                 Name = txtDisplayName.Text,
                 Description = txtDescription.Text,
-                Timeout = Convert.ToInt32(txtTimeout.Text),
+                Timeout = 0,
                 Arguments = string.Empty,
-                Override = txtOverride.Text,
-                KeepUpdated = chkAutoUpdate.Checked,
-                InstallLatest = chkLatest.Checked,
-                InstallType = (EnumWingetInstallType.WingetInstallType)Enum.Parse(typeof(EnumWingetInstallType.WingetInstallType), ddlInstallType.SelectedValue),
-                RedirectStdOut = chkStdOut.Checked,
-                RedirectStdError = chkStdError.Checked,
-                ImpersonationId = Convert.ToInt32(ddlRunAs.SelectedValue)
-
+                Override = string.Empty,
+                KeepUpdated = false,
+                InstallLatest = false,
+                InstallType = EnumWingetInstallType.WingetInstallType.Install,
+                RedirectStdOut = false,
+                RedirectStdError = false,
             };
 
 
