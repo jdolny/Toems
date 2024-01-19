@@ -11,7 +11,7 @@ namespace Toems_FrontEnd.views.policies
 {
 
 
-    public partial class general
+    public partial class specialties
     {
 
         /// <summary>
@@ -24,102 +24,93 @@ namespace Toems_FrontEnd.views.policies
         protected global::System.Web.UI.WebControls.LinkButton buttonUpdate;
 
         /// <summary>
-        /// txtName control.
+        /// ddlInventory control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtName;
+        protected global::System.Web.UI.WebControls.DropDownList ddlInventory;
 
         /// <summary>
-        /// txtDescription control.
+        /// chkLoginTracker control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtDescription;
+        protected global::System.Web.UI.WebControls.CheckBox chkLoginTracker;
 
         /// <summary>
-        /// ddlExecType control.
+        /// chkApplicationMonitor control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlExecType;
+        protected global::System.Web.UI.WebControls.CheckBox chkApplicationMonitor;
 
         /// <summary>
-        /// ddlCompletedAction control.
+        /// chkWingetUpdates control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlCompletedAction;
+        protected global::System.Web.UI.WebControls.CheckBox chkWingetUpdates;
 
         /// <summary>
-        /// ddlErrorAction control.
+        /// chkWingetDownloadConnections control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlErrorAction;
+        protected global::System.Web.UI.WebControls.CheckBox chkWingetDownloadConnections;
 
         /// <summary>
-        /// chkDeleteCache control.
+        /// ddlRemoteAccess control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkDeleteCache;
+        protected global::System.Web.UI.WebControls.DropDownList ddlRemoteAccess;
 
         /// <summary>
-        /// ddlAutoArchive control.
+        /// chkJoinDomain control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlAutoArchive;
+        protected global::System.Web.UI.WebControls.CheckBox chkJoinDomain;
 
         /// <summary>
-        /// divArchiveDays control.
+        /// txtDomainOU control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divArchiveDays;
+        protected global::System.Web.UI.WebControls.TextBox txtDomainOU;
 
         /// <summary>
-        /// txtAutoArchiveDays control.
+        /// chkImagePrepCleanup control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtAutoArchiveDays;
+        protected global::System.Web.UI.WebControls.CheckBox chkImagePrepCleanup;
 
         /// <summary>
-        /// ddlLogLevel control.
+        /// ddlWinUpdates control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlLogLevel;
-
-        /// <summary>
-        /// chkSkipResult control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkSkipResult;
+        protected global::System.Web.UI.WebControls.DropDownList ddlWinUpdates;
     }
 }

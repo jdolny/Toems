@@ -11,7 +11,7 @@ namespace Toems_FrontEnd.views.policies
 {
 
 
-    public partial class general
+    public partial class triggers
     {
 
         /// <summary>
@@ -24,102 +24,138 @@ namespace Toems_FrontEnd.views.policies
         protected global::System.Web.UI.WebControls.LinkButton buttonUpdate;
 
         /// <summary>
-        /// txtName control.
+        /// ddlTrigger control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtName;
+        protected global::System.Web.UI.WebControls.DropDownList ddlTrigger;
 
         /// <summary>
-        /// txtDescription control.
+        /// ddlFrequency control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtDescription;
+        protected global::System.Web.UI.WebControls.DropDownList ddlFrequency;
 
         /// <summary>
-        /// ddlExecType control.
+        /// divWeekly control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlExecType;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divWeekly;
 
         /// <summary>
-        /// ddlCompletedAction control.
+        /// ddlWeekDay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlCompletedAction;
+        protected global::System.Web.UI.WebControls.DropDownList ddlWeekDay;
 
         /// <summary>
-        /// ddlErrorAction control.
+        /// divMonthly control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlErrorAction;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divMonthly;
 
         /// <summary>
-        /// chkDeleteCache control.
+        /// ddlMonthDay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkDeleteCache;
+        protected global::System.Web.UI.WebControls.DropDownList ddlMonthDay;
 
         /// <summary>
-        /// ddlAutoArchive control.
+        /// divXHours control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlAutoArchive;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divXHours;
 
         /// <summary>
-        /// divArchiveDays control.
+        /// txtHours control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divArchiveDays;
+        protected global::System.Web.UI.WebControls.TextBox txtHours;
 
         /// <summary>
-        /// txtAutoArchiveDays control.
+        /// divXDays control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtAutoArchiveDays;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divXDays;
 
         /// <summary>
-        /// ddlLogLevel control.
+        /// txtDays control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlLogLevel;
+        protected global::System.Web.UI.WebControls.TextBox txtDays;
 
         /// <summary>
-        /// chkSkipResult control.
+        /// divMissed control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkSkipResult;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divMissed;
+
+        /// <summary>
+        /// ddlMissed control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlMissed;
+
+        /// <summary>
+        /// ddlScheduleStart control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlScheduleStart;
+
+        /// <summary>
+        /// ddlScheduleEnd control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlScheduleEnd;
+
+        /// <summary>
+        /// txtStartDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtStartDate;
     }
 }

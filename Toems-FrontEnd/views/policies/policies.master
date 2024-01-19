@@ -45,6 +45,18 @@
                 <a href="<%= ResolveUrl("~/views/policies/general.aspx") %>?policyId=<%= Policy.Id %>">
                     <span class="sub-nav-text">General</span></a>
             </li>
+             <li id="conditions">
+                <a href="<%= ResolveUrl("~/views/policies/conditions.aspx") %>?policyId=<%= Policy.Id %>">
+                    <span class="sub-nav-text">Conditions</span></a>
+            </li>
+                 <li id="triggers">
+                <a href="<%= ResolveUrl("~/views/policies/triggers.aspx") %>?policyId=<%= Policy.Id %>">
+                    <span class="sub-nav-text">Triggers</span></a>
+            </li>
+             <li id="specialties">
+                <a href="<%= ResolveUrl("~/views/policies/specialties.aspx") %>?policyId=<%= Policy.Id %>">
+                    <span class="sub-nav-text">Specialties</span></a>
+            </li>
             <li id="assignedmodules">
                 <a href="<%= ResolveUrl("~/views/policies/assignedmodules.aspx") %>?policyId=<%= Policy.Id %>">
                     <span class="sub-nav-text">Assigned Modules</span></a>
