@@ -20,6 +20,10 @@ namespace Toems_FrontEnd.views.policies
             policy.Name = txtName.Text;
             policy.Description = txtDescription.Text;
             policy.StartDate = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            policy.ConditionId = -1;
+            policy.RemoveInstallCache = true;
+            policy.WindowEndScheduleId = -1;
+            policy.WindowStartScheduleId = -1;
 
             var result = Call.PolicyApi.Post(policy);
             if (!result.Success)

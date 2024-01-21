@@ -31,6 +31,7 @@ namespace Toems_FrontEnd.views.modules.wingetmodules
                 InstallType = EnumWingetInstallType.WingetInstallType.Install,
                 RedirectStdOut = false,
                 RedirectStdError = false,
+                ImpersonationId = -1
             };
 
 
