@@ -9,6 +9,10 @@ namespace Toems_DataModel
         {
         }
 
+        public ToemsDbContext(string readonlyContext) : base(readonlyContext) 
+        {
+        }
+
         public DbSet<EntityPolicyModules> PolicyModules { get; set; }
         public DbSet<EntityPolicy> Policies { get; set; }
         public DbSet<EntityPrinterModule> PrinterModules { get; set; }
@@ -130,7 +134,7 @@ namespace Toems_DataModel
         public DbSet<EntityWingetLocaleManifest> WingetLocaleManifests { get; set; }
         public DbSet<EntityWingetModule> WingetModules { get; set; }
 
-
+        public DbSet<EntityToemsUserOptions> ToemsUserOptions { get; set; }
 
     }
 }

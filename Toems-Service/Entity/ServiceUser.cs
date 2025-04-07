@@ -528,6 +528,38 @@ namespace Toems_Service.Entity
                 return user.DefaultComputerView;
         }
 
+        public EntityToemsUserOptions GetUserComputerOptions(int userId)
+        {
+            return _uow.ToemsUserOptionsRepository.Get().Where(x => x.ToemsUserId == userId).FirstOrDefault();
+        }
+
+        public DtoActionResult UpdateOrInsertUserComputerOptions(EntityToemsUserOptions userComputerOptions)
+        {
+            var actionResult = new DtoActionResult();
+            var options = GetUserComputerOptions(userComputerOptions.ToemsUserId);
+            if (options == null)
+            {
+                //insert
+                _uow.ToemsUserOptionsRepository.Insert(userComputerOptions);
+                _uow.Save();
+                actionResult.Success = true;
+                actionResult.Id = userComputerOptions.Id;
+
+            }
+            else
+            {
+                //update
+                userComputerOptions.Id = options.Id;
+                _uow.ToemsUserOptionsRepository.Update(userComputerOptions, userComputerOptions.Id);
+                _uow.Save();
+                actionResult.Success = true;
+                actionResult.Id = userComputerOptions.Id;
+            }
+
+            return actionResult;
+        }
+
+
         public string GetUserComputerSort(int userId)
         {
             var user = GetUser(userId);

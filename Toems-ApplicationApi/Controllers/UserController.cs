@@ -220,6 +220,11 @@ namespace Toems_ApplicationApi.Controllers
         {
             return new DtoApiStringResponse { Value = _userServices.GetUserComputerView(_userId) };
         }
+        [Authorize]
+        public EntityToemsUserOptions GetUserComputerOptions(int id)
+        {
+            return _userServices.GetUserComputerOptions(id); ;
+        }
 
         [Authorize]
         public DtoApiStringResponse GetUserComputerSort()
@@ -233,6 +238,13 @@ namespace Toems_ApplicationApi.Controllers
             return new DtoApiStringResponse { Value = _userServices.GetUserLoginPage(_userId) };
         }
 
-
+        [Authorize]
+        [HttpPost]
+        public DtoActionResult UpdateOrInsertUserComputerOptions(EntityToemsUserOptions userComputerOptions)
+        {
+            var result = _userServices.UpdateOrInsertUserComputerOptions(userComputerOptions);
+            if (result == null) throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
+            return result;
+        }
     }
 }

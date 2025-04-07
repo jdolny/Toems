@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
-using Toems_Service.Entity;
 
 namespace Toems_Service.Workflows
 {
@@ -18,11 +17,13 @@ namespace Toems_Service.Workflows
 
         public DtoRawSqlQuery Run(List<EntitySmartGroupQuery> queries)
         {
+            if (queries == null || queries.Count == 0) return null;
             var sqlQuery = new DtoRawSqlQuery();
+           
             if (queries.Count == 1 && queries[0].AndOr.Equals("Not"))
             {
                 var query = queries[0];
-               
+
                 if (query.Table.Equals("Application"))
                 {
                     sb.Append(@"select a.computer_id,a.computer_name
@@ -33,7 +34,7 @@ namespace Toems_Service.Workflows
                                     FROM computers
                                     left join computer_software on computers.computer_id = computer_software.computer_id 
                                     left join software_inventory on (computer_software.software_id = software_inventory.software_inventory_id)
-                                    where software_inventory.name " + query.Operator + "'" + query.Value + "'" + 
+                                    where software_inventory.name " + query.Operator + "'" + query.Value + "'" +
                                 ")" +
                                 "and a.provision_status = 8 and a.last_inventory_time_local > '2019-01-01'");
                     sb.Append(" GROUP BY a.computer_name, a.computer_id");
@@ -75,8 +76,8 @@ namespace Toems_Service.Workflows
                 sqlQuery = new DtoRawSqlQuery();
                 sqlQuery.Sql = sb.ToString();
                 return sqlQuery;
-                    
-                
+
+
             }
             else
             {

@@ -53,6 +53,19 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<DtoApiStringResponse>(Request);
         }
 
+        public DataSet GetReportSqlQuery(string sql)
+        {
+            var dtoString = new DtoApiStringResponse();
+            dtoString.Value = sql;
+            Request.Method = Method.POST;
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(dtoString), ParameterType.RequestBody);
+            Request.Resource = string.Format("{0}/GetReportSqlQuery/", Resource);
+            var response = new ApiRequest().Execute<DtoApiStringResponse>(Request);
+            if (response != null)
+                return JsonConvert.DeserializeObject<DataSet>(response.Value);
+            return null;
+        }
+
         public DataSet GetCustomComputer(List<DtoCustomComputerQuery> queries)
         {
             Request.Method = Method.POST;

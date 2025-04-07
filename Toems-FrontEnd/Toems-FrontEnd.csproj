@@ -1849,7 +1849,6 @@
     </Compile>
     <Compile Include="views\computers\search.aspx.cs">
       <DependentUpon>search.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="views\computers\search.aspx.designer.cs">
       <DependentUpon>search.aspx</DependentUpon>

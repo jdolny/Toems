@@ -14,7 +14,7 @@ namespace Toems_DataModel
 
         public RawSqlRepository()
         {
-            _context = new ToemsDbContext();
+            _context = new ToemsDbContext("toems_read_only");
         }
 
         public int Execute(string sql)
@@ -22,6 +22,34 @@ namespace Toems_DataModel
             return _context.Database.ExecuteSqlCommand(sql);
         }
 
+        public DataSet ExecuteCustomSqlReportReader(string sql)
+        {
+            try
+            {
+                log.Debug("Custom SQL Query: " + sql);
+                DataSet resultDataSet = new DataSet("DataSet");
+                DataTable resultTable = new DataTable("Result");
+                resultDataSet.Tables.Add(resultTable);
+                using (_context)
+                {
+                    var connection = _context.Database.Connection;
+                    if (connection.State == ConnectionState.Closed)
+                        connection.Open();
+                    var command = connection.CreateCommand();
+                    command.CommandText = sql;
+                    //command.CommandType = CommandType.Text;
+
+                    resultTable.Load(command.ExecuteReader());
+                }
+                return resultDataSet;
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+            }
+            return null;
+        }
+    
         public DataSet ExecuteReader(DtoRawSqlQuery query)
         {
             try

@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.reports.computer {
-    
-    
-    public partial class custom {
-        
+namespace Toems_FrontEnd.views.reports.computer
+{
+
+
+    public partial class custom
+    {
+
         /// <summary>
         /// btnTestQuery control.
         /// </summary>
@@ -20,7 +22,16 @@ namespace Toems_FrontEnd.views.reports.computer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnTestQuery;
-        
+
+        /// <summary>
+        /// btnRawSql control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnRawSql;
+
         /// <summary>
         /// btnExport control.
         /// </summary>
@@ -29,7 +40,16 @@ namespace Toems_FrontEnd.views.reports.computer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnExport;
-        
+
+        /// <summary>
+        /// txtCustomSql control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtCustomSql;
+
         /// <summary>
         /// gvNetBoot control.
         /// </summary>
@@ -38,7 +58,7 @@ namespace Toems_FrontEnd.views.reports.computer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvNetBoot;
-        
+
         /// <summary>
         /// chkArchived control.
         /// </summary>
@@ -47,7 +67,7 @@ namespace Toems_FrontEnd.views.reports.computer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkArchived;
-        
+
         /// <summary>
         /// chkPre control.
         /// </summary>
@@ -56,7 +76,7 @@ namespace Toems_FrontEnd.views.reports.computer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkPre;
-        
+
         /// <summary>
         /// ddlGroupBy control.
         /// </summary>
@@ -65,7 +85,7 @@ namespace Toems_FrontEnd.views.reports.computer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlGroupBy;
-        
+
         /// <summary>
         /// lblTotal control.
         /// </summary>
@@ -74,7 +94,7 @@ namespace Toems_FrontEnd.views.reports.computer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblTotal;
-        
+
         /// <summary>
         /// gvResult control.
         /// </summary>

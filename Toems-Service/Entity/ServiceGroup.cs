@@ -149,6 +149,7 @@ namespace Toems_Service.Entity
         public DataSet GetDynamicMembers(List<EntitySmartGroupQuery> queries)
         {
             var sql = new Workflows.BuildSqlQuery().Run(queries);
+            if(sql == null) return null;
             return new RawSqlRepository().ExecuteReader(sql);
         }
 

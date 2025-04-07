@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -163,6 +164,35 @@ namespace Toems_ApiCalls
                 return "";
             else
                 return response.Value;
+        }
+
+        public EntityToemsUserOptions GetUserComputerOptions(int userId)
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetUserComputerOptions/{1}", Resource,userId);
+            return _apiRequest.Execute<EntityToemsUserOptions>(Request);
+        }
+
+        public DtoActionResult UpdateUserComputerOptions(EntityToemsUserOptions entityToemsUserOptions)
+        {
+            Request.Method = Method.POST;
+            Request.AddParameter("application/json", JsonConvert.SerializeObject(entityToemsUserOptions), ParameterType.RequestBody);
+            Request.Resource = $"{Resource}/UpdateOrInsertUserComputerOptions/";
+            var response = new ApiRequest().Execute<DtoActionResult>(Request);
+            if (response != null)
+            {
+                if (response.Id == 0)
+                    response.Success = false;
+            }
+            else
+            {
+                return new DtoActionResult()
+                {
+                    ErrorMessage = "Unknown Exception.  Check The Exception Logs For More Info.",
+                    Success = false
+                };
+            }
+            return response;
         }
 
         public string GetUserComputerSort()

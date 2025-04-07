@@ -26,11 +26,14 @@
             });
         });
 
-    </script>
+         function RefreshUpdatePanel() {
+             __doPostBack('<%= txtSearch.ClientID %>', '');
+         };
+     </script>
 
    
     <div class="size-7 column">
-         <asp:TextBox ID="txtSearch" runat="server" CssClass="rounded-search" OnTextChanged="search_Changed"></asp:TextBox>
+         <asp:TextBox ID="txtSearch" runat="server" CssClass="rounded-search" OnTextChanged="search_Changed" ></asp:TextBox>
       
     </div>
     
@@ -41,8 +44,8 @@
         <asp:DropDownList runat="server" ID="ddlLimit" AutoPostBack="True" OnSelectedIndexChanged="ddl_OnSelectedIndexChanged" >
              <asp:ListItem></asp:ListItem>
             <asp:ListItem>25</asp:ListItem>
-            <asp:ListItem>100</asp:ListItem>
-            <asp:ListItem Selected="True">250</asp:ListItem>
+            <asp:ListItem Selected="True">100</asp:ListItem>
+            <asp:ListItem>250</asp:ListItem>
             <asp:ListItem >500</asp:ListItem>
             <asp:ListItem>1000</asp:ListItem>
             <asp:ListItem>5000</asp:ListItem>
@@ -74,16 +77,13 @@
     <br class="clear"/>
 
 
-   
-    <asp:GridView ID="gvComputers" runat="server" AllowSorting="True" DataKeyNames="Id" OnSorting="gridView_Sorting" AutoGenerateColumns="False" CssClass="Gridview" AlternatingRowStyle-CssClass="alt">
+           <asp:GridView ID="gvComputers" runat="server" AllowSorting="True" DataKeyNames="Id" OnSorting="gridView_Sorting" AutoGenerateColumns="False" CssClass="Gridview" AlternatingRowStyle-CssClass="alt">
         <Columns>
 
             <asp:TemplateField>
+                 <ItemStyle CssClass="chkboxwidth"></ItemStyle>
 
-                <ItemStyle CssClass="chkboxwidth"></ItemStyle>
-                <HeaderTemplate>
-                    <asp:CheckBox ID="chkSelectAll" runat="server" AutoPostBack="True" OnCheckedChanged="chkSelectAll_CheckedChanged"/>
-                </HeaderTemplate>
+          
                 <ItemTemplate>
                     <asp:CheckBox ID="chkSelector" runat="server"/>
                 </ItemTemplate>
@@ -91,22 +91,15 @@
             <asp:HyperLinkField DataNavigateUrlFields="Id" DataNavigateUrlFormatString="~/views/computers/general.aspx?computerId={0}" Text="View" ItemStyle-CssClass="chkboxwidth"/>
             <asp:BoundField DataField="Id" HeaderText="computerID" SortExpression="computerID" Visible="False"/>
             <asp:BoundField DataField="Name" HeaderText="Name" SortExpression="Name" ItemStyle-CssClass="width_200"></asp:BoundField>
-             <asp:BoundField DataField="LastCheckinTime" HeaderText="Last Checkin" SortExpression="LastCheckinTime" ItemStyle-CssClass="width_200"></asp:BoundField>
-             <asp:BoundField DataField="LastIp" HeaderText="Last Known Ip" SortExpression="LastIp" ItemStyle-CssClass="width_200" ></asp:BoundField>
-               <asp:BoundField DataField="ClientVersion" HeaderText="Client Version" SortExpression="ClientVersion" ItemStyle-CssClass="width_200"></asp:BoundField> 
-             <asp:BoundField DataField="LastLoggedInUser" HeaderText="Last User" SortExpression="LastLoggedInUser" ItemStyle-CssClass="width_200"></asp:BoundField> 
-            <asp:BoundField DataField="ProvisionedTime" HeaderText="Provision Date" SortExpression="ProvisionedTime" ></asp:BoundField>
-            
-         
-            
-         
-        
-        
+     
         </Columns>
         <EmptyDataTemplate>
             No Computers Found
         </EmptyDataTemplate>
     </asp:GridView>
+
+   
+   
 
     <div id="confirmbox" class="confirm-box-outer">
         <div class="confirm-box-inner">
@@ -128,4 +121,6 @@
 	<li><strong>By category</strong></li>
 	<li><strong>By limit</strong></li>
 </ul>
+
+
 </asp:Content>

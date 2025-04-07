@@ -84,6 +84,7 @@ namespace Toems_Service.Workflows
 
         public DtoRawSqlQuery Run(List<DtoCustomComputerQuery> queries)
         {
+            if (queries == null || queries.Count == 0) return null;
             var sqlQuery = new DtoRawSqlQuery();
             if (queries.Count == 1 && queries[0].AndOr.Equals("Not"))
             {

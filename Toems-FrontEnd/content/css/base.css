@@ -685,6 +685,18 @@ input[type="checkbox"] { display: inline; }
     width: 100%;
 }
 
+.orderbox {
+    background: #555;
+    border: none;
+    border-bottom: 1px solid #a6b7da;
+    color: #e4e5e6;
+    display: block;
+    font-size: 24px;
+    margin: 0;
+    outline: none;
+    width: 100%;
+}
+
 .textbox-small {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;

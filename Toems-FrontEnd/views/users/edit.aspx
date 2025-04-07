@@ -132,6 +132,229 @@
         <label for="chkImagingMfa"></label>
     </div>
     <br class="clear"/>
+    <h2>Active Computer Search Fields</h2>
+    <hr />
+        <div class="acl_header">
+<div class="size-10-3 column"><h2>Field</h2></div>
+<div class="size-10-3 column"><h2>Enabled</h2></div>
+<div class="size-10-3 column"><h2>Order</h2></div>
+
+        </div>
+    <br class="clear" />
+      <div class="size-10-3 column">
+        Description:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkComputerDesc" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkComputerDesc"></label>
+    </div>
+       <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderDesc" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+    <br />
+
+     <br class="clear" />
+      <div class="size-10-3 column">
+        Last Checkin:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkLastCheckin" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkLastCheckin"></label>
+    </div>
+     <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderLastCheckin" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+     <br />
+
+     <br class="clear" />
+      <div class="size-10-3 column">
+        Last Known IP:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkLastKnownIp" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkLastKnownIp"></label>
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderLastKnownIp" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+     <br class="clear" />
+       <div class="size-10-3 column">
+        Client Version:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkClientVersion" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkClientVersion"></label>
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderClientVersion" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+    <br class="clear" />
+
+       <div class="size-10-3 column">
+        Last User:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkLastUser" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkLastUser"></label>
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderLastUser" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+     <br class="clear" />
+    <div class="size-10-3 column">
+        Provision Date:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkProvisionDate" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkProvisionDate"></label>
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderProvisionDate" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+     <br class="clear" />
+    <div class="size-10-3 column">
+        Status:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkStatus" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkStatus"></label>
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderStatus" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+     <br class="clear" />
+    <div class="size-10-3 column">
+        Current Image:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkCurrentImage" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkCurrentImage"></label>
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderCurrentImage" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+    <br class="clear" />
+     <div class="size-10-3 column">
+        Manufacturer:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkManufacturer" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkManufacturer"></label>
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderManufacturer" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+     <br class="clear" />
+     <div class="size-10-3 column">
+        Model:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkModel" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkModel"></label>
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderModel" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+     <br class="clear" />
+     <div class="size-10-3 column">
+        OS Name:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkOs" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkOs"></label>
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderOs" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+     <br class="clear" />
+     <div class="size-10-3 column">
+        OS Version:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkOsVersion" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkOsVersion"></label>
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderOsVersion" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+    <br class="clear" />
+     <div class="size-10-3 column">
+        OS Build:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkOsBuild" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkOsBuild"></label>
+
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderOsBuild" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+     <br class="clear" />
+    <div class="size-10-3 column">
+        Domain:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkDomain" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkDomain"></label>
+
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderDomain" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+     <br class="clear" />
+     <div class="size-10-3 column">
+        Force Checkin:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkForceCheckin" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkForceCheckin"></label>
+
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderForceCheckin" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+     <br class="clear" />
+     <div class="size-10-3 column">
+        Collect Inventory:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkCollectInventory" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkCollectInventory"></label>
+
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderCollectInventory" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+    <br class="clear" />
+     <div class="size-10-3 column">
+        Remote Control:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkRemoteControl" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkRemoteControl"></label>
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderRemoteControl" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+     <br class="clear" />
+     <div class="size-10-3 column">
+        Get Service Log:
+    </div>
+    <div class="size-10-3 column hidden-check">
+        <asp:CheckBox ID="chkGetServiceLog" runat="server" ClientIDMode="Static"></asp:CheckBox>
+        <label for="chkGetServiceLog"></label>
+
+    </div>
+      <div class="size-10-4 column">
+        <asp:TextBox ID="txtOrderGetServiceLog" runat="server" CssClass="orderbox">0</asp:TextBox>
+    </div>
+
+
+
+    <br class="clear"/>
+
+
+
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="subHelp">
     <h5><span style="color: #ff9900;">Username:</span></h5>

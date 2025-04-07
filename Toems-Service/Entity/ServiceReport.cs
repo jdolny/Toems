@@ -21,12 +21,19 @@ namespace Toems_Service.Entity
         public DataSet GetInventory(List<DtoCustomComputerQuery> queries)
         {
             var sql = new Workflows.BuildReportSqlQuery().Run(queries);
+            if(sql == null) return null;
             return new RawSqlRepository().ExecuteReader(sql);
+        }
+
+        public DataSet GetSqlQueryReport(DtoApiStringResponse sql)
+        {
+            return new RawSqlRepository().ExecuteCustomSqlReportReader(sql.Value);
         }
 
         public DataSet GetAssetInventory(List<DtoCustomComputerQuery> queries)
         {
             var sql = new Workflows.BuildAssetSqlQuery().Run(queries);
+            if (sql == null) return null;
             return new RawSqlRepository().ExecuteReader(sql);
         }
 

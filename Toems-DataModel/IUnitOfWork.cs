@@ -129,6 +129,7 @@ namespace Toems_DataModel
         IGenericRepository<EntityWingetVersionManifest> WingetVersionManifestRepository { get; }
         WingetLocaleRepository WingetLocaleManifestRepository { get; }
         IGenericRepository<EntityWingetModule> WingetModuleRepository { get; }
+        IGenericRepository<EntityToemsUserOptions> ToemsUserOptionsRepository { get; }
         void Save();
     }
 }

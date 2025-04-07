@@ -7,6 +7,7 @@
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="DropDownActionsSub2" runat="server">
     <li><asp:LinkButton ID="btnTestQuery" runat="server" OnClick="btnTestQuery_OnClick" Text="Run Query" CssClass="main-action"></asp:LinkButton></li>
+     <li><asp:LinkButton ID="btnRawSql" runat="server" OnClick="btnRawSql_Click" Text="Run SQL Query" CssClass="main-action"></asp:LinkButton></li>
     <li><asp:LinkButton ID="btnExport" runat="server" OnClick="btnExport_OnClick" Text="Export To CSV"></asp:LinkButton></li>
 </asp:Content>
 <asp:Content ID="Content4" ContentPlaceHolderID="SubContent2" runat="server">
@@ -17,6 +18,7 @@
          
     </script>
    
+        <asp:TextBox ID="txtCustomSql" runat="server" TextMode="MultiLine"></asp:TextBox>
         <asp:GridView ID="gvNetBoot" runat="server" AutoGenerateColumns="false"  CssClass="Gridview extraPad"
                       OnRowEditing="OnRowEditing" OnRowCancelingEdit="OnRowCancelingEdit" ShowFooter="True"
                       OnRowUpdating="OnRowUpdating" OnRowDataBound="gv_OnRowDataBound" OnRowDeleting="OnRowDeleting" AlternatingRowStyle-CssClass="alt">

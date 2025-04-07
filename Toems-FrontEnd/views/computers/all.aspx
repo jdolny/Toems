@@ -29,11 +29,15 @@
             });
         });
 
+        function RefreshUpdatePanel() {
+            __doPostBack('<%= txtSearch.ClientID %>', '');
+        };
+
     </script>
        
     <div class="size-7 column">
 
-        <asp:TextBox ID="txtSearch" runat="server" CssClass="rounded-search" OnTextChanged="search_Changed"></asp:TextBox>
+        <asp:TextBox ID="txtSearch" runat="server" CssClass="rounded-search" OnTextChanged="search_Changed" onkeyup="RefreshUpdatePanel();"></asp:TextBox>
     </div>
     
     <div class="size-11 column">
@@ -96,6 +100,8 @@
    
 
    
+      <asp:UpdatePanel ID="Update" runat="server">
+           <ContentTemplate>
     <asp:GridView ID="gvComputers" runat="server" AllowSorting="True" DataKeyNames="Id" OnSorting="gridView_Sorting" AutoGenerateColumns="False" CssClass="Gridview" AlternatingRowStyle-CssClass="alt">
         <Columns>
 
@@ -134,6 +140,11 @@
             No Computers Found
         </EmptyDataTemplate>
     </asp:GridView>
+                </ContentTemplate>
+        <Triggers>
+            <asp:AsyncPostBackTrigger ControlID="txtSearch" />
+        </Triggers>
+    </asp:UpdatePanel>
 
     <div id="confirmbox" class="confirm-box-outer">
         <div class="confirm-box-inner">

@@ -53,6 +53,9 @@ namespace Toems_DataModel
                                  from u in _context.UserLogins.Where(x => x.ComputerId == c.Id).OrderByDescending(x => x.Id).Take(1).DefaultIfEmpty()
                                  from b in _context.BiosInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
                                  from cu in _context.CustomComputerAttributes.Where(x => x.ComputerId == c.Id && x.Value.Contains(customAttribSearch)).DefaultIfEmpty()
+                                 from sc in _context.ActiveSockets.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
+                                 from cs in _context.ComputerSystemInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
+                                 from os in _context.OsInventory.Where(x=> x.ComputerId == c.Id).DefaultIfEmpty()
                                  where
                                  (
                                  b.SerialNumber.Contains(filter.SearchText) || u.UserName.Contains(filter.SearchText) ||
@@ -72,6 +75,16 @@ namespace Toems_DataModel
                                      clientVersion = c.ClientVersion,
                                      lastUser = u.UserName,
                                      provision = c.ProvisionedTime,
+                                     connected = sc.ConnectionId,
+                                     manufacturer = cs.Manufacturer,
+                                     description = c.Description,
+                                     model = cs.Model,
+                                     domain = cs.Domain,
+                                     osName = os.Caption,
+                                     osVersion = os.Version,
+                                     osBuild = os.BuildNumber
+
+
                                  }).AsEnumerable().Select(x => new EntityComputer()
                                  {
                                      Id = x.id,
@@ -80,7 +93,17 @@ namespace Toems_DataModel
                                      LastIp = x.lastIp,
                                      ClientVersion = x.clientVersion,
                                      LastLoggedInUser = x.lastUser,
-                                     ProvisionedTime = x.provision
+                                     ProvisionedTime = x.provision,
+                                     Status = x.connected != null ? "Connected" : "Disconnected",
+                                     Manufacturer = x.manufacturer,
+                                     Description = x.description,
+                                     Model = x.model,
+                                     Domain = x.domain,
+                                     OsName = x.osName,
+                                     OsVersion = x.osVersion,
+                                     OsBuild = x.osBuild,
+
+                                     
                                  }).Take(filter.Limit).ToList();
             }
             else
@@ -89,6 +112,9 @@ namespace Toems_DataModel
                         from u in _context.UserLogins.Where(x => x.ComputerId == c.Id).OrderByDescending(x => x.Id).Take(1).DefaultIfEmpty()
                         from b in _context.BiosInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
                         from cu in _context.CustomComputerAttributes.Where(x => x.ComputerId == c.Id && x.Value.Contains(customAttribSearch)).DefaultIfEmpty()
+                        from sc in _context.ActiveSockets.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
+                        from cs in _context.ComputerSystemInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
+                        from os in _context.OsInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
                         where
                         (
                         b.SerialNumber.Contains(filter.SearchText) || u.UserName.Contains(filter.SearchText) ||
@@ -108,6 +134,14 @@ namespace Toems_DataModel
                             clientVersion = c.ClientVersion,
                             lastUser = u.UserName,
                             provision = c.ProvisionedTime,
+                            connected = sc.ConnectionId,
+                            manufacturer = cs.Manufacturer,
+                            description = c.Description,
+                            model = cs.Model,
+                            domain = cs.Domain,
+                            osName = os.Caption,
+                            osVersion = os.Version,
+                            osBuild = os.BuildNumber
                         }).AsEnumerable().Select(x => new EntityComputer()
                         {
                             Id = x.id,
@@ -116,7 +150,15 @@ namespace Toems_DataModel
                             LastIp = x.lastIp,
                             ClientVersion = x.clientVersion,
                             LastLoggedInUser = x.lastUser,
-                            ProvisionedTime = x.provision
+                            ProvisionedTime = x.provision,
+                            Status = x.connected != null ? "Connected" : "Disconnected",
+                            Manufacturer = x.manufacturer,
+                            Description = x.description,
+                            Model = x.model,
+                            Domain = x.domain,
+                            OsName = x.osName,
+                            OsVersion = x.osVersion,
+                            OsBuild = x.osBuild,
                         }).Take(filter.Limit).ToList();
             }
 

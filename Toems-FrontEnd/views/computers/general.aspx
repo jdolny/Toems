@@ -27,6 +27,13 @@
         <asp:Textbox runat="server" ID="txtName" CssClass="textbox" ></asp:Textbox>
     </div>
     <br class="clear"/>
+     <div class="size-lbl column">
+        Description:
+    </div>
+    <div class="size-lbl2 column">
+        <asp:TextBox ID="txtDesc" runat="server" TextMode="MultiLine" CssClass="descbox"></asp:TextBox>
+    </div>
+    <br class="clear"/>
        <div class="size-lbl column">
         Identifier:
     </div>

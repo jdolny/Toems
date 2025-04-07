@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.computers {
-    
-    
-    public partial class all {
-        
+namespace Toems_FrontEnd.views.computers
+{
+
+
+    public partial class all
+    {
+
         /// <summary>
         /// btnArchive control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnArchive;
-        
+
         /// <summary>
         /// btnDelete control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnDelete;
-        
+
         /// <summary>
         /// txtSearch control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtSearch;
-        
+
         /// <summary>
         /// ddlLimit control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlLimit;
-        
+
         /// <summary>
         /// ddlCatType control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlCatType;
-        
+
         /// <summary>
         /// ddlDisabled control.
         /// </summary>
@@ -65,7 +67,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlDisabled;
-        
+
         /// <summary>
         /// ddlStatus control.
         /// </summary>
@@ -74,7 +76,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlStatus;
-        
+
         /// <summary>
         /// selectCategory control.
         /// </summary>
@@ -83,7 +85,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlSelect selectCategory;
-        
+
         /// <summary>
         /// CategorySubmit control.
         /// </summary>
@@ -92,7 +94,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button CategorySubmit;
-        
+
         /// <summary>
         /// lblTotal control.
         /// </summary>
@@ -101,7 +103,16 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblTotal;
-        
+
+        /// <summary>
+        /// Update control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel Update;
+
         /// <summary>
         /// gvComputers control.
         /// </summary>
@@ -110,7 +121,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvComputers;
-        
+
         /// <summary>
         /// lblTitle control.
         /// </summary>
@@ -119,7 +130,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblTitle;
-        
+
         /// <summary>
         /// ConfirmButton control.
         /// </summary>
@@ -128,7 +139,7 @@ namespace Toems_FrontEnd.views.computers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton ConfirmButton;
-        
+
         /// <summary>
         /// CancelButton control.
         /// </summary>

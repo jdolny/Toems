@@ -544,6 +544,13 @@ namespace Toems_Service.Entity
                 }
             }
 
+            foreach(var c  in list)
+            {
+                var currentImage = GetEffectiveImage(c.Id);
+                if (currentImage != null)
+                    c.CurrentImage = currentImage.Name;
+            }
+
             var computerAcl = new ServiceUser().GetAllowedComputers(userId);
             if (!computerAcl.ComputerManagementEnforced)
                 return list.ToList();

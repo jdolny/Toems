@@ -139,6 +139,7 @@ namespace Toems_DataModel
         private IGenericRepository<EntityWingetVersionManifest> _wingetVersionManifestRepository;
         private WingetLocaleRepository _wingetLocaleManifestRepository;
         private IGenericRepository<EntityWingetModule> _wingetModuleRepository;
+        private IGenericRepository<EntityToemsUserOptions> _toemsUserOptionsRepository;
 
 
         private bool disposed;
@@ -147,6 +148,14 @@ namespace Toems_DataModel
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+        public IGenericRepository<EntityToemsUserOptions> ToemsUserOptionsRepository
+        {
+            get
+            {
+                return _toemsUserOptionsRepository ?? (_toemsUserOptionsRepository = new GenericRepository<EntityToemsUserOptions>(_context));
+            }
+
         }
         public IGenericRepository<EntityWingetModule> WingetModuleRepository
         {

@@ -16,14 +16,15 @@ namespace Toems_FrontEnd.views.computers
 
         protected void btnUpdate_Click(object sender, EventArgs e)
         {
-            if(ComputerEntity.ProvisionStatus != Toems_Common.Enum.EnumProvisionStatus.Status.ImageOnly)
+            if(ComputerEntity.ProvisionStatus != Toems_Common.Enum.EnumProvisionStatus.Status.ImageOnly && (txtName.Text != ComputerEntity.Name || txtImagingMac.Text != ComputerEntity.ImagingMac))
             {
-                EndUserMessage = "Only Image Only Computer Computers Can Have Their Name Or Mac Updated.";
+                EndUserMessage = "Only \"Image Only\" Computers Can Have Their Name Or Mac Updated.";
                 return;
             }
 
 
             ComputerEntity.Name = txtName.Text;
+            ComputerEntity.Description = txtDesc.Text;
             ComputerEntity.ImagingMac = Utility.FixMac(txtImagingMac.Text);
             ComputerEntity.ImagingClientId = Utility.FixMac(txtImagingId.Text);
 
@@ -36,6 +37,7 @@ namespace Toems_FrontEnd.views.computers
         protected void PopulateForm()
         {
             txtName.Text = ComputerEntity.Name;
+            txtDesc.Text = ComputerEntity.Description;
             lblAdSync.Text = ComputerEntity.IsAdSync.ToString();
             lblClientVersion.Text = ComputerEntity.ClientVersion;
             lblIdentifier.Text = ComputerEntity.Guid;

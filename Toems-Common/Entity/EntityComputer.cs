@@ -98,8 +98,27 @@ namespace Toems_Common.Entity
         [Column("winpe_module_id")]
         public int WinPeModuleId { get; set; }
 
+        [Column("computer_description")]
+        public string Description { get; set; }
+
         [NotMapped]
-        public string LastLoggedInUser {get; set;}
+        public string LastLoggedInUser { get; set; }
+        [NotMapped]
+        public string Status { get; set; }
+        [NotMapped]
+        public string CurrentImage { get; set; }
+        [NotMapped]
+        public string Manufacturer { get; set; }
+        [NotMapped]
+        public string Model { get; set; }
+        [NotMapped]
+        public string OsName { get; set; }
+        [NotMapped]
+        public string OsVersion { get; set; }
+        [NotMapped]
+        public string OsBuild { get; set; }
+        [NotMapped]
+        public string Domain { get; set; }
     }
 
     [NotMapped]
@@ -114,5 +133,4 @@ namespace Toems_Common.Entity
         public EntityImage Image { get; set; }
         public EntityImageProfile ImageProfile { get; set; }
     }
-
 }

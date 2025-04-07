@@ -296,6 +296,21 @@ float:left;
     margin-top:-10px;
 }
 
+.container .size-10-3.column {
+    color: #83cce9;
+    font-size: 24px;
+    margin-bottom: 5px;
+    width: 250px;
+}
+
+.container .size-10-4.column {
+    color: #83cce9;
+    font-size: 24px;
+    margin-bottom: 5px;
+    width: 20px;
+}
+
+
 .container .size-11.column {
     float: right;
     width: 150px;

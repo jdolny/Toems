@@ -493,5 +493,13 @@ namespace Toems_FrontEnd.views.reports.computer
 
 
         }
+
+        protected void btnRawSql_Click(object sender, EventArgs e)
+        {
+            var result = Call.ReportApi.GetReportSqlQuery(txtCustomSql.Text);
+            gvResult.DataSource = result;
+            gvResult.DataBind();
+            lblTotal.Text = gvResult.Rows.Count + " Result(s)";
+        }
     }
 }

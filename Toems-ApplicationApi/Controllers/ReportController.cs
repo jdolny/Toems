@@ -36,6 +36,14 @@ namespace Toems_ApplicationApi.Controllers
 
         [HttpPost]
         [CustomAuth(Permission = AuthorizationStrings.ReportRead)]
+        public DtoApiStringResponse GetReportSqlQuery(DtoApiStringResponse sql)
+        {
+            var result = _reportService.GetSqlQueryReport(sql);
+            return new DtoApiStringResponse() { Value = JsonConvert.SerializeObject(result) };
+        }
+
+        [HttpPost]
+        [CustomAuth(Permission = AuthorizationStrings.ReportRead)]
         public DtoApiStringResponse GetCustomAsset(List<DtoCustomComputerQuery> queries)
         {
             var result = _reportService.GetAssetInventory(queries);
