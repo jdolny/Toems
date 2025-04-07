@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Web;
 using Hangfire;
 using Hangfire.MySql;
-using Hangfire.SqlServer;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Infrastructure;
 using Microsoft.Owin.Security.OAuth;
@@ -133,20 +132,12 @@ namespace Toems_ApplicationApi
             var providerName = System.Configuration.ConfigurationManager.
                 ConnectionStrings["toems"].ProviderName;
 
-            if (providerName.Equals("MySql.Data.MySqlClient"))
-            {              
+       
                 //mysql
                 Hangfire.GlobalConfiguration.Configuration.UseStorage(
                     new MySqlStorage(ConfigurationManager.
                         ConnectionStrings["toems"].ConnectionString, new MySqlStorageOptions()));
-            }
-            else
-            {
-                //sql server
-                Hangfire.GlobalConfiguration.Configuration.UseStorage(
-                new SqlServerStorage(ConfigurationManager.
-                    ConnectionStrings["toems"].ConnectionString));
-            }
+
 
             app.UseHangfireDashboard();
             app.UseHangfireServer();
