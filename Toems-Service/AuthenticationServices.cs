@@ -248,10 +248,7 @@ namespace Toems_Service
                     }
                 }
 
-                if (userNeedsAdminRole)
-                    user.Membership = "Administrator";
-                else
-                    user.Membership = "User";
+                user.Membership = userNeedsAdminRole ? "Administrator" : "User";
 
                 _userServices.UpdateUser(user);
             }

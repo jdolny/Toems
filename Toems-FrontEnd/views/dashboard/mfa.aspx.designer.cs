@@ -40,5 +40,19 @@ namespace Toems_FrontEnd.views.dashboard
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtVerify;
+
+        /// <summary>
+        /// Master property.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated property.
+        /// </remarks>
+        public new Toems_FrontEnd.views.SiteMaster Master
+        {
+            get
+            {
+                return ((Toems_FrontEnd.views.SiteMaster)(base.Master));
+            }
+        }
     }
 }

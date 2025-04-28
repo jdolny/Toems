@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -30,140 +29,53 @@ namespace Toems_DataModel
 
         public List<EntityComputer> SearchActiveComputers(DtoSearchFilterCategories filter, int userId)
         {
-            var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
-            var sortMode = "";
-            if (user.ComputerSortMode.Equals("Default"))
+            var user = _context.Users.FirstOrDefault(x => x.Id == userId);
+            var sortMode = user?.ComputerSortMode == "Default"
+                ? _context.Settings.FirstOrDefault(x => x.Name == SettingStrings.ComputerSortMode)?.Value?.ToString() ?? "Last Checkin"
+                : user?.ComputerSortMode ?? "Last Checkin";
+
+            var searchText = filter.SearchText ?? "";
+            var customAttribSearch = string.IsNullOrEmpty(searchText) ? "zzkjfjekrhwlhhw" : searchText;
+
+            var query = from c in _context.Computers
+                from u in _context.UserLogins.Where(x => x.ComputerId == c.Id).OrderByDescending(x => x.Id).Take(1).DefaultIfEmpty()
+                from b in _context.BiosInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
+                from cu in _context.CustomComputerAttributes.Where(x => x.ComputerId == c.Id && x.Value.Contains(customAttribSearch)).DefaultIfEmpty()
+                from sc in _context.ActiveSockets.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
+                from cs in _context.ComputerSystemInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
+                from os in _context.OsInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
+                where (b.SerialNumber.Contains(searchText) || u.UserName.Contains(searchText) ||
+                       c.Name.Contains(searchText) || c.Guid.Contains(searchText) || c.InstallationId.Contains(searchText) ||
+                       c.UUID.Contains(searchText) || c.ImagingClientId.Contains(searchText) || c.LastIp.Contains(searchText) ||
+                       cu.Value.Contains(customAttribSearch))
+                      && c.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned
+                      && c.ProvisionStatus != EnumProvisionStatus.Status.Archived
+                      && c.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved
+                      && c.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly
+                select new { c, u, b, cu, sc, cs, os };
+
+            query = sortMode == "Last Checkin"
+                ? query.OrderByDescending(x => x.c.LastCheckinTime)
+                : query.OrderBy(x => x.c.Name);
+
+            return query.AsEnumerable().Select(x => new EntityComputer
             {
-                var sortModeSetting = _context.Settings.Where(x => x.Name == SettingStrings.ComputerSortMode).FirstOrDefault();
-                sortMode = sortModeSetting == null ? "Last Checkin" : sortModeSetting.Value.ToString();
-            }
-            else
-                sortMode = user.ComputerSortMode;
-            if (string.IsNullOrEmpty(sortMode))
-                sortMode = "Last Checkin";
-
-
-            var customAttribSearch = "zzkjfjekrhwlhhw";
-            if(!string.IsNullOrEmpty(filter.SearchText))
-                customAttribSearch = filter.SearchText;
-
-            if (sortMode.Equals("Last Checkin"))
-            {
-                return (from c in _context.Computers
-                                 from u in _context.UserLogins.Where(x => x.ComputerId == c.Id).OrderByDescending(x => x.Id).Take(1).DefaultIfEmpty()
-                                 from b in _context.BiosInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
-                                 from cu in _context.CustomComputerAttributes.Where(x => x.ComputerId == c.Id && x.Value.Contains(customAttribSearch)).DefaultIfEmpty()
-                                 from sc in _context.ActiveSockets.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
-                                 from cs in _context.ComputerSystemInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
-                                 from os in _context.OsInventory.Where(x=> x.ComputerId == c.Id).DefaultIfEmpty()
-                                 where
-                                 (
-                                 b.SerialNumber.Contains(filter.SearchText) || u.UserName.Contains(filter.SearchText) ||
-                                 c.Name.Contains(filter.SearchText) || c.Guid.Contains(filter.SearchText) || c.InstallationId.Contains(filter.SearchText) ||
-                                 c.UUID.Contains(filter.SearchText) || c.ImagingClientId.Contains(filter.SearchText) || c.LastIp.Contains(filter.SearchText) || cu.Value.Contains(customAttribSearch))
-
-                                 && c.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && c.ProvisionStatus != EnumProvisionStatus.Status.Archived
-                                 && c.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved
-                                 && c.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly
-                                 orderby c.LastCheckinTime descending
-                                 select new
-                                 {
-                                     id = c.Id,
-                                     name = c.Name,
-                                     lastCheckinTime = c.LastCheckinTime,
-                                     lastIp = c.LastIp,
-                                     clientVersion = c.ClientVersion,
-                                     lastUser = u.UserName,
-                                     provision = c.ProvisionedTime,
-                                     connected = sc.ConnectionId,
-                                     manufacturer = cs.Manufacturer,
-                                     description = c.Description,
-                                     model = cs.Model,
-                                     domain = cs.Domain,
-                                     osName = os.Caption,
-                                     osVersion = os.Version,
-                                     osBuild = os.BuildNumber
-
-
-                                 }).AsEnumerable().Select(x => new EntityComputer()
-                                 {
-                                     Id = x.id,
-                                     Name = x.name,
-                                     LastCheckinTime = x.lastCheckinTime,
-                                     LastIp = x.lastIp,
-                                     ClientVersion = x.clientVersion,
-                                     LastLoggedInUser = x.lastUser,
-                                     ProvisionedTime = x.provision,
-                                     Status = x.connected != null ? "Connected" : "Disconnected",
-                                     Manufacturer = x.manufacturer,
-                                     Description = x.description,
-                                     Model = x.model,
-                                     Domain = x.domain,
-                                     OsName = x.osName,
-                                     OsVersion = x.osVersion,
-                                     OsBuild = x.osBuild,
-
-                                     
-                                 }).Take(filter.Limit).ToList();
-            }
-            else
-            {
-                return (from c in _context.Computers
-                        from u in _context.UserLogins.Where(x => x.ComputerId == c.Id).OrderByDescending(x => x.Id).Take(1).DefaultIfEmpty()
-                        from b in _context.BiosInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
-                        from cu in _context.CustomComputerAttributes.Where(x => x.ComputerId == c.Id && x.Value.Contains(customAttribSearch)).DefaultIfEmpty()
-                        from sc in _context.ActiveSockets.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
-                        from cs in _context.ComputerSystemInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
-                        from os in _context.OsInventory.Where(x => x.ComputerId == c.Id).DefaultIfEmpty()
-                        where
-                        (
-                        b.SerialNumber.Contains(filter.SearchText) || u.UserName.Contains(filter.SearchText) ||
-                        c.Name.Contains(filter.SearchText) || c.Guid.Contains(filter.SearchText) || c.InstallationId.Contains(filter.SearchText) ||
-                        c.UUID.Contains(filter.SearchText) || c.ImagingClientId.Contains(filter.SearchText) || c.LastIp.Contains(filter.SearchText) || cu.Value.Contains(customAttribSearch))
-
-                        && c.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && c.ProvisionStatus != EnumProvisionStatus.Status.Archived
-                        && c.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved
-                        && c.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly
-                        orderby c.Name
-                        select new
-                        {
-                            id = c.Id,
-                            name = c.Name,
-                            lastCheckinTime = c.LastCheckinTime,
-                            lastIp = c.LastIp,
-                            clientVersion = c.ClientVersion,
-                            lastUser = u.UserName,
-                            provision = c.ProvisionedTime,
-                            connected = sc.ConnectionId,
-                            manufacturer = cs.Manufacturer,
-                            description = c.Description,
-                            model = cs.Model,
-                            domain = cs.Domain,
-                            osName = os.Caption,
-                            osVersion = os.Version,
-                            osBuild = os.BuildNumber
-                        }).AsEnumerable().Select(x => new EntityComputer()
-                        {
-                            Id = x.id,
-                            Name = x.name,
-                            LastCheckinTime = x.lastCheckinTime,
-                            LastIp = x.lastIp,
-                            ClientVersion = x.clientVersion,
-                            LastLoggedInUser = x.lastUser,
-                            ProvisionedTime = x.provision,
-                            Status = x.connected != null ? "Connected" : "Disconnected",
-                            Manufacturer = x.manufacturer,
-                            Description = x.description,
-                            Model = x.model,
-                            Domain = x.domain,
-                            OsName = x.osName,
-                            OsVersion = x.osVersion,
-                            OsBuild = x.osBuild,
-                        }).Take(filter.Limit).ToList();
-            }
-
-           
-
+                Id = x.c.Id,
+                Name = x.c.Name,
+                LastCheckinTime = x.c.LastCheckinTime,
+                LastIp = x.c.LastIp,
+                ClientVersion = x.c.ClientVersion,
+                LastLoggedInUser = x.u?.UserName,
+                ProvisionedTime = x.c.ProvisionedTime,
+                Status = x.sc?.ConnectionId != null ? "Connected" : "Disconnected",
+                Manufacturer = x.cs?.Manufacturer,
+                Description = x.c.Description,
+                Model = x.cs?.Model,
+                Domain = x.cs?.Domain,
+                OsName = x.os?.Caption,
+                OsVersion = x.os?.Version,
+                OsBuild = x.os?.BuildNumber,
+            }).Take(filter.Limit).ToList();
         }
 
         public List<EntityComputer> GetPotentialWOLRelays(string gateway, DateTime dateCutoff)

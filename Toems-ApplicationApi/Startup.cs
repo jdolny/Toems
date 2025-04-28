@@ -146,19 +146,20 @@ namespace Toems_ApplicationApi
             {
                 if (ConfigurationManager.AppSettings["ServerRole"].ToLower().Equals("primary"))
                 {
-                    RecurringJob.AddOrUpdate("ScheduleRunner-Job", () => new ScheduleRunner().Run(), 
-                       "*/15 * * * *", TimeZoneInfo.Local);
+                   
+
+                    RecurringJob.AddOrUpdate("ScheduleRunner-Job", () => new ScheduleRunner().Run(), "*/15 * * * *", new RecurringJobOptions { TimeZone = TimeZoneInfo.Local });
 
                     var imagingTimeout = ServiceSetting.GetSettingValue(SettingStrings.ImageTaskTimeoutMinutes);
                     if(!string.IsNullOrEmpty(imagingTimeout))
                     {
                         if(!imagingTimeout.Equals("0"))
                             RecurringJob.AddOrUpdate("ImagingTaskTimeout-Job", () => new ServiceActiveImagingTask().CancelTimedOutTasks(),
-                      "*/5 * * * *", TimeZoneInfo.Local);
+                      "*/5 * * * *", new RecurringJobOptions { TimeZone = TimeZoneInfo.Local });
                     }
 
                     var path = HttpContext.Current.Server.MapPath("~");
-                    RecurringJob.AddOrUpdate("Toec-Deploy-Job", () => new ToecRemoteInstaller().Run(path), "*/15 * * * *", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate("Toec-Deploy-Job", () => new ToecRemoteInstaller().Run(path), "*/15 * * * *", new RecurringJobOptions { TimeZone = TimeZoneInfo.Local });
 
                     var groupSchedule = ServiceSetting.GetSettingValue(SettingStrings.DynamicGroupSchedule);
                     var ldapSchedule = ServiceSetting.GetSettingValue(SettingStrings.LdapSyncSchedule);
@@ -171,47 +172,47 @@ namespace Toems_ApplicationApi
                     var wingetSchedule = ServiceSetting.GetSettingValue(SettingStrings.WingetManifestSchedule);
 
                     RecurringJob.AddOrUpdate("DynamicGroupUpdate-Job", () => new UpdateDynamicMemberships().All(),
-                        groupSchedule, TimeZoneInfo.Local);
+                        groupSchedule, new RecurringJobOptions { TimeZone = TimeZoneInfo.Local });
                     RecurringJob.AddOrUpdate("StorageSync-Job", () => new FolderSync().RunAllServers(), storageSchedule,
-                        TimeZoneInfo.Local);
+                        new RecurringJobOptions { TimeZone = TimeZoneInfo.Local });
                     RecurringJob.AddOrUpdate("LDAPSync-Job", () => new LdapSync().Run(), ldapSchedule,
-                        TimeZoneInfo.Local);
+                        new RecurringJobOptions { TimeZone = TimeZoneInfo.Local });
 
                     if (!string.IsNullOrEmpty(resetSchedule))
                         RecurringJob.AddOrUpdate("ResetRequestReport-Job",
-                            () => new ServiceResetRequest().SendResetRequestReport(), resetSchedule, TimeZoneInfo.Local);
+                            () => new ServiceResetRequest().SendResetRequestReport(), resetSchedule, new RecurringJobOptions { TimeZone = TimeZoneInfo.Local });
                     else
                         RecurringJob.RemoveIfExists("ResetRequestReport-Job");
 
                     if (!string.IsNullOrEmpty(approvalSchedule))
                         RecurringJob.AddOrUpdate("ApprovalRequestReport-Job",
                             () => new ServiceApprovalRequest().SendApprovalRequestReport(), approvalSchedule,
-                            TimeZoneInfo.Local);
+                            new RecurringJobOptions { TimeZone = TimeZoneInfo.Local });
                     else
                         RecurringJob.RemoveIfExists("ApprovalRequestReport-Job");
 
                     if (!string.IsNullOrEmpty(smartSchedule))
                         RecurringJob.AddOrUpdate("SmartReport-Job", () => new ServiceReport().SendSmartReport(),
-                            smartSchedule, TimeZoneInfo.Local);
+                            smartSchedule, new RecurringJobOptions { TimeZone = TimeZoneInfo.Local });
                     else
                         RecurringJob.RemoveIfExists("SmartReport-Job");
 
                     if (!string.IsNullOrEmpty(lowDiskSchedule))
                         RecurringJob.AddOrUpdate("LowDiskReport-Job", () => new ServiceReport().SendLowDiskSpaceReport(),
-                      lowDiskSchedule, TimeZoneInfo.Local);
+                      lowDiskSchedule, new RecurringJobOptions { TimeZone = TimeZoneInfo.Local });
                     else
                         RecurringJob.RemoveIfExists("LowDiskReport-Job");
 
 
                     if (!string.IsNullOrEmpty(dataCleanupSchedule))
                         RecurringJob.AddOrUpdate("DataCleanup-Job", () => new DataCleanup().Run(),
-                            dataCleanupSchedule, TimeZoneInfo.Local);
+                            dataCleanupSchedule, new RecurringJobOptions { TimeZone = TimeZoneInfo.Local });
                     else
                         RecurringJob.RemoveIfExists("DataCleanup-Job");
 
                     if(!string.IsNullOrEmpty(wingetSchedule))
                         RecurringJob.AddOrUpdate("WingetManifest-Job", () => new WinGetManifestImporter().Run(path),
-                            wingetSchedule, TimeZoneInfo.Local);
+                            wingetSchedule, new RecurringJobOptions { TimeZone = TimeZoneInfo.Local });
                     else
                         RecurringJob.RemoveIfExists("WingetManifest-Job");
                 }
