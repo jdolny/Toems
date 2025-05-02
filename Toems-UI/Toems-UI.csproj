@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Toems_UI</RootNamespace>
+    <AssemblyName>`$(AssemblyName.Replace(' ', '_'))</AssemblyName>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="MudBlazor" Version="8.*" />
+  </ItemGroup>
+</Project>
