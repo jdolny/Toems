@@ -1,0 +1,105 @@
+﻿@using Toems_Common
+@using Toems_Common.Entity
+@using Toems_Common.Enum
+@inject Toems_ApiCalls.APICall Call
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            Create Unmanaged Computer
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTabs Outlined="true" Position="Position.Top" Rounded="false" Border="false" @bind-ActivePanelIndex="_activePanelIndex"
+                 ApplyEffectsToContainer="true" Class="mt-4" PanelClass="pa-8" Elevation="5">
+            <MudTabPanel Class="pa-4" Text="Single">
+    
+                <MudTextField @bind-Value="_computerName" Label="Computer Name" Variant="Variant.Outlined"/>
+                <MudTextField Mask="@(new PatternMask("##:##:##:##:##:##")
+                                    {
+                                        MaskChars = new[] { new MaskChar('#', "[0-9A-Fa-f]") },
+                                        Transformation = char.ToUpper
+                                    })" @bind-Value="_computerMac" Label="MAC Address" Variant="Variant.Outlined"/>
+      
+            </MudTabPanel>
+            <MudTabPanel Text="Multi">
+                <MudTextField @bind-Value="_multiText" Label="name,00:11:22:33:44:55" HelperText="Enter one name,mac address on each line to import the list.  MAC address can be formats such as 00:11 or 0011 or 00-11." AutoGrow="true" Variant="Variant.Outlined" Lines="4"></MudTextField>
+            </MudTabPanel>
+        </MudTabs>
+        <br/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Create">Create</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    private int _activePanelIndex = 0;
+    private string _computerName;
+    private string _computerMac;
+    private string _multiText;
+    
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+    
+    private void Cancel() => MudDialog.Cancel();
+
+    private async Task Create()
+    {
+        if (_activePanelIndex == 0)
+        {
+            var computer = new EntityComputer();
+            computer.Name = _computerName;
+            computer.ProvisionStatus = EnumProvisionStatus.Status.ImageOnly;
+            computer.ImagingMac = Utility.FixMac(_computerMac);
+            computer.ImagingClientId = computer.ImagingMac;
+            var result = await Call.ComputerApi.Post(computer);
+            if (!result.Success)
+            {
+                Snackbar.Add($"Could not create {_computerName}:  {result.ErrorMessage} Ensure this computer doesn't already exist", Severity.Error);
+            }
+            else
+            {
+                Snackbar.Add($"Successfully Created {_computerName}", Severity.Success);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+        }
+        else
+        {
+            var seperator = new string[] { "\n" };
+            var isError = false;
+            try
+            {
+                foreach (var obj in _multiText.Split(seperator, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    var comp = obj.Split(',');
+                    var computer = new EntityComputer();
+                    computer.Name = comp[0];
+                    computer.ProvisionStatus = EnumProvisionStatus.Status.ImageOnly;
+                    computer.ImagingMac = Utility.FixMac(comp[1]);
+                    computer.ImagingClientId = computer.ImagingMac;
+                    var result = await Call.ComputerApi.Post(computer);
+                    if (!result.Success)
+                    {
+                        isError = true;
+                        Snackbar.Add($"Could not create {obj}.  {result.ErrorMessage}", Severity.Error);
+                        break;
+                    }
+                }
+
+                if (!isError)
+                {
+                    Snackbar.Add("Successfully created computers. ", Severity.Success);
+                    MudDialog.Close(DialogResult.Ok(true));
+                }
+            }
+            catch
+            {
+                Snackbar.Add($"Could not parse list. Ensure the format is name,00:11:22:33:44:55", Severity.Error);
+            }
+        }
+    }
+}
