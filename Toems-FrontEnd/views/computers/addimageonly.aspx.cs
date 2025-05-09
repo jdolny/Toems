@@ -61,11 +61,7 @@ namespace Toems_FrontEnd.views.computers
                     EndUserMessage = "Could Not create " + obj;
                     break;
                 }
-
-
             }
-
-
         }
     }
 }

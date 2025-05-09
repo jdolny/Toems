@@ -1,0 +1,272 @@
+﻿@page "/computers/manage"
+@using Toems_Common
+@using Toems_Common.Dto
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@using Toems_UI.Site.Pages.Computers.Components
+@inject Toems_ApiCalls.APICall Call
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<Authorize>
+    <ActionButtons>
+
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small">
+            <MudButton OnClick="@(() => ArchiveOrDeleteComputer("Archive"))">Archive Selected</MudButton>
+            <MudMenu Icon="@Icons.Material.Filled.ArrowDropDown" Style="align-self: auto;">
+                <MudMenuItem OnClick="@(() => ArchiveOrDeleteComputer("Delete"))">Delete Selected</MudMenuItem>
+                <MudDivider />
+                <MudMenuItem OnClick="@((e) => CreateNew())">New Unmanaged</MudMenuItem>
+            </MudMenu>
+        </MudButtonGroup>
+    </ActionButtons>
+    <MudPaper Class="pa-8 mb-8" Elevation="5" >
+        
+        <MudGrid >
+            <MudItem xs="12" md="6">
+                <MudToggleGroup ValueChanged="@(s => FilterUpdated(s))" Value="_computerSelection" T="string" SelectionMode="SelectionMode.SingleSelection" Color="Color.Primary" Style="width: 350px;">
+                    <MudToggleItem Value="@("Active")" Text="Active"/>
+                    <MudToggleItem Value="@("All")" Text="All"/>
+                    <MudToggleItem Value="@("Unmanaged")" Text="Unmanaged"/>
+                </MudToggleGroup>
+            </MudItem>
+            <MudItem xs="12" md="6" Class="d-flex justify-end">
+                <div class="width-150" style="margin-right:20px;">
+                    <MudSelect Dense="true" T="string" Value="_selectedCategoryType" Label="Category Filter" SelectedValuesChanged="@(s => OnCategoryFilterTypeChanged(s))" AdornmentIcon="@Icons.Material.Filled.Category" Variant="Variant.Outlined" AdornmentColor="Color.Primary">
+                        <MudSelectItem Value="@("Any")">Any Category</MudSelectItem>
+                        <MudSelectItem Value="@("And")">And Category</MudSelectItem>
+                        <MudSelectItem Value="@("Or")">Or Category</MudSelectItem>
+                    </MudSelect>
+                </div>
+                <div class="width-150">
+                    <MudSelect T="string" ValueChanged="@(s => LimitUpdated(s))" Label="Limit" Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Stop" Value="_selectedLimit" ShrinkLabel>
+                        @foreach (var limit in Constants.Limits)
+                        {
+                            <MudSelectItem Value="@limit">@limit</MudSelectItem>
+                        }
+                    </MudSelect>
+                </div>
+            </MudItem>
+            @if (_selectedCategoryType.Equals("And") || _selectedCategoryType.Equals("Or"))
+            {
+                <MudItem xs="12">
+                    <MudSelect T="string" Label="Selected Categories" MultiSelection="true" SelectedValuesChanged="@(s => OnCategoryChanged(s))" SelectedValues="_selectedCategories">
+                        @foreach (var category in Categories)
+                        {
+                            <MudSelectItem T="string" Value="@category.Name">@category.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            }
+    
+            
+            <MudItem xs="12" md="6">
+                <div class="width-600">
+                <MudTextField T="string" ValueChanged="@(s => OnSearchChanged(s))" DebounceInterval="300" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" HelperText="Computer Name, Serial Number, IP Address, MAC Address, GUID, Installation ID, Custom Attribute"/>
+                </div>
+                </MudItem>
+         
+        
+        </MudGrid>
+    </MudPaper>
+    <div style="height: 4px;">@if (_isLoading) {<MudProgressLinear Color="Color.Default" Indeterminate="true" Class="my-2" />}</div>
+    <div class="clear"></div>
+    <MudDataGrid Striped="true" T="EntityComputer" Class="mb-10" Elevation="5" MultiSelection="true" Items="@Computers" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive" @bind-SelectedItems="_selectedComputers">
+        <ToolBarContent>
+            <MudGrid>
+                <MudSpacer />
+               
+            </MudGrid>
+        </ToolBarContent>
+        <PagerContent><MudDataGridPager T="EntityComputer" /></PagerContent>
+        <Columns>
+            <SelectColumn T="EntityComputer" />
+            <PropertyColumn Property="x => x.Name" Title="Name" />
+            <PropertyColumn Property="x => x.LastCheckinTime" Title="Last Checkin" />
+            <PropertyColumn Property="x => x.LastIp" Title="Last Known IP" />
+            <PropertyColumn Property="x => x.ClientVersion" Title="Client Version" />
+            @foreach (var column in UserDefinedColumns)
+            {
+                <PropertyColumn Property="@column.Property" Title="@column.Title" />
+            }
+            <TemplateColumn Title="Actions" StickyRight="true">
+                <CellTemplate>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="@(() => Navigation.NavigateTo($"/Computers/Details/{context.Item.Id}"))">Details</MudButton>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</Authorize>
+
+@code {
+    [CascadingParameter] public MainLayout? Layout { get; set; }
+    private IEnumerable<EntityComputer> Computers = new List<EntityComputer>();
+    private IEnumerable<EntityCategory> Categories = new List<EntityCategory>();
+    private readonly DtoComputerFilter _computerFilter = new();
+    private readonly List<DtoColumnDefinition> UserDefinedColumns = [];
+    
+    private IEnumerable<string> _selectedCategories = new HashSet<string> {  };
+    private HashSet<EntityComputer> _selectedComputers = []; 
+    private string? _selectedCategoryType = "Any Category";
+    private string? _computerSelection = "Active";
+    private string? _selectedLimit = "50";
+    private bool _isLoading = true;
+    private string? _searchString;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Layout?.UpdateAppBar("Computer Search",
+            new List<BreadcrumbItem>
+            {
+                new("Home", href: "/"),
+                new("Computers Search", href: null, disabled: true)
+            }
+        );
+        
+        UserDefinedColumns.Add(new DtoColumnDefinition { Property = x => x.Guid, Title = "Guid" });
+        if (_selectedLimit != null) _computerFilter.Limit = int.Parse(_selectedLimit);
+        _computerFilter.SearchText = "";
+        _computerFilter.CategoryType = "";
+        _computerFilter.Categories = new List<string>();
+        _computerFilter.IsActive = true;
+       
+        Categories = await Call.CategoryApi.Get();
+        await LoadComputers();
+    }
+    
+    
+    private async Task LoadComputers()
+    {
+        _isLoading = true;
+        
+        _computerFilter.CategoryType = _selectedCategoryType;
+        if (_selectedLimit != null) _computerFilter.Limit = _computerFilter.Limit = int.Parse(_selectedLimit);
+        _computerFilter.SearchText = _searchString;
+        _computerFilter.Categories.Clear();
+        foreach (var cat in _selectedCategories)
+        {
+            _computerFilter.Categories.Add(cat);
+        }
+        switch (_computerSelection)
+        {
+            case "Active":
+                _computerFilter.IsActive = true;
+                _computerFilter.IsUnmanaged = false;
+                _computerFilter.IsAll = false;
+                break;
+            case "All":
+                _computerFilter.IsAll = true;
+                _computerFilter.IsActive = false;
+                _computerFilter.IsUnmanaged = false;
+                break;
+            case "Unmanaged":
+                _computerFilter.IsActive = false;
+                _computerFilter.IsAll = false;
+                _computerFilter.IsUnmanaged = true;
+                break;
+        }
+        Computers = await Call.ComputerApi.SearchComputers(_computerFilter);
+        _isLoading = false;
+    }
+    
+    
+    private Task OnSearchChanged(string searchText)
+    {
+        _searchString = searchText;
+        return LoadComputers();
+    }
+
+    private Task FilterUpdated(string? selection)
+    {
+        _computerSelection = selection;
+        return LoadComputers();
+    }
+    
+    private Task LimitUpdated(string limit)
+    {
+        _selectedLimit = limit;
+        return LoadComputers();
+    }
+    
+    private Task OnCategoryChanged(IEnumerable<string> selection)
+    {
+        _selectedCategories = selection;
+        return LoadComputers();
+    }
+
+    private Task OnCategoryFilterTypeChanged(IEnumerable<string?> categoryFilterType)
+    {
+        _selectedCategoryType = categoryFilterType.FirstOrDefault();
+        return LoadComputers();
+    }
+
+    private async Task ArchiveOrDeleteComputer(string type)
+    {
+        var contentText = $"Are you sure you want to {type.ToLower()} the following computers?\n";
+        foreach (var computer in _selectedComputers)
+            contentText += $"\n{computer.Name}";
+
+        var parameters = new DialogParameters<DialogConfirm>
+        {
+            { x => x.ContentText, contentText },
+            { x => x.ButtonText, type },
+            { x => x.Color, Color.Error }
+        };
+
+        var dialog = await DialogService.ShowAsync<DialogConfirm>(type, parameters, DialogOptionsConstants.DeleteDialogOptions);
+        var result = await dialog.Result;
+
+        var errorCount = 0;
+        var successCount = 0;
+        if (!result.Canceled && result.Data is true)
+        {
+            foreach (var computer in _selectedComputers)
+            {
+                DtoActionResult response;
+                if(type.Equals("Archive"))
+                    response = await Call.ComputerApi.Archive(computer.Id);
+                else
+                    response = await Call.ComputerApi.Delete(computer.Id);
+
+                if (response.Success) 
+                    successCount++;
+                else 
+                    errorCount++;
+              
+            }
+
+            string message;
+            Severity severity;
+
+            if (errorCount == 0)
+            {
+                message = $"Successfully {type.ToLower()}d {successCount} computer{(successCount == 1 ? "" : "s")}.";
+                severity = Severity.Success;
+            }
+            else if (successCount == 0)
+            {
+                message = $"Failed to {type.ToLower()} {errorCount} computer{(errorCount == 1 ? "" : "s")}.";
+                severity = Severity.Error;
+            }
+            else
+            {
+                message = $"{type}d {successCount} computer{(successCount == 1 ? "" : "s")} successfully. Failed to {type.ToLower()} {errorCount}.";
+                severity = Severity.Warning;
+            }
+
+            Snackbar.Add(message, severity);
+            _selectedComputers.Clear();
+            await LoadComputers();
+        }
+    }
+    private async Task CreateNew()
+    {
+        await DialogService.ShowAsync<ActionCreate>("New", new DialogParameters<ActionCreate>(), DialogOptionsConstants.DeleteDialogOptions);
+    }
+
+}
+
+
+
+

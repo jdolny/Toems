@@ -1,0 +1,105 @@
+﻿@inject LocalAuthStateProvider AuthStateProvider
+
+    <MudNavMenu Color="Color.Primary" Bordered="true"  Class="mt-2"  >
+        
+        <MudTextField @bind-Value="_navSearchString" Class="mx-2" Label="Search" Immediate
+                      Variant="Variant.Outlined" Margin="Margin.Dense"/>
+        <MudDivider Class="my-2"/>
+
+        <MudNavLink Class="@(SearchClass("dashboard"))" Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard" >Dashboard</MudNavLink>
+        @if (ShowComputersGroup())
+        {
+            <MudNavGroup Title="Computers" Expanded="@(IsComputersExpanded)" Icon="@Icons.Material.Filled.Computer">
+                <MudNavLink  Class="@(ShowAllComputersLinks() ? string.Empty : SearchClass("manage"))" Href="/computers/manage" Match="NavLinkMatch.All">Computer List</MudNavLink>
+                <MudNavLink  Class="@(ShowAllComputersLinks() ? string.Empty : SearchClass("reset", "approval", "request"))" Href="/computers/approval" Match="NavLinkMatch.Prefix">Approval / Reset Requests</MudNavLink>
+            </MudNavGroup>
+        }
+        <MudNavGroup Title="Images" Expanded="@(IsImagesExpanded)" Icon="@Icons.Material.Filled.Camera" >
+            <MudNavLink Class="sub-nav-item" Href="/images/search" Match="NavLinkMatch.All">Image List</MudNavLink>
+            <MudNavLink Href="/images/globalprofiles" Match="NavLinkMatch.Prefix">Global Profiles</MudNavLink>
+        </MudNavGroup>
+        <MudNavGroup Title="Groups" Expanded="@(IsGroupsExpanded)" Icon="@Icons.Material.Filled.Group" >
+            <MudNavLink Href="/groups/search" Match="NavLinkMatch.All">Group List</MudNavLink>
+            <MudNavLink Href="/groups/oubrowser" Match="NavLinkMatch.Prefix">Active Directory OU Browser</MudNavLink>
+        </MudNavGroup>
+        <MudNavGroup Title="Modules" Expanded="@(IsModulesExpanded)" Icon="@Icons.Material.Filled.ViewModule" >
+            <MudNavLink Href="/modules/all" Match="NavLinkMatch.All">All Modules List</MudNavLink>
+            <MudNavLink Href="/modules/command" Match="NavLinkMatch.All">Command</MudNavLink>
+            <MudNavLink Href="/modules/file" Match="NavLinkMatch.All">File</MudNavLink>
+            <MudNavLink Href="/modules/message" Match="NavLinkMatch.All">Message</MudNavLink>
+            <MudNavLink Href="/modules/printer" Match="NavLinkMatch.All">Printer</MudNavLink>
+            <MudNavLink Href="/modules/script" Match="NavLinkMatch.All">Script</MudNavLink>
+            <MudNavLink Href="/modules/software" Match="NavLinkMatch.All">Software</MudNavLink>
+            <MudNavLink Href="/modules/sysprep" Match="NavLinkMatch.All">Sysprep</MudNavLink>
+            <MudNavLink Href="/modules/winget" Match="NavLinkMatch.All">Winget</MudNavLink>
+            <MudNavLink Href="/modules/winpe" Match="NavLinkMatch.All">WinPE</MudNavLink>
+        </MudNavGroup>
+        <MudNavGroup Title="Policies" Expanded="@(IsModulesExpanded)" Icon="@Icons.Material.Filled.Policy">
+            <MudNavLink Href="/policies/search" Match="NavLinkMatch.All">Policy List</MudNavLink>
+            <MudNavLink Href="/policies/status" Match="NavLinkMatch.All">Active Status</MudNavLink>
+        </MudNavGroup>
+        <MudNavGroup Title="Tasks" Expanded="@(IsModulesExpanded)" Icon="@Icons.Material.Filled.Task">
+            <MudNavLink Href="/tasks/imaging" Match="NavLinkMatch.All">Imaging Tasks</MudNavLink>
+            <MudNavLink Href="/tasks/policy" Match="NavLinkMatch.All">Policy Tasks</MudNavLink>
+        </MudNavGroup>
+        <MudNavGroup Title="Global Properties" Expanded="@(IsModulesExpanded)" Icon="@Icons.Material.Filled.BlurCircular">
+            <MudNavLink Href="/global/schedules" Match="NavLinkMatch.All">Schedules</MudNavLink>
+            <MudNavLink Href="/global/categories" Match="NavLinkMatch.All">Categories</MudNavLink>
+            <MudNavLink Href="/global/customattributes" Match="NavLinkMatch.All">Custom Attributes</MudNavLink>
+        </MudNavGroup>
+        <MudNavGroup Title="Reports" Expanded="@(IsModulesExpanded)" Icon="@Icons.Material.Filled.Report">
+            <MudNavLink Href="/reports/computer" Match="NavLinkMatch.All">Computer</MudNavLink>
+            <MudNavLink Href="/reports/user" Match="NavLinkMatch.All">User</MudNavLink>
+            <MudNavLink Href="/reports/software" Match="NavLinkMatch.All">Software</MudNavLink>
+            <MudNavLink Href="/reports/certificates" Match="NavLinkMatch.All">Certificates</MudNavLink>
+        </MudNavGroup>
+        <MudNavGroup Title="Users and Groups" Expanded="@(IsModulesExpanded)" Icon="@Icons.Material.Filled.Groups">
+            <MudNavLink Href="/users/manage" Match="NavLinkMatch.All">Manage Users</MudNavLink>
+            <MudNavLink Href="/usergroups/manage" Match="NavLinkMatch.All">Manage Groups</MudNavLink>
+        </MudNavGroup>
+        <MudNavGroup Title="Admin Settings" Expanded="@(IsModulesExpanded)" Icon="@Icons.Material.Filled.Settings">
+            <MudNavLink Href="/settings/about" Match="NavLinkMatch.All">About</MudNavLink>
+        </MudNavGroup>
+        <MudNavLink Icon="@Icons.Material.Filled.Logout" OnClick="() => HandleLogout()">Logout</MudNavLink>
+        
+    </MudNavMenu>
+
+@code {
+    private async Task HandleLogout()
+    {
+        await AuthStateProvider.LogoutAsync();
+    }
+    
+    
+    private string _navSearchString { get; set; }
+
+    private string SearchClass(params string[] labels)
+    {
+        return string.IsNullOrEmpty(_navSearchString) || labels.Any(label => label.Contains(_navSearchString, StringComparison.OrdinalIgnoreCase))
+            ? string.Empty
+            : "d-none";
+    }
+    
+
+    private bool ShowComputersGroup() =>
+        MatchesSearch("computers") || MatchesSearch("manage", "reset", "approval", "request");
+
+    private bool ShowAllComputersLinks() =>
+        MatchesSearch("computers");
+
+    private bool IsComputersExpanded =>
+        !string.IsNullOrEmpty(_navSearchString) && MatchesSearch("computers", "manage", "reset", "approval", "request");
+    private bool IsModulesExpanded =>
+        !string.IsNullOrEmpty(_navSearchString) && MatchesSearch("modules");
+    private bool IsImagesExpanded =>
+        !string.IsNullOrEmpty(_navSearchString) && MatchesSearch("images");
+    private bool IsGroupsExpanded =>
+        !string.IsNullOrEmpty(_navSearchString) && MatchesSearch("groups");
+    
+    private bool MatchesSearch(params string[] aliases)
+    {
+        return string.IsNullOrEmpty(_navSearchString) || aliases.Any(a => a.Contains(_navSearchString, StringComparison.OrdinalIgnoreCase));
+    }
+}
+
+

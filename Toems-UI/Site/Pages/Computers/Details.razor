@@ -1,0 +1,84 @@
+﻿@page "/Computers/Details/{Id:int}"
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@using Toems_UI.Site.Pages.Computers.Components
+@inject Toems_ApiCalls.APICall Call
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<ActionButtons>
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
+    <MudButton>Actions</MudButton>
+    <MudMenu Icon="@Icons.Material.Filled.ArrowDropDown" Style="align-self: auto;">
+        
+        <MudMenuItem>Reply All</MudMenuItem>
+        <MudMenuItem>Forward</MudMenuItem>
+        <MudMenuItem>Reply & Delete</MudMenuItem>
+        <MudDivider />
+        <MudMenuItem OnClick="@((e) => GetStatusAsync())">Get Status</MudMenuItem>
+    </MudMenu>
+</MudButtonGroup>
+</ActionButtons>
+<MudTabs Outlined="true" Position="Position.Left" Rounded="false" Border="false" @bind-ActivePanelIndex="_selectedTabIndex"
+         ApplyEffectsToContainer="true" Class="mt-8" PanelClass="pa-0" Elevation="5">
+    <MudTabPanel Text="Attachments">
+    
+           <Attachments Computer="Computer"></Attachments>
+      
+    </MudTabPanel>
+    <MudTabPanel Text="Certificates">
+    </MudTabPanel>
+    <MudTabPanel Text="Comments">
+    </MudTabPanel>
+    <MudTabPanel Text="Custom Attributes">
+    </MudTabPanel>
+    <MudTabPanel Text="Custom Inventory">
+    </MudTabPanel>
+    <MudTabPanel Text="Effective Policy">
+    </MudTabPanel>
+    <MudTabPanel Text="General">
+        <div class="content-container">
+        <General Computer="@Computer"/>
+        </div>
+    </MudTabPanel>
+    <MudTabPanel Text="Image Logs">
+    </MudTabPanel>
+    <MudTabPanel Text="Image Settings">
+    </MudTabPanel>
+    <MudTabPanel Text="Instant Module Runner">
+    </MudTabPanel>
+    <MudTabPanel Text="Policy History">
+    </MudTabPanel>
+    <MudTabPanel Text="Software">
+    </MudTabPanel>
+    <MudTabPanel Text="System Info">
+    </MudTabPanel>
+    <MudTabPanel Text="Usages">
+    </MudTabPanel>
+    <MudTabPanel Text="User Login History">
+    </MudTabPanel>
+    <MudTabPanel Text="Windows Updates">
+    </MudTabPanel>
+    
+</MudTabs>
+
+@code {
+    [CascadingParameter] public MainLayout? Layout { get; set; }
+    [Parameter] public int Id { get; set; }
+    [Parameter] public EntityComputer Computer {get; set;} = new();
+    private int _selectedTabIndex = 6;
+    protected override async Task OnInitializedAsync()
+    {
+        Computer = await Call.ComputerApi.Get(Id);
+    }
+    
+    private async Task GetStatusAsync()
+    {
+        var parameters = new DialogParameters<ActionStatus>
+        {
+            { x => x.Computer, Computer },
+        };
+        await DialogService.ShowAsync<ActionStatus>("New", parameters, DialogOptionsConstants.DeleteDialogOptions);
+    }
+  
+}

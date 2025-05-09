@@ -1,0 +1,175 @@
+﻿
+@inherits LayoutComponentBase
+@inject LocalAuthStateProvider AuthStateProvider
+
+<MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<CascadingValue Value="this">
+<MudLayout>
+    <MudAppBar Elevation="1"  >
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h5" Color="Color.Secondary" Class="ml-3">Theopenem</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle" />
+        
+        <MudIconButton Icon="@Icons.Material.Filled.Help" Color="Color.Default" />
+        <MudMenu>
+            <ActivatorContent>
+                <MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Primary">@_currentUser</MudChip>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem Label="Profile" />
+                <MudMenuItem Label="Theme" />
+                <MudMenuItem Label="Usage" />
+            </ChildContent>
+        </MudMenu>
+    </MudAppBar>
+
+    <MudDrawer  @bind-Open="_drawerOpen" Elevation="2" Variant="DrawerVariant.Responsive"  Width="250px" >
+        <NavMenu/>
+        
+    </MudDrawer>
+    
+    
+<MudAppBar Elevation="10" Fixed="true" Width="100%" Class="mt-16" Style="z-index: 2" Color="Color.Secondary"  Contextual>
+    
+        <div class="d-flex flex-column">
+            <MudBreadcrumbs Items="Breadcrumbs" Separator=" > " Class="mb-0" Style="line-height:0; margin-top:-20px;" >
+                <ItemTemplate>
+                    <MudLink Typo="Typo.caption" Href="@context.Href" Disabled="@context.Disabled"  Color="@(context.Disabled ? Color.Default : Color.Inherit)">@context.Text</MudLink>
+
+                </ItemTemplate>
+            </MudBreadcrumbs>
+            <MudText Typo="Typo.h5" Style="line-height:.5;" Color="Color.Primary" Class="font-weight-bold">@PageTitle</MudText>
+        </div>
+       
+        <MudSpacer/>
+
+        @ActionButtons
+
+    </MudAppBar>
+
+    <MudMainContent>
+        <MudContainer Class="mt-20" MaxWidth="MaxWidth.False">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+
+</MudLayout>
+</CascadingValue>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+@code {
+    public string PageTitle { get; set; } = "";
+    public List<BreadcrumbItem> Breadcrumbs { get; set; } = new();
+    public RenderFragment? ActionButtons { get; set; }
+    private bool _drawerOpen = true;
+    private bool _isDarkMode = false;
+    private MudTheme? _theme = null;
+    private string _currentUser = string.Empty;
+    public void NotifyStageChange()
+    {
+        StateHasChanged();
+    }
+    public void UpdateAppBar(string title, List<BreadcrumbItem> breadcrumbs)
+    {
+        PageTitle = title;
+        Breadcrumbs = breadcrumbs;
+        StateHasChanged();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        _currentUser = user.Identity.Name;
+      
+    }
+    
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _theme = new()
+        {
+            PaletteLight = _lightPalette,
+            PaletteDark = _darkPalette,
+            LayoutProperties = new LayoutProperties()
+        };
+       
+    }
+
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private void DarkModeToggle()
+    {
+        _isDarkMode = !_isDarkMode;
+    }
+
+
+    private readonly PaletteLight _lightPalette = new()
+    {
+        Black = "#110e2d",
+        AppbarText = "#6C7383",
+        AppbarBackground = "#3d6889",
+        DrawerBackground = "#353c48",
+        GrayLight = "#e8e8e8",
+        GrayLighter = "#f9f9f9",
+        DrawerText = "#a5adba",
+        Secondary = "ffffff",
+        DrawerIcon = "#a5adba",
+        Background = "#e3e3e3", //"#f6f6f6",
+        Tertiary = "#e5e9ed",
+        Primary = "#5864bd"
+        
+        
+    };
+
+    private readonly PaletteDark _darkPalette = new()
+    {
+        Primary = "#667dab",
+        Tertiary = "#2b2b2b",
+        Surface = "#2b2b2b",
+        Background = "#555555",
+        BackgroundGray = "#151521",
+        AppbarText = "#92929f",
+        AppbarBackground = "#3d6889",
+        DrawerBackground = "#2b2b2b",
+        ActionDefault = "#74718e",
+        ActionDisabled = "#9999994d",
+        ActionDisabledBackground = "#605f6d4d",
+        TextPrimary = "#e2e0ed",
+        TextSecondary = "#92929f",
+        TextDisabled = "#ffffff33",
+        DrawerIcon = "#92929f",
+        DrawerText = "#cccccc",
+        GrayLight = "#2a2833",
+        GrayLighter = "#1e1e2d",
+        Info = "#4a86ff",
+        Success = "#3dcb6c",
+        Warning = "#ffb545",
+        Error = "#ff3f5f",
+        LinesDefault = "#33323e",
+        TableLines = "#33323e",
+        Divider = "#292838",
+        OverlayLight = "#1e1e2d80",
+        
+    };
+
+    public string DarkLightModeButtonIcon => _isDarkMode switch
+    {
+        true => Icons.Material.Rounded.AutoMode,
+        false => Icons.Material.Outlined.DarkMode,
+    };
+}
+
+

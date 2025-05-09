@@ -1,0 +1,211 @@
+﻿@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@using System.Net.Http.Headers
+@using System.Security.Claims
+@using Blazored.LocalStorage
+@layout MainLayout
+@inject HttpClient HttpClient
+@inject ISnackbar Snackbar
+@inject ILocalStorageService LocalStorage
+
+    <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="@progress" Class="my-4" />
+    <MudStack Style="width: 100%">
+        <MudFileUpload T="IReadOnlyList<IBrowserFile>"@ref="_fileUpload" OnFilesChanged="OnInputFileChanged" AppendMultipleFiles Hidden="@false" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+                       InputStyle="opacity:0" tabindex="-1" @ondrop="@ClearDragClass" @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass">
+            <ActivatorContent>
+                <MudPaper Height="300px" Outlined="true" Class="@_dragClass">
+                    <MudText Typo="Typo.h6">
+                        Drag and drop files here or click to select files
+                    </MudText>
+                    @foreach (var file in _fileNames)
+                    {
+                        <MudChip T="string" Color="Color.Dark" Text="@file" tabindex="-1"/>
+                    }
+                </MudPaper>
+            </ActivatorContent>
+        </MudFileUpload>
+        <MudToolBar Gutters="@false" Class="relative d-flex justify-end gap-4">
+            <MudButton Color="Color.Primary" OnClick="@OpenFilePickerAsync" Variant="Variant.Filled">
+                Open file picker
+            </MudButton>
+            <MudButton Color="Color.Primary" Disabled="@(!_fileNames.Any())" OnClick="@Upload" Variant="Variant.Filled">
+                Upload
+            </MudButton>
+            <MudButton Color="Color.Error" Disabled="@(!_fileNames.Any())" OnClick="@ClearAsync" Variant="Variant.Filled">
+                Clear
+            </MudButton>
+        </MudToolBar>
+    </MudStack>
+
+
+@code {
+    [Parameter] public EntityComputer Computer { get; set; } = new();
+    [CascadingParameter] public MainLayout? Layout { get; set; }
+
+    [Parameter]
+    public string AttachmentGuid { get; set; } = Guid.NewGuid().ToString();
+    
+    private double progress = 0;
+    private const int ChunkSize = 1024 * 1024 * 2; // 2MB chunks
+
+    private string _token = string.Empty;
+    
+
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
+    private string _dragClass = DefaultDragClass;
+    private readonly List<string> _fileNames = new();
+    private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
+    private IReadOnlyList<IBrowserFile>? _selectedFiles;
+
+    private async Task ClearAsync()
+    {
+        await (_fileUpload?.ClearAsync() ?? Task.CompletedTask);
+        _fileNames.Clear();
+        ClearDragClass();
+    }
+
+    private Task OpenFilePickerAsync() => _fileUpload?.OpenFilePickerAsync() ?? Task.CompletedTask;
+    
+    private void OnInputFileChanged(InputFileChangeEventArgs args)
+    {
+        ClearDragClass();
+        _selectedFiles = args.GetMultipleFiles();
+        foreach (var file in args.GetMultipleFiles())
+        { 
+            _fileNames.Add(file.Name);
+        }
+    }
+
+    private async Task Upload()
+    {
+        try
+        {
+            var authStateResult = await LocalStorage.GetItemAsync<AuthState>("authState");
+            var claims = authStateResult.Claims.Select(c => new Claim(c.Type, c.Value));
+            _token = claims.Where(x => x.Type.Equals("AccessToken", StringComparison.InvariantCultureIgnoreCase)).Select(x => x.Value).FirstOrDefault();
+        }
+        catch (Exception ex)
+        {
+
+        }
+        
+        try
+        {
+            progress = 0;
+            var totalFiles = _selectedFiles.Count;
+            var filesProcessed = 0;
+
+            foreach (var file in _selectedFiles)
+            {
+                await UploadFile(file);
+                filesProcessed++;
+                progress = (double)filesProcessed / totalFiles * 100;
+                StateHasChanged();
+            }
+
+            progress = 100;
+            Snackbar.Add("All files uploaded successfully!", Severity.Success);
+            await ClearAsync();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Upload failed: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void SetDragClass() => _dragClass = $"{DefaultDragClass} mud-border-primary";
+
+    private void ClearDragClass() => _dragClass = DefaultDragClass;
+    
+
+    private async Task UploadFile(IBrowserFile file)
+    {
+        var fileSize = file.Size;
+        var totalChunks = (int)Math.Ceiling((double)fileSize / ChunkSize);
+        var fileName = file.Name;
+        var uuid = Guid.NewGuid().ToString();
+
+        // Set Authorization header
+        if (!string.IsNullOrEmpty(_token))
+        {
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+        }
+
+        // Upload chunks
+        using var stream = file.OpenReadStream(file.Size);
+        var position = 0L;
+
+        for (int chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++)
+        {
+            var chunkLength = (int)Math.Min(ChunkSize, fileSize - position);
+            var buffer = new byte[chunkLength];
+            var bytesRead = 0;
+
+            // Read chunk into buffer
+            while (bytesRead < chunkLength)
+            {
+                var read = await stream.ReadAsync(buffer, bytesRead, chunkLength - bytesRead);
+                if (read == 0) break; // End of stream
+                bytesRead += read;
+            }
+
+            if (bytesRead == 0) throw new Exception("Failed to read chunk data.");
+
+            using var content = new MultipartFormDataContent();
+            var fileContent = new ByteArrayContent(buffer);
+            fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/octet-stream");
+            content.Add(fileContent, "qqfile", fileName);
+            content.Add(new StringContent(fileName), "qqfilename");
+            content.Add(new StringContent(chunkIndex.ToString()), "qqpartindex");
+            content.Add(new StringContent(totalChunks.ToString()), "qqtotalparts");
+            content.Add(new StringContent(uuid), "qquuid");
+            content.Add(new StringContent(fileSize.ToString()), "qqtotalfilesize");
+            content.Add(new StringContent(AttachmentGuid), "attachmentGuid");
+            content.Add(new StringContent(Computer.Id.ToString()), "computerId");
+            content.Add(new StringContent("standard"), "uploadMethod");
+
+            var response = await HttpClient.PostAsync("http://192.168.56.1:8080/Upload/UploadAttachment", content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Chunk {chunkIndex + 1} upload failed: {responseContent}");
+            }
+
+            position += bytesRead;
+            progress = (double)(chunkIndex + 1) / totalChunks * 100;
+            StateHasChanged();
+        }
+
+        // Notify server of chunking completion
+        using var completeContent = new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            { "qqfilename", fileName },
+            { "attachmentGuid", AttachmentGuid },
+            { "computerId", Computer.Id.ToString() ?? "" }
+        });
+
+        var completeResponse = await HttpClient.PostAsync("http://192.168.56.1:8080/Upload/AttachmentChunkingComplete", completeContent);
+        if (!completeResponse.IsSuccessStatusCode)
+        {
+            throw new Exception("Failed to complete chunked upload.");
+        }
+
+        // Clear Authorization header after requests (optional, depending on your app's needs)
+        HttpClient.DefaultRequestHeaders.Authorization = null;
+    }
+    
+    
+    private bool _titleSet = false;
+    protected override void OnParametersSet()
+    {
+        if (Layout is null || string.IsNullOrEmpty(Computer.Name) ||  _titleSet) return;
+        Layout.UpdateAppBar($"{Computer.Name} Attachments",
+            new List<BreadcrumbItem>
+            {
+                new("Home", href: "/"),
+                new("Computer Search", href: null, disabled: true)
+            }
+        );
+        _titleSet = true;
+    }
+}

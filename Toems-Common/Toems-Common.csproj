@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorizationStrings.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="DbUpgrades\157.cs" />
     <Compile Include="DbUpgrades\156.cs" />
     <Compile Include="DbUpgrades\155.cs" />
@@ -96,7 +97,9 @@
     <Compile Include="Dto\client\DtoClientModuleCondition.cs" />
     <Compile Include="Dto\DtoActionResult.cs" />
     <Compile Include="Dto\DtoBootMenuGenOptions.cs" />
+    <Compile Include="Dto\DtoColumnDefinition.cs" />
     <Compile Include="Dto\DtoComPid.cs" />
+    <Compile Include="Dto\DtoComputerFilter.cs" />
     <Compile Include="Dto\DtoCoreScript.cs" />
     <Compile Include="Dto\DtoGroupImage.cs" />
     <Compile Include="Dto\DtoGroupWithCount.cs" />

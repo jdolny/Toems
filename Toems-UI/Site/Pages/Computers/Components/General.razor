@@ -1,0 +1,235 @@
+﻿@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@inject Toems_ApiCalls.APICall Call
+@inject ISnackbar Snackbar
+@layout MainLayout
+
+    @if (Computer == null)
+    {
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+    }
+    else
+    {
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
+            <MudPaper Elevation="2" Class="pa-4">
+                <MudGrid>
+                    <!-- Name -->
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Computer Details</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Name:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.Name ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Description:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.Description ?? "N/A")</MudText>
+                    </MudItem>
+
+                    <!-- Identifier -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Identifier:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.Guid ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Synced From Active Directory:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.IsAdSync ? Computer.IsAdSync.ToString() : "N/A")</MudText>
+                    </MudItem>
+
+                    <!-- Active Directory GUID -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Active Directory GUID:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.AdGuid ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Active Directory Disabled:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.AdDisabled ? Computer.AdDisabled.ToString() : "N/A")</MudText>
+                    </MudItem>
+
+                    <!-- Installation ID -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Installation ID:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.InstallationId ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Hardware UUID:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.UUID ?? "N/A")</MudText>
+                    </MudItem>
+
+                    <!-- Provision Status -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Provision Status:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.ProvisionStatus.ToString() ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Provision Date:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.ProvisionedTime.ToString("MM/dd/yyyy h:mm:ss tt"))</MudText>
+                    </MudItem>
+
+                    <!-- Last Checkin -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Last Checkin:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.LastCheckinTime.ToString("MM/dd/yyyy h:mm:ss tt"))</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Last Known IP:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.LastIp ?? "N/A")</MudText>
+                    </MudItem>
+
+                    <!-- Client Version -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Client Version:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.ClientVersion ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Last Inventory Time:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.LastInventoryTime.ToString("MM/dd/yyyy h:mm:ss tt"))</MudText>
+                    </MudItem>
+
+                    <!-- Remote Access -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Remote Access ID:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.RemoteAccessId ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Remote Access WebRTC Status:</b></MudText>
+                        
+                    </MudItem>
+
+                    <!-- Primary Imaging MAC -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Primary Imaging MAC:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.ImagingMac ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Imaging Client ID:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.ImagingClientId ?? "N/A")</MudText>
+                    </MudItem>
+                </MudGrid>
+                 <MudGrid>
+                    <!-- Name -->
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Computer Details</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Name:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.Name ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Description:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.Description ?? "N/A")</MudText>
+                    </MudItem>
+
+                    <!-- Identifier -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Identifier:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.Guid ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Synced From Active Directory:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.IsAdSync ? Computer.IsAdSync.ToString() : "N/A")</MudText>
+                    </MudItem>
+
+                    <!-- Active Directory GUID -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Active Directory GUID:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.AdGuid ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Active Directory Disabled:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.AdDisabled ? Computer.AdDisabled.ToString() : "N/A")</MudText>
+                    </MudItem>
+
+                    <!-- Installation ID -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Installation ID:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.InstallationId ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Hardware UUID:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.UUID ?? "N/A")</MudText>
+                    </MudItem>
+
+                    <!-- Provision Status -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Provision Status:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.ProvisionStatus.ToString() ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Provision Date:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.ProvisionedTime.ToString("MM/dd/yyyy h:mm:ss tt"))</MudText>
+                    </MudItem>
+
+                    <!-- Last Checkin -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Last Checkin:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.LastCheckinTime.ToString("MM/dd/yyyy h:mm:ss tt"))</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Last Known IP:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.LastIp ?? "N/A")</MudText>
+                    </MudItem>
+
+                    <!-- Client Version -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Client Version:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.ClientVersion ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Last Inventory Time:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.LastInventoryTime.ToString("MM/dd/yyyy h:mm:ss tt"))</MudText>
+                    </MudItem>
+
+                    <!-- Remote Access -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Remote Access ID:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.RemoteAccessId ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Remote Access WebRTC Status:</b></MudText>
+                        
+                    </MudItem>
+
+                    <!-- Primary Imaging MAC -->
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Primary Imaging MAC:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.ImagingMac ?? "N/A")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Imaging Client ID:</b></MudText>
+                        <MudText Typo="Typo.body2">@(Computer.ImagingClientId ?? "N/A")</MudText>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudContainer>
+   
+    }
+@code {
+    [Parameter] public required EntityComputer Computer { get; set; }
+    [CascadingParameter] public MainLayout? Layout { get; set; }
+    
+    private bool _titleSet = false;
+    protected override void OnParametersSet()
+    {
+        if (Layout is null || string.IsNullOrEmpty(Computer.Name) ||  _titleSet) return;
+        Layout.UpdateAppBar($"{Computer.Name} General",
+            new List<BreadcrumbItem>
+            {
+                new("Home", href: "/"),
+                new("Computer Search", href: null, disabled: true)
+            }
+        );
+        _titleSet = true;
+    }
+    
+    private async Task Save()
+    {
+        var result = await Call.ComputerApi.Put(Computer.Id,Computer);
+        if(result.Success)
+            Snackbar.Add("Computer updated successfully", Severity.Success);
+        else
+        {
+            Snackbar.Add("Failed to update Computer", Severity.Error);
+        }
+    }
+}

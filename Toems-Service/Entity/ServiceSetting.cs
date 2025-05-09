@@ -121,7 +121,8 @@ namespace Toems_Service.Entity
         {
             var certEntity = _uow.CertificateRepository.GetFirstOrDefault(x => x.Type == EnumCertificate.CertificateType.Authority);
             if (certEntity == null) return null;
-            var pfx = new X509Certificate2(certEntity.PfxBlob, new EncryptionServices().DecryptText(certEntity.Password), X509KeyStorageFlags.Exportable);
+            var pass = new EncryptionServices().DecryptText(certEntity.Password);
+            var pfx = new X509Certificate2(certEntity.PfxBlob, pass, X509KeyStorageFlags.Exportable);
             var thumbprint = pfx.Thumbprint;
 
             var provisionKeyEncrypted = GetSettingValue(SettingStrings.ProvisionKeyEncrypted);

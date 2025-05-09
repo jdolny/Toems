@@ -10,6 +10,119 @@
 
 
   <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageReference Include="log4net" Version="3.0.4" />
     <PackageReference Include="MudBlazor" Version="8.*" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="RestSharp" Version="112.1.0" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\Toems-Common\Toems-Common.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Remove="Services\ApiCalls\ActiveImagingTaskAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ActiveMulticastSessionAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ApprovalRequestAPI.cs" />
+    <Compile Remove="Services\ApiCalls\AssetApi.cs" />
+    <Compile Remove="Services\ApiCalls\AssetAttributeAPI.cs" />
+    <Compile Remove="Services\ApiCalls\AssetCategoryAPI.cs" />
+    <Compile Remove="Services\ApiCalls\AssetGroupApi.cs" />
+    <Compile Remove="Services\ApiCalls\AssetGroupMemberAPI.cs" />
+    <Compile Remove="Services\ApiCalls\AttachmentApi.cs" />
+    <Compile Remove="Services\ApiCalls\AuthorizationAPI.cs" />
+    <Compile Remove="Services\ApiCalls\CertificateInventoryAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ClientComServerApi.cs" />
+    <Compile Remove="Services\ApiCalls\ComClusterServerApi.cs" />
+    <Compile Remove="Services\ApiCalls\CommandModuleAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ComputerLogAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ComServerClusterApi.cs" />
+    <Compile Remove="Services\ApiCalls\CustomAssetTypeApi.cs" />
+    <Compile Remove="Services\ApiCalls\CustomAttributeAPI.cs" />
+    <Compile Remove="Services\ApiCalls\CustomBootMenuAPI.cs" />
+    <Compile Remove="Services\ApiCalls\CustomComputerAttributeApi.cs" />
+    <Compile Remove="Services\ApiCalls\ExternalDownloadAPI.cs" />
+    <Compile Remove="Services\ApiCalls\FileCopyAPI.cs" />
+    <Compile Remove="Services\ApiCalls\FilesystemAPI.cs" />
+    <Compile Remove="Services\ApiCalls\GroupCategoryAPI.cs" />
+    <Compile Remove="Services\ApiCalls\GroupAPI.cs" />
+    <Compile Remove="Services\ApiCalls\GroupMembershipAPI.cs" />
+    <Compile Remove="Services\ApiCalls\GroupPolicyAPI.cs" />
+    <Compile Remove="Services\ApiCalls\HangfireTriggerAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ImageAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ImageCategoryAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ImageProfileAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ImageProfileFileCopyAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ImageProfileScriptAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ImageProfileSysprepAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ImageProfileTemplateApi.cs" />
+    <Compile Remove="Services\ApiCalls\ImageSchemaAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ImpersonationAccountAPI.cs" />
+    <Compile Remove="Services\ApiCalls\MessageModuleAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ModuleAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ModuleCategoryAPI.cs" />
+    <Compile Remove="Services\ApiCalls\OnlineKernelAPI.cs" />
+    <Compile Remove="Services\ApiCalls\PinnedGroupApi.cs" />
+    <Compile Remove="Services\ApiCalls\PinnedPolicyApi.cs" />
+    <Compile Remove="Services\ApiCalls\PolicyAPI.cs" />
+    <Compile Remove="Services\ApiCalls\PolicyCategoryAPI.cs" />
+    <Compile Remove="Services\ApiCalls\PolicyComServerAPI.cs" />
+    <Compile Remove="Services\ApiCalls\PolicyModulesAPI.cs" />
+    <Compile Remove="Services\ApiCalls\PrinterModuleAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ProcessInventoryAPI.cs" />
+    <Compile Remove="Services\ApiCalls\RemoteAccessApi.cs" />
+    <Compile Remove="Services\ApiCalls\ReportAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ResetRequestAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ScheduleAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ScriptModuleAPI.cs" />
+    <Compile Remove="Services\ApiCalls\SettingAPI.cs" />
+    <Compile Remove="Services\ApiCalls\SetupCompleteFileAPI.cs" />
+    <Compile Remove="Services\ApiCalls\SmartGroupQueryAPI.cs" />
+    <Compile Remove="Services\ApiCalls\SoftwareAssetSoftwareAPI.cs" />
+    <Compile Remove="Services\ApiCalls\SoftwareInventoryAPI.cs" />
+    <Compile Remove="Services\ApiCalls\SoftwareModuleAPI.cs" />
+    <Compile Remove="Services\ApiCalls\SysprepAnswerFileAPI.cs" />
+    <Compile Remove="Services\ApiCalls\SysprepModuleAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ToecDeployJobAPI.cs" />
+    <Compile Remove="Services\ApiCalls\ToecDeployTargetListAPI.cs" />
+    <Compile Remove="Services\ApiCalls\UploadedFileAPI.cs" />
+    <Compile Remove="Services\ApiCalls\UserAPI.cs" />
+    <Compile Remove="Services\ApiCalls\UserGroupAPI.cs" />
+    <Compile Remove="Services\ApiCalls\UserGroupMembershipAPI.cs" />
+    <Compile Remove="Services\ApiCalls\UserGroupRightAPI.cs" />
+    <Compile Remove="Services\ApiCalls\UserRightAPI.cs" />
+    <Compile Remove="Services\ApiCalls\VersionAPI.cs" />
+    <Compile Remove="Services\ApiCalls\WieBuildAPI.cs" />
+    <Compile Remove="Services\ApiCalls\WingetModuleApi.cs" />
+    <Compile Remove="Services\ApiCalls\WinPeModuleAPI.cs" />
+    <Compile Remove="Services\ApiCalls\WolRelayAPI.cs" />
+    <Compile Remove="Services\ApiCalls\WuModuleAPI.cs" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Site\Layout\LoginLayout.razor" />
+    <_ContentIncludedByDefault Remove="Site\Layout\MainLayout.razor" />
+    <_ContentIncludedByDefault Remove="Site\Layout\NavMenu.razor" />
+    <_ContentIncludedByDefault Remove="Components\Layout\LoginLayout.razor" />
+    <_ContentIncludedByDefault Remove="Components\Layout\MainLayout.razor" />
+    <_ContentIncludedByDefault Remove="Components\Layout\NavMenu.razor" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <AdditionalFiles Include="Site\Layout\LoginLayout.razor" />
+    <AdditionalFiles Include="Site\Layout\MainLayout.razor" />
+    <AdditionalFiles Include="Site\Layout\NavMenu.razor" />
+    <AdditionalFiles Include="Site\Pages\Computers\Details.razor" />
+    <AdditionalFiles Include="Site\Pages\Computers\Components\Attachments.razor" />
+    <AdditionalFiles Include="Site\Pages\Computers\Components\General.razor" />
+    <AdditionalFiles Include="Site\Pages\Computers\Manage.razor" />
+    <AdditionalFiles Include="Site\Pages\Error.razor" />
+    <AdditionalFiles Include="Site\Pages\Home.razor" />
+    <AdditionalFiles Include="Site\Pages\Login.razor" />
   </ItemGroup>
 </Project>

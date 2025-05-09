@@ -1,0 +1,51 @@
+﻿@page "/login"
+@layout Layout.LoginLayout
+@inject LocalAuthStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+
+<EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+<MudCard Outlined="true">
+    <MudCardContent>
+        <MudTextField T="string" Label="Username" HelperText="Username" HelperTextOnFocus="true" Variant="Variant.Text" @bind-Value="loginModel.Username" />
+        <MudTextField  @bind-Value="loginModel.Password" Label="Password" Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon"  AdornmentAriaLabel="Show Password" />
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant="Variant.Outlined" ButtonType="ButtonType.Submit" Color="Color.Primary">Login</MudButton>
+    </MudCardActions>
+</MudCard>
+</EditForm>
+
+
+
+
+@code {
+
+    bool isShow;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if(user.Identity?.IsAuthenticated == true)
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
+
+    private LoginModel loginModel = new();
+
+    private async Task HandleLogin()
+    {
+        var result = await AuthStateProvider.LoginAsync(loginModel.Username, loginModel.Password);
+        Navigation.NavigateTo("/");
+    }
+
+    private class LoginModel
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+}

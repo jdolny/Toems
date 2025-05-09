@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ISnackbar Snackbar
+@if (_isAuthorized)
+{
+    @ChildContent
+}
+else
+{
+    <p>Access denied.</p>
+}
+
+@code {
+    [Parameter] public string RequiredRole { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    private bool _isAuthorized;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        bool isAuthenticated = authState.User.Identity.IsAuthenticated;
+        bool hasRole = string.IsNullOrEmpty(RequiredRole) || authState.User.IsInRole(RequiredRole);
+
+        _isAuthorized = isAuthenticated && hasRole;
+
+        if (!isAuthenticated)
+        {
+            Navigation.NavigateTo("/login");
+        }
+        else if (!hasRole)
+        {
+            Navigation.NavigateTo("/access-denied");
+        }
+    }
+}
