@@ -18,6 +18,7 @@ using System.Configuration;
 using Toems_Service.Entity;
 using Toems_Common;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Toems_ClientApi.Controllers
 {
@@ -626,7 +627,7 @@ namespace Toems_ClientApi.Controllers
 
         [HttpPost]
         [ClientImagingAuth]
-        public HttpResponseMessage GetImagingFile(DtoImageFileRequest fileRequest)
+        public async Task<HttpResponseMessage> GetImagingFile(DtoImageFileRequest fileRequest)
         {
             var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
             var thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
@@ -635,8 +636,9 @@ namespace Toems_ClientApi.Controllers
                 Logger.Error($"Com Server With Guid {guid} Not Found");
                 return new HttpResponseMessage(HttpStatusCode.NotFound);
             }
+
             var profile = new ServiceImageProfile().ReadProfile(fileRequest.profileId);
-            if(profile == null)
+            if (profile == null)
             {
                 Logger.Error($"Image Profile Not Found: {fileRequest.profileId}");
                 return new HttpResponseMessage(HttpStatusCode.NotFound);
@@ -645,31 +647,52 @@ namespace Toems_ClientApi.Controllers
             var maxBitRate = thisComServer.ImagingMaxBps;
             var basePath = thisComServer.LocalStoragePath;
 
-            var fullPath = Path.Combine(basePath, "images",profile.Image.Name, $"hd{fileRequest.hdNumber}",
-                fileRequest.fileName);
+            var fullPath = Path.Combine(basePath, "images", profile.Image.Name, $"hd{fileRequest.hdNumber}", fileRequest.fileName);
             if (File.Exists(fullPath))
             {
                 HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
                 try
                 {
-                    var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
-                    if (maxBitRate == 0)
-                        result.Content = new StreamContent(stream);
-                    else
+                    result.Content = new PushStreamContent(async (outputStream, httpContext, transportContext) =>
                     {
-                        Stream throttledStream = new ThrottledStream(stream, maxBitRate);
-                        result.Content = new StreamContent(throttledStream);
-                    }
+                        try
+                        {
+                            using (var fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous))
+                            {
+                                Stream stream = fileStream;
+                                if(maxBitRate > 0)
+                                    stream = new ThrottledStream(fileStream, maxBitRate) { BlockSize = 1048576 };
 
-                    result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-                    result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("inline");
-                    result.Content.Headers.ContentDisposition.FileName = fileRequest.fileName;
+                                using (stream)
+                                {
+                                    byte[] buffer = new byte[1048576];
+                                    int bytesRead;
+                                    while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                                    {
+                                        await outputStream.WriteAsync(buffer, 0, bytesRead);
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error(ex.Message);
+                        }
+                        finally
+                        {
+                            await outputStream.FlushAsync();
+                            outputStream.Close();
+                        }
+                    }, new MediaTypeHeaderValue("application/octet-stream"));
+
+                    result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("inline") { FileName = fileRequest.fileName };
                     return result;
                 }
                 catch (Exception ex)
                 {
                     Logger.Error(ex.Message);
-
+                    result.Dispose();
+                    return new HttpResponseMessage(HttpStatusCode.InternalServerError);
                 }
             }
 

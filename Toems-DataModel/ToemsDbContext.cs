@@ -133,8 +133,8 @@ namespace Toems_DataModel
         public DbSet<EntityWingetVersionManifest> WingetVersionManifests { get; set; }
         public DbSet<EntityWingetLocaleManifest> WingetLocaleManifests { get; set; }
         public DbSet<EntityWingetModule> WingetModules { get; set; }
-
         public DbSet<EntityToemsUserOptions> ToemsUserOptions { get; set; }
+        public DbSet<EntityBrowserToken> BrowserTokens { get; set; }
 
     }
 }

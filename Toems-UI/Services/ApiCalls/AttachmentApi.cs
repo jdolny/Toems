@@ -1,9 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Microsoft.AspNetCore.Http;
+﻿using Blazored.LocalStorage;
 using RestSharp;
-using Toems_Common.Dto;
 using Toems_Common.Entity;
 
 namespace Toems_ApiCalls
@@ -11,16 +7,16 @@ namespace Toems_ApiCalls
 
     public class AttachmentAPI : BaseAPI<EntityAttachment>
     {
-        public AttachmentAPI(string resource, ProtectedSessionStorage protectedSessionStorage) : base(resource, protectedSessionStorage)
+        public AttachmentAPI(string resource, ILocalStorageService protectedSessionStorage) : base(resource, protectedSessionStorage)
         {
 
         }
 
-        public byte[] GetAttachment(int id)
+        public async  Task<byte[]> GetAttachment(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetAttachment/{1}", Resource, id);
-            return _apiRequest.ExecuteRaw(Request);
+            Request.Resource = $"{Resource}/GetAttachment/{id}";
+            return await _apiRequest.ExecuteRawAsync(Request);
         }
 
         

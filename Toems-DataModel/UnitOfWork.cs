@@ -140,6 +140,7 @@ namespace Toems_DataModel
         private WingetLocaleRepository _wingetLocaleManifestRepository;
         private IGenericRepository<EntityWingetModule> _wingetModuleRepository;
         private IGenericRepository<EntityToemsUserOptions> _toemsUserOptionsRepository;
+        private IGenericRepository<EntityBrowserToken> _browserTokenRepository;
 
 
         private bool disposed;
@@ -149,22 +150,12 @@ namespace Toems_DataModel
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        public IGenericRepository<EntityToemsUserOptions> ToemsUserOptionsRepository
-        {
-            get
-            {
-                return _toemsUserOptionsRepository ?? (_toemsUserOptionsRepository = new GenericRepository<EntityToemsUserOptions>(_context));
-            }
+        
+        public IGenericRepository<EntityBrowserToken> BrowserTokenRepository => _browserTokenRepository ?? (_browserTokenRepository = new GenericRepository<EntityBrowserToken>(_context));
+        public IGenericRepository<EntityToemsUserOptions> ToemsUserOptionsRepository => _toemsUserOptionsRepository ?? (_toemsUserOptionsRepository = new GenericRepository<EntityToemsUserOptions>(_context));
 
-        }
-        public IGenericRepository<EntityWingetModule> WingetModuleRepository
-        {
-            get
-            {
-                return _wingetModuleRepository ?? (_wingetModuleRepository = new GenericRepository<EntityWingetModule>(_context));
-            }
+        public IGenericRepository<EntityWingetModule> WingetModuleRepository => _wingetModuleRepository ?? (_wingetModuleRepository = new GenericRepository<EntityWingetModule>(_context));
 
-        }
         public IGenericRepository<EntityWingetInstallerManifest> WingetInstallerManifestRepository
         {
             get

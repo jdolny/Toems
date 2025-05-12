@@ -7,8 +7,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using Toems_ApplicationApi.Controllers.Authorization;
 using Toems_Common;
 using Toems_Common.Dto;
@@ -20,11 +22,21 @@ namespace Toems_ApplicationApi.Controllers
 {
     public class AttachmentController : ApiController
     {
+        public AttachmentController()
+        {
+
+        }
         private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        [CustomAuth(Permission = AuthorizationStrings.AttachmentRead)]
-        public HttpResponseMessage GetAttachment(int id)
+        
+        public HttpResponseMessage GetAttachment(int id, string token)
         {
+            var isValidToken = new ServiceBrowserToken().Use(token);
+            if (!isValidToken)
+            {
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+            }
+            
             var attachment = new ServiceAttachment().Get(id);
             if(attachment == null) return new HttpResponseMessage(HttpStatusCode.NotFound);
             var basePath = ServiceSetting.GetSettingValue(SettingStrings.StoragePath);

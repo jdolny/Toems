@@ -59,6 +59,14 @@ CREATE TABLE `toems_users_options` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
+CREATE TABLE `browser_download_tokens` (
+  `browser_download_token_id` INT NOT NULL AUTO_INCREMENT,
+  `token` VARCHAR(45) NOT NULL,
+  `expires_at_utc` DATETIME NOT NULL,
+  PRIMARY KEY (`browser_download_token_id`));
+
+ALTER TABLE `browser_download_tokens` 
+ADD COLUMN `user_id` INT NOT NULL AFTER `expires_at_utc`;
 
 "
             ;

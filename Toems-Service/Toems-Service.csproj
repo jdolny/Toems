@@ -131,6 +131,7 @@
   <ItemGroup>
     <Compile Include="BcdService.cs" />
     <Compile Include="ClientImagingServices.cs" />
+    <Compile Include="Entity\ServiceBrowserToken.cs" />
     <Compile Include="Entity\ServiceWingetModule.cs" />
     <Compile Include="Entity\ServiceManifestDownload.cs" />
     <Compile Include="Entity\ServiceWieBuild.cs" />

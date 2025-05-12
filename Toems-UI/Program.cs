@@ -29,7 +29,11 @@ builder.Services.AddRazorComponents()
 
 
 
-builder.Services.AddHttpClient("API", client => client.BaseAddress = new Uri("http://localhost:8080"));
+builder.Services.AddHttpClient("API", client => client.BaseAddress = new Uri(builder.Configuration["ApplicationApiUrl"]));
+builder.Services.AddServerSideBlazor(options =>
+{
+    options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromMinutes(5);
+});
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("API"));
 builder.Services.AddScoped<LocalAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<LocalAuthStateProvider>());

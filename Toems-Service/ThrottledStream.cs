@@ -159,7 +159,7 @@ public class ThrottledStream : Stream
         _baseStream = baseStream;
         _stopWatch = Stopwatch.StartNew();
         MaximumBytesPerSecond = maximumBytesPerSecond;
-        BlockSize = 512;
+        BlockSize = 8192;
         _byteCount = 0;
     }
 
@@ -286,46 +286,35 @@ public class ThrottledStream : Stream
     /// <param name="bufferSizeInBytes">The buffer size in bytes.</param>
     protected void Throttle(int bufferSizeInBytes)
     {
-        // Make sure the buffer isn't empty.
         if (_maximumBytesPerSecond <= 0 || bufferSizeInBytes <= 0)
-        {
             return;
-        }
 
         _byteCount += bufferSizeInBytes;
-        if (_byteCount < 16)
+        if (_byteCount < 8192) // Avoid throttling for small bursts
             return;
 
         long elapsedMilliseconds = _stopWatch.ElapsedMilliseconds;
+        if (elapsedMilliseconds <= 0)
+            return;
 
-        if (elapsedMilliseconds > 0)
+        long bps = _byteCount * 1000L / elapsedMilliseconds;
+        if (bps <= _maximumBytesPerSecond)
+            return;
+
+        long wakeElapsed = _byteCount * 1000L / _maximumBytesPerSecond;
+        int toSleep = (int)(wakeElapsed - elapsedMilliseconds);
+
+        if (toSleep > 10) // Only sleep for significant durations
         {
-            // Calculate the current bps.
-            long bps = _byteCount * 1000L / elapsedMilliseconds;
-
-            // If the bps are more then the maximum bps, try to throttle.
-            if (bps > _maximumBytesPerSecond)
+            try
             {
-                // Calculate the time to sleep.
-                long wakeElapsed = _byteCount * 1000L / _maximumBytesPerSecond;
-                int toSleep = (int)(wakeElapsed - elapsedMilliseconds);
-
-                if (toSleep > 1)
-                {
-                    try
-                    {
-                        // The time to sleep is more then a millisecond, so sleep.
-                        Thread.Sleep(toSleep);
-                    }
-                    catch (ThreadAbortException)
-                    {
-                        // Eatup ThreadAbortException.
-                    }
-
-                    // A sleep has been done, reset.
-                    Reset();
-                }
+                Thread.Sleep(toSleep);
             }
+            catch (ThreadAbortException)
+            {
+                // Ignore
+            }
+            Reset();
         }
     }
 
@@ -334,10 +323,7 @@ public class ThrottledStream : Stream
     /// </summary>
     protected void Reset()
     {
-        long difference = _stopWatch.ElapsedMilliseconds;
-
-        // Only reset counters when a known history is available of more then 1 second.
-        if (difference > 1000)
+        if (_stopWatch.ElapsedMilliseconds > 1000)
         {
             _byteCount = 0;
             _stopWatch.Restart();

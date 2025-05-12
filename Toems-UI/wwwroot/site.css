@@ -31,7 +31,9 @@
 
 .content-container {
     max-height: 80vh; /* Limit height to 80% of viewport height */
-
+    padding-bottom:40px;
+    padding-right:15px;
+    width:100%;
     overflow-y: auto; /* Enable vertical scrolling */
 
 }

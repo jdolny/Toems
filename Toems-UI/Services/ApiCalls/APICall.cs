@@ -5,7 +5,7 @@ using Toems_Common.Dto;
 
 namespace Toems_ApiCalls
 {
-    public class APICall : IAPICall
+    public class APICall 
     {
 
         private readonly ILocalStorageService _protectedSessionStorage;
@@ -27,6 +27,8 @@ namespace Toems_ApiCalls
 
         public CategoryAPI CategoryApi => new("Category",_protectedSessionStorage);
 
+        public AttachmentAPI AttachmentApi => new("Attachment",_protectedSessionStorage);
+        public BrowserTokenAPI BrowserTokenApi => new("BrowserToken",_protectedSessionStorage);
 
         /*
         public MessageModuleAPI MessageModuleApi
@@ -64,10 +66,7 @@ namespace Toems_ApiCalls
             get { return new SoftwareAssetSoftwareAPI("SoftwareAssetSoftware",_protectedSessionStorage);}
         }
 
-        public AttachmentAPI AttachmentApi
-        {
-            get { return new AttachmentAPI("Attachment",_protectedSessionStorage);}
-        }
+       
 
         public AssetAttributeAPI AssetAttributeApi
         {

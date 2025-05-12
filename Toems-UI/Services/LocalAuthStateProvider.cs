@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text.Json.Serialization;
 using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components;
 
 
 public class LocalAuthStateProvider : AuthenticationStateProvider
@@ -48,6 +49,27 @@ public class LocalAuthStateProvider : AuthenticationStateProvider
         return _anonymous;
     }
 
+    public async Task<long> GetTokenExpiration()
+    {
+        try
+        {
+            var authStateResult = await _protectedSessionStorage.GetItemAsync<AuthState>("authState");
+            var claims = authStateResult.Claims.Select(c => new Claim(c.Type, c.Value));
+            return long.Parse(claims.FirstOrDefault(c => c.Type == "Expires")?.Value);
+        }
+        catch (Exception ex)
+        {
+            return 0;
+        }
+    }
+
+    public async Task<string> GetToken()
+    {
+        var authStateResult = await _protectedSessionStorage.GetItemAsync<AuthState>("authState");
+        var claims = authStateResult.Claims.Select(c => new Claim(c.Type, c.Value));
+        var token = claims.Where(x => x.Type.Equals("AccessToken", StringComparison.InvariantCultureIgnoreCase)).Select(x => x.Value).FirstOrDefault();
+        return token;
+    }
 
     public async Task<LoginResult> LoginAsync(string username, string password)
     {
@@ -113,6 +135,7 @@ public class LocalAuthStateProvider : AuthenticationStateProvider
     {
         await _protectedSessionStorage.RemoveItemAsync("authState");
         NotifyAuthenticationStateChanged(Task.FromResult(_anonymous));
+        
     }
 
 

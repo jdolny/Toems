@@ -56,9 +56,6 @@ namespace Toems_ApplicationApi
                 oAuthIdentity.AddClaim(new Claim("user_id", user.Id.ToString()));
                 if(validationResult.ErrorMessage.Equals("Mfa setup is required"))
                     oAuthIdentity.AddClaim(new Claim("mfa_setup_required", "true"));
-                //set different time spans here
-                //if (user.Membership == "Administrator")
-                //    context.Options.AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(20);
                 context.Validated(oAuthIdentity);
             }
             else

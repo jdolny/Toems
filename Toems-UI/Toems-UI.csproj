@@ -32,7 +32,6 @@
     <Compile Remove="Services\ApiCalls\AssetCategoryAPI.cs" />
     <Compile Remove="Services\ApiCalls\AssetGroupApi.cs" />
     <Compile Remove="Services\ApiCalls\AssetGroupMemberAPI.cs" />
-    <Compile Remove="Services\ApiCalls\AttachmentApi.cs" />
     <Compile Remove="Services\ApiCalls\AuthorizationAPI.cs" />
     <Compile Remove="Services\ApiCalls\CertificateInventoryAPI.cs" />
     <Compile Remove="Services\ApiCalls\ClientComServerApi.cs" />
@@ -100,6 +99,7 @@
     <Compile Remove="Services\ApiCalls\WinPeModuleAPI.cs" />
     <Compile Remove="Services\ApiCalls\WolRelayAPI.cs" />
     <Compile Remove="Services\ApiCalls\WuModuleAPI.cs" />
+    <Compile Remove="Services\ApiCalls\IAPICall.cs" />
   </ItemGroup>
 
 

@@ -1,6 +1,8 @@
-﻿
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 @inject LocalAuthStateProvider AuthStateProvider
+@using System.Timers
+@inject IJSRuntime JS
+@implements IAsyncDisposable
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
@@ -25,11 +27,15 @@
                 <MudMenuItem Label="Usage" />
             </ChildContent>
         </MudMenu>
+     
     </MudAppBar>
-
+   
+   
     <MudDrawer  @bind-Open="_drawerOpen" Elevation="2" Variant="DrawerVariant.Responsive"  Width="250px" >
         <NavMenu/>
-        
+        <div>
+            Token expires in: <span id="@CountdownElementId">00:00:00</span>
+        </div>
     </MudDrawer>
     
     
@@ -74,6 +80,10 @@
     private bool _isDarkMode = false;
     private MudTheme? _theme = null;
     private string _currentUser = string.Empty;
+    private DateTime? TokenExpiration { get; set; }
+    private Timer? CountdownTimer;
+    private string CountdownElementId { get; } = $"token-countdown-{Guid.NewGuid():N}";
+    private bool IsCircuitActive { get; set; } = true;
     public void NotifyStageChange()
     {
         StateHasChanged();
@@ -89,7 +99,36 @@
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         _currentUser = user.Identity.Name;
-      
+        var expiresAt = await AuthStateProvider.GetTokenExpiration();
+        TokenExpiration = DateTimeOffset.FromUnixTimeSeconds(expiresAt).UtcDateTime;
+        
+
+        CountdownTimer = new Timer(1000);
+        CountdownTimer.Elapsed += async (sender, e) =>
+        {
+            if (!IsCircuitActive)
+                return;
+            var timeLeft = TokenExpiration.Value - DateTime.UtcNow;
+            string timeLeftFormatted;
+            if(timeLeft.Seconds > 0)
+                timeLeftFormatted = timeLeft.ToString(@"hh\:mm\:ss");
+            else
+            {
+                timeLeftFormatted = "00:00:00";
+            }
+
+            try
+            {
+                await JS.InvokeVoidAsync("updateCountdown", CountdownElementId, timeLeftFormatted);
+            }
+            catch (JSDisconnectedException)
+            {
+                IsCircuitActive = false; 
+                return;
+            }
+        };
+        CountdownTimer.AutoReset = true;
+        CountdownTimer.Start();
     }
     
     protected override void OnInitialized()
@@ -102,9 +141,18 @@
             PaletteDark = _darkPalette,
             LayoutProperties = new LayoutProperties()
         };
-       
     }
 
+    public async ValueTask DisposeAsync()
+    {
+        if (CountdownTimer != null)
+        {
+            CountdownTimer.Stop();
+            CountdownTimer.Dispose();
+            CountdownTimer = null;
+        }
+        IsCircuitActive = false;
+    }
     private void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;

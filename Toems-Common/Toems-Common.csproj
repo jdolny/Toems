@@ -260,6 +260,7 @@
     <Compile Include="Dto\imageschemafe\DtoVolumeGroup.cs" />
     <Compile Include="Entity\EntityActiveImagingTask.cs" />
     <Compile Include="Entity\EntityActiveMulticastSession.cs" />
+    <Compile Include="Entity\EntityBrowserToken.cs" />
     <Compile Include="Entity\EntityToemsUserOptions.cs" />
     <Compile Include="Entity\EntityWingetLocaleManifest.cs" />
     <Compile Include="Entity\EntityWingetInstallerManifest.cs" />

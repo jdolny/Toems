@@ -373,7 +373,7 @@ namespace Toems_ApiCalls
 
             return false;
         }
-        public byte[] ExecuteRaw(RestRequest request)
+        public async Task<byte[]> ExecuteRawAsync(RestRequest request)
         {
             if (request == null)
             {
@@ -381,10 +381,10 @@ namespace Toems_ApiCalls
                 return null;
             }
 
-            var token = Task.Run(() => GetTokenAsync()).Result;
+            var token = await GetTokenAsync();
             request.AddHeader("Authorization", "bearer " + token);
 
-            var response = _client.DownloadData(request);
+            var response = await _client.DownloadDataAsync(request);
 
             if (response == null)
             {
