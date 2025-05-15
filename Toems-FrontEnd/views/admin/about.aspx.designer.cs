@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Toems_FrontEnd.views.admin {
-    
-    
-    public partial class about {
-        
+namespace Toems_FrontEnd.views.admin
+{
+
+
+    public partial class about
+    {
+
         /// <summary>
         /// tomesUiVersion control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label tomesUiVersion;
-        
+
         /// <summary>
         /// lblToemsApi control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblToemsApi;
-        
+
         /// <summary>
         /// lblDatabaseVersion control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblDatabaseVersion;
-        
+
         /// <summary>
         /// lblExpectedToecApi control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblExpectedToecApi;
-        
+
         /// <summary>
         /// lblExpectedToemsApi control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblExpectedToemsApi;
-        
+
         /// <summary>
         /// lblExpectedToec control.
         /// </summary>
@@ -65,7 +67,7 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblExpectedToec;
-        
+
         /// <summary>
         /// comServerPlaceholder control.
         /// </summary>
@@ -74,5 +76,19 @@ namespace Toems_FrontEnd.views.admin {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder comServerPlaceholder;
+
+        /// <summary>
+        /// Master property.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated property.
+        /// </remarks>
+        public new Toems_FrontEnd.views.admin.AdminMaster Master
+        {
+            get
+            {
+                return ((Toems_FrontEnd.views.admin.AdminMaster)(base.Master));
+            }
+        }
     }
 }

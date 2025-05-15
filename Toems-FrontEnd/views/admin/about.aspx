@@ -22,7 +22,7 @@
         Toems UI Version:
     </div>
     <div class="size-lbl2 column">
-        <asp:Label runat="server" ID="tomesUiVersion" Text="1.5.6.0" ></asp:Label>
+        <asp:Label runat="server" ID="tomesUiVersion" Text="1.5.7.0" ></asp:Label>
     </div>
     <br class="clear"/>
 

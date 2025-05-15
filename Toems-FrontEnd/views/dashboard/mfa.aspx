@@ -14,7 +14,7 @@ MFA
     <p>Enter the code from your app into the Verification Code box below.  Then Select <b>Actions-> Verify MFA</b>.</p>
     <br />
     <p>
-        <img runat="server" id="q"></p>
+        <img runat="server" id="q"/></p>
 
     <br />
      <div class="size-4 column">
