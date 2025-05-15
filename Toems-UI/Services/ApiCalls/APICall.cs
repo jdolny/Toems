@@ -1,35 +1,15 @@
-﻿using Blazored.LocalStorage;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Microsoft.AspNetCore.Http;
-using Toems_Common.Dto;
-
+﻿
 namespace Toems_ApiCalls
 {
-    public class APICall 
+    public class APICall(ApiRequest apiRequest)
     {
+        public ComputerAPI ComputerApi => new("Computer", apiRequest);
 
-        private readonly ILocalStorageService _protectedSessionStorage;
-        private readonly DtoCustomApiCall _cApiDto;
+        public CategoryAPI CategoryApi => new("Category",apiRequest);
 
-        public APICall(ILocalStorageService protectedeSessionStorage)
-        {
-            _protectedSessionStorage = protectedeSessionStorage;
-        }
-
-
-        public APICall(DtoCustomApiCall cApi, ILocalStorageService protectedSessionStorage)
-        {
-            _cApiDto = cApi;
-           _protectedSessionStorage = protectedSessionStorage;
-        }
-
-        public ComputerAPI ComputerApi => new("Computer",_protectedSessionStorage);
-
-        public CategoryAPI CategoryApi => new("Category",_protectedSessionStorage);
-
-        public AttachmentAPI AttachmentApi => new("Attachment",_protectedSessionStorage);
-        public BrowserTokenAPI BrowserTokenApi => new("BrowserToken",_protectedSessionStorage);
-
+        public AttachmentAPI AttachmentApi => new("Attachment",apiRequest);
+        public BrowserTokenAPI BrowserTokenApi => new("BrowserToken",apiRequest);
+        public CustomAttributeAPI CustomAttributeApi => new("CustomAttribute",apiRequest);
         /*
         public MessageModuleAPI MessageModuleApi
         {
@@ -88,10 +68,7 @@ namespace Toems_ApiCalls
             get { return new CustomComputerAttributeAPI("CustomComputerAttribute",_protectedSessionStorage);}
         }
 
-        public CustomAttributeAPI CustomAttributeApi
-        {
-            get { return new CustomAttributeAPI("CustomAttribute",_protectedSessionStorage);}
-        }
+       
 
         public ExternalDownloadAPI ExternalDownloadApi
         {

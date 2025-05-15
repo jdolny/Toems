@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -9,33 +6,30 @@ using Toems_Common.Entity;
 namespace Toems_ApiCalls
 {
 
-    public class CustomAttributeAPI : BaseAPI<EntityCustomAttribute>
-    {
-        public CustomAttributeAPI(string resource, ProtectedLocalStorage protectedLocalStorage) : base(resource, protectedLocalStorage)
+        public class CustomAttributeAPI(string resource, ApiRequest apiRequest)
+            : BaseAPI<EntityCustomAttribute>(resource,apiRequest)
         {
 
-        }
-
-        public List<EntityCustomAttribute> GetForBuiltInComputers()
+        public async Task<List<EntityCustomAttribute>> GetForBuiltInComputers()
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetForBuiltInComputers", Resource);
-            return _apiRequest.Execute<List<EntityCustomAttribute>>(Request);
+            Request.Resource = $"{Resource}/GetForBuiltInComputers";
+            return await _apiRequest.ExecuteAsync<List<EntityCustomAttribute>>(Request);
         }
 
-        public List<EntityCustomAttribute> GetForAssetType(int assetTypeId)
+        public async Task<List<EntityCustomAttribute>> GetForAssetType(int assetTypeId)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetForAssetType/{1}", Resource,assetTypeId);
-            return _apiRequest.Execute<List<EntityCustomAttribute>>(Request);
+            Request.Resource = $"{Resource}/GetForAssetType/{assetTypeId}";
+            return await _apiRequest.ExecuteAsync<List<EntityCustomAttribute>>(Request);
         }
 
-        new public IEnumerable<DtoCustomAttributeWithType> Search(DtoSearchFilter filter)
+        public new async Task<IEnumerable<DtoCustomAttributeWithType>> Search(DtoSearchFilter filter)
         {
             Request.Method = Method.Post;
             Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
-            Request.Resource = string.Format("{0}/Search", Resource);
-            return _apiRequest.Execute<List<DtoCustomAttributeWithType>>(Request);
+            Request.Resource = $"{Resource}/Search";
+            return await _apiRequest.ExecuteAsync<List<DtoCustomAttributeWithType>>(Request);
         }
 
     }

@@ -3,26 +3,25 @@
 @using Toems_Common.Dto
 @using Toems_Common.Entity
 @using Toems_UI.Site.Layout
+@using Toems_UI.Site.Pages.Computers.Actions
 @using Toems_UI.Site.Pages.Computers.Components
 @inject Toems_ApiCalls.APICall Call
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
+@inherits BasePage
 
-<Authorize>
-    <ActionButtons>
 
-        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small">
-            <MudButton OnClick="@(() => ArchiveOrDeleteComputer("Archive"))">Archive Selected</MudButton>
-            <MudMenu Icon="@Icons.Material.Filled.ArrowDropDown" Style="align-self: auto;">
-                <MudMenuItem OnClick="@(() => ArchiveOrDeleteComputer("Delete"))">Delete Selected</MudMenuItem>
-                <MudDivider />
-                <MudMenuItem OnClick="@((e) => CreateNew())">New Unmanaged</MudMenuItem>
-            </MudMenu>
-        </MudButtonGroup>
-    </ActionButtons>
-    <MudPaper Class="pa-8 mb-8" Elevation="5" >
-        
+<ActionButtons>
+    <Content>
+        <MudMenuItem Label="Archive" OnClick="@(() => ArchiveOrDeleteComputer("Archive"))"/>
+        <MudMenuItem Label="Delete" OnClick="@(() => ArchiveOrDeleteComputer("Delete"))"/>
+        <MudMenuItem Label="Create" OnClick="@(() => CreateNew())"/>
+    </Content>
+</ActionButtons>
+    
+    <MudPaper Class="pa-8 mb-8" Elevation="5">
+
         <MudGrid >
             <MudItem xs="12" md="6">
                 <MudToggleGroup ValueChanged="@(s => FilterUpdated(s))" Value="_computerSelection" T="string" SelectionMode="SelectionMode.SingleSelection" Color="Color.Primary" Style="width: 350px;">
@@ -59,36 +58,42 @@
                     </MudSelect>
                 </MudItem>
             }
-    
-            
+
+
             <MudItem xs="12" md="6">
                 <div class="width-600">
-                <MudTextField T="string" ValueChanged="@(s => OnSearchChanged(s))" DebounceInterval="300" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" HelperText="Computer Name, Serial Number, IP Address, MAC Address, GUID, Installation ID, Custom Attribute"/>
+                    <MudTextField T="string" ValueChanged="@(s => OnSearchChanged(s))" DebounceInterval="300" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" HelperText="Computer Name, Serial Number, IP Address, MAC Address, GUID, Installation ID, Custom Attribute"/>
                 </div>
-                </MudItem>
-         
-        
+            </MudItem>
+
+
         </MudGrid>
     </MudPaper>
-    <div style="height: 4px;">@if (_isLoading) {<MudProgressLinear Color="Color.Default" Indeterminate="true" Class="my-2" />}</div>
-    <div class="clear"></div>
+    <div style="height: 4px;">
+        @if (_isLoading)
+        {
+            <MudProgressLinear Color="Color.Default" Indeterminate="true" Class="my-2"/>
+        }
+    </div>
+<div class="clear"></div>
+
     <MudDataGrid Striped="true" T="EntityComputer" Class="mb-10" Elevation="5" MultiSelection="true" Items="@Computers" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive" @bind-SelectedItems="_selectedComputers">
         <ToolBarContent>
             <MudGrid>
-                <MudSpacer />
-               
+                <MudSpacer/>
+
             </MudGrid>
         </ToolBarContent>
-        <PagerContent><MudDataGridPager T="EntityComputer" /></PagerContent>
+        <PagerContent><MudDataGridPager T="EntityComputer"/></PagerContent>
         <Columns>
-            <SelectColumn T="EntityComputer" />
-            <PropertyColumn Property="x => x.Name" Title="Name" />
-            <PropertyColumn Property="x => x.LastCheckinTime" Title="Last Checkin" />
-            <PropertyColumn Property="x => x.LastIp" Title="Last Known IP" />
-            <PropertyColumn Property="x => x.ClientVersion" Title="Client Version" />
+            <SelectColumn T="EntityComputer"/>
+            <PropertyColumn Property="x => x.Name" Title="Name"/>
+            <PropertyColumn Property="x => x.LastCheckinTime" Title="Last Checkin"/>
+            <PropertyColumn Property="x => x.LastIp" Title="Last Known IP"/>
+            <PropertyColumn Property="x => x.ClientVersion" Title="Client Version"/>
             @foreach (var column in UserDefinedColumns)
             {
-                <PropertyColumn Property="@column.Property" Title="@column.Title" />
+                <PropertyColumn Property="@column.Property" Title="@column.Title"/>
             }
             <TemplateColumn Title="Actions" StickyRight="true">
                 <CellTemplate>
@@ -97,10 +102,15 @@
             </TemplateColumn>
         </Columns>
     </MudDataGrid>
-</Authorize>
+
 
 @code {
-    [CascadingParameter] public MainLayout? Layout { get; set; }
+
+    private readonly List<BreadcrumbItem> Breadcrumbs =
+    [
+        new("Home", href: "/"),
+        new("Computers Search", href: null, disabled: true)
+    ];
     private IEnumerable<EntityComputer> Computers = new List<EntityComputer>();
     private IEnumerable<EntityCategory> Categories = new List<EntityCategory>();
     private readonly DtoComputerFilter _computerFilter = new();
@@ -113,29 +123,23 @@
     private string? _selectedLimit = "50";
     private bool _isLoading = true;
     private string? _searchString;
-    
+
     protected override async Task OnInitializedAsync()
     {
-        Layout?.UpdateAppBar("Computer Search",
-            new List<BreadcrumbItem>
-            {
-                new("Home", href: "/"),
-                new("Computers Search", href: null, disabled: true)
-            }
-        );
-        
+        SetTitleAndBreadcrumbs("Computer Search", Breadcrumbs);
+
         UserDefinedColumns.Add(new DtoColumnDefinition { Property = x => x.Guid, Title = "Guid" });
         if (_selectedLimit != null) _computerFilter.Limit = int.Parse(_selectedLimit);
         _computerFilter.SearchText = "";
         _computerFilter.CategoryType = "";
         _computerFilter.Categories = new List<string>();
         _computerFilter.IsActive = true;
-       
+
         Categories = await Call.CategoryApi.Get();
         await LoadComputers();
     }
-    
-    
+
+
     private async Task LoadComputers()
     {
         _isLoading = true;
@@ -262,7 +266,7 @@
     }
     private async Task CreateNew()
     {
-        await DialogService.ShowAsync<ActionCreate>("New", new DialogParameters<ActionCreate>(), DialogOptionsConstants.DeleteDialogOptions);
+        await DialogService.ShowAsync<ActionCreateComputer>("New", new DialogParameters<ActionCreateComputer>(), DialogOptionsConstants.DeleteDialogOptions);
     }
 
 }

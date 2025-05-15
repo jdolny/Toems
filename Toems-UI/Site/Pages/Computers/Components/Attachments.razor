@@ -1,5 +1,4 @@
 ﻿@using Toems_ApiCalls
-@using Toems_Common.Dto
 @using Toems_Common.Entity
 @using Toems_UI.Site.Layout
 @using Toems_UI.Components
@@ -10,14 +9,20 @@
 @inject ISnackbar Snackbar
 @inject IJSRuntime JSRuntime
 @inject IConfiguration Configuration
-@inject LocalAuthStateProvider AuthState
-<ComponentFileUploader Computer="Computer"/>
+@inherits BaseComponent
 
+<ActionButtons InsertAtTop="true">
+    <Content>
+        <MudMenuItem Label="Delete Attachment" OnClick="DeleteAttachments"/>
+    </Content>
+</ActionButtons>
+<ComponentFileUploader Computer="Computer" OnUploadCompleted="LoadAttachments"/>
+
+<br/><br/>
 <MudDataGrid Striped="true" T="EntityAttachment" Class="mb-10" Elevation="5" MultiSelection="true" Items="@attachments" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive" @bind-SelectedItems="_selectedAttachments">
     <ToolBarContent>
         <MudGrid>
             <MudSpacer />
-               
         </MudGrid>
     </ToolBarContent>
     <PagerContent><MudDataGridPager T="EntityAttachment" /></PagerContent>
@@ -32,43 +37,43 @@
             <CellTemplate>
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"  OnClick="@(() => DownloadAttachment(context.Item))">Download</MudButton>
                
-                </CellTemplate>
+            </CellTemplate>
         </TemplateColumn>
     </Columns>
 </MudDataGrid>
+
 @code {
+
+    private readonly List<BreadcrumbItem> _breadcrumbs =
+    [
+        new("Home", href: "/"),
+        new("Computer Search", href: null, disabled: true)
+    ];
+    
     [Parameter] public EntityComputer Computer { get; set; } = new();
-    [CascadingParameter] public MainLayout? Layout { get; set; }
     private IEnumerable<EntityAttachment> attachments = new List<EntityAttachment>();
     private HashSet<EntityAttachment> _selectedAttachments = [];
-    private bool _titleSet = false;
 
     protected override async Task OnParametersSetAsync()
     {
-        if (string.IsNullOrEmpty(Computer.Name)) return;
-        attachments = await Call.ComputerApi.GetAttachments(Computer.Id);
-        if (Layout is null ||  _titleSet) return;
-        Layout.UpdateAppBar($"{Computer.Name} Attachments",
-            new List<BreadcrumbItem>
-            {
-                new("Home", href: "/"),
-                new("Computer Search", href: null, disabled: true)
-            }
-        );
-        _titleSet = true;
+        if (Computer.Id == 0) return;
+        if(!SetTitleAndBreadcrumbs($"{Computer.Name} Attachments",_breadcrumbs)) return;
+        await LoadAttachments();
     }
-    
+
+    private async Task LoadAttachments()
+    {
+        attachments = await Call.ComputerApi.GetAttachments(Computer.Id);
+    }
+
     private async Task DownloadAttachment(EntityAttachment attachment)
     {
-        var authToken = await AuthState.GetToken();
         var browserToken = await Call.BrowserTokenApi.GetToken();
-        string apiUrl = Configuration["ApplicationApiUrl"];
-        apiUrl += $"/Attachment/GetAttachment?Id={attachment.Id}&Token={browserToken.Token}";
+        var apiUrl = $"{Configuration["ApplicationApiUrl"]}/Attachment/GetAttachment?Id={attachment.Id}&Token={browserToken.Token}";
         await JSRuntime.InvokeVoidAsync("eval", $"window.location.href = '{apiUrl}'");
-
     }
 
-    private async Task Delete()
+    private async Task DeleteAttachments()
     {
         var contentText = $"Are you sure you want to delete the following attachments?\n";
         foreach (var attachment in _selectedAttachments)
@@ -90,18 +95,16 @@
         {
             foreach (var attachment in _selectedAttachments)
             {
-                DtoActionResult response;
-                response = await Call.AttachmentApi.Delete(attachment.Id);
+                var response = await Call.AttachmentApi.Delete(attachment.Id);
 
                 if (response.Success)
                     successCount++;
                 else
                     errorCount++;
             }
-
+            
             string message;
             Severity severity;
-
             if (errorCount == 0)
             {
                 message = $"Successfully deleted {successCount} attachment{(successCount == 1 ? "" : "s")}.";
@@ -120,7 +123,9 @@
 
             Snackbar.Add(message, severity);
             _selectedAttachments.Clear();
+            await LoadAttachments();
         }
     }
 
+    
 }

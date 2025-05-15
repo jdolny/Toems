@@ -5,6 +5,17 @@
     }
 };
 
+window.getDeviceInfo = () => {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isMobile = /android|iphone|ipad|ipod|windows phone|blackberry|mobile|tablet/.test(userAgent);
+    return {
+        screenWidth: window.innerWidth,
+        screenHeight: window.innerHeight,
+        isMobile: isMobile,
+        isTouchDevice: 'ontouchstart' in window || navigator.maxTouchPoints > 0
+    };
+};
+
 window.downloadFileWithToken = (url, fileName, token) => {
     fetch(url, {
         headers: {

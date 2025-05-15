@@ -1,4 +1,5 @@
-﻿using Blazored.LocalStorage;
+﻿
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
@@ -12,11 +13,11 @@ namespace Toems_ApiCalls
         protected RestRequest Request { get; }
         protected readonly ApiRequest _apiRequest;
 
-        protected BaseAPI(string resource, ILocalStorageService protectedSessionStorage)
+        protected BaseAPI(string resource, ApiRequest apiRequest)
         {
             Resource = resource;
             Request = new RestRequest();
-            _apiRequest = new ApiRequest(protectedSessionStorage);
+            _apiRequest = apiRequest;
         }
 
         public async Task<List<T>> Search(DtoSearchFilterCategories filter)

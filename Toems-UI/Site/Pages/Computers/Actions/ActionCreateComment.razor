@@ -1,0 +1,54 @@
+﻿@using Toems_Common.Dto
+@using Toems_Common.Entity
+@inject Toems_ApiCalls.APICall Call
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            Create Comment
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="_text" Label="" HelperText="Enter your comment in the box." AutoGrow="true" Variant="Variant.Outlined" Lines="4"></MudTextField>
+        <br/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Create">Create</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    private string _text;
+    
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+    
+    [Parameter]
+    public EntityComputer Computer { get; set; }
+    
+    private void Cancel() => MudDialog.Cancel();
+
+    private async Task Create()
+    {
+        var comment = new DtoComputerComment
+        {
+            ComputerId = Computer.Id,
+            Comment = _text.Replace("\n","<br />")
+        };
+
+        var result = await Call.ComputerApi.AddComment(comment);
+        if (!result.Success)
+        {
+            Snackbar.Add($"Could not create comment: {result.ErrorMessage}", Severity.Error);
+        }
+        else
+        {
+            Snackbar.Add($"Successfully created comment", Severity.Success);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+    }
+
+}

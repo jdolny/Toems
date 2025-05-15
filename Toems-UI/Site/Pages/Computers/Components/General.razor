@@ -3,6 +3,7 @@
 @inject Toems_ApiCalls.APICall Call
 @inject ISnackbar Snackbar
 @layout MainLayout
+@inherits BaseComponent
 
     @if (Computer == null)
     {
@@ -10,7 +11,6 @@
     }
     else
     {
-      
                 <MudGrid>
                     <!-- Name -->
                     <MudItem xs="12">
@@ -204,7 +204,6 @@
     }
 @code {
     [Parameter] public required EntityComputer Computer { get; set; }
-    [CascadingParameter] public MainLayout? Layout { get; set; }
     
     private bool _titleSet = false;
     protected override void OnParametersSet()

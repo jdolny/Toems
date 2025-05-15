@@ -10,7 +10,6 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="log4net" Version="3.0.4" />
     <PackageReference Include="MudBlazor" Version="8.*" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -40,7 +39,6 @@
     <Compile Remove="Services\ApiCalls\ComputerLogAPI.cs" />
     <Compile Remove="Services\ApiCalls\ComServerClusterApi.cs" />
     <Compile Remove="Services\ApiCalls\CustomAssetTypeApi.cs" />
-    <Compile Remove="Services\ApiCalls\CustomAttributeAPI.cs" />
     <Compile Remove="Services\ApiCalls\CustomBootMenuAPI.cs" />
     <Compile Remove="Services\ApiCalls\CustomComputerAttributeApi.cs" />
     <Compile Remove="Services\ApiCalls\ExternalDownloadAPI.cs" />
@@ -100,6 +98,7 @@
     <Compile Remove="Services\ApiCalls\WolRelayAPI.cs" />
     <Compile Remove="Services\ApiCalls\WuModuleAPI.cs" />
     <Compile Remove="Services\ApiCalls\IAPICall.cs" />
+    <Compile Remove="Services\ApiCalls\ClientAPI.cs" />
   </ItemGroup>
 
 

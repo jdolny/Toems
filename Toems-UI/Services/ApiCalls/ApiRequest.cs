@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
@@ -7,7 +8,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using Blazored.LocalStorage;
 using log4net;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using RestSharp;
@@ -19,20 +19,20 @@ namespace Toems_ApiCalls
     {
         private readonly RestClient _client;
         private readonly ILog _log = LogManager.GetLogger(typeof(ApiRequest));
-        private readonly ILocalStorageService _protectedSessionStorage;
+        private readonly ProtectedLocalStorage _protectedLocalStorage;
 
-        public ApiRequest(ILocalStorageService protectedSessionStorage)
+        public ApiRequest(ProtectedLocalStorage protectedLocalStorage,IConfiguration configuration)
         {
             var options = new RestClientOptions
             {
-                BaseUrl = new Uri("http://localhost:8080/"),
+                BaseUrl = new Uri(configuration["ApplicationApiUrl"]),
                 Timeout = TimeSpan.FromHours(1)
             };
             _client = new RestClient(options);
-            _protectedSessionStorage = protectedSessionStorage;
+            _protectedLocalStorage = protectedLocalStorage;
         }
 
-        public ApiRequest(Uri baseUrl)
+        /*public ApiRequest(Uri baseUrl)
         {
             var options = new RestClientOptions
             {
@@ -40,7 +40,7 @@ namespace Toems_ApiCalls
                 Timeout = TimeSpan.FromHours(1)
             };
             _client = new RestClient(options);
-        }
+        }*/
 
         public TClass ExecuteHMAC<TClass>(RestRequest request, X509Certificate2 cert) where TClass : new()
         {
@@ -521,12 +521,10 @@ namespace Toems_ApiCalls
         {
             try
             {
-                var authStateResult = await _protectedSessionStorage.GetItemAsync<AuthState>("authState");
-                var claims = authStateResult.Claims.Select(c => new Claim(c.Type, c.Value));
+                var authStateResult = await _protectedLocalStorage.GetAsync<AuthState>("authState");
+                var claims = authStateResult.Value.Claims.Select(c => new Claim(c.Type, c.Value));
                 var token = claims.Where(x => x.Type.Equals("AccessToken", StringComparison.InvariantCultureIgnoreCase)).Select(x => x.Value).FirstOrDefault();
                 
-                //var result = await _protectedSessionStorage.GetItemAsync<string>("authToken");
-                //var token = result;
                 return token;
             }
             catch (Exception ex)

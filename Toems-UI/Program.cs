@@ -1,5 +1,5 @@
-using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using MudBlazor;
 using MudBlazor.Services;
 using Toems_ApiCalls;
@@ -37,7 +37,8 @@ builder.Services.AddServerSideBlazor(options =>
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("API"));
 builder.Services.AddScoped<LocalAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<LocalAuthStateProvider>());
-builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddScoped<ProtectedLocalStorage>();
+builder.Services.AddScoped<ApiRequest>();
 builder.Services.AddScoped<APICall>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();

@@ -2,13 +2,14 @@
 @using Toems_UI.Site.Layout
 @using System.Net.Http.Headers
 @using System.Security.Claims
-@using Blazored.LocalStorage
 @using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using MudBlazor
 @layout MainLayout
 @inject HttpClient HttpClient
 @inject ISnackbar Snackbar
-@inject ILocalStorageService LocalStorage
+@inject ProtectedLocalStorage LocalStorage
+@inject IConfiguration Configuration
 
 <MudGrid>
     <MudItem xs="12"  >
@@ -50,6 +51,7 @@
 
 @code 
 {
+    [Parameter] public EventCallback OnUploadCompleted { get; set; }
     [Parameter] public EntityComputer Computer { get; set; } = new();
     public string AttachmentGuid { get; set; } = Guid.NewGuid().ToString();
     private string _currentFile = string.Empty;
@@ -90,8 +92,8 @@
     {
         try
         {
-            var authStateResult = await LocalStorage.GetItemAsync<AuthState>("authState");
-            var claims = authStateResult.Claims.Select(c => new Claim(c.Type, c.Value));
+            var authStateResult = await LocalStorage.GetAsync<AuthState>("authState");
+            var claims = authStateResult.Value.Claims.Select(c => new Claim(c.Type, c.Value));
             _token = claims.Where(x => x.Type.Equals("AccessToken", StringComparison.InvariantCultureIgnoreCase)).Select(x => x.Value).FirstOrDefault();
         }
         catch (Exception ex)
@@ -118,6 +120,7 @@
             _currentFile = string.Empty;
             Snackbar.Add("All files uploaded successfully!", Severity.Success);
             await ClearAsync();
+            await OnUploadCompleted.InvokeAsync();
         }
         catch (Exception ex)
         {
@@ -131,7 +134,7 @@
         var totalChunks = (int)Math.Ceiling((double)fileSize / ChunkSize);
         var fileName = file.Name;
         var uuid = Guid.NewGuid().ToString();
-
+        var baseUrl = Configuration["UploadApiUrl"];
         // Set Authorization header
         if (!string.IsNullOrEmpty(_token))
         {
@@ -170,8 +173,8 @@
             content.Add(new StringContent(AttachmentGuid), "attachmentGuid");
             content.Add(new StringContent(Computer.Id.ToString()), "computerId");
             content.Add(new StringContent("standard"), "uploadMethod");
-
-            var response = await HttpClient.PostAsync("http://192.168.56.1:8080/Upload/UploadAttachment", content);
+            
+            var response = await HttpClient.PostAsync($"{baseUrl}/Upload/UploadAttachment", content);
             var responseContent = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {
@@ -190,8 +193,8 @@
             { "attachmentGuid", AttachmentGuid },
             { "computerId", Computer.Id.ToString() ?? "" }
         });
-
-        var completeResponse = await HttpClient.PostAsync("http://192.168.56.1:8080/Upload/AttachmentChunkingComplete", completeContent);
+        
+        var completeResponse = await HttpClient.PostAsync($"{baseUrl}/Upload/AttachmentChunkingComplete", completeContent);
         if (!completeResponse.IsSuccessStatusCode)
         {
             throw new Exception("Failed to complete chunked upload.");

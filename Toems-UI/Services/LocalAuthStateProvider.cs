@@ -1,24 +1,20 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
-using Blazored.LocalStorage;
-using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 
 public class LocalAuthStateProvider : AuthenticationStateProvider
 {
-    //private readonly HttpClient _httpClient;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly ILocalStorageService _protectedSessionStorage;
+    private readonly ProtectedLocalStorage _protectedLocalStorage;
     private readonly string _tokenEndpoint = "/token";
     private readonly AuthenticationState _anonymous = new(new ClaimsPrincipal(new ClaimsIdentity()));
 
-    public LocalAuthStateProvider(IHttpClientFactory httpClientFactory,ILocalStorageService protectedSessionStorage)
+    public LocalAuthStateProvider(IHttpClientFactory httpClientFactory,ProtectedLocalStorage protectedLocalStorage)
     {
-        //_httpClient = httpClient;
-
         _httpClientFactory = httpClientFactory;
-        _protectedSessionStorage = protectedSessionStorage;
+        _protectedLocalStorage = protectedLocalStorage;
     }
 
 
@@ -27,8 +23,8 @@ public class LocalAuthStateProvider : AuthenticationStateProvider
     {
         try
         {
-            var authStateResult = await _protectedSessionStorage.GetItemAsync<AuthState>("authState");
-            var claims = authStateResult.Claims.Select(c => new Claim(c.Type, c.Value));
+            var authStateResult = await _protectedLocalStorage.GetAsync<AuthState>("authState");
+            var claims = authStateResult.Value.Claims.Select(c => new Claim(c.Type, c.Value));
             
             if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() >= long.Parse(claims.FirstOrDefault(c => c.Type == "Expires")?.Value))
             {
@@ -53,8 +49,8 @@ public class LocalAuthStateProvider : AuthenticationStateProvider
     {
         try
         {
-            var authStateResult = await _protectedSessionStorage.GetItemAsync<AuthState>("authState");
-            var claims = authStateResult.Claims.Select(c => new Claim(c.Type, c.Value));
+            var authStateResult = await _protectedLocalStorage.GetAsync<AuthState>("authState");
+            var claims = authStateResult.Value.Claims.Select(c => new Claim(c.Type, c.Value));
             return long.Parse(claims.FirstOrDefault(c => c.Type == "Expires")?.Value);
         }
         catch (Exception ex)
@@ -65,8 +61,8 @@ public class LocalAuthStateProvider : AuthenticationStateProvider
 
     public async Task<string> GetToken()
     {
-        var authStateResult = await _protectedSessionStorage.GetItemAsync<AuthState>("authState");
-        var claims = authStateResult.Claims.Select(c => new Claim(c.Type, c.Value));
+        var authStateResult = await _protectedLocalStorage.GetAsync<AuthState>("authState");
+        var claims = authStateResult.Value.Claims.Select(c => new Claim(c.Type, c.Value));
         var token = claims.Where(x => x.Type.Equals("AccessToken", StringComparison.InvariantCultureIgnoreCase)).Select(x => x.Value).FirstOrDefault();
         return token;
     }
@@ -108,7 +104,7 @@ public class LocalAuthStateProvider : AuthenticationStateProvider
                         Claims = claims.Select(c => new ClaimData { Type = c.Type, Value = c.Value }).ToList()
                     };
                     
-                    await _protectedSessionStorage.SetItemAsync("authState", authState);
+                    await _protectedLocalStorage.SetAsync("authState", authState);
                     var identity = new ClaimsIdentity(claims, "LocalAuth");
                     var user = new ClaimsPrincipal(identity);
 
@@ -133,7 +129,7 @@ public class LocalAuthStateProvider : AuthenticationStateProvider
 
     public async Task LogoutAsync()
     {
-        await _protectedSessionStorage.RemoveItemAsync("authState");
+        await _protectedLocalStorage.DeleteAsync("authState");
         NotifyAuthenticationStateChanged(Task.FromResult(_anonymous));
         
     }

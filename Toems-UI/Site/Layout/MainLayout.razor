@@ -3,7 +3,7 @@
 @using System.Timers
 @inject IJSRuntime JS
 @implements IAsyncDisposable
-
+<Authorize/>
 <MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
 <MudDialogProvider />
@@ -52,8 +52,22 @@
         </div>
        
         <MudSpacer/>
-
-        @ActionButtons
+        
+            <MudMenu Label="Actions" EndIcon="@Icons.Material.Filled.ArrowDropDown">
+                @if (ActionButtonsTop is not null)
+                {
+                    @ActionButtonsTop
+                    @if(ActionButtonsBottom is not null)
+                    {
+                        <MudDivider/>
+                    }
+                }
+                @if (ActionButtonsBottom is not null)
+                {
+                    @ActionButtonsBottom
+                }
+            </MudMenu>
+       
 
     </MudAppBar>
 
@@ -75,7 +89,19 @@
 @code {
     public string PageTitle { get; set; } = "";
     public List<BreadcrumbItem> Breadcrumbs { get; set; } = new();
-    public RenderFragment? ActionButtons { get; set; }
+
+    public RenderFragment? ActionButtonsTop { get; set; }
+    public RenderFragment? ActionButtonsBottom { get; set; }
+
+    public void ClearActionButtons()
+    {
+        ActionButtonsTop = null;
+        ActionButtonsBottom = null;
+        StateHasChanged();
+    }
+
+    public void NotifyStateChange() => StateHasChanged();
+    
     private bool _drawerOpen = true;
     private bool _isDarkMode = false;
     private MudTheme? _theme = null;
@@ -84,10 +110,7 @@
     private Timer? CountdownTimer;
     private string CountdownElementId { get; } = $"token-countdown-{Guid.NewGuid():N}";
     private bool IsCircuitActive { get; set; } = true;
-    public void NotifyStageChange()
-    {
-        StateHasChanged();
-    }
+
     public void UpdateAppBar(string title, List<BreadcrumbItem> breadcrumbs)
     {
         PageTitle = title;

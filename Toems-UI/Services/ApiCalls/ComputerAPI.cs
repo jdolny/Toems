@@ -1,4 +1,4 @@
-﻿using Blazored.LocalStorage;
+﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
@@ -7,13 +7,9 @@ using Toems_Common.Enum;
 
 namespace Toems_ApiCalls
 {
-    public class ComputerAPI : BaseAPI<EntityComputer>
+    public class ComputerAPI(string resource, ApiRequest apiRequest)
+        : BaseAPI<EntityComputer>(resource,apiRequest)
     {
-        public ComputerAPI(string resource, ILocalStorageService protectedSessionStorage) : base(resource, protectedSessionStorage)
-        {
-            
-        }
-
         public async Task<DtoActionResult> Restore(int id)
         {
             Request.Method = Method.Get;

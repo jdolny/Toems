@@ -1,17 +1,13 @@
-﻿using Blazored.LocalStorage;
+﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using RestSharp;
 using Toems_Common.Entity;
 
 namespace Toems_ApiCalls
 {
 
-    public class BrowserTokenAPI : BaseAPI<EntityAttachment>
+    public class BrowserTokenAPI(string resource, ApiRequest apiRequest)
+        : BaseAPI<EntityAttachment>(resource, apiRequest)
     {
-        public BrowserTokenAPI(string resource, ILocalStorageService protectedSessionStorage) : base(resource, protectedSessionStorage)
-        {
-
-        }
-
         public async Task<EntityBrowserToken> GetToken()
         {
             Request.Method = Method.Get;

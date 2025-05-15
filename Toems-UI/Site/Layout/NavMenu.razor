@@ -10,7 +10,7 @@
         @if (ShowComputersGroup())
         {
             <MudNavGroup Title="Computers" Expanded="@(IsComputersExpanded)" Icon="@Icons.Material.Filled.Computer">
-                <MudNavLink  Class="@(ShowAllComputersLinks() ? string.Empty : SearchClass("manage"))" Href="/computers/manage" Match="NavLinkMatch.All">Computer List</MudNavLink>
+                <MudNavLink  Class="@(ShowAllComputersLinks() ? string.Empty : SearchClass("manage"))" Href="/computers/manage" Match="NavLinkMatch.All">Manage Computers</MudNavLink>
                 <MudNavLink  Class="@(ShowAllComputersLinks() ? string.Empty : SearchClass("reset", "approval", "request"))" Href="/computers/approval" Match="NavLinkMatch.Prefix">Approval / Reset Requests</MudNavLink>
             </MudNavGroup>
         }

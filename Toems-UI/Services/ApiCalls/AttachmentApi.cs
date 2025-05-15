@@ -1,4 +1,4 @@
-﻿using Blazored.LocalStorage;
+﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using RestSharp;
 using Toems_Common.Entity;
 
@@ -7,7 +7,7 @@ namespace Toems_ApiCalls
 
     public class AttachmentAPI : BaseAPI<EntityAttachment>
     {
-        public AttachmentAPI(string resource, ILocalStorageService protectedSessionStorage) : base(resource, protectedSessionStorage)
+        public AttachmentAPI(string resource, ApiRequest apiRequest) : base(resource, apiRequest)
         {
 
         }

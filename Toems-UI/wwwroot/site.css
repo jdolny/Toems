@@ -19,6 +19,13 @@
     width: 600px;
 }
 
+.width-full{
+    width: 100%;
+}
+.stack-full {
+    width: 100%;
+}
+
 .sub-nav-item {
     color: #ff0000 !important; /* Red text for sub-menu items */
 }
@@ -29,11 +36,19 @@
     text-align: left !important; 
     }
 
-.content-container {
-    max-height: 80vh; /* Limit height to 80% of viewport height */
-    padding-bottom:40px;
-    padding-right:15px;
-    width:100%;
-    overflow-y: auto; /* Enable vertical scrolling */
 
+
+.mud-tabs-panels.mud-tabs-vertical {
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    max-height: calc(100vh - 200px);
+    width:100%;
 }
+
+.mud-tabs-tabbar-inner {
+    max-height: calc(100vh - 200px);
+}
+.mud-table-container{
+    max-height: calc(100% - 100px);
+}
+
