@@ -20,10 +20,10 @@
 }
 
 .width-full{
-    width: 100%;
+    width: 100% !important;
 }
 .stack-full {
-    width: 100%;
+    width: 100% !important;
 }
 
 .sub-nav-item {
@@ -49,6 +49,17 @@
     max-height: calc(100vh - 200px);
 }
 .mud-table-container{
-    max-height: calc(100% - 100px);
+    max-height: calc(100% - 120px);
 }
 
+.full-data-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+}
+
+.full-data-grid .mud-table-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: calc(100% - 120px);
+}

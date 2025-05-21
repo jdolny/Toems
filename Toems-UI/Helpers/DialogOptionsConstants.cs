@@ -5,7 +5,7 @@ public static class DialogOptionsConstants
     public static readonly DialogOptions DeleteDialogOptions = new DialogOptions
     {
         CloseButton = false,
-        MaxWidth = MaxWidth.Small,
+        MaxWidth = MaxWidth.Medium,
         FullWidth = true
     };
 }

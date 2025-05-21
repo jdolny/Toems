@@ -10,6 +10,12 @@ namespace Toems_ApiCalls
         public AttachmentAPI AttachmentApi => new("Attachment",apiRequest);
         public BrowserTokenAPI BrowserTokenApi => new("BrowserToken",apiRequest);
         public CustomAttributeAPI CustomAttributeApi => new("CustomAttribute",apiRequest);
+        public CustomComputerAttributeAPI CustomComputerAttributeApi => new("CustomComputerAttribute",apiRequest);
+        public ClientComServerAPI ClientComServerApi => new("ClientComServer",apiRequest);
+        public ComputerLogAPI ComputerLogApi => new("ComputerLog",apiRequest);
+        public ImageAPI ImageApi => new("Image",apiRequest);
+        public WinPeModuleAPI WinPeModuleApi => new("WinPeModule",apiRequest);
+        public PolicyAPI PolicyApi => new("Policy",apiRequest);
         /*
         public MessageModuleAPI MessageModuleApi
         {
@@ -63,10 +69,7 @@ namespace Toems_ApiCalls
             get { return new CustomAssetTypeAPI("CustomAssetType",_protectedSessionStorage);}
         }
 
-        public CustomComputerAttributeAPI CustomComputerAttributeApi
-        {
-            get { return new CustomComputerAttributeAPI("CustomComputerAttribute",_protectedSessionStorage);}
-        }
+      
 
        
 
@@ -156,10 +159,7 @@ namespace Toems_ApiCalls
             get { return new FileCopyModuleAPI("FileCopyModule",_protectedSessionStorage); }
         }
 
-        public WinPeModuleAPI WinPeModuleApi
-        {
-            get { return new WinPeModuleAPI("WinPeModule",_protectedSessionStorage); }
-        }
+      
 
         public ScriptModuleAPI ScriptModuleApi
         {
@@ -209,10 +209,7 @@ namespace Toems_ApiCalls
             get { return new PolicyModulesAPI("PolicyModules",_protectedSessionStorage); }
         }
 
-        public PolicyAPI PolicyApi
-        {
-            get { return new PolicyAPI("Policy",_protectedSessionStorage); }
-        }
+     
 
         public PrinterModuleAPI PrinterModuleApi
         {
@@ -325,10 +322,7 @@ namespace Toems_ApiCalls
         }
 
 
-        public ImageAPI ImageApi
-        {
-            get { return new ImageAPI("Image",_protectedSessionStorage); }
-        }
+       
 
         public ImageProfileAPI ImageProfileApi
         {
@@ -370,10 +364,7 @@ namespace Toems_ApiCalls
             get { return new ActiveMulticastSessionAPI("ActiveMulticastSession",_protectedSessionStorage); }
         }
 
-        public ComputerLogAPI ComputerLogApi
-        {
-            get { return new ComputerLogAPI("ComputerLog",_protectedSessionStorage); }
-        }
+        
 
         public RemoteAccessApi RemoteAccessApi
         {

@@ -1,0 +1,143 @@
+﻿@using System.Runtime.CompilerServices
+@using Toems_ApiCalls
+@using Toems_Common.Dto
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@layout MainLayout
+@inject APICall Call
+@inherits BaseComponent
+@inject ISnackbar Snackbar
+@code
+{
+    [Parameter] public EntityComputer Computer { get; set; } = new();
+    private IEnumerable<EntityImage> _images = new List<EntityImage>();
+    private IEnumerable<EntityImageProfile> _imageProfiles = new List<EntityImageProfile>();
+    private IEnumerable<EntityWinPeModule> _winPeModules = new List<EntityWinPeModule>();
+    private string _effectiveImage = string.Empty;
+    private string _effectiveImageProfile = string.Empty;
+    private string _effectiveWinPeModule = string.Empty;
+}
+
+<ActionButtons InsertAtTop="true">
+    <Content>
+        <MudMenuItem Label="Update Image Settings" OnClick="UpdateImageSettings"/>
+    </Content>
+</ActionButtons>
+
+<MudTabs Outlined="true" Position="Position.Top" Rounded="false" Border="true" 
+         ApplyEffectsToContainer="true" Class="mt-2" PanelClass="pa-4" Elevation="0" >
+<MudTabPanel Text="Assigned Image">
+<MudStack Class="stack-full">
+    <MudGrid >
+        <MudItem xs="12" sm="6">
+            <MudSelect Dense="true" T="int" Value="@Computer.ImageId" Label="Image"  ValueChanged="@(s => OnImageChanged(s))" AdornmentIcon="@Icons.Material.Filled.Category" Variant="Variant.Outlined" AdornmentColor="Color.Primary">
+                <MudSelectItem Value="-1">Select an image</MudSelectItem>
+                @foreach (var image in _images)
+                {
+                    <MudSelectItem Value="@image.Id">@image.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudFlexBreak/>
+        <MudItem xs="12" sm="6">
+            <MudSelect Dense="true" T="int" @bind-Value="@Computer.ImageProfileId" Label="Image Profile"  AdornmentIcon="@Icons.Material.Filled.Category" Variant="Variant.Outlined" AdornmentColor="Color.Primary">
+                <MudSelectItem Value="-1">Select an image profile</MudSelectItem>
+                @foreach (var profile in _imageProfiles)
+                {
+                    <MudSelectItem Value="@profile.Id">@profile.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudFlexBreak/>
+        <MudItem xs="12" sm="6">
+            <MudSelect Dense="true" T="int" @bind-Value="@Computer.WinPeModuleId" Label="WinPE Module" AdornmentIcon="@Icons.Material.Filled.Category" Variant="Variant.Outlined" AdornmentColor="Color.Primary">
+                <MudSelectItem Value="-1">Select a WinPE module</MudSelectItem>
+                @foreach (var module in _winPeModules)
+                {
+                    <MudSelectItem Value="@module.Id">@module.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+    </MudGrid>
+</MudStack>
+</MudTabPanel>
+    <MudTabPanel Text="Effective Image">
+        <MudGrid>
+        <MudItem xs="12">
+            <MudText Typo="Typo.body1"><b>Effective Image</b></MudText>
+            <MudText Typo="Typo.body2" Variant="Variant.Outlined">@_effectiveImage</MudText>
+        </MudItem>
+        <MudItem xs="12">
+            <MudText Typo="Typo.body1"><b>Effective Image Profile</b></MudText>
+            <MudText Typo="Typo.body2" Variant="Variant.Outlined">@_effectiveImageProfile</MudText>
+        </MudItem>
+        <MudItem xs="12">
+            <MudText Typo="Typo.body1"><b>Effective WinPE Module</b></MudText>
+            <MudText Typo="Typo.body2">@_effectiveWinPeModule</MudText>
+        </MudItem>
+        </MudGrid>
+    </MudTabPanel>
+    <MudTabPanel Text="Static IP Settings">
+        <MudGrid>
+            <MudItem xs="12" sm="6">
+                <MudTextField T="string" Label="IP Address" @bind-Value="@Computer.PxeIpAddress" Typo="Typo.body2" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudTextField T="string" Label="Netmask" @bind-Value="@Computer.PxeNetmask" Typo="Typo.body2" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudTextField T="string" Label="Gateway" @bind-Value="@Computer.PxeGateway" Typo="Typo.body2" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudTextField T="string" Label="DNS" @bind-Value="@Computer.PxeDns" Typo="Typo.body2" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+        </MudGrid>
+    </MudTabPanel>
+
+</MudTabs>
+
+
+
+@code {
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Computer.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Computer.Name}",new ComputerBreadcrumbs(Computer.Name).ImageSettings())) return;
+        
+        _images = await Call.ImageApi.Get();
+        _winPeModules = await Call.WinPeModuleApi.Get();
+        _imageProfiles = await Call.ImageApi.GetImageProfiles(Computer.ImageId);
+        await PopulateEffectiveFields();
+        
+        Layout?.NotifyStateChange();
+    }
+
+    private async Task PopulateEffectiveFields()
+    {
+        _effectiveImage = (await Call.ComputerApi.GetEffectiveImage(Computer.Id))?.Image?.Name ?? "None";
+        _effectiveImageProfile = (await Call.ComputerApi.GetEffectiveImage(Computer.Id))?.Name ?? "None";
+        _effectiveWinPeModule = (await Call.ComputerApi.GetEffectiveWinPe(Computer.Id))?.Name ?? "None";
+
+    }
+    private async Task OnImageChanged(int Id)
+    {
+        _imageProfiles = await Call.ImageApi.GetImageProfiles(Id);
+        Computer.ImageId = Id;
+        Computer.ImageProfileId = _imageProfiles.FirstOrDefault()?.Id ?? -1;
+        Layout?.NotifyStateChange();
+    }
+    
+    private async Task UpdateImageSettings()
+    {
+        var result = await Call.ComputerApi.Put(Computer.Id,Computer);
+        if (!result.Success)
+        {
+            Snackbar.Add($"Could update the computers' image settings: {result.ErrorMessage}", Severity.Error);
+        }
+        else
+        {
+            Snackbar.Add($"Successfully updated image settings", Severity.Success);
+        }
+        await PopulateEffectiveFields();
+    }
+}

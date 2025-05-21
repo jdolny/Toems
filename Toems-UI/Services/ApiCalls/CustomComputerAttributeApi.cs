@@ -8,19 +8,15 @@ using Toems_Common.Entity;
 
 namespace Toems_ApiCalls
 {
-    public class CustomComputerAttributeAPI : BaseAPI<EntityCustomComputerAttribute>
+    public class CustomComputerAttributeAPI(string resource, ApiRequest apiRequest)
+        : BaseAPI<EntityCustomComputerAttribute>(resource,apiRequest)
     {
-        public CustomComputerAttributeAPI(string resource, ProtectedLocalStorage protectedLocalStorage) : base(resource, protectedLocalStorage)
-        {
-
-        }
-
-        public DtoActionResult Post(List<EntityCustomComputerAttribute> attributes)
+        public async Task<DtoActionResult> Post(List<EntityCustomComputerAttribute> attributes)
         {
             Request.Method = Method.Post;
-            Request.Resource = string.Format("{0}/Post/", Resource);
+            Request.Resource = $"{Resource}/Post/";
             Request.AddParameter("application/json", JsonConvert.SerializeObject(attributes), ParameterType.RequestBody);
-            return _apiRequest.Execute<DtoActionResult>(Request);
+            return await _apiRequest.ExecuteAsync<DtoActionResult>(Request);
         }
     }
 }

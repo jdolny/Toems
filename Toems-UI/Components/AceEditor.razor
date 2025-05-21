@@ -1,0 +1,50 @@
+﻿@using Microsoft.JSInterop
+@using Toems_UI.Site.Layout
+@inject IJSRuntime JSRuntime
+
+<div id="@EditorId" style="height:@Height;width:@Width;border:1px solid #ccc;"></div>
+
+@code {
+    [CascadingParameter] public MainLayout? Layout { get; set; }
+    [Parameter] public string EditorId { get; set; } = $"aceEditor_{Guid.NewGuid()}";
+    [Parameter] public string Theme { get; set; } = "textmate";
+    [Parameter] public string Mode { get; set; } = "csharp";
+    [Parameter] public string Height { get; set; } = "100%";
+    [Parameter] public string Width { get; set; } = "100%";
+    [Parameter] public string Value { get; set; } = string.Empty;
+    [Parameter] public bool IsReadOnly { get; set; } = false;
+    
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+
+    private DotNetObjectReference<AceEditor>? objRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Layout.IfNotNull(layout =>
+            {
+                if(layout.IsDarkMode) Theme = "cloud_editor_dark";
+            });
+            
+            objRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("aceEditors.create", EditorId, Theme, Mode, Value,IsReadOnly);
+        }
+    }
+    
+    public async Task<string> GetValueAsync()
+    {
+        return await JSRuntime.InvokeAsync<string>("aceEditors.getValue", EditorId);
+    }
+
+    public async Task SetValueAsync(string value)
+    {
+        await JSRuntime.InvokeVoidAsync("aceEditors.setValue", EditorId, value);
+       
+    }
+    
+    public void Dispose()
+    {
+        objRef?.Dispose();
+    }
+}

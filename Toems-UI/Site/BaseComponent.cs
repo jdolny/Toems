@@ -6,13 +6,16 @@ namespace Toems_UI.Site;
 public class BaseComponent : ComponentBase
 {
     [CascadingParameter] public MainLayout? Layout { get; set; }
-    public bool TitleIsSet { get; set; } = false;
+    protected bool ParametersSet { get; set; } = false;
     
     protected bool SetTitleAndBreadcrumbs(string title, List<BreadcrumbItem> breadCrumbs)
     {
-        if (Layout is null ||  TitleIsSet) return false;
+        if (ParametersSet) return true;
+        if (Layout is null) return false;
         Layout?.UpdateAppBar(title,breadCrumbs);
-        TitleIsSet = true;
+        ParametersSet = true;
         return true;
     }
+    
+    
 }

@@ -1,0 +1,77 @@
+﻿@using Toems_ApiCalls
+@using Toems_Common.Dto
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@layout MainLayout
+@inject APICall Call
+@inherits BaseComponent
+@using Toems_Common.Enum
+@using Toems_UI.Components
+@code
+{
+    private string _selectedClientAction = "Startup";
+    private string _selectedComServer = "";
+    private AceEditor aceEditor;
+    
+    [Parameter] public EntityComputer Computer { get; set; } = new();
+    private IEnumerable<EntityClientComServer> _clientComServers = new List<EntityClientComServer>();
+}
+
+<ActionButtons InsertAtTop="true">
+    <Content>
+        <MudMenuItem Label="Test Submit" OnClick="TestClick"/>
+    </Content>
+</ActionButtons>
+
+<MudGrid >
+    <MudItem xs="12" sm="6">
+        <MudSelect Dense="true" T="string" Value="_selectedClientAction" Label="Client Action" ValueChanged="@(s => OnClientActionChanged(s))" AdornmentIcon="@Icons.Material.Filled.Category" Variant="Variant.Outlined" AdornmentColor="Color.Primary">
+            <MudSelectItem Value="@("Startup")">Startup</MudSelectItem>
+            <MudSelectItem Value="@("Checkin")">Checkin</MudSelectItem>
+            <MudSelectItem Value="@("Login")">Login</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+    <MudSelect Dense="true" T="string" Value="_selectedComServer" Label="Com Server" ValueChanged="@(s => OnComServerChanged(s))" AdornmentIcon="@Icons.Material.Filled.Category" Variant="Variant.Outlined" AdornmentColor="Color.Primary">
+        @foreach (var com in _clientComServers)
+        {
+            <MudSelectItem Value="@com.Url">@com.DisplayName - @com.Url</MudSelectItem>
+        }
+    </MudSelect>
+    </MudItem>
+</MudGrid>
+
+<AceEditor @ref="aceEditor" Mode="json"/>
+
+@code {
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Computer.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Computer.Name}",new ComputerBreadcrumbs(Computer.Name).EffectivePolicy())) return;
+        _clientComServers = await Call.ClientComServerApi.Get();
+    }
+
+    private async Task LoadEffectivePolicies()
+    {
+        var policyText = await Call.ComputerApi.GetEffectivePolicy(Computer.Id,
+            (EnumPolicy.Trigger) Enum.Parse(typeof (EnumPolicy.Trigger), _selectedClientAction),_selectedComServer);
+        await aceEditor.SetValueAsync(policyText);
+
+    }
+    private Task OnClientActionChanged(string action)
+    {
+        _selectedClientAction = action;
+        return LoadEffectivePolicies();
+    }
+    
+    private Task OnComServerChanged(string comUrl)
+    {
+        _selectedComServer = comUrl;
+        return LoadEffectivePolicies();
+    }
+    
+    private async Task TestClick()
+    {
+        var updatedPolicyText = await aceEditor.GetValueAsync();
+    }
+}

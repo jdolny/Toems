@@ -22,7 +22,7 @@
              ApplyEffectsToContainer="true" Class="mt-2" PanelClass="pa-4" Elevation="0" AlwaysShowScrollButtons="true"  >
         <MudTabPanel Text="Attachments">
             <MudStack Class="stack-full">
-                <Attachments Computer="Computer"></Attachments>
+                <Attachments Computer="@Computer"/>
                 <br/> <br/>
             </MudStack>
         </MudTabPanel>
@@ -31,17 +31,23 @@
         </MudTabPanel>
         <MudTabPanel Text="Comments">
             <MudStack Class="stack-full">
-                <Comments Computer="Computer"></Comments>
+                <Comments Computer="@Computer"/>
             </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Custom Attributes">
             <MudStack Class="width-full">
-                <CustomAttributes Computer="Computer"></CustomAttributes>
+                <CustomAttributes Computer="@Computer"/>
             </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Custom Inventory">
+       
+            <CustomInventory Computer="@Computer"/>
+         
         </MudTabPanel>
         <MudTabPanel Text="Effective Policy">
+            <MudStack Class="stack-full">
+                <EffectivePolicy Computer="@Computer"/>
+            </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="General">
             <MudStack>
@@ -49,17 +55,33 @@
                 <br/><br/>
             </MudStack>
         </MudTabPanel>
-        <MudTabPanel Text="Image Logs">
+        <MudTabPanel Text="Imaging Logs">
+            <MudStack Class="stack-full">
+            <ImagingLogs Computer="@Computer"/>
+            </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Image Settings">
+            <MudStack Class="stack-full">
+                <ImageSettings Computer="@Computer"/>
+            </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Instant Module Runner">
+            <MudStack Class="stack-full">
+                <OnDemandModule Computer="@Computer"/>
+            </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Policy History">
+          
+                <PolicyHistory Computer="@Computer"/>
+         
         </MudTabPanel>
         <MudTabPanel Text="Software">
+            <Software Computer="@Computer"/>
         </MudTabPanel>
         <MudTabPanel Text="System Info">
+            <MudStack Class="stack-full">
+                <SystemInformation Computer="@Computer"/>
+            </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Usages">
         </MudTabPanel>

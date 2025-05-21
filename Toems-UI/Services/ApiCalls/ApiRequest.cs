@@ -32,7 +32,7 @@ namespace Toems_ApiCalls
             _protectedLocalStorage = protectedLocalStorage;
         }
 
-        /*public ApiRequest(Uri baseUrl)
+        public ApiRequest(Uri baseUrl)
         {
             var options = new RestClientOptions
             {
@@ -40,7 +40,7 @@ namespace Toems_ApiCalls
                 Timeout = TimeSpan.FromHours(1)
             };
             _client = new RestClient(options);
-        }*/
+        }
 
         public TClass ExecuteHMAC<TClass>(RestRequest request, X509Certificate2 cert) where TClass : new()
         {

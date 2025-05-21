@@ -8,29 +8,25 @@ using Toems_Common.Entity;
 
 namespace Toems_ApiCalls
 {
-    public class WinPeModuleAPI : BaseAPI<EntityWinPeModule>
+    public class WinPeModuleAPI(string resource, ApiRequest apiRequest)
+        : BaseAPI<EntityWinPeModule>(resource,apiRequest)
     {
 
-        public WinPeModuleAPI(string resource, ProtectedLocalStorage protectedLocalStorage) : base(resource, protectedLocalStorage)
-        {
-            
-        }
-
-        public string GetArchivedCount()
+        public async Task<string> GetArchivedCount()
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetArchivedCount", Resource);
-            var responseData = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            Request.Resource = $"{Resource}/GetArchivedCount";
+            var responseData = await _apiRequest.ExecuteAsync<DtoApiStringResponse>(Request);
             return responseData != null ? responseData.Value : string.Empty;
 
         }
 
-        public List<EntityWinPeModule> GetArchived(DtoSearchFilterCategories filter)
+        public async Task<List<EntityWinPeModule>> GetArchived(DtoSearchFilterCategories filter)
         {
             Request.Method = Method.Post;
-            Request.Resource = string.Format("{0}/GetArchived", Resource);
+            Request.Resource = $"{Resource}/GetArchived";
             Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
-            return _apiRequest.Execute<List<EntityWinPeModule>>(Request);
+            return await _apiRequest.ExecuteAsync<List<EntityWinPeModule>>(Request);
         }
       
        

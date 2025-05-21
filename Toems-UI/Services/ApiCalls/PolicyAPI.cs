@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using RestSharp;
 using Toems_Common.Dto;
 using Toems_Common.Dto.exports;
@@ -10,36 +6,32 @@ using Toems_Common.Entity;
 
 namespace Toems_ApiCalls
 {
-    public class PolicyAPI : BaseAPI<EntityPolicy>
+    public class PolicyAPI (string resource, ApiRequest apiRequest)
+        : BaseAPI<EntityPolicy>(resource,apiRequest)
     {
 
-        public PolicyAPI(string resource, ProtectedLocalStorage protectedLocalStorage) : base(resource, protectedLocalStorage)
-        {
-
-        }
-
-        public string GetArchivedCount()
+        public async Task<string> GetArchivedCount()
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetArchivedCount", Resource);
-            var responseData = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            Request.Resource = $"{Resource}/GetArchivedCount";
+            var responseData = await _apiRequest.ExecuteAsync<DtoApiStringResponse>(Request);
             return responseData != null ? responseData.Value : string.Empty;
 
         }
 
-        public List<EntityPolicy> GetArchived(DtoSearchFilterCategories filter)
+        public async Task<List<EntityPolicy>> GetArchived(DtoSearchFilterCategories filter)
         {
             Request.Method = Method.Post;
-            Request.Resource = string.Format("{0}/GetArchived", Resource);
+            Request.Resource = $"{Resource}/GetArchived";
             Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
-            return _apiRequest.Execute<List<EntityPolicy>>(Request);
+            return await _apiRequest.ExecuteAsync<List<EntityPolicy>>(Request);
         }
 
-        public DtoActionResult Archive(int id)
+        public async Task<DtoActionResult> Archive(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/Archive/{1}", Resource, id);
-            var response = _apiRequest.Execute<DtoActionResult>(Request);
+            Request.Resource = $"{Resource}/Archive/{id}";
+            var response = await _apiRequest.ExecuteAsync<DtoActionResult>(Request);
             if (response != null)
             {
                 if (response.Id == 0)
@@ -56,11 +48,11 @@ namespace Toems_ApiCalls
             return response;
         }
 
-        public DtoActionResult Restore(int id)
+        public async Task<DtoActionResult> Restore(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/Restore/{1}", Resource, id);
-            var response = _apiRequest.Execute<DtoActionResult>(Request);
+            Request.Resource = $"{Resource}/Restore/{id}";
+            var response = await _apiRequest.ExecuteAsync<DtoActionResult>(Request);
             if (response != null)
             {
                 if (response.Id == 0)
@@ -77,11 +69,11 @@ namespace Toems_ApiCalls
             return response;
         }
 
-        public DtoActionResult Clone(int id)
+        public async Task<DtoActionResult> Clone(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/Clone/{1}", Resource, id);
-            var response = _apiRequest.Execute<DtoActionResult>(Request);
+            Request.Resource = $"{Resource}/Clone/{id}";
+            var response = await _apiRequest.ExecuteAsync<DtoActionResult>(Request);
             if (response != null)
             {
                 if (response.Id == 0)
@@ -98,113 +90,113 @@ namespace Toems_ApiCalls
             return response;
         }
 
-        public IEnumerable<EntityPolicyComServer> GetPolicyComServers(int id)
+        public async Task<IEnumerable<EntityPolicyComServer>> GetPolicyComServers(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetPolicyComServers/{1}", Resource, id);
-            return _apiRequest.Execute<List<EntityPolicyComServer>>(Request);
+            Request.Resource = $"{Resource}/GetPolicyComServers/{id}";
+            return await _apiRequest.ExecuteAsync<List<EntityPolicyComServer>>(Request);
         }
 
-        public IEnumerable<EntityPolicyCategory> GetPolicyCategories(int id)
+        public async Task<IEnumerable<EntityPolicyCategory>> GetPolicyCategories(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetPolicyCategories/{1}", Resource, id);
-            return _apiRequest.Execute<List<EntityPolicyCategory>>(Request);
+            Request.Resource = $"{Resource}/GetPolicyCategories/{id}";
+            return await _apiRequest.ExecuteAsync<List<EntityPolicyCategory>>(Request);
         }
 
-        public IEnumerable<EntityGroup> GetPolicyGroups(int id)
+        public async Task<IEnumerable<EntityGroup>> GetPolicyGroups(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetPolicyGroups/{1}", Resource, id);
-            return _apiRequest.Execute<List<EntityGroup>>(Request);
+            Request.Resource = $"{Resource}/GetPolicyGroups/{id}";
+            return await _apiRequest.ExecuteAsync<List<EntityGroup>>(Request);
         }
 
-        public IEnumerable<EntityComputer> GetPolicyComputers(int id)
+        public async Task<IEnumerable<EntityComputer>> GetPolicyComputers(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetPolicyComputers/{1}", Resource, id);
-            return _apiRequest.Execute<List<EntityComputer>>(Request);
+            Request.Resource = $"{Resource}/GetPolicyComputers/{id}";
+            return await _apiRequest.ExecuteAsync<List<EntityComputer>>(Request);
         }
 
-        public EntityActiveClientPolicy GetActiveStatus(int id)
+        public async Task<EntityActiveClientPolicy> GetActiveStatus(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetActiveStatus/{1}", Resource, id);
-            return _apiRequest.Execute<EntityActiveClientPolicy>(Request);
+            Request.Resource = $"{Resource}/GetActiveStatus/{id}";
+            return await _apiRequest.ExecuteAsync<EntityActiveClientPolicy>(Request);
         }
 
-        public DtoPolicyExport ExportPolicy(DtoPolicyExportGeneral exportInfo)
+        public async Task<DtoPolicyExport> ExportPolicy(DtoPolicyExportGeneral exportInfo)
         {
             Request.Method = Method.Post;
             Request.AddParameter("application/json", JsonConvert.SerializeObject(exportInfo), ParameterType.RequestBody);
-            Request.Resource = string.Format("{0}/ExportPolicy/", Resource);
-            return _apiRequest.Execute<DtoPolicyExport>(Request);
+            Request.Resource = $"{Resource}/ExportPolicy/";
+            return await _apiRequest.ExecuteAsync<DtoPolicyExport>(Request);
         }
 
-        public DtoImportResult ImportPolicy(DtoPolicyExport export)
+        public async Task<DtoImportResult> ImportPolicy(DtoPolicyExport export)
         {
             Request.Method = Method.Post;
             Request.AddParameter("application/json", JsonConvert.SerializeObject(export), ParameterType.RequestBody);
-            Request.Resource = string.Format("{0}/ImportPolicy/", Resource);
-            return _apiRequest.Execute<DtoImportResult>(Request);
+            Request.Resource = $"{Resource}/ImportPolicy/";
+            return await _apiRequest.ExecuteAsync<DtoImportResult>(Request);
         }
 
-        public DtoActionResult ValidatePolicyExport(DtoPolicyExportGeneral exportInfo)
+        public async Task<DtoActionResult> ValidatePolicyExport(DtoPolicyExportGeneral exportInfo)
         {
             Request.Method = Method.Post;
             Request.AddParameter("application/json", JsonConvert.SerializeObject(exportInfo), ParameterType.RequestBody);
-            Request.Resource = string.Format("{0}/ValidatePolicyExport/", Resource);
-            return _apiRequest.Execute<DtoActionResult>(Request);
+            Request.Resource = $"{Resource}/ValidatePolicyExport/";
+            return await _apiRequest.ExecuteAsync<DtoActionResult>(Request);
         }
 
-        public IEnumerable<DtoModule> GetAllModules(DtoModuleSearchFilter filter)
+        public async Task<IEnumerable<DtoModule>> GetAllModules(DtoModuleSearchFilter filter)
         {
             Request.Method = Method.Post;
             Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
-            Request.Resource = string.Format("{0}/GetAllModules/", Resource);
-            return _apiRequest.Execute<List<DtoModule>>(Request);
+            Request.Resource = $"{Resource}/GetAllModules/";
+            return await _apiRequest.ExecuteAsync<List<DtoModule>>(Request);
         }
 
-        public IEnumerable<EntityPolicyModules> GetAssignedModules(int id, DtoModuleSearchFilter filter)
+        public async Task<IEnumerable<EntityPolicyModules>> GetAssignedModules(int id, DtoModuleSearchFilter filter)
         {
             Request.Method = Method.Post;
-            Request.Resource = string.Format("{0}/GetAssignedModules/{1}", Resource,id);
+            Request.Resource = $"{Resource}/GetAssignedModules/{id}";
             Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
-            return _apiRequest.Execute<List<EntityPolicyModules>>(Request);
+            return await _apiRequest.ExecuteAsync<List<EntityPolicyModules>>(Request);
         }
 
-        public IEnumerable<EntityPolicyHistory> GetHistoryWithComputer(int id,DtoSearchFilter filter)
+        public async Task<IEnumerable<EntityPolicyHistory>> GetHistoryWithComputer(int id,DtoSearchFilter filter)
         {
             Request.Method = Method.Post;
             Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
-            Request.Resource = string.Format("{0}/GetHistoryWithComputer/{1}", Resource, id);
-            return _apiRequest.Execute<List<EntityPolicyHistory>>(Request);
+            Request.Resource = $"{Resource}/GetHistoryWithComputer/{id}";
+            return await _apiRequest.ExecuteAsync<List<EntityPolicyHistory>>(Request);
         }
 
-        public IEnumerable<EntityPolicyHashHistory> GetPolicyHashHistory(int id)
+        public async Task<IEnumerable<EntityPolicyHashHistory>> GetPolicyHashHistory(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetPolicyHashHistory/{1}", Resource, id);
-            return _apiRequest.Execute<List<EntityPolicyHashHistory>>(Request);
+            Request.Resource = $"{Resource}/GetPolicyHashHistory/{id}";
+            return await _apiRequest.ExecuteAsync<List<EntityPolicyHashHistory>>(Request);
         }
 
-        public string GetHashDetail(int id, string hash)
+        public async Task<string> GetHashDetail(int id, string hash)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetHashDetail/", Resource);
+            Request.Resource = $"{Resource}/GetHashDetail/";
             Request.AddParameter("id", id);
             Request.AddParameter("hash", hash);
-            var result = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            var result = await _apiRequest.ExecuteAsync<DtoApiStringResponse>(Request);
             if (result != null)
                 return result.Value ?? string.Empty;
             return string.Empty;
         }
 
-        public string PolicyChangedSinceActivation(int id)
+        public async Task<string> PolicyChangedSinceActivation(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/PolicyChangedSinceActivation/{1}", Resource, id);
-            var result = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            Request.Resource = $"{Resource}/PolicyChangedSinceActivation/{id}";
+            var result = await _apiRequest.ExecuteAsync<DtoApiStringResponse>(Request);
             if (result != null)
                 return result.Value;
             else
@@ -212,20 +204,20 @@ namespace Toems_ApiCalls
                 throw new NullReferenceException();
             }
         }
-        public DtoApiStringResponse GetAssignedModuleCount(int id)
+        public async Task<DtoApiStringResponse> GetAssignedModuleCount(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetAssignedModuleCount/{1}", Resource,id);
-            return _apiRequest.Execute<DtoApiStringResponse>(Request);
+            Request.Resource = $"{Resource}/GetAssignedModuleCount/{id}";
+            return await _apiRequest.ExecuteAsync<DtoApiStringResponse>(Request);
         }
 
-        public DtoActionResult ActivatePolicy(int id, bool reRunExisting)
+        public async Task<DtoActionResult> ActivatePolicy(int id, bool reRunExisting)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/ActivatePolicy", Resource);
+            Request.Resource = $"{Resource}/ActivatePolicy";
             Request.AddParameter("id", id);
             Request.AddParameter("reRunExisting", reRunExisting);
-            var response = _apiRequest.Execute<DtoActionResult>(Request);
+            var response = await _apiRequest.ExecuteAsync<DtoActionResult>(Request);
             if (response != null)
             {
                 if (response.Id == 0)
@@ -242,11 +234,11 @@ namespace Toems_ApiCalls
             return response;
         }
 
-        public DtoActionResult DeactivatePolicy(int id)
+        public async Task<DtoActionResult> DeactivatePolicy(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/DeactivatePolicy/{1}", Resource, id);
-            var response = _apiRequest.Execute<DtoActionResult>(Request);
+            Request.Resource = $"{Resource}/DeactivatePolicy/{id}";
+            var response = await _apiRequest.ExecuteAsync<DtoActionResult>(Request);
             if (response != null)
             {
                 if (response.Id == 0)
@@ -263,11 +255,11 @@ namespace Toems_ApiCalls
             return response;
         }
 
-        public IEnumerable<DtoPinnedPolicy> GetAllActiveStatus()
+        public async Task<IEnumerable<DtoPinnedPolicy>> GetAllActiveStatus()
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetAllActiveStatus/", Resource);
-            return _apiRequest.Execute<List<DtoPinnedPolicy>>(Request);
+            Request.Resource = $"{Resource}/GetAllActiveStatus/";
+            return await _apiRequest.ExecuteAsync<List<DtoPinnedPolicy>>(Request);
         }
     }
 }

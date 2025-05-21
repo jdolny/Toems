@@ -1,0 +1,36 @@
+﻿@using Toems_Common.Entity
+@using Toems_UI.Components
+@inject IJSRuntime JSRuntime
+
+<MudDialog >
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            @Computer.Name
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <AceEditor Value="@ImagingLog.Contents" Mode="text" Height="600px" IsReadOnly="true"/>
+        <br/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Export">Export Log</MudButton>
+        <MudButton OnClick="Cancel">Close</MudButton>
+
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public EntityComputer Computer { get; set; }
+    [Parameter]
+    public EntityComputerLog ImagingLog { get; set; }
+    private void Cancel() => MudDialog.Cancel();
+    
+    private async Task Export()
+    {
+        await JSRuntime.InvokeVoidAsync("saveAsTextFile", ImagingLog.Contents, $"{Computer.Name}-{ImagingLog.LogTime}.log");
+    }
+}

@@ -13,7 +13,7 @@ namespace Toems_ApiCalls
         public async Task<DtoActionResult> Restore(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/Restore/{1}", Resource, id);
+            Request.Resource = $"{Resource}/Restore/{id}";
             var response = await _apiRequest.ExecuteAsync<DtoActionResult>(Request);
             if (response != null)
             {
@@ -153,18 +153,18 @@ namespace Toems_ApiCalls
             return await _apiRequest.ExecuteAsync<DtoInventoryCollection>(Request);
         }
 
-        public async Task<ImageProfileWithImage> GetEffectiveImage(int id)
+        public async Task<ImageProfileWithImage?> GetEffectiveImage(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetEffectiveImage", Resource);
+            Request.Resource = $"{Resource}/GetEffectiveImage";
             Request.AddParameter("id", id);
             return await _apiRequest.ExecuteAsync<ImageProfileWithImage>(Request);
         }
 
-        public async Task<EntityWinPeModule> GetEffectiveWinPe(int id)
+        public async Task<EntityWinPeModule?> GetEffectiveWinPe(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetEffectiveWinPe", Resource);
+            Request.Resource = $"{Resource}/GetEffectiveWinPe";
             Request.AddParameter("id", id);
             return await _apiRequest.ExecuteAsync<EntityWinPeModule>(Request);
         }
@@ -183,10 +183,10 @@ namespace Toems_ApiCalls
             return await _apiRequest.ExecuteAsync<List<DtoGroupImage>>(Request);
         }
 
-        public async Task<IEnumerable<EntityCustomComputerAttribute>> GetCustomAttributes(int id)
+        public async Task<List<EntityCustomComputerAttribute>> GetCustomAttributes(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetCustomAttributes/{1}", Resource, id);
+            Request.Resource = $"{Resource}/GetCustomAttributes/{id}";
             return await _apiRequest.ExecuteAsync<List<EntityCustomComputerAttribute>>(Request);
         }
 

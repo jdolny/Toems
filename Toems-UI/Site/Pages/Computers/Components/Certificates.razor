@@ -5,35 +5,34 @@
 @inject APICall Call
 @inherits BaseComponent
 
+@if(!_certificates.Any())  
+{
+    <MudText Typo="Typo.body2">No certificates have been found.  Ensure an inventory scan has been run on this computer.</MudText>
+}
+else
+{
+    <MudDataGrid Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityCertificateInventory" Class="mb-2 full-data-grid" Elevation="5" Items="@_certificates" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+        <PagerContent><MudDataGridPager T="EntityCertificateInventory"/></PagerContent>
+        <Columns>
+            <PropertyColumn Property="x => x.FriendlyName" Title="Friendly Name"/>
+            <PropertyColumn Property="x => x.Subject" Title="Subject"/>
+            <PropertyColumn Property="x => x.Store" Title="Store"/>
+            <PropertyColumn Property="x => x.Issuer" Title="Issuer"/>
+            <PropertyColumn Property="x => x.NotBefore" Title="Not Before"/>
+            <PropertyColumn Property="x => x.NotAfter" Title="Not After"/>
+            <PropertyColumn Property="x => x.Serial" Title="Serial"/>
+            <PropertyColumn Property="x => x.Thumbprint" Title="Thumbprint"/>
+        </Columns>
+    </MudDataGrid>
+}
 
-<MudDataGrid HeaderClass="test"  HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityCertificateInventory" Class="mb-2" Elevation="5" Items="@_certificates" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive"  >
-
-    <PagerContent><MudDataGridPager T="EntityCertificateInventory" /></PagerContent>
-    <Columns>
-        <PropertyColumn Property="x => x.FriendlyName" Title="Friendly Name" />
-        <PropertyColumn Property="x => x.Subject" Title="Subject" />
-        <PropertyColumn Property="x => x.Store" Title="Store" />
-        <PropertyColumn Property="x => x.Issuer" Title="Issuer" />
-        <PropertyColumn Property="x => x.NotBefore" Title="Not Before" />
-        <PropertyColumn Property="x => x.NotAfter" Title="Not After" />
-        <PropertyColumn Property="x => x.Serial" Title="Serial" />
-        <PropertyColumn Property="x => x.Thumbprint" Title="Thumbprint" />
-    </Columns>
-</MudDataGrid>
 @code {
-    private readonly List<BreadcrumbItem> _breadcrumbs =
-    [
-        new("Home", href: "/"),
-        new("Computer Search", href: null, disabled: true)
-    ];
-    
     [Parameter] public EntityComputer Computer { get; set; } = new();
     private IEnumerable<EntityCertificateInventory> _certificates = new List<EntityCertificateInventory>();
 
     protected override async Task OnParametersSetAsync()
     {
-        if (Computer.Id == 0) return;
-        if(!SetTitleAndBreadcrumbs($"{Computer.Name} Certificates",_breadcrumbs)) return;
+        if (Computer.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Computer.Name}",new ComputerBreadcrumbs(Computer.Name).Certificates())) return;
         await LoadCertificates();
     }
 

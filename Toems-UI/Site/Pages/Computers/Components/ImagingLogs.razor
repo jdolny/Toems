@@ -1,0 +1,57 @@
+﻿@using Toems_ApiCalls
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@using Toems_UI.Site.Pages.Computers.Actions
+@layout MainLayout
+@inject APICall Call
+@inherits BaseComponent
+@inject IDialogService DialogService
+
+
+@if(!_imagingLogs.Any())  
+{
+    <MudText Typo="Typo.body2">No imaging logs are available for this computer.</MudText>
+}
+else
+{
+    <MudDataGrid HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityComputerLog" Class="mb-2 full-data-grid" Elevation="5" Items="@_imagingLogs" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+
+        <PagerContent><MudDataGridPager T="EntityComputerLog"/></PagerContent>
+        <Columns>
+            <PropertyColumn Property="x => x.SubType" Title="Type"/>
+            <PropertyColumn Property="x => x.LogTime" Title="Time" c/>
+            <TemplateColumn Title="Actions" StickyRight="true">
+                <CellTemplate>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="@(() => ViewLog(context.Item.Id))">View Log</MudButton>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+}
+
+@code {
+    [Parameter] public EntityComputer Computer { get; set; } = new();
+    private IEnumerable<EntityComputerLog> _imagingLogs = new List<EntityComputerLog>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Computer.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Computer.Name}",new ComputerBreadcrumbs(Computer.Name).ImagingLogs())) return;
+        await LoadLogs();
+    }
+
+    private async Task LoadLogs()
+    {
+        _imagingLogs = await Call.ComputerApi.GetComputerImagingLogs(Computer.Id);
+    }
+    
+    private async Task ViewLog(int Id)
+    {
+        var log = await Call.ComputerLogApi.Get(Id);
+        var parameters = new DialogParameters<ActionViewImagingLog>
+        {
+            { x => x.Computer, Computer },
+            { x => x.ImagingLog, log }
+        };
+        await DialogService.ShowAsync<ActionViewImagingLog>("Imaging Log", parameters, DialogOptionsConstants.DeleteDialogOptions);
+    }
+}

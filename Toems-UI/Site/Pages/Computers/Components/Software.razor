@@ -1,0 +1,54 @@
+﻿@using Toems_ApiCalls
+@using Toems_Common.Dto
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@using Toems_UI.Site.Pages.Computers.Actions
+@layout MainLayout
+@inject APICall Call
+@inherits BaseComponent
+@inject IDialogService DialogService
+
+@if(!_computerSoftware.Any())  
+{
+    <MudText Typo="Typo.body2">No software found.  Ensure an inventory scan has been ran on this computer.</MudText>
+}
+else
+{
+    <MudDataGrid RowsPerPage="50" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntitySoftwareInventory" Class="mb-2 full-data-grid" Elevation="5" Items="@_computerSoftware" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Software</MudText>
+            <MudSpacer />
+            <MudTextField T="string" ValueChanged="@(s => OnSearchChanged(s))" DebounceInterval="300" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <PagerContent><MudDataGridPager T="EntitySoftwareInventory"/></PagerContent>
+        <Columns>
+            <PropertyColumn Property="x => x.Name" Title="Name"/>
+            <PropertyColumn Property="x => x.Version" Title="Version"/>
+            <PropertyColumn Property="x => x.UninstallString" Title="Uninstall String"/>
+         
+        </Columns>
+     
+    </MudDataGrid>
+}
+
+@code {
+    [Parameter] public EntityComputer Computer { get; set; } = new();
+    private IEnumerable<EntitySoftwareInventory> _computerSoftware = new List<EntitySoftwareInventory>();
+    private string _searchString = string.Empty;
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Computer.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Computer.Name}",new ComputerBreadcrumbs(Computer.Name).Software())) return;
+        await LoadSoftware();
+    }
+
+    private async Task LoadSoftware()
+    {
+        _computerSoftware = await Call.ComputerApi.GetComputerSoftware(Computer.Id,_searchString);
+    }
+    private Task OnSearchChanged(string searchText)
+    {
+        _searchString = searchText;
+        return LoadSoftware();
+    }
+}

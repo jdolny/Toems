@@ -1,0 +1,60 @@
+﻿@using Toems_ApiCalls
+@using Toems_Common.Dto
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@layout MainLayout
+@inject APICall Call
+@inherits BaseComponent
+@inject ISnackbar Snackbar
+
+<MudTabs Outlined="true" Position="Position.Top" Centered="true" Rounded="false" Border="true"  
+         ApplyEffectsToContainer="true" Class="mt-2" PanelClass="pa-4" Elevation="0" >
+<MudTabPanel Text="OS">
+<MudStack Class="stack-full">
+    <MudGrid >
+        <MudItem xs="12" sm="6">
+            <MudTextField T="string" ReadOnly="true" Label="Computer Name" @bind-Value="@_inventory.ComputerSystem.Name" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField T="string" ReadOnly="true" Label="Domain" @bind-Value="@_inventory.ComputerSystem.Domain" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField T="string" ReadOnly="true" Label="Workgroup" Value="@(_inventory.ComputerSystem.Workgroup ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField T="string" ReadOnly="true" Label="OS Name" @bind-Value="@_inventory.Os.Caption" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+        </MudItem>
+      
+        <MudItem xs="12">
+            <MudText Typo="Typo.body1"><b>Text</b></MudText>
+            <MudText Typo="Typo.body2" Variant="Variant.Outlined">@_inventory.Os.BuildNumber</MudText>
+        </MudItem>
+    </MudGrid>
+</MudStack>
+</MudTabPanel>
+    <MudTabPanel Text="Security">
+      
+    </MudTabPanel>
+    <MudTabPanel Text="Hardware">
+     
+    </MudTabPanel>
+    <MudTabPanel Text="Printers">
+     
+    </MudTabPanel>
+    <MudTabPanel Text="Location">
+       
+    </MudTabPanel>
+
+</MudTabs>
+
+
+
+@code {
+    [Parameter] public EntityComputer Computer { get; set; } = new();
+    private DtoInventoryCollection _inventory = new();
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Computer.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Computer.Name}",new ComputerBreadcrumbs(Computer.Name).SystemInformation())) return;
+        _inventory = await Call.ComputerApi.GetSystemInfo(Computer.Id);
+    }
+}

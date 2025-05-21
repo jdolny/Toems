@@ -9,101 +9,98 @@ using Toems_Common.Entity;
 namespace Toems_ApiCalls
 {
 
-    public class ImageAPI : BaseAPI<EntityImage>
+    public class ImageAPI(string resource, ApiRequest apiRequest)
+        : BaseAPI<EntityImage>(resource,apiRequest)
     {
-        public ImageAPI(string resource, ProtectedLocalStorage protectedLocalStorage) : base(resource, protectedLocalStorage)
-        {
 
-        }
-
-        public IEnumerable<EntityImageProfile> GetImageProfiles(int id)
+        public async Task<IEnumerable<EntityImageProfile>> GetImageProfiles(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetImageProfiles/{1}", Resource, id);
-            var result = _apiRequest.Execute<List<EntityImageProfile>>(Request);
+            Request.Resource = $"{Resource}/GetImageProfiles/{id}";
+            var result = await _apiRequest.ExecuteAsync<List<EntityImageProfile>>(Request);
             if (result == null)
                 return new List<EntityImageProfile>();
             else
                 return result;
         }
 
-        public string GetImageSizeOnServer(string imageName, string hdNumber)
+        public async Task<string> GetImageSizeOnServer(string imageName, string hdNumber)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetImageSizeOnServer/", Resource);
+            Request.Resource = $"{Resource}/GetImageSizeOnServer/";
             Request.AddParameter("imageName", imageName);
             Request.AddParameter("hdNumber", hdNumber);
-            var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            var response = await _apiRequest.ExecuteAsync<DtoApiStringResponse>(Request);
             return response != null ? response.Value : string.Empty;
         }
 
-        public IEnumerable<DtoImageFileInfo> GetPartitionFileInfo(int id, string selectedHd, string selectedPartition)
+        public async Task<IEnumerable<DtoImageFileInfo>> GetPartitionFileInfo(int id, string selectedHd, string selectedPartition)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetPartitionFileInfo/{1}", Resource, id);
+            Request.Resource = $"{Resource}/GetPartitionFileInfo/{id}";
             Request.AddParameter("selectedHd", selectedHd);
             Request.AddParameter("selectedPartition", selectedPartition);
-            var result = _apiRequest.Execute<List<DtoImageFileInfo>>(Request);
+            var result = await _apiRequest.ExecuteAsync<List<DtoImageFileInfo>>(Request);
             if (result == null)
                 return new List<DtoImageFileInfo>();
             else
                 return result;
         }
 
-        public EntityImageProfile SeedDefaultProfile(int id)
+        public async Task<EntityImageProfile> SeedDefaultProfile(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/SeedDefaultProfile/{1}", Resource, id);
-            return _apiRequest.Execute<EntityImageProfile>(Request);
+            Request.Resource = $"{Resource}/SeedDefaultProfile/{id}";
+            return await _apiRequest.ExecuteAsync<EntityImageProfile>(Request);
         }
 
-        new public List<ImageWithDate> Search(DtoSearchFilterCategories filter)
+        new public async Task<List<ImageWithDate>> Search(DtoSearchFilterCategories filter)
         {
             Request.Method = Method.Post;
-            Request.Resource = string.Format("{0}/Search/",Resource);
+            Request.Resource = $"{Resource}/Search/";
             Request.AddParameter("application/json", JsonConvert.SerializeObject(filter), ParameterType.RequestBody);
-            return _apiRequest.Execute<List<ImageWithDate>>(Request);
+            return await _apiRequest.ExecuteAsync<List<ImageWithDate>>(Request);
         }
 
-        public List<DtoServerImageRepStatus> GetReplicationStatus(int id)
+        public async Task<List<DtoServerImageRepStatus>> GetReplicationStatus(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetReplicationStatus/{1}", Resource,id);
-            return _apiRequest.Execute<List<DtoServerImageRepStatus>>(Request);
+            Request.Resource = $"{Resource}/GetReplicationStatus/{id}";
+            return await _apiRequest.ExecuteAsync<List<DtoServerImageRepStatus>>(Request);
         }
 
-        public IEnumerable<EntityImageCategory> GetImageCategories(int id)
+        public async Task<IEnumerable<EntityImageCategory>> GetImageCategories(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetImageCategories/{1}", Resource, id);
-            return _apiRequest.Execute<List<EntityImageCategory>>(Request);
+            Request.Resource = $"{Resource}/GetImageCategories/{id}";
+            return await _apiRequest.ExecuteAsync<List<EntityImageCategory>>(Request);
         }
 
-        public IEnumerable<EntityAuditLog> GetImageAuditLogs(int id, int limit)
+        public async Task<IEnumerable<EntityAuditLog>> GetImageAuditLogs(int id, int limit)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetImageAuditLogs/{1}", Resource, id);
+            Request.Resource = $"{Resource}/GetImageAuditLogs/{id}";
             Request.AddParameter("limit", limit);
-            var result = _apiRequest.Execute<List<EntityAuditLog>>(Request);
+            var result = await _apiRequest.ExecuteAsync<List<EntityAuditLog>>(Request);
             if (result == null)
                 return new List<EntityAuditLog>();
             else
                 return result;
         }
 
-        public IEnumerable<EntityImageReplicationServer> GetImageReplicationComServers(int id)
+        public async Task<IEnumerable<EntityImageReplicationServer>> GetImageReplicationComServers(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetImageReplicationComServers/{1}", Resource, id);
-            return _apiRequest.Execute<List<EntityImageReplicationServer>>(Request);
+            Request.Resource = $"{Resource}/GetImageReplicationComServers/{id}";
+            return await _apiRequest.ExecuteAsync<List<EntityImageReplicationServer>>(Request);
         }
 
-        public DtoActionResult UpdateReplicationServers(List<EntityImageReplicationServer> imageReplicationServers)
+        public async Task<DtoActionResult> UpdateReplicationServers(List<EntityImageReplicationServer> imageReplicationServers)
         {
             Request.Method = Method.Post;
-            Request.Resource = string.Format("{0}/UpdateReplicationServers/", Resource);
+            Request.Resource = $"{Resource}/UpdateReplicationServers/";
             Request.AddParameter("application/json", JsonConvert.SerializeObject(imageReplicationServers), ParameterType.RequestBody);
-            var response = _apiRequest.Execute<DtoActionResult>(Request);
+            var response = await _apiRequest.ExecuteAsync<DtoActionResult>(Request);
             if (response != null)
             {
                 if (response.Id == 0)

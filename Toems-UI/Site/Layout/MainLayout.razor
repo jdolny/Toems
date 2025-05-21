@@ -4,14 +4,14 @@
 @inject IJSRuntime JS
 @implements IAsyncDisposable
 <Authorize/>
-<MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
+<MudThemeProvider Theme="@_theme" IsDarkMode="IsDarkMode" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 <CascadingValue Value="this">
 <MudLayout>
     <MudAppBar Elevation="1"  >
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((_) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Color="Color.Secondary" Class="ml-3">Theopenem</MudText>
         <MudSpacer />
         <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle" />
@@ -44,7 +44,7 @@
         <div class="d-flex flex-column">
             <MudBreadcrumbs Items="Breadcrumbs" Separator=" > " Class="mb-0" Style="line-height:0; margin-top:-20px;" >
                 <ItemTemplate>
-                    <MudLink Typo="Typo.caption" Href="@context.Href" Disabled="@context.Disabled"  Color="@(context.Disabled ? Color.Default : Color.Inherit)">@context.Text</MudLink>
+                    <MudLink Typo="Typo.caption" Href="@context.Href" Disabled="@context.Disabled"  Color="@(context.Disabled ? Color.Primary : Color.Primary)">@context.Text</MudLink>
 
                 </ItemTemplate>
             </MudBreadcrumbs>
@@ -72,7 +72,7 @@
     </MudAppBar>
 
     <MudMainContent>
-        <MudContainer Class="mt-20" MaxWidth="MaxWidth.False">
+        <MudContainer Class="mt-19" MaxWidth="MaxWidth.False">
             @Body
         </MudContainer>
     </MudMainContent>
@@ -103,8 +103,8 @@
     public void NotifyStateChange() => StateHasChanged();
     
     private bool _drawerOpen = true;
-    private bool _isDarkMode = false;
-    private MudTheme? _theme = null;
+    public bool IsDarkMode;
+    private MudTheme? _theme;
     private string _currentUser = string.Empty;
     private DateTime? TokenExpiration { get; set; }
     private Timer? CountdownTimer;
@@ -121,24 +121,18 @@
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        _currentUser = user.Identity.Name;
+        _currentUser = user.Identity?.Name ?? string.Empty;
         var expiresAt = await AuthStateProvider.GetTokenExpiration();
         TokenExpiration = DateTimeOffset.FromUnixTimeSeconds(expiresAt).UtcDateTime;
         
 
         CountdownTimer = new Timer(1000);
-        CountdownTimer.Elapsed += async (sender, e) =>
+        CountdownTimer.Elapsed += async (_, _) =>
         {
             if (!IsCircuitActive)
                 return;
             var timeLeft = TokenExpiration.Value - DateTime.UtcNow;
-            string timeLeftFormatted;
-            if(timeLeft.Seconds > 0)
-                timeLeftFormatted = timeLeft.ToString(@"hh\:mm\:ss");
-            else
-            {
-                timeLeftFormatted = "00:00:00";
-            }
+            var timeLeftFormatted = timeLeft.Seconds > 0 ? timeLeft.ToString(@"hh\:mm\:ss") : "00:00:00";
 
             try
             {
@@ -147,7 +141,6 @@
             catch (JSDisconnectedException)
             {
                 IsCircuitActive = false; 
-                return;
             }
         };
         CountdownTimer.AutoReset = true;
@@ -158,7 +151,7 @@
     {
         base.OnInitialized();
 
-        _theme = new()
+        _theme = new MudTheme
         {
             PaletteLight = _lightPalette,
             PaletteDark = _darkPalette,
@@ -166,7 +159,7 @@
         };
     }
 
-    public async ValueTask DisposeAsync()
+    public ValueTask DisposeAsync()
     {
         if (CountdownTimer != null)
         {
@@ -175,6 +168,7 @@
             CountdownTimer = null;
         }
         IsCircuitActive = false;
+        return ValueTask.CompletedTask;
     }
     private void DrawerToggle()
     {
@@ -183,7 +177,7 @@
 
     private void DarkModeToggle()
     {
-        _isDarkMode = !_isDarkMode;
+        IsDarkMode = !IsDarkMode;
     }
 
 
@@ -196,11 +190,12 @@
         GrayLight = "#e8e8e8",
         GrayLighter = "#f9f9f9",
         DrawerText = "#a5adba",
-        Secondary = "ffffff",
+        Secondary = "#ffffff",
         DrawerIcon = "#a5adba",
         Background = "#e3e3e3", //"#f6f6f6",
         Tertiary = "#e5e9ed",
-        Primary = "#5864bd"
+        Primary = "#5864bd",
+        
         
         
     };
@@ -236,7 +231,7 @@
         
     };
 
-    public string DarkLightModeButtonIcon => _isDarkMode switch
+    private string DarkLightModeButtonIcon => IsDarkMode switch
     {
         true => Icons.Material.Rounded.AutoMode,
         false => Icons.Material.Outlined.DarkMode,

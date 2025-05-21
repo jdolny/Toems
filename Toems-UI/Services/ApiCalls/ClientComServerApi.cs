@@ -9,15 +9,9 @@ using Toems_Common.Entity;
 
 namespace Toems_ApiCalls
 {
-    /// <summary>
-    ///     Summary description for User
-    /// </summary>
-    public class ClientComServerAPI : BaseAPI<EntityClientComServer>
+    public class ClientComServerAPI(string resource, ApiRequest apiRequest)
+        : BaseAPI<EntityClientComServer>(resource,apiRequest)
     {
-        public ClientComServerAPI(string resource, ProtectedLocalStorage protectedLocalStorage) : base(resource, protectedLocalStorage)
-        {
-           
-        }
         public string GetDefaultBootFilePath(string type, int id)
         {
             Request.Method = Method.Get;
@@ -114,18 +108,18 @@ namespace Toems_ApiCalls
                 return responseData.Value;
         }
 
-        public byte[] GenerateCert(int id)
+        public async Task<byte[]> GenerateCert(int id)
         {
             Request.Method = Method.Post;
             Request.Resource = string.Format("{0}/GenerateCert/{1}", Resource, id);
-            return _apiRequest.ExecuteRaw(Request);
+            return await _apiRequest.ExecuteRawAsync(Request);
         }
 
-        public byte[] GenerateRemoteAccessCert(int id)
+        public async Task<byte[]> GenerateRemoteAccessCert(int id)
         {
             Request.Method = Method.Post;
             Request.Resource = string.Format("{0}/GenerateRemoteAccessCert/{1}", Resource, id);
-            return _apiRequest.ExecuteRaw(Request);
+            return await _apiRequest.ExecuteRawAsync(Request);
         }
 
         public bool CopyPxeBinaries(string url, string serverName, string interComKey)
@@ -258,12 +252,12 @@ namespace Toems_ApiCalls
             return new ApiRequest(new Uri(url)).ExecuteHMACInterCom<List<string>>(Request, serverName, interComKey);
         }
 
-        public byte[] GenerateISO(string url, string serverName, string interComKey,DtoIsoGenOptions isoOptions)
+        public async Task<byte[]> GenerateISO(string url ,DtoIsoGenOptions isoOptions)
         {
             Request.Method = Method.Post;
             Request.AddParameter("application/json", JsonConvert.SerializeObject(isoOptions), ParameterType.RequestBody);
             Request.Resource = string.Format("Imaging/GenerateISO");
-            return new ApiRequest(new Uri(url)).ExecuteRaw(Request);
+            return await new ApiRequest(new Uri(url)).ExecuteRawAsync(Request);
         }
 
         public DtoFreeSpace GetFreeSpace(string url, string serverName, string interComKey)

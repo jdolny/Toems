@@ -1,0 +1,38 @@
+﻿@using Toems_ApiCalls
+@using Toems_Common.Dto
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@layout MainLayout
+@inject APICall Call
+@inherits BaseComponent
+
+@if(!_customInventory.Any())  
+{
+    <MudText Typo="Typo.body2">No custom inventory has been collected for this computer.</MudText>
+}
+else
+{
+    <MudDataGrid HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="DtoCustomComputerInventory" Class="mb-2 full-data-grid" Elevation="5" Items="@_customInventory" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+        <PagerContent><MudDataGridPager T="DtoCustomComputerInventory"/></PagerContent>
+        <Columns>
+            <PropertyColumn Property="x => x.ModuleName" Title="Name"/>
+            <PropertyColumn Property="x => x.Value" Title="Value"/>
+        </Columns>
+    </MudDataGrid>
+}
+
+@code {
+    [Parameter] public EntityComputer Computer { get; set; } = new();
+    private IEnumerable<DtoCustomComputerInventory> _customInventory = new List<DtoCustomComputerInventory>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Computer.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Computer.Name}",new ComputerBreadcrumbs(Computer.Name).CustomInventory())) return;
+        await LoadInventory();
+    }
+
+    private async Task LoadInventory()
+    {
+        _customInventory = await Call.ComputerApi.GetCustomInventory(Computer.Id);
+    }
+}

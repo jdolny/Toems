@@ -19,45 +19,44 @@
 <ComponentFileUploader Computer="Computer" OnUploadCompleted="LoadAttachments"/>
 
 <br/><br/>
-<MudDataGrid Striped="true" T="EntityAttachment" Class="mb-10" Elevation="5" MultiSelection="true" Items="@attachments" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive" @bind-SelectedItems="_selectedAttachments">
-    <ToolBarContent>
-        <MudGrid>
-            <MudSpacer />
-        </MudGrid>
-    </ToolBarContent>
-    <PagerContent><MudDataGridPager T="EntityAttachment" /></PagerContent>
-    <Columns>
-        <SelectColumn T="EntityAttachment" />
-        <PropertyColumn Property="x => x.Name" Title="Name" />
-        <PropertyColumn Property="x => x.DirectoryGuid" Title="Directory GUID" />
-        <PropertyColumn Property="x => x.AttachmentTime" Title="Time" />
-        <PropertyColumn Property="x => x.UserName" Title="User" />
-   
-        <TemplateColumn Title="Actions" StickyRight="true">
-            <CellTemplate>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"  OnClick="@(() => DownloadAttachment(context.Item))">Download</MudButton>
-               
-            </CellTemplate>
-        </TemplateColumn>
-    </Columns>
-</MudDataGrid>
+@if(!attachments.Any())  
+{
+    <MudText Typo="Typo.body2">No attachments have been uploaded for this computer.</MudText>
+}
+else
+{
+    <MudDataGrid Striped="true" T="EntityAttachment" Class="mb-10" Elevation="5" MultiSelection="true" Items="@attachments" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive" @bind-SelectedItems="_selectedAttachments">
+        <ToolBarContent>
+            <MudGrid>
+                <MudSpacer/>
+            </MudGrid>
+        </ToolBarContent>
+        <PagerContent><MudDataGridPager T="EntityAttachment"/></PagerContent>
+        <Columns>
+            <SelectColumn T="EntityAttachment"/>
+            <PropertyColumn Property="x => x.Name" Title="Name"/>
+            <PropertyColumn Property="x => x.DirectoryGuid" Title="Directory GUID"/>
+            <PropertyColumn Property="x => x.AttachmentTime" Title="Time"/>
+            <PropertyColumn Property="x => x.UserName" Title="User"/>
+
+            <TemplateColumn Title="Actions" StickyRight="true">
+                <CellTemplate>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="@(() => DownloadAttachment(context.Item))">Download</MudButton>
+
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+}
 
 @code {
-
-    private readonly List<BreadcrumbItem> _breadcrumbs =
-    [
-        new("Home", href: "/"),
-        new("Computer Search", href: null, disabled: true)
-    ];
-    
     [Parameter] public EntityComputer Computer { get; set; } = new();
     private IEnumerable<EntityAttachment> attachments = new List<EntityAttachment>();
     private HashSet<EntityAttachment> _selectedAttachments = [];
 
     protected override async Task OnParametersSetAsync()
     {
-        if (Computer.Id == 0) return;
-        if(!SetTitleAndBreadcrumbs($"{Computer.Name} Attachments",_breadcrumbs)) return;
+        if (Computer.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Computer.Name}",new ComputerBreadcrumbs(Computer.Name).Attachments())) return;
         await LoadAttachments();
     }
 

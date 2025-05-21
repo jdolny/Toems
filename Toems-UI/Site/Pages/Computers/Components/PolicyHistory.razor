@@ -1,0 +1,60 @@
+﻿@using Toems_ApiCalls
+@using Toems_Common.Dto
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@using Toems_UI.Site.Pages.Computers.Actions
+@layout MainLayout
+@inject APICall Call
+@inherits BaseComponent
+@inject IDialogService DialogService
+
+@if(!_policyHistories.Any())  
+{
+    <MudText Typo="Typo.body2">No policies have been run on this computer.</MudText>
+}
+else
+{
+    <MudDataGrid HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="DtoComputerPolicyHistory" Class="mb-2 full-data-grid" Elevation="5" Items="@_policyHistories" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+        <PagerContent><MudDataGridPager T="DtoComputerPolicyHistory"/></PagerContent>
+        <Columns>
+            <PropertyColumn Property="x => x.PolicyName" Title="Policy Name"/>
+            <PropertyColumn Property="x => x.Result" Title="Result"/>
+            <PropertyColumn Property="x => x.RunTime" Title="Date Ran"/>
+            <TemplateColumn Title="Actions" StickyRight="true">
+                <CellTemplate>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="@(() => ViewPolicyHash(@context.Item))">@context.Item.PolicyHash</MudButton>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+     
+    </MudDataGrid>
+}
+
+@code {
+    [Parameter] public EntityComputer Computer { get; set; } = new();
+    private IEnumerable<DtoComputerPolicyHistory> _policyHistories = new List<DtoComputerPolicyHistory>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Computer.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Computer.Name}",new ComputerBreadcrumbs(Computer.Name).PolicyHistory())) return;
+        await LoadPolicyHistory();
+    }
+
+    private async Task LoadPolicyHistory()
+    {
+        _policyHistories = await Call.ComputerApi.GetPolicyHistory(Computer.Id);
+    }
+
+    private async Task ViewPolicyHash(DtoComputerPolicyHistory policyHistory)
+    {
+        var policyJson = await Call.PolicyApi.GetHashDetail(policyHistory.PolicyId, policyHistory.PolicyHash);
+        var parameters = new DialogParameters<ActionViewPolicyHash>
+        {
+            { x => x.Computer, Computer },
+            { x => x.PolicyName, policyHistory.PolicyName },
+            { x => x.PolicyJson, policyJson }
+        };
+        await DialogService.ShowAsync<ActionViewPolicyHash>("Policy History", parameters, DialogOptionsConstants.DeleteDialogOptions);
+    }
+
+}
