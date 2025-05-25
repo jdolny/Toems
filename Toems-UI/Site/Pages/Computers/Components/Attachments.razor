@@ -1,4 +1,5 @@
-﻿@using Toems_ApiCalls
+﻿@using System.Reflection.Metadata
+@using Toems_ApiCalls
 @using Toems_Common.Entity
 @using Toems_UI.Site.Layout
 @using Toems_UI.Components
@@ -11,43 +12,55 @@
 @inject IConfiguration Configuration
 @inherits BaseComponent
 
-<ActionButtons InsertAtTop="true">
-    <Content>
-        <MudMenuItem Label="Delete Attachment" OnClick="DeleteAttachments"/>
-    </Content>
-</ActionButtons>
-<ComponentFileUploader Computer="Computer" OnUploadCompleted="LoadAttachments"/>
+<MudTabs Outlined="true" Position="Position.Top" Centered="true" Rounded="true" Border="true"  
+         ApplyEffectsToContainer="false" PanelClass="pt-4" Elevation="2"    >
+    <MudTabPanel Text="Upload Attachments" >
+        <ActionButtons InsertAtTop="true">
+            <MainButton/>
+            <Content/>
+        </ActionButtons>
+        <MudPaper Class="pa-4" Elevation="2">
+        <ComponentFileUploader Computer="Computer" OnUploadCompleted="LoadAttachments"/>
+        </MudPaper>
+    </MudTabPanel>
 
-<br/><br/>
-@if(!attachments.Any())  
-{
-    <MudText Typo="Typo.body2">No attachments have been uploaded for this computer.</MudText>
-}
-else
-{
-    <MudDataGrid Striped="true" T="EntityAttachment" Class="mb-10" Elevation="5" MultiSelection="true" Items="@attachments" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive" @bind-SelectedItems="_selectedAttachments">
-        <ToolBarContent>
-            <MudGrid>
-                <MudSpacer/>
-            </MudGrid>
-        </ToolBarContent>
-        <PagerContent><MudDataGridPager T="EntityAttachment"/></PagerContent>
-        <Columns>
-            <SelectColumn T="EntityAttachment"/>
-            <PropertyColumn Property="x => x.Name" Title="Name"/>
-            <PropertyColumn Property="x => x.DirectoryGuid" Title="Directory GUID"/>
-            <PropertyColumn Property="x => x.AttachmentTime" Title="Time"/>
-            <PropertyColumn Property="x => x.UserName" Title="User"/>
+    <MudTabPanel Text="Current Attachments">
+        <ActionButtons InsertAtTop="true">
+            <MainButton>
+                <MudButton  OnClick="DeleteAttachments">Delete Attachment</MudButton>
+            </MainButton>
+            <Content/>
+        </ActionButtons>
+        @if (!attachments.Any())
+        {
+            <MudText Typo="Typo.body2">No attachments have been uploaded for this computer.</MudText>
+        }
+        else
+        {
+            <MudDataGrid ShowMenuIcon="true" Hideable="true" Dense="true" RowsPerPage="@Constants.DefaultPageSize"  FixedHeader="true"  FixedFooter="true" T="EntityAttachment" Class="mb-2 full-data-grid-with-tabs" Elevation="5" MultiSelection="true" Items="@attachments" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive" @bind-SelectedItems="_selectedAttachments">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h5" Color="Color.Primary">Computer Attachments</MudText>
+                    <MudSpacer/>
+                </ToolBarContent>
+                <PagerContent><MudDataGridPager T="EntityAttachment"/></PagerContent>
+                <Columns>
+                    <SelectColumn T="EntityAttachment"/>
+                    <PropertyColumn Property="x => x.Name" Title="Name"  />
+                    <PropertyColumn Property="x => x.DirectoryGuid" Title="Directory GUID"  Hidden="true"/>
+                    <PropertyColumn Property="x => x.AttachmentTime" Title="Time" />
+                    <PropertyColumn Property="x => x.UserName" Title="User" />
 
-            <TemplateColumn Title="Actions" StickyRight="true">
-                <CellTemplate>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="@(() => DownloadAttachment(context.Item))">Download</MudButton>
+                    <TemplateColumn Title="Actions" StickyRight="true">
+                        <CellTemplate>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="@(() => DownloadAttachment(context.Item))">Download</MudButton>
 
-                </CellTemplate>
-            </TemplateColumn>
-        </Columns>
-    </MudDataGrid>
-}
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+            </MudDataGrid>
+        }
+    </MudTabPanel>
+</MudTabs>
 
 @code {
     [Parameter] public EntityComputer Computer { get; set; } = new();
@@ -74,6 +87,12 @@ else
 
     private async Task DeleteAttachments()
     {
+        if (!_selectedAttachments.Any())
+        {
+            Snackbar.Add("Please select at least one attachment to delete.", Severity.Warning);
+            return;
+        }
+        
         var contentText = $"Are you sure you want to delete the following attachments?\n";
         foreach (var attachment in _selectedAttachments)
             contentText += $"\n{attachment.Name}";
@@ -85,7 +104,7 @@ else
             { x => x.Color, Color.Error }
         };
 
-        var dialog = await DialogService.ShowAsync<DialogConfirm>("Delete", parameters, DialogOptionsConstants.DeleteDialogOptions);
+        var dialog = await DialogService.ShowAsync<DialogConfirm>("Delete", parameters, Constants.DeleteDialogOptions);
         var result = await dialog.Result;
 
         var errorCount = 0;

@@ -65,7 +65,6 @@
     <Compile Remove="Services\ApiCalls\PolicyModulesAPI.cs" />
     <Compile Remove="Services\ApiCalls\PrinterModuleAPI.cs" />
     <Compile Remove="Services\ApiCalls\ProcessInventoryAPI.cs" />
-    <Compile Remove="Services\ApiCalls\RemoteAccessApi.cs" />
     <Compile Remove="Services\ApiCalls\ReportAPI.cs" />
     <Compile Remove="Services\ApiCalls\ResetRequestAPI.cs" />
     <Compile Remove="Services\ApiCalls\ScheduleAPI.cs" />

@@ -396,7 +396,7 @@ namespace Toems_ApiCalls
             return response;
         }
 
-        public string ExecuteRemotely(RestRequest request, string authHeader)
+        public async Task<string> ExecuteRemotelyAsync(RestRequest request, string authHeader)
         {
             if (request == null)
             {
@@ -406,7 +406,7 @@ namespace Toems_ApiCalls
 
             request.AddHeader("Authorization", authHeader);
 
-            var response = _client.Execute(request);
+            var response = await _client.ExecuteAsync(request);
             if(response == null)
             {
                 return null;

@@ -1,6 +1,6 @@
 ﻿using MudBlazor;
 
-public static class DialogOptionsConstants
+public static class Constants
 {
     public static readonly DialogOptions DeleteDialogOptions = new DialogOptions
     {
@@ -8,4 +8,5 @@ public static class DialogOptionsConstants
         MaxWidth = MaxWidth.Medium,
         FullWidth = true
     };
+    public const int DefaultPageSize = 50;
 }

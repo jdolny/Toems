@@ -3,10 +3,13 @@
 @code {
     [CascadingParameter] public MainLayout? Layout { get; set; }
     [Parameter] public RenderFragment? Content { get; set; }
+    [Parameter] public RenderFragment? MainButton { get; set; }
     [Parameter] public bool InsertAtTop { get; set; } = false;
 
     protected override void OnInitialized()
     {
+        if (Layout is not null && MainButton is not null)
+            Layout.MainButton = MainButton;
         if (Layout is not null && Content is not null)
         {
             if (InsertAtTop)

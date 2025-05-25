@@ -16,25 +16,27 @@
 </ActionButtons>
 
 
-<MudPaper Class="pa-2 mb-8" Elevation="5"  >
+<MudPaper Class="pa-2 " Elevation="5"  >
 
     <MudTabs Outlined="true" Position="@pos" Rounded="false" Border="true" @bind-ActivePanelIndex="_selectedTabIndex"
-             ApplyEffectsToContainer="true" Class="mt-2" PanelClass="pa-4" Elevation="0" AlwaysShowScrollButtons="true"  >
+             ApplyEffectsToContainer="true" Class="mt-2" PanelClass="pa-4 " Elevation="0" AlwaysShowScrollButtons="true" >
         <MudTabPanel Text="Attachments">
             <MudStack Class="stack-full">
                 <Attachments Computer="@Computer"/>
-                <br/> <br/>
+
             </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Certificates">
+            <MudStack Class="stack-full">
             <Certificates Computer="@Computer"/>
+          </MudStack>
         </MudTabPanel>
-        <MudTabPanel Text="Comments">
+        <MudTabPanel Text="Comments" >
             <MudStack Class="stack-full">
                 <Comments Computer="@Computer"/>
             </MudStack>
         </MudTabPanel>
-        <MudTabPanel Text="Custom Attributes">
+        <MudTabPanel Text="Custom Attributes" >
             <MudStack Class="width-full">
                 <CustomAttributes Computer="@Computer"/>
             </MudStack>
@@ -44,12 +46,12 @@
             <CustomInventory Computer="@Computer"/>
          
         </MudTabPanel>
-        <MudTabPanel Text="Effective Policy">
+        <MudTabPanel Text="Effective Policy" >
             <MudStack Class="stack-full">
                 <EffectivePolicy Computer="@Computer"/>
             </MudStack>
         </MudTabPanel>
-        <MudTabPanel Text="General">
+        <MudTabPanel Text="General" >
             <MudStack>
                 <General Computer="@Computer"/>
                 <br/><br/>
@@ -60,7 +62,7 @@
             <ImagingLogs Computer="@Computer"/>
             </MudStack>
         </MudTabPanel>
-        <MudTabPanel Text="Image Settings">
+        <MudTabPanel Text="Image Settings" >
             <MudStack Class="stack-full">
                 <ImageSettings Computer="@Computer"/>
             </MudStack>
@@ -70,12 +72,12 @@
                 <OnDemandModule Computer="@Computer"/>
             </MudStack>
         </MudTabPanel>
-        <MudTabPanel Text="Policy History">
-          
+        <MudTabPanel Text="Policy History"  >
+            <MudStack Class="stack-full">
                 <PolicyHistory Computer="@Computer"/>
-         
+         </MudStack>
         </MudTabPanel>
-        <MudTabPanel Text="Software">
+        <MudTabPanel Text="Software" >
             <Software Computer="@Computer"/>
         </MudTabPanel>
         <MudTabPanel Text="System Info">
@@ -85,9 +87,9 @@
         </MudTabPanel>
         <MudTabPanel Text="Usages">
         </MudTabPanel>
-        <MudTabPanel Text="User Login History">
+        <MudTabPanel Text="User Login History" >
         </MudTabPanel>
-        <MudTabPanel Text="Windows Updates">
+        <MudTabPanel Text="Windows Updates"  >
         </MudTabPanel>
 
     </MudTabs>
@@ -118,7 +120,7 @@
         {
             { x => x.Computer, Computer },
         };
-        await DialogService.ShowAsync<ActionStatus>("New", parameters, DialogOptionsConstants.DeleteDialogOptions);
+        await DialogService.ShowAsync<ActionStatus>("New", parameters, Constants.DeleteDialogOptions);
     }
     private class DeviceInfo
     {

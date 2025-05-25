@@ -717,18 +717,18 @@ namespace Toems_Service.Entity
         public DtoInventoryCollection GetSystemInfo(int computerId)
         {
             var systemInfo = new DtoInventoryCollection();
-            systemInfo.Bios = _uow.BiosInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault();
-            systemInfo.ComputerSystem = _uow.ComputerSystemInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault();
-            systemInfo.Gpu = _uow.ComputerGpuRepository.Get(x => x.ComputerId == computerId);
-            systemInfo.Os = _uow.OsInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault();
+            systemInfo.Bios = _uow.BiosInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault() ?? new EntityBiosInventory();
+            systemInfo.ComputerSystem = _uow.ComputerSystemInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault() ?? new EntityComputerSystemInventory();
+            systemInfo.Gpu = _uow.ComputerGpuRepository.Get(x => x.ComputerId == computerId) ?? new List<EntityComputerGpuInventory>();
+            systemInfo.Os = _uow.OsInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault() ?? new EntityOsInventory();
             systemInfo.Processor =
-                _uow.ProcessorInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault();
+                _uow.ProcessorInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault() ?? new EntityProcessorInventory();
             systemInfo.HardDrives = _uow.HardDriveInventoryRepository.Get(x => x.ComputerId == computerId);
             systemInfo.Printers = _uow.PrinterInventoryRepository.Get(x => x.ComputerId == computerId);
             systemInfo.Nics = _uow.NicInventoryRepository.Get(x => x.ComputerId == computerId);
             systemInfo.AntiVirus = _uow.AntivirusRepository.Get(x => x.ComputerId == computerId);
             systemInfo.Bitlocker = _uow.BitlockerRepository.Get(x => x.ComputerId == computerId);
-            systemInfo.Firewall = _uow.FirewallRepository.Get(x => x.ComputerId == computerId).FirstOrDefault();
+            systemInfo.Firewall = _uow.FirewallRepository.Get(x => x.ComputerId == computerId).FirstOrDefault() ?? new EntityFirewallInventory();
             systemInfo.LogicalVolume = _uow.LogicalVolumeRepository.Get(x => x.ComputerId == computerId);
             return systemInfo;   
         }

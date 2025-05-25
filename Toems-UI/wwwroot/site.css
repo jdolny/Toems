@@ -41,12 +41,12 @@
 .mud-tabs-panels.mud-tabs-vertical {
     overflow-x: auto !important;
     overflow-y: auto !important;
-    max-height: calc(100vh - 200px);
+    max-height: calc(100vh - 170px);
     width:100%;
 }
 
 .mud-tabs-tabbar-inner {
-    max-height: calc(100vh - 200px);
+    max-height: calc(100vh - 170px);
 }
 .mud-table-container{
     max-height: calc(100% - 120px);
@@ -62,4 +62,37 @@
     width: 100% !important;
     max-width: 100% !important;
     max-height: calc(100% - 120px);
+}
+
+
+.full-data-grid-with-tabs .mud-table-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: calc(100vh - 390px) !important;
+}
+
+.responsive-title {
+    
+    @media (max-width: 576px) {
+        font-size: 1rem;
+    }
+}
+
+.table-header{
+    background-color: var(--mud-palette-background-gray) !important;
+}
+
+.mud-table-toolbar {
+    border-bottom: 3px solid var(--mud-palette-primary);
+}
+
+/*data grid select all checkbox background color*/
+.mud-table-sticky-header * .mud-table-root .mud-table-head * .mud-table-cell:first-child {
+    background-color: var(--mud-palette-background-gray);
+}
+.mud-table-sticky-header * .mud-table-root .mud-table-head * .mud-table-cell {
+    background-color: var(--mud-palette-background-gray);
+}
+.mud-tabs-panels.mud-tabs-vertical {
+    background-color: var(--mud-palette-gray-light);
 }

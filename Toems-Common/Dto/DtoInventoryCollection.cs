@@ -7,7 +7,6 @@ namespace Toems_Common.Dto
     {
         public EntityBiosInventory Bios { get; set; } = new EntityBiosInventory();
         public EntityComputerSystemInventory ComputerSystem { get; set; } = new EntityComputerSystemInventory();
-
         public List<EntityComputerGpuInventory> Gpu { get; set; } = new List<EntityComputerGpuInventory>();
         public List<EntitySoftwareInventory> Software { get; set; } = new List<EntitySoftwareInventory>();
         public EntityOsInventory Os { get; set; } = new EntityOsInventory();

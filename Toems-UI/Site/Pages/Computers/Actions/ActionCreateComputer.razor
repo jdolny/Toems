@@ -51,6 +51,13 @@
     {
         if (_activePanelIndex == 0)
         {
+            if (string.IsNullOrEmpty(_computerName) || string.IsNullOrEmpty(_computerMac))
+            {
+                Snackbar.Add($"Computer name or MAC address was empty.", Severity.Warning);
+                MudDialog.Close(DialogResult.Ok(true));
+                return;
+            }
+
             var computer = new EntityComputer();
             computer.Name = _computerName;
             computer.ProvisionStatus = EnumProvisionStatus.Status.ImageOnly;

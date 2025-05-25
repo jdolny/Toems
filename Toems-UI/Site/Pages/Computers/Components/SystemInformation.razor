@@ -8,34 +8,136 @@
 @inject ISnackbar Snackbar
 
 <MudTabs Outlined="true" Position="Position.Top" Centered="true" Rounded="false" Border="true"  
-         ApplyEffectsToContainer="true" Class="mt-2" PanelClass="pa-4" Elevation="0" >
+         ApplyEffectsToContainer="false" Class="mt-2" PanelClass="pa-4" Elevation="0" >
 <MudTabPanel Text="OS">
 <MudStack Class="stack-full">
     <MudGrid >
-        <MudItem xs="12" sm="6">
-            <MudTextField T="string" ReadOnly="true" Label="Computer Name" @bind-Value="@_inventory.ComputerSystem.Name" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+        <MudItem xs="12" md="6">
+            <MudTextField T="string" ReadOnly="true" Label="Computer Name" Value="@(_inventory.ComputerSystem.Name ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
         </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudTextField T="string" ReadOnly="true" Label="Domain" @bind-Value="@_inventory.ComputerSystem.Domain" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+        <MudItem xs="12" md="6">
+            <MudTextField T="string" ReadOnly="true" Label="Domain" Value="@(_inventory.ComputerSystem.Domain ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
         </MudItem>
-        <MudItem xs="12" sm="6">
+        <MudItem xs="12" md="6">
             <MudTextField T="string" ReadOnly="true" Label="Workgroup" Value="@(_inventory.ComputerSystem.Workgroup ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
         </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudTextField T="string" ReadOnly="true" Label="OS Name" @bind-Value="@_inventory.Os.Caption" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+        <MudItem xs="12" md="6">
+            <MudTextField T="string" ReadOnly="true" Label="OS Name" Value="@(_inventory.Os.Caption ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
         </MudItem>
-      
-        <MudItem xs="12">
-            <MudText Typo="Typo.body1"><b>Text</b></MudText>
-            <MudText Typo="Typo.body2" Variant="Variant.Outlined">@_inventory.Os.BuildNumber</MudText>
+        <MudItem xs="12" md="6">
+            <MudTextField T="string" ReadOnly="true" Label="OS Version" Value="@(_inventory.Os.Version ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
         </MudItem>
+        <MudItem xs="12" md="6">
+            <MudTextField T="string" ReadOnly="true" Label="OS Build" Value="@(_inventory.Os.BuildNumber ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudTextField T="string" ReadOnly="true" Label="OS Release ID" Value="@(_inventory.Os.ReleaseId ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudTextField T="string" ReadOnly="true" Label="OS Architecture" Value="@(_inventory.Os.OSArchitecture ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudTextField T="string" ReadOnly="true" Label="OS Service Pack Major" Value="@(_inventory.Os.ServicePackMajorVersion.ToString() ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudTextField T="string" ReadOnly="true" Label="OS Service Pack Minor" Value="@(_inventory.Os.ServicePackMinorVersion.ToString() ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudTextField T="string" ReadOnly="true" Label="Time Zone" Value="@(_inventory.Os.LocalTimeZone ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+        </MudItem>
+        
     </MudGrid>
 </MudStack>
 </MudTabPanel>
+<MudTabPanel Text="Hardware">
+    
+    <MudStack Class="stack-full">
+        <MudGrid >
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Manufacturer" Value="@(_inventory.ComputerSystem.Manufacturer ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Model" Value="@(_inventory.ComputerSystem.Model ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Bios Serial Number" Value="@(_inventory.Bios.SerialNumber ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Bios Version" Value="@(_inventory.Bios.Version ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="SMBIOS Version" Value="@(_inventory.Bios.SMBIOSBIOSVersion ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Processor" Value="@(_inventory.Processor.Name ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Processor Clock Speed" Value="@(_inventory.Processor.MaxClockSpeed.ToString() ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Processor Cores" Value="@(_inventory.Processor.Cores.ToString() ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Memory (MB)" Value="@(_inventory.ComputerSystem.Memory.ToString() ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+        </MudGrid>
+        <br/>
+        <MudDataGrid RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityHardDriveInventory" Class="mb-2 full-data-grid" Elevation="2" Items="@_inventory.HardDrives" ColumnResizeMode="ResizeMode.Column">
+            <ToolBarContent>
+                <MudText Typo="Typo.h5" Color="Color.Primary">Hard Drives</MudText>
+                <MudSpacer/>
+            </ToolBarContent>
+            <Columns>
+                <PropertyColumn Property="x => x.Model" Title="Model"/>
+                <PropertyColumn Property="x => x.SerialNumber" Title="Serial"/>
+                <PropertyColumn Property="x => x.FirmwareRevision" Title="Firmware"/>
+                <PropertyColumn Property="x => x.SizeMb" Title="Size (MB)"/>
+                <PropertyColumn Property="x => x.Status" Title="Smart Status"/>
+            </Columns>
+        </MudDataGrid>
+        <br/>
+        <MudDataGrid RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityLogicalVolumeInventory" Class="mb-2 full-data-grid" Elevation="2" Items="@_inventory.LogicalVolume" ColumnResizeMode="ResizeMode.Column">
+            <ToolBarContent>
+                <MudText Typo="Typo.h5" Color="Color.Primary">Logical Volumes</MudText>
+                <MudSpacer/>
+            </ToolBarContent>
+            <Columns>
+                <PropertyColumn Property="x => x.Drive" Title="Drive Letter"/>
+                <PropertyColumn Property="x => x.SizeGB" Title="Size (GB)"/>
+                <PropertyColumn Property="x => x.FreeSpacePercent" Title="Free (%)"/>
+                <PropertyColumn Property="x => x.FreeSpaceGB" Title="Free (GB)"/>
+            </Columns>
+        </MudDataGrid>
+        <br/>
+        <MudDataGrid RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityNicInventory" Class="mb-2 full-data-grid" Elevation="2" Items="@_inventory.Nics" ColumnResizeMode="ResizeMode.Column">
+            <ToolBarContent>
+                <MudText Typo="Typo.h5" Color="Color.Primary">Network Adapters</MudText>
+                <MudSpacer/>
+            </ToolBarContent>
+            <Columns>
+                <PropertyColumn Property="x => x.Name" Title="Name"/>
+                <PropertyColumn Property="x => x.Description" Title="Description"/>
+                <PropertyColumn Property="x => x.Type" Title="Type"/>
+                <PropertyColumn Property="x => x.Mac" Title="MAC"/>
+                <PropertyColumn Property="x => x.Speed" Title="Speed"/>
+                <PropertyColumn Property="x => x.Ips" Title="IP(s)"/>
+                <PropertyColumn Property="x => x.Gateways" Title="Gateway"/>
+            </Columns>
+        </MudDataGrid>
+        <br/>
+        <MudDataGrid RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityComputerGpuInventory" Class="mb-2 full-data-grid" Elevation="2" Items="@_inventory.Gpu" ColumnResizeMode="ResizeMode.Column">
+            <ToolBarContent>
+                <MudText Typo="Typo.h5" Color="Color.Primary">GPUs</MudText>
+                <MudSpacer/>
+            </ToolBarContent>
+            <Columns>
+                <PropertyColumn Property="x => x.Name" Title="Name"/>
+                <PropertyColumn Property="x => x.Memory" Title="Memory (MB)"/>
+            </Columns>
+        </MudDataGrid>
+    </MudStack>
+</MudTabPanel>
     <MudTabPanel Text="Security">
-      
-    </MudTabPanel>
-    <MudTabPanel Text="Hardware">
      
     </MudTabPanel>
     <MudTabPanel Text="Printers">

@@ -6,7 +6,10 @@
 @inject APICall Call
 @inherits BaseComponent
 @inject IDialogService DialogService
-
+<ActionButtons InsertAtTop="true">
+    <MainButton/>
+    <Content/>
+</ActionButtons>
 
 @if(!_imagingLogs.Any())  
 {
@@ -15,7 +18,10 @@
 else
 {
     <MudDataGrid HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityComputerLog" Class="mb-2 full-data-grid" Elevation="5" Items="@_imagingLogs" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
-
+        <ToolBarContent>
+            <MudText Typo="Typo.h5">Imaging Logs</MudText>
+            <MudSpacer/>
+        </ToolBarContent>
         <PagerContent><MudDataGridPager T="EntityComputerLog"/></PagerContent>
         <Columns>
             <PropertyColumn Property="x => x.SubType" Title="Type"/>
@@ -52,6 +58,6 @@ else
             { x => x.Computer, Computer },
             { x => x.ImagingLog, log }
         };
-        await DialogService.ShowAsync<ActionViewImagingLog>("Imaging Log", parameters, DialogOptionsConstants.DeleteDialogOptions);
+        await DialogService.ShowAsync<ActionViewImagingLog>("Imaging Log", parameters, Constants.DeleteDialogOptions);
     }
 }

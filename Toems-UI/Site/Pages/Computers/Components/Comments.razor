@@ -10,9 +10,10 @@
 @inherits BaseComponent
 
 <ActionButtons InsertAtTop="true">
-    <Content>
-        <MudMenuItem Label="Create Comment" OnClick="CreateComment"/>
-    </Content>
+    <MainButton>
+        <MudButton OnClick="CreateComment">Create Comment</MudButton>
+    </MainButton>
+    <Content/>
 </ActionButtons>
 
 @if(!_comments.Any())  
@@ -26,7 +27,7 @@ else
         <MudCard Outlined="true">
             <MudCardContent>
                 
-                <MudText GutterBottom="true">On @comment.CommentTime @comment.Username Added</MudText>
+                <MudText Typo="Typo.subtitle2"  GutterBottom="true">On @comment.CommentTime @comment.Username Added</MudText>
                 <MudText Typo="Typo.body2">@((MarkupString)comment.Comment)</MudText>
             </MudCardContent>
 
@@ -55,7 +56,7 @@ else
         {
             { x => x.Computer, Computer },
         };
-        var dialog = await DialogService.ShowAsync<ActionCreateComment>("Create Comment", parameters, DialogOptionsConstants.DeleteDialogOptions);
+        var dialog = await DialogService.ShowAsync<ActionCreateComment>("Create Comment", parameters, Constants.DeleteDialogOptions);
         await dialog.Result;
         await LoadComments();
 

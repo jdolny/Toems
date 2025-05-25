@@ -5,14 +5,21 @@
 @layout MainLayout
 @inject APICall Call
 @inherits BaseComponent
-
+<ActionButtons InsertAtTop="true">
+    <MainButton/>
+    <Content/>
+</ActionButtons>
 @if(!_customInventory.Any())  
 {
     <MudText Typo="Typo.body2">No custom inventory has been collected for this computer.</MudText>
 }
 else
 {
-    <MudDataGrid HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="DtoCustomComputerInventory" Class="mb-2 full-data-grid" Elevation="5" Items="@_customInventory" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+    <MudDataGrid RowsPerPage="@Constants.DefaultPageSize" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="DtoCustomComputerInventory" Class="mb-2 full-data-grid" Elevation="5" Items="@_customInventory" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+        <ToolBarContent>
+            <MudText Typo="Typo.h5">Custom Inventory</MudText>
+            <MudSpacer/>
+        </ToolBarContent>
         <PagerContent><MudDataGridPager T="DtoCustomComputerInventory"/></PagerContent>
         <Columns>
             <PropertyColumn Property="x => x.ModuleName" Title="Name"/>

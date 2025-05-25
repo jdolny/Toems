@@ -33,6 +33,12 @@
 
     private async Task Create()
     {
+        if (string.IsNullOrEmpty(_text))
+        {
+            Snackbar.Add($"Comment box was empty.", Severity.Warning);
+            MudDialog.Close(DialogResult.Ok(true));
+            return;
+        }
         var comment = new DtoComputerComment
         {
             ComputerId = Computer.Id,

@@ -14,13 +14,17 @@
 }
 else
 {
-    <MudDataGrid HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="DtoComputerPolicyHistory" Class="mb-2 full-data-grid" Elevation="5" Items="@_policyHistories" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+    <MudDataGrid RowsPerPage="@Constants.DefaultPageSize" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="DtoComputerPolicyHistory" Class="mb-2 full-data-grid" Elevation="5" Items="@_policyHistories" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+        <ToolBarContent>
+            <MudText Typo="Typo.h5">Policy History</MudText>
+            <MudSpacer/>
+        </ToolBarContent>
         <PagerContent><MudDataGridPager T="DtoComputerPolicyHistory"/></PagerContent>
         <Columns>
             <PropertyColumn Property="x => x.PolicyName" Title="Policy Name"/>
             <PropertyColumn Property="x => x.Result" Title="Result"/>
             <PropertyColumn Property="x => x.RunTime" Title="Date Ran"/>
-            <TemplateColumn Title="Actions" StickyRight="true">
+            <TemplateColumn Title="Actions" >
                 <CellTemplate>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="@(() => ViewPolicyHash(@context.Item))">@context.Item.PolicyHash</MudButton>
                 </CellTemplate>
@@ -54,7 +58,7 @@ else
             { x => x.PolicyName, policyHistory.PolicyName },
             { x => x.PolicyJson, policyJson }
         };
-        await DialogService.ShowAsync<ActionViewPolicyHash>("Policy History", parameters, DialogOptionsConstants.DeleteDialogOptions);
+        await DialogService.ShowAsync<ActionViewPolicyHash>("Policy History", parameters, Constants.DeleteDialogOptions);
     }
 
 }

@@ -5,6 +5,7 @@
 @using Toems_UI.Site.Layout
 @using Toems_UI.Site.Pages.Computers.Actions
 @using Toems_UI.Site.Pages.Computers.Components
+@using Constants = Constants
 @inject Toems_ApiCalls.APICall Call
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
@@ -13,10 +14,12 @@
 
 
 <ActionButtons>
+    <MainButton>
+        <MudButton OnClick="@(() => ArchiveOrDeleteComputer("Archive"))">Archive Computer(s)</MudButton>
+    </MainButton>
     <Content>
-        <MudMenuItem Label="Archive" OnClick="@(() => ArchiveOrDeleteComputer("Archive"))"/>
-        <MudMenuItem Label="Delete" OnClick="@(() => ArchiveOrDeleteComputer("Delete"))"/>
-        <MudMenuItem Label="Create" OnClick="@(() => CreateNew())"/>
+        <MudMenuItem Label="Delete Computer(s)" OnClick="@(() => ArchiveOrDeleteComputer("Delete"))"/>
+        <MudMenuItem Label="Create Unmanaged Computer" OnClick="@(() => CreateNew())"/>
     </Content>
 </ActionButtons>
     
@@ -40,7 +43,7 @@
                 </div>
                 <div class="width-150">
                     <MudSelect T="string" ValueChanged="@(s => LimitUpdated(s))" Label="Limit" Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Stop" Value="_selectedLimit" ShrinkLabel>
-                        @foreach (var limit in Constants.Limits)
+                        @foreach (var limit in Toems_Common.Constants.Limits)
                         {
                             <MudSelectItem Value="@limit">@limit</MudSelectItem>
                         }
@@ -77,12 +80,10 @@
     </div>
 <div class="clear"></div>
 
-    <MudDataGrid RowsPerPage="50" Striped="true" T="EntityComputer" Class="mb-10" Elevation="5" MultiSelection="true" Items="@Computers" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive" @bind-SelectedItems="_selectedComputers">
+    <MudDataGrid RowsPerPage="@Constants.DefaultPageSize" Dense="true" Hideable="true" ColumnsPanelReordering="true" ShowMenuIcon="true"  T="EntityComputer" Class="mb-10" Elevation="5" MultiSelection="true" Items="@Computers" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive" @bind-SelectedItems="_selectedComputers">
         <ToolBarContent>
-            <MudGrid>
+                <MudText Typo="Typo.h5" Color="Color.Primary">Computers</MudText>
                 <MudSpacer/>
-
-            </MudGrid>
         </ToolBarContent>
         <PagerContent><MudDataGridPager T="EntityComputer"/></PagerContent>
         <Columns>
@@ -201,6 +202,12 @@
 
     private async Task ArchiveOrDeleteComputer(string type)
     {
+        if (!_selectedComputers.Any())
+        {
+            Snackbar.Add($"Please select at least one computer to {type.ToLower()}", Severity.Warning);
+            return;
+        }
+        
         var contentText = $"Are you sure you want to {type.ToLower()} the following computers?\n";
         foreach (var computer in _selectedComputers)
             contentText += $"\n{computer.Name}";
@@ -212,7 +219,7 @@
             { x => x.Color, Color.Error }
         };
 
-        var dialog = await DialogService.ShowAsync<DialogConfirm>(type, parameters, DialogOptionsConstants.DeleteDialogOptions);
+        var dialog = await DialogService.ShowAsync<DialogConfirm>(type, parameters, Constants.DeleteDialogOptions);
         var result = await dialog.Result;
 
         var errorCount = 0;
@@ -260,7 +267,7 @@
     }
     private async Task CreateNew()
     {
-        await DialogService.ShowAsync<ActionCreateComputer>("New", new DialogParameters<ActionCreateComputer>(), DialogOptionsConstants.DeleteDialogOptions);
+        await DialogService.ShowAsync<ActionCreateComputer>("New", new DialogParameters<ActionCreateComputer>(), Constants.DeleteDialogOptions);
     }
 
 }

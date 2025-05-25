@@ -4,9 +4,7 @@ namespace Toems_ApiCalls
     public class APICall(ApiRequest apiRequest)
     {
         public ComputerAPI ComputerApi => new("Computer", apiRequest);
-
         public CategoryAPI CategoryApi => new("Category",apiRequest);
-
         public AttachmentAPI AttachmentApi => new("Attachment",apiRequest);
         public BrowserTokenAPI BrowserTokenApi => new("BrowserToken",apiRequest);
         public CustomAttributeAPI CustomAttributeApi => new("CustomAttribute",apiRequest);
@@ -16,6 +14,7 @@ namespace Toems_ApiCalls
         public ImageAPI ImageApi => new("Image",apiRequest);
         public WinPeModuleAPI WinPeModuleApi => new("WinPeModule",apiRequest);
         public PolicyAPI PolicyApi => new("Policy",apiRequest);
+        public RemoteAccessApi RemoteAccessApi => new("RemoteAccess",apiRequest);
         /*
         public MessageModuleAPI MessageModuleApi
         {
@@ -366,10 +365,7 @@ namespace Toems_ApiCalls
 
         
 
-        public RemoteAccessApi RemoteAccessApi
-        {
-            get { return new RemoteAccessApi("RemoteAccess",_protectedSessionStorage); }
-        }
+       
 
         public SysprepAnswerFileAPI SysprepAnswerFileApi
         {

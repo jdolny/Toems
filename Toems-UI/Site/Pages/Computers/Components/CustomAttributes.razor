@@ -8,10 +8,12 @@
 @inherits BaseComponent
 
 <ActionButtons InsertAtTop="true">
-    <Content>
-        <MudMenuItem Label="Update Attribute Values" OnClick="UpdateAttributes"/>
-    </Content>
+    <MainButton>
+        <MudButton OnClick="UpdateAttributes">Update Custom Attributes</MudButton>
+    </MainButton>
+    <Content/>
 </ActionButtons>
+
 
 @if(!_definedAttributes.Any())  
 {
@@ -19,19 +21,21 @@
 }
 else
 {
-    <MudGrid>
+    <MudPaper Elevation="2" Class="pa-4">
+        <MudGrid>
 
-        @foreach (var customAttribute in _definedAttributes)
-        {
-            <MudItem xs="12" sm="6">
-                <MudText Typo="Typo.body1"><b>@customAttribute.Name</b></MudText>
-                <MudTextField Variant="Variant.Outlined" T="string" AutoGrow="@(customAttribute.TextMode == EnumCustomAttribute.TextMode.MultiLine)" 
-                              Lines="@(customAttribute.TextMode == EnumCustomAttribute.TextMode.MultiLine ? 4 : 0)" Typo="Typo.body2" 
-                              Value="@_computerAttributes.FirstOrDefault(x => x.CustomAttributeId == customAttribute.Id)?.Value"
-                              ValueChanged="@(value => UpdateValue(customAttribute.Id,value))"></MudTextField>
-            </MudItem>
-        }
-    </MudGrid>
+            @foreach (var customAttribute in _definedAttributes)
+            {
+                <MudItem xs="12" sm="6">
+                
+                    <MudTextField Label="@customAttribute.Name" Variant="Variant.Outlined" T="string" AutoGrow="@(customAttribute.TextMode == EnumCustomAttribute.TextMode.MultiLine)" 
+                                  Lines="@(customAttribute.TextMode == EnumCustomAttribute.TextMode.MultiLine ? 4 : 0)"  
+                                  Value="@_computerAttributes.FirstOrDefault(x => x.CustomAttributeId == customAttribute.Id)?.Value"
+                                  ValueChanged="@(value => UpdateValue(customAttribute.Id,value))"></MudTextField>
+                </MudItem>
+            }
+        </MudGrid>
+    </MudPaper>
 }
 
 @code {

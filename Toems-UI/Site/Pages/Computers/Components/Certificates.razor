@@ -4,14 +4,21 @@
 @layout MainLayout
 @inject APICall Call
 @inherits BaseComponent
-
+<ActionButtons InsertAtTop="true">
+    <MainButton/>
+    <Content/>
+</ActionButtons>
 @if(!_certificates.Any())  
 {
     <MudText Typo="Typo.body2">No certificates have been found.  Ensure an inventory scan has been run on this computer.</MudText>
 }
 else
 {
-    <MudDataGrid Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityCertificateInventory" Class="mb-2 full-data-grid" Elevation="5" Items="@_certificates" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+    <MudDataGrid RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityCertificateInventory" Class="mb-2 full-data-grid" Elevation="5" Items="@_certificates" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+        <ToolBarContent>
+            <MudText Typo="Typo.h5">Computer Certificates</MudText>
+            <MudSpacer/>
+        </ToolBarContent>
         <PagerContent><MudDataGridPager T="EntityCertificateInventory"/></PagerContent>
         <Columns>
             <PropertyColumn Property="x => x.FriendlyName" Title="Friendly Name"/>

@@ -10,7 +10,7 @@
 <MudSnackbarProvider />
 <CascadingValue Value="this">
 <MudLayout>
-    <MudAppBar Elevation="1"  >
+    <MudAppBar Elevation="1" Dense="true"  >
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((_) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Color="Color.Secondary" Class="ml-3">Theopenem</MudText>
         <MudSpacer />
@@ -39,25 +39,27 @@
     </MudDrawer>
     
     
-<MudAppBar Elevation="10" Fixed="true" Width="100%" Class="mt-16" Style="z-index: 2" Color="Color.Secondary"  Contextual>
+<MudAppBar Elevation="10" Fixed="true" Width="100%" Class="mt-12" Style="z-index: 2" Color="Color.Secondary"  Contextual>
     
         <div class="d-flex flex-column">
-            <MudBreadcrumbs Items="Breadcrumbs" Separator=" > " Class="mb-0" Style="line-height:0; margin-top:-20px;" >
+            <MudBreadcrumbs Items="Breadcrumbs" Separator=" / " Class="mb-0 d-none d-lg-flex" Style="line-height:0; margin-top:-20px;" >
                 <ItemTemplate>
                     <MudLink Typo="Typo.caption" Href="@context.Href" Disabled="@context.Disabled"  Color="@(context.Disabled ? Color.Primary : Color.Primary)">@context.Text</MudLink>
 
                 </ItemTemplate>
             </MudBreadcrumbs>
-            <MudText Typo="Typo.h5" Style="line-height:.5;" Color="Color.Primary" Class="font-weight-bold">@PageTitle</MudText>
+            <MudText Typo="Typo.h5" Style="line-height:.5;" Color="Color.Primary" Class="font-weight-bold responsive-title">@PageTitle</MudText>
+          
         </div>
        
         <MudSpacer/>
-        
-            <MudMenu Label="Actions" EndIcon="@Icons.Material.Filled.ArrowDropDown">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" >
+            @MainButton
+            <MudMenu Icon="@Icons.Material.Filled.ArrowDropDown" Style="align-self: auto;">
                 @if (ActionButtonsTop is not null)
                 {
                     @ActionButtonsTop
-                    @if(ActionButtonsBottom is not null)
+                    @if (ActionButtonsBottom is not null)
                     {
                         <MudDivider/>
                     }
@@ -67,7 +69,7 @@
                     @ActionButtonsBottom
                 }
             </MudMenu>
-       
+        </MudButtonGroup>
 
     </MudAppBar>
 
@@ -92,6 +94,7 @@
 
     public RenderFragment? ActionButtonsTop { get; set; }
     public RenderFragment? ActionButtonsBottom { get; set; }
+    public RenderFragment? MainButton { get; set; }
 
     public void ClearActionButtons()
     {
@@ -187,14 +190,16 @@
         AppbarText = "#6C7383",
         AppbarBackground = "#3d6889",
         DrawerBackground = "#353c48",
-        GrayLight = "#e8e8e8",
+        GrayLight = "#fbfbfb", //vertical pager background
         GrayLighter = "#f9f9f9",
         DrawerText = "#a5adba",
         Secondary = "#ffffff",
         DrawerIcon = "#a5adba",
         Background = "#e3e3e3", //"#f6f6f6",
         Tertiary = "#e5e9ed",
-        Primary = "#5864bd",
+        Primary = "#3d6889",
+        
+        BackgroundGray = "#e2e2e2", //data grid header and sticky column
         
         
         
@@ -203,6 +208,7 @@
     private readonly PaletteDark _darkPalette = new()
     {
         Primary = "#667dab",
+        Secondary = "#2b2b2b",
         Tertiary = "#2b2b2b",
         Surface = "#2b2b2b",
         Background = "#555555",

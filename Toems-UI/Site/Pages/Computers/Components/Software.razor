@@ -16,7 +16,7 @@ else
 {
     <MudDataGrid RowsPerPage="50" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntitySoftwareInventory" Class="mb-2 full-data-grid" Elevation="5" Items="@_computerSoftware" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
         <ToolBarContent>
-            <MudText Typo="Typo.h6">Software</MudText>
+            <MudText Typo="Typo.h5">Software</MudText>
             <MudSpacer />
             <MudTextField T="string" ValueChanged="@(s => OnSearchChanged(s))" DebounceInterval="300" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>

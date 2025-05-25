@@ -7,25 +7,16 @@
 @inject APICall Call
 @inherits BaseComponent
 @inject ISnackbar Snackbar
-@code
-{
-    [Parameter] public EntityComputer Computer { get; set; } = new();
-    private IEnumerable<EntityImage> _images = new List<EntityImage>();
-    private IEnumerable<EntityImageProfile> _imageProfiles = new List<EntityImageProfile>();
-    private IEnumerable<EntityWinPeModule> _winPeModules = new List<EntityWinPeModule>();
-    private string _effectiveImage = string.Empty;
-    private string _effectiveImageProfile = string.Empty;
-    private string _effectiveWinPeModule = string.Empty;
-}
 
 <ActionButtons InsertAtTop="true">
-    <Content>
-        <MudMenuItem Label="Update Image Settings" OnClick="UpdateImageSettings"/>
-    </Content>
+    <MainButton>
+        <MudButton OnClick="UpdateImageSettings">Update Computer</MudButton>
+    </MainButton>
+    <Content/>
 </ActionButtons>
 
 <MudTabs Outlined="true" Position="Position.Top" Rounded="false" Border="true" 
-         ApplyEffectsToContainer="true" Class="mt-2" PanelClass="pa-4" Elevation="0" >
+         ApplyEffectsToContainer="false" Class="mt-2" PanelClass="pa-4" Elevation="0" Centered="true">
 <MudTabPanel Text="Assigned Image">
 <MudStack Class="stack-full">
     <MudGrid >
@@ -63,17 +54,16 @@
 </MudTabPanel>
     <MudTabPanel Text="Effective Image">
         <MudGrid>
-        <MudItem xs="12">
-            <MudText Typo="Typo.body1"><b>Effective Image</b></MudText>
-            <MudText Typo="Typo.body2" Variant="Variant.Outlined">@_effectiveImage</MudText>
-        </MudItem>
-        <MudItem xs="12">
-            <MudText Typo="Typo.body1"><b>Effective Image Profile</b></MudText>
-            <MudText Typo="Typo.body2" Variant="Variant.Outlined">@_effectiveImageProfile</MudText>
-        </MudItem>
-        <MudItem xs="12">
-            <MudText Typo="Typo.body1"><b>Effective WinPE Module</b></MudText>
-            <MudText Typo="Typo.body2">@_effectiveWinPeModule</MudText>
+            <MudItem xs="12" sm="6">
+                <MudTextField T="string" Label="Effective Image" Value="@_effectiveImage" Typo="Typo.body2" Variant="Variant.Text" ReadOnly="true"></MudTextField>
+            </MudItem>
+            <MudFlexBreak/>
+            <MudItem xs="12" sm="6">
+                <MudTextField T="string" Label="Effective Image Profile" Value="@_effectiveImageProfile" Typo="Typo.body2" Variant="Variant.Text" ReadOnly="true"></MudTextField>
+            </MudItem>
+            <MudFlexBreak/>
+        <MudItem xs="12" sm="6">
+            <MudTextField T="string" Label="Effective WinPE Module" Value="@_effectiveWinPeModule" Typo="Typo.body2" Variant="Variant.Text" ReadOnly="true"></MudTextField>
         </MudItem>
         </MudGrid>
     </MudTabPanel>
@@ -99,6 +89,13 @@
 
 
 @code {
+    [Parameter] public EntityComputer Computer { get; set; } = new();
+    private IEnumerable<EntityImage> _images = new List<EntityImage>();
+    private IEnumerable<EntityImageProfile> _imageProfiles = new List<EntityImageProfile>();
+    private IEnumerable<EntityWinPeModule> _winPeModules = new List<EntityWinPeModule>();
+    private string _effectiveImage = string.Empty;
+    private string _effectiveImageProfile = string.Empty;
+    private string _effectiveWinPeModule = string.Empty;
     
     protected override async Task OnParametersSetAsync()
     {
