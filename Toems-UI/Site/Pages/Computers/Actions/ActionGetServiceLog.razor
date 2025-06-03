@@ -1,0 +1,68 @@
+﻿@using Toems_Common.Entity
+@using Toems_UI.Components
+@using Toems_UI.Site.Layout
+@inject Toems_ApiCalls.APICall Call
+@inject ISnackbar Snackbar
+@inject IJSRuntime JSRuntime
+@inject IDialogService DialogService
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            Getting Service Log..
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudProgressLinear Indeterminate="true"></MudProgressLinear>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Close">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public EntityComputer Computer { get; set; }
+    private CancellationTokenSource _cts;
+
+    private async Task Cancel() => await _cts.CancelAsync();
+    private void Close() => MudDialog.Close(DialogResult.Ok(true));
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _cts = new CancellationTokenSource();
+        await Call.ComputerApi.ClearLastSocketResult(Computer.Id);
+        await Call.ComputerApi.GetServiceLog(Computer.Id);
+        
+        for (int counter = 0; counter < 10; counter++)
+        {
+            if (_cts.Token.IsCancellationRequested)
+            {
+                Snackbar.Add("Task cancelled", Severity.Warning);
+                MudDialog.Close(DialogResult.Cancel());
+                return;
+            }
+
+            var lastSocketResult = await Call.ComputerApi.GetLastSocketResult(Computer.Id);
+            if (!string.IsNullOrEmpty(lastSocketResult))
+            {
+                var parameters = new DialogParameters<ViewServiceLog>
+                {
+                    { x => x.Computer, Computer },
+                    { x => x.ServiceLog, lastSocketResult }
+                };
+                await DialogService.ShowAsync<ViewServiceLog>("New", parameters, Constants.DeleteDialogOptions);
+                MudDialog.Close(DialogResult.Ok(true));
+                return;
+            }
+            await Task.Delay(1000);
+        }
+        Snackbar.Add("Could not get service log.", Severity.Error);
+        MudDialog.Cancel();
+    }
+}

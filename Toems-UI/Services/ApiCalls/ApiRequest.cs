@@ -323,26 +323,26 @@ namespace Toems_ApiCalls
             if (response.Data == null)
             {
                 _log.Error("Response Data Was Null For Resource: " + request.Resource);
-                return default(TClass);
+                return new TClass();
             }
 
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 _log.Error("Could Not Complete API Request.  The Response Produced An Error." + request.Resource);
                 _log.Error(response.Content);
-                return default(TClass);
+                return new TClass();
             }
             
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 _log.Error("Error Retrieving API Response: Not Found " + request.Resource);
-                //throw new HttpException();
+                return new TClass();
             }
 
             if (response.ErrorException != null)
             {
                 _log.Error("Error Retrieving API Response: " + response.ErrorException);
-                return default(TClass);
+                return new TClass();
             }
 
             _log.Debug(request.Resource);

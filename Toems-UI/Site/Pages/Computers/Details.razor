@@ -7,29 +7,40 @@
 @inject Toems_ApiCalls.APICall Call
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
-@inject IJSRuntime JS
 @inherits BasePage
+
 <ActionButtons>
     <Content>
         <MudMenuItem Label="Get Status" OnClick="@((e) => GetStatusAsync())"/>
+        <MudMenuItem Label="Force Checkin" OnClick="@((e) => ForceCheckin())"/>
+        <MudMenuItem Label="Collect Inventory" OnClick="@((e) => CollectInventory())"/>
+        <MudMenuItem Label="Current Users" OnClick="@((e) => CurrentUsers())"/>
+        <MudMenuItem Label="System Uptime" OnClick="@((e) => SystemUptime())"/>
+        <MudMenuItem Label="Get Service Log" OnClick="@((e) => ServiceLog())"/>
+        <MudMenuItem Label="Remote Control" OnClick="@((e) => RemoteControl())"/>
+        <MudMenuItem Label="Wake Up" OnClick="@((e) => WakeUp())"/>
+        <MudMenuItem Label="Reboot" OnClick="@((e) => Reboot())"/>
+        <MudMenuItem Label="Shutdown" OnClick="@((e) => Shutdown())"/>
+        <MudDivider/>
+        <MudMenuItem Label="Deploy Image" OnClick="@((e) => DeployImage())"/>
+        <MudMenuItem Label="Upload Image" OnClick="@((e) => UploadImage())"/>
+        <MudMenuItem Label="Deploy Image Via Toec" OnClick="@((e) => DeployImageViaToec())"/>
     </Content>
 </ActionButtons>
 
-
+<MudBreakpointProvider OnBreakpointChanged="OnBreakpointChanged" />
 <MudPaper Class="pa-2 " Elevation="5"  >
-
-    <MudTabs Outlined="true" Position="@pos" Rounded="false" Border="true" @bind-ActivePanelIndex="_selectedTabIndex"
-             ApplyEffectsToContainer="true" Class="mt-2" PanelClass="pa-4 " Elevation="0" AlwaysShowScrollButtons="true" >
+    <MudTabs Outlined="true" Position="@pos" Rounded="false" Border="true" ActivePanelIndexChanged="@(x => OnTabChanged(x))"
+             ApplyEffectsToContainer="true" Class="mt-2" ActiveTabClass="active-tab" PanelClass="pa-4 " Elevation="0" AlwaysShowScrollButtons="true" KeepPanelsAlive="false" ActivePanelIndex="@_activePanelIndex"  >
         <MudTabPanel Text="Attachments">
             <MudStack Class="stack-full">
                 <Attachments Computer="@Computer"/>
-
             </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Certificates">
             <MudStack Class="stack-full">
-            <Certificates Computer="@Computer"/>
-          </MudStack>
+                <Certificates Computer="@Computer"/>
+            </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Comments" >
             <MudStack Class="stack-full">
@@ -37,14 +48,14 @@
             </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Custom Attributes" >
-            <MudStack Class="width-full">
+            <MudStack Class="stack-full">
                 <CustomAttributes Computer="@Computer"/>
             </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Custom Inventory">
-       
+            <MudStack Class="stack-full">
             <CustomInventory Computer="@Computer"/>
-         
+         </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Effective Policy" >
             <MudStack Class="stack-full">
@@ -52,15 +63,14 @@
             </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="General" >
-            <MudStack>
+            <MudStack Class="stack-full">
                 <General Computer="@Computer"/>
-                <br/><br/>
             </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Imaging Logs">
             <MudStack Class="stack-full">
-            <ImagingLogs Computer="@Computer"/>
-            </MudStack>
+                <ImagingLogs Computer="@Computer"/>
+           </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Image Settings" >
             <MudStack Class="stack-full">
@@ -75,10 +85,12 @@
         <MudTabPanel Text="Policy History"  >
             <MudStack Class="stack-full">
                 <PolicyHistory Computer="@Computer"/>
-         </MudStack>
+            </MudStack>
         </MudTabPanel>
-        <MudTabPanel Text="Software" >
+        <MudTabPanel Text="Software">
+            <MudStack Class="stack-full">
             <Software Computer="@Computer"/>
+            </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="System Info">
             <MudStack Class="stack-full">
@@ -86,10 +98,19 @@
             </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Usages">
+            <MudStack Class="stack-full">
+                <Usages Computer="@Computer"/>
+            </MudStack>
         </MudTabPanel>
-        <MudTabPanel Text="User Login History" >
+        <MudTabPanel Text="User Login History">
+            <MudStack Class="stack-full">
+                <UserLogins Computer="@Computer"/>
+            </MudStack>
         </MudTabPanel>
-        <MudTabPanel Text="Windows Updates"  >
+        <MudTabPanel Text="Windows Updates">
+            <MudStack Class="stack-full">
+                <WindowsUpdates Computer="@Computer"/>
+            </MudStack>
         </MudTabPanel>
 
     </MudTabs>
@@ -98,36 +119,209 @@
 @code {
     [Parameter] public int Id { get; set; }
     [Parameter] public EntityComputer Computer {get; set;} = new();
-    public Position pos { get; set; } = Position.Left;
-    private int _selectedTabIndex = 6;
+    private int _activePanelIndex { get; set; } = 6;
+    private Position pos { get; set; } = Position.Left;
+
     protected override async Task OnInitializedAsync()
     {
         Computer = await Call.ComputerApi.Get(Id);
-        var deviceInfo = await JS.InvokeAsync<DeviceInfo>("getDeviceInfo");
-        if(deviceInfo.ScreenWidth < 768)
-        {
-            pos = Position.Top;
-        }
-        else
-        {
-            pos = Position.Left;
-        }
     }
-    
+
+    private async Task OnTabChanged(int index)
+    {
+        _activePanelIndex = index;
+        Computer = await Call.ComputerApi.Get(Id); // Refresh the computer data when the tab changes
+    }
+    private void OnBreakpointChanged(Breakpoint breakpoint)
+    {
+        pos = breakpoint < Breakpoint.Md ? Position.Top : Position.Left;
+    }
     private async Task GetStatusAsync()
     {
         var parameters = new DialogParameters<ActionStatus>
         {
             { x => x.Computer, Computer },
         };
-        await DialogService.ShowAsync<ActionStatus>("New", parameters, Constants.DeleteDialogOptions);
+        await DialogService.ShowAsync<ActionStatus>("", parameters, Constants.DeleteDialogOptions);
     }
-    private class DeviceInfo
+    
+    private async Task ForceCheckin()
     {
-        public int ScreenWidth { get; set; }
-        public int ScreenHeight { get; set; }
-        public bool IsMobile { get; set; }
-        public bool IsTouchDevice { get; set; }
+        var parameters = new DialogParameters<ActionForceCheckin>
+        {
+            { x => x.Computer, Computer },
+        };
+        await DialogService.ShowAsync<ActionForceCheckin>("", parameters, Constants.DeleteDialogOptions);
     }
-  
+    
+    private async Task CollectInventory()
+    {
+        var parameters = new DialogParameters<ActionCollectInventory>
+        {
+            { x => x.Computer, Computer },
+        };
+        await DialogService.ShowAsync<ActionCollectInventory>("", parameters, Constants.DeleteDialogOptions);
+    }
+    
+    private async Task CurrentUsers()
+    {
+        var parameters = new DialogParameters<ActionCurrentUsers>
+        {
+            { x => x.Computer, Computer },
+        };
+        await DialogService.ShowAsync<ActionCurrentUsers>("", parameters, Constants.DeleteDialogOptions);
+    }
+    
+    private async Task SystemUptime()
+    {
+        var parameters = new DialogParameters<ActionSystemUptime>
+        {
+            { x => x.Computer, Computer },
+        };
+        await DialogService.ShowAsync<ActionSystemUptime>("", parameters, Constants.DeleteDialogOptions);
+    }
+    
+    private async Task ServiceLog()
+    {
+        var parameters = new DialogParameters<ActionGetServiceLog>
+        {
+            { x => x.Computer, Computer },
+        };
+        await DialogService.ShowAsync<ActionGetServiceLog>("", parameters, Constants.DeleteDialogOptions);
+    }
+    
+    private async Task RemoteControl()
+    {
+        if (string.IsNullOrEmpty(Computer.RemoteAccessId))
+        {
+            Snackbar.Add("Cannot start remote control.  The remote control agent is not installed on this computer.", Severity.Error);
+            return;
+        }
+        var parameters = new DialogParameters<ActionRemoteControl>
+        {
+            { x => x.Computer, Computer },
+        };
+        await DialogService.ShowAsync<ActionRemoteControl>("", parameters, Constants.DeleteDialogOptions);
+    }
+
+    private async Task WakeUp()
+    {
+        await Call.ComputerApi.Wakeup(Computer.Id);
+        Snackbar.Add("Wake up command sent.", Severity.Success);
+    }
+    
+    private async Task Reboot()
+    {
+        var parameters = new DialogParameters<DialogConfirm>
+        {
+            { x => x.ContentText, $"Are you sure you want to reboot {Computer.Name}?" },
+            { x => x.ButtonText, "Reboot" },
+            { x => x.Color, Color.Error }
+        };
+        var dialog = await DialogService.ShowAsync<DialogConfirm>("Reboot", parameters, Constants.DeleteDialogOptions);
+        var result = await dialog.Result;
+
+        if (!result.Canceled && result.Data is true)
+        {
+            var rebootParameters = new DialogParameters<ActionReboot>
+            {
+                { x => x.Computer, Computer },
+            };
+            await DialogService.ShowAsync<ActionReboot>("Reboot", rebootParameters, Constants.DeleteDialogOptions);
+        }
+    }
+    
+    private async Task Shutdown()
+    {
+        var parameters = new DialogParameters<DialogConfirm>
+        {
+            { x => x.ContentText, $"Are you sure you want to shutdown {Computer.Name}?" },
+            { x => x.ButtonText, "Shutdown" },
+            { x => x.Color, Color.Error }
+        };
+        var dialog = await DialogService.ShowAsync<DialogConfirm>("Shutdown", parameters, Constants.DeleteDialogOptions);
+        var result = await dialog.Result;
+
+        if (!result.Canceled && result.Data is true)
+        {
+            var rebootParameters = new DialogParameters<ActionShutdown>
+            {
+                { x => x.Computer, Computer },
+            };
+            await DialogService.ShowAsync<ActionShutdown>("Shutdown", rebootParameters, Constants.DeleteDialogOptions);
+        }
+    }
+
+    private async Task DeployImage()
+    {
+        var image = await Call.ComputerApi.GetEffectiveImage(Computer.Id);
+        if (image == null)
+        {
+            Snackbar.Add("Cannot deploy image, no image is assigned.", Severity.Error);
+            return;
+        }
+
+        var parameters = new DialogParameters<DialogConfirm>
+        {
+            { x => x.ContentText, $"Are you sure you want to deploy the image {image.Image.Name} to {Computer.Name}?" },
+            { x => x.ButtonText, "Deploy" },
+            { x => x.Color, Color.Error }
+        };
+        var dialog = await DialogService.ShowAsync<DialogConfirm>("Deploy", parameters, Constants.DeleteDialogOptions);
+        var result = await dialog.Result;
+        if (!result.Canceled && result.Data is true)
+        {
+            var deployResult = await Call.ComputerApi.StartDeploy(Computer.Id);
+            Snackbar.Add(deployResult, Severity.Success);
+        }
+    }
+    
+    private async Task UploadImage()
+    {
+        var image = await Call.ComputerApi.GetEffectiveImage(Computer.Id);
+        if (image == null)
+        {
+            Snackbar.Add("Cannot upload image, no image is assigned.", Severity.Error);
+            return;
+        }
+
+        var parameters = new DialogParameters<DialogConfirm>
+        {
+            { x => x.ContentText, $"Are you sure you want to upload the image {image.Image.Name} from {Computer.Name}?" },
+            { x => x.ButtonText, "Upload" },
+            { x => x.Color, Color.Error }
+        };
+        var dialog = await DialogService.ShowAsync<DialogConfirm>("Upload", parameters, Constants.DeleteDialogOptions);
+        var result = await dialog.Result;
+        if (!result.Canceled && result.Data is true)
+        {
+            var deployResult = await Call.ComputerApi.StartUpload(Computer.Id);
+            Snackbar.Add(deployResult, Severity.Success);
+        }
+    }
+    
+    private async Task DeployImageViaToec()
+    {
+        var image = await Call.ComputerApi.GetEffectiveImage(Computer.Id);
+        if (image == null)
+        {
+            Snackbar.Add("Cannot deploy image, no image is assigned.", Severity.Error);
+            return;
+        }
+        
+        var parameters = new DialogParameters<DialogConfirm>
+        {
+            { x => x.ContentText, $"Are you sure you want to deploy the image {image.Image.Name} to {Computer.Name}?  This computer will immediately reboot and begin the imaging process.  All data on the computer will be overwritten." },
+            { x => x.ButtonText, "Deploy Via Toec" },
+            { x => x.Color, Color.Error }
+        };
+        var dialog = await DialogService.ShowAsync<DialogConfirm>("Deploy Via Toec", parameters, Constants.DeleteDialogOptions);
+        var result = await dialog.Result;
+        if (!result.Canceled && result.Data is true)
+        {
+            var deployResult = await Call.ComputerApi.StartDeployWinPe(Computer.Id);
+            Snackbar.Add(deployResult, Severity.Success);
+        }
+    }
+
 }

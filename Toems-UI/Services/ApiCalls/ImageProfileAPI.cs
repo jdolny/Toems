@@ -9,96 +9,93 @@ using Toems_Common.Entity;
 namespace Toems_ApiCalls
 {
 
-    public class ImageProfileAPI : BaseAPI<ImageProfileWithImage>
+    public class ImageProfileAPI (string resource, ApiRequest apiRequest)
+        : BaseAPI<ImageProfileWithImage>(resource,apiRequest)
     {
-        public ImageProfileAPI(string resource, ProtectedLocalStorage protectedLocalStorage) : base(resource, protectedLocalStorage)
-        {
 
-        }
-
-        public bool Clone(int id)
+        public async Task<bool> Clone(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/Clone/{1}", Resource, id);
-            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
+            Request.Resource = $"{Resource}/Clone/{id}";
+            var response = await _apiRequest.ExecuteAsync<DtoApiBoolResponse>(Request);
             return response != null && response.Value;
         }
 
-        public string GetMinimumClientSize(int id, int hdNumber)
+        public async Task<string> GetMinimumClientSize(int id, int hdNumber)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetMinimumClientSize/{1}", Resource, id);
+            Request.Resource = $"{Resource}/GetMinimumClientSize/{id}";
             Request.AddParameter("hdNumber", hdNumber);
-            var response = _apiRequest.Execute<DtoApiStringResponse>(Request);
+            var response = await _apiRequest.ExecuteAsync<DtoApiStringResponse>(Request);
             return response != null ? response.Value : string.Empty;
         }
 
-        public IEnumerable<EntityImageProfileScript> GetScripts(int id)
+        public async Task<IEnumerable<EntityImageProfileScript>> GetScripts(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetScripts/{1}", Resource, id);
-            var result = _apiRequest.Execute<List<EntityImageProfileScript>>(Request);
+            Request.Resource = $"{Resource}/GetScripts/{id}";
+            var result = await _apiRequest.ExecuteAsync<List<EntityImageProfileScript>>(Request);
             if (result == null)
                 return new List<EntityImageProfileScript>();
             else
                 return result;
         }
 
-        public IEnumerable<EntityImageProfileSysprepTag> GetSysprep(int id)
+        public async Task<IEnumerable<EntityImageProfileSysprepTag>> GetSysprep(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetSysprep/{1}", Resource, id);
-            var result = _apiRequest.Execute<List<EntityImageProfileSysprepTag>>(Request);
+            Request.Resource = $"{Resource}/GetSysprep/{id}";
+            var result = await _apiRequest.ExecuteAsync<List<EntityImageProfileSysprepTag>>(Request);
             if (result == null)
                 return new List<EntityImageProfileSysprepTag>();
             else
                 return result;
         }
 
-        public IEnumerable<EntityImageProfileFileCopy> GetFileCopy(int id)
+        public async Task<IEnumerable<EntityImageProfileFileCopy>> GetFileCopy(int id)
         {
             Request.Method = Method.Get;
-            Request.Resource = string.Format("{0}/GetFileCopy/{1}", Resource, id);
-            var result = _apiRequest.Execute<List<EntityImageProfileFileCopy>>(Request);
+            Request.Resource = $"{Resource}/GetFileCopy/{id}";
+            var result = await _apiRequest.ExecuteAsync<List<EntityImageProfileFileCopy>>(Request);
             if (result == null)
                 return new List<EntityImageProfileFileCopy>();
             else
                 return result;
         }
 
-        public bool RemoveProfileFileCopy(int id)
+        public async Task<bool> RemoveProfileFileCopy(int id)
         {
             Request.Method = Method.Delete;
-            Request.Resource = string.Format("{0}/RemoveProfileFileCopy/{1}", Resource, id);
-            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
+            Request.Resource = $"{Resource}/RemoveProfileFileCopy/{id}";
+            var response = await _apiRequest.ExecuteAsync<DtoApiBoolResponse>(Request);
             if (response != null) return response.Value;
             return false;
         }
 
-        public bool RemoveProfileScripts(int id)
+        public async Task<bool> RemoveProfileScripts(int id)
         {
             Request.Method = Method.Delete;
-            Request.Resource = string.Format("{0}/RemoveProfileScripts/{1}", Resource, id);
-            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
+            Request.Resource = $"{Resource}/RemoveProfileScripts/{id}";
+            var response = await _apiRequest.ExecuteAsync<DtoApiBoolResponse>(Request);
             if (response != null) return response.Value;
             return false;
         }
 
-        public bool RemoveProfileSysprepTags(int id)
+        public async Task<bool> RemoveProfileSysprepTags(int id)
         {
             Request.Method = Method.Delete;
-            Request.Resource = string.Format("{0}/RemoveProfileSysprep/{1}", Resource, id);
-            var response = _apiRequest.Execute<DtoApiBoolResponse>(Request);
+            Request.Resource = $"{Resource}/RemoveProfileSysprep/{id}";
+            var response = await _apiRequest.ExecuteAsync<DtoApiBoolResponse>(Request);
             if (response != null) return response.Value;
             return false;
         }
 
-        public DtoActionResult Post(EntityImageProfile profile)
+        public async Task<DtoActionResult> Post(EntityImageProfile profile)
         {
             Request.Method = Method.Post;
             Request.AddParameter("application/json", JsonConvert.SerializeObject(profile), ParameterType.RequestBody);
-            Request.Resource = string.Format("{0}/Post/",Resource);
-            var response = _apiRequest.Execute<DtoActionResult>(Request);
+            Request.Resource = $"{Resource}/Post/";
+            var response = await _apiRequest.ExecuteAsync<DtoActionResult>(Request);
             if (response != null)
             {
                 if (response.Id == 0)

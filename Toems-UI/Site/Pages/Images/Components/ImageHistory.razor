@@ -1,0 +1,67 @@
+﻿@using Toems_ApiCalls
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@using Toems_UI.Site.Pages.Images.Actions
+
+@layout MainLayout
+@inject APICall Call
+@inherits BaseComponent
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+<ActionButtons InsertAtTop="true">
+    <MainButton/>
+    <Content/>
+</ActionButtons>
+@if(!_history.Any())  
+{
+    <MudText Typo="Typo.body2">No image history found.</MudText>
+}
+else
+{
+    <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize"   Dense="false" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityAuditLog" Class="mb-2 full-data-grid" Elevation="5" Items="@_history" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+        <ToolBarContent>
+            <MudText Typo="Typo.h5" Color="Color.Primary">Image History</MudText>
+            <MudSpacer/>
+        </ToolBarContent>
+        <PagerContent><MudDataGridPager T="EntityAuditLog"/></PagerContent>
+        <Columns>
+            <PropertyColumn Property="x => x.UserName" Title="User"/>
+            <PropertyColumn Property="x => x.AuditType" Title="Audit Type"/>
+            <PropertyColumn Property="x => x.DateTime" Title="Date"/>
+            <TemplateColumn Title="Actions" StickyRight="true">
+                <CellTemplate>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="@(() => ViewDetails(context.Item))">Details</MudButton>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+}
+
+@code {
+    [Parameter] public EntityImage Image { get; set; } = new();
+    private IEnumerable<EntityAuditLog> _history = new List<EntityAuditLog>();
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Image.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Image.Name}",new ImageBreadcrumbs(Image).History())) return;
+        await LoadHistory();
+    }
+
+    private async Task LoadHistory()
+    {
+        _history = await Call.ImageApi.GetImageAuditLogs(Image.Id, 5000);
+    }
+    
+    private async Task ViewDetails(EntityAuditLog log)
+    {
+        var parameters = new DialogParameters<ActionViewImageAudit>
+        {
+            { x => x.Image, Image },
+            { x => x.ObjectJson, Formatting.FormatJson(log.ObjectJson) }
+        };
+        await DialogService.ShowAsync<ActionViewImageAudit>("Image", parameters, Constants.DeleteDialogOptions);
+    }
+
+   
+}

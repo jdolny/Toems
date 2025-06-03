@@ -1,0 +1,191 @@
+﻿@using Toems_ApiCalls
+@using Toems_Common.Dto
+@using Toems_Common.Dto.imageschemafe
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@using Toems_UI.Site.Pages.Images.Actions
+
+@layout MainLayout
+@inject APICall Call
+@inherits BaseComponent
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+<ActionButtons InsertAtTop="true">
+    <MainButton/>
+    <Content/>
+</ActionButtons>
+@if(!_drives.Any())  
+{
+    <MudText Typo="Typo.body2">No image schema found.  Ensure this image has been uploaded.</MudText>
+}
+else
+{
+    <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="DtoHardDrive" Class="mb-2 full-data-grid" Elevation="5" Items="@_drives" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+        <ToolBarContent>
+            <MudText Typo="Typo.h5" Color="Color.Primary">Drives</MudText>
+            <MudSpacer/>
+        </ToolBarContent>
+        <PagerContent><MudDataGridPager T="DtoHardDrive"/></PagerContent>
+        <Columns>
+            <HierarchyColumn T="DtoHardDrive"  />
+            <PropertyColumn Property="x => x.Name" Title="Name"/>
+            <PropertyColumn Property="x => x.Size" Title="Size (Reported / Usable)"/>
+            <PropertyColumn Property="x => x.Table" Title="Table"/>
+            <PropertyColumn Property="x => x.Boot" Title="Boot Flag"/>
+            <PropertyColumn Property="x => x.Lbs" Title="LBS"/>
+            <PropertyColumn Property="x => x.Pbs" Title="PBS"/>
+            <PropertyColumn Property="x => x.Guid" Title="Guid" Hidden="true"/>
+        </Columns>
+        <ChildRowContent>
+            @{
+                var selectedDrive = context.Item; 
+                var partitions = _partitionsDict.TryGetValue(selectedDrive.Name, out var value) 
+                    ? value 
+                    : new List<DtoPartition>();
+            }
+            <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="DtoPartition" Class="mb-2 full-data-grid" Elevation="5" Items="@partitions" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h5" Color="Color.Primary">Partitions</MudText>
+                    <MudSpacer/>
+                </ToolBarContent>
+                <Columns>
+                    <HierarchyColumn T="DtoPartition"  />
+                    <PropertyColumn Property="x => x.Prefix" Title="Prefix"/>
+                    <PropertyColumn Property="x => x.Number" Title="Partition Number"/>
+                    <PropertyColumn Property="x => x.Start" Title="Start"/>
+                    <PropertyColumn Property="x => x.End" Title="End"/>
+                    <PropertyColumn Property="x => x.Size" Title="Size"/>
+                    <PropertyColumn Property="x => x.VolumeSize" Title="Volume"/>
+                    <PropertyColumn Property="x => x.Type" Title="Type"/>
+                    <PropertyColumn Property="x => x.FsType" Title="Filesystem"/>
+                    <PropertyColumn Property="x => x.FsId" Title="Filesystem ID"/>
+                    <PropertyColumn Property="x => x.UsedMb" Title="Used"/>
+                    <PropertyColumn Property="x => x.Uuid" Title="UUID" Hidden="true"/>
+                    <PropertyColumn Property="x => x.Guid" Title="GUID" Hidden="true"/>
+                </Columns>
+                <ChildRowContent Context="contextPartition">
+                    @{
+                        var selectedPartition = contextPartition.Item;
+                        var fileInfos = _fileInfoDict.TryGetValue(selectedDrive.Name + selectedPartition.Number, out var value)
+                            ? value
+                            : new List<DtoImageFileInfo>();
+                        if (selectedPartition.VolumeGroup?.Name is not null)
+                        {
+                            var vgs = _volumeGroupDict.TryGetValue(selectedDrive.Name + selectedPartition.Number, out var valueVg)
+                                ? valueVg
+                                : new List<DtoVolumeGroup>();
+                            <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize"
+                                         Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true"
+                                         Striped="true" T="DtoVolumeGroup" Class="mb-2 full-data-grid" Elevation="5"
+                                         Items="@vgs" ColumnResizeMode="ResizeMode.Column" Filterable="true"
+                                         FilterMode="DataGridFilterMode.ColumnFilterMenu"
+                                         FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+                                <ToolBarContent>
+                                    <MudText Typo="Typo.h5" Color="Color.Primary">Volume Group</MudText>
+                                    <MudSpacer/>
+                                </ToolBarContent>
+                                <Columns>
+                                    <HierarchyColumn T="DtoVolumeGroup"  />
+                                    <PropertyColumn Property="x => x.Name" Title="Name"/>
+                                    <PropertyColumn Property="x => x.PhysicalVolume" Title="Physical Volume"/>
+                                    <PropertyColumn Property="x => x.Uuid" Title="UUID" Hidden="true"/>
+                                </Columns>
+                                <ChildRowContent Context="contextVolumeGroup">
+                                    <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize"
+                                                 Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true"
+                                                 Striped="true" T="DtoLogicalVolume" Class="mb-2 full-data-grid" Elevation="5"
+                                                 Items="@contextVolumeGroup.Item.LogicalVolumes" ColumnResizeMode="ResizeMode.Column" Filterable="true"
+                                                 FilterMode="DataGridFilterMode.ColumnFilterMenu"
+                                                 FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+                                        <ToolBarContent>
+                                            <MudText Typo="Typo.h5" Color="Color.Primary">Logical Volumes</MudText>
+                                            <MudSpacer/>
+                                        </ToolBarContent>
+                                        <Columns>
+                                            <PropertyColumn Property="x => x.Name" Title="Name"/>
+                                            <PropertyColumn Property="x => x.Size" Title="Size"/>
+                                            <PropertyColumn Property="x => x.VolumeSize" Title="Volume Size"/>
+                                            <PropertyColumn Property="x => x.FsType" Title="FS"/>
+                                            <PropertyColumn Property="x => x.Uuid" Title="UUID" Hidden="true"/>
+                                            <PropertyColumn Property="x => x.UsedMb" Title="Used"/>
+                                        </Columns>
+                                    </MudDataGrid>
+                                </ChildRowContent>
+                            </MudDataGrid>
+                        }
+
+                        else
+                        {
+                            <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize"
+                                         Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true"
+                                         Striped="true" T="DtoImageFileInfo" Class="mb-2 full-data-grid" Elevation="5"
+                                         Items="@fileInfos" ColumnResizeMode="ResizeMode.Column" Filterable="true"
+                                         FilterMode="DataGridFilterMode.ColumnFilterMenu"
+                                         FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+                                <ToolBarContent>
+                                    <MudText Typo="Typo.h5" Color="Color.Primary">Image File</MudText>
+                                    <MudSpacer/>
+                                </ToolBarContent>
+                                <Columns>
+                                    <PropertyColumn Property="x => x.FileName" Title="File Name"/>
+                                    <PropertyColumn Property="x => x.FileSize" Title="Size On Server"/>
+                                </Columns>
+                            </MudDataGrid>
+                        }
+                    }
+                </ChildRowContent>
+            </MudDataGrid>
+            
+        </ChildRowContent>
+    </MudDataGrid>
+
+}
+
+@code {
+    [Parameter] public EntityImage Image { get; set; } = new();
+    private IEnumerable<DtoHardDrive> _drives = new List<DtoHardDrive>();
+    private readonly Dictionary<string, List<DtoPartition>> _partitionsDict = new();
+    private readonly Dictionary<string, List<DtoImageFileInfo>> _fileInfoDict = new();
+    private readonly Dictionary<string, List<DtoVolumeGroup>> _volumeGroupDict = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Image.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Image.Name}",new ImageBreadcrumbs(Image).History())) return;
+        await LoadSchema();
+    }
+
+    private async Task LoadSchema()
+    {
+        var schemaRequestOptions = new DtoImageSchemaRequest();
+        schemaRequestOptions.image = Image;
+        schemaRequestOptions.imageProfile = null;
+        schemaRequestOptions.schemaType = null;
+
+        _drives = await Call.ImageSchemaApi.GetHardDrives(schemaRequestOptions);
+
+        int driveIndex = 0;
+        foreach (var drive in _drives)
+        {
+            var partitionRequest = new DtoImageSchemaRequest
+            {
+                image = Image,
+                imageProfile = null,
+                schemaType = null,
+                selectedHd = drive.Name
+            };
+            var partitions = await Call.ImageSchemaApi.GetPartitions(partitionRequest) ?? new List<DtoPartition>();
+            _partitionsDict[drive.Name] = partitions.ToList();
+            foreach(var partition in partitions)
+            {
+                var fileInfo = await Call.ImageApi.GetPartitionFileInfo(Image.Id, driveIndex.ToString(), partition.Number);
+                _fileInfoDict[drive.Name+partition.Number] = fileInfo.ToList();
+                
+                if(partition.VolumeGroup?.Name is not null)
+                {
+                    _volumeGroupDict[drive.Name + partition.Number] = [partition.VolumeGroup];
+                }
+            }
+            driveIndex++;
+        }
+    }
+}

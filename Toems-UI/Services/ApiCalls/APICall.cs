@@ -15,6 +15,9 @@ namespace Toems_ApiCalls
         public WinPeModuleAPI WinPeModuleApi => new("WinPeModule",apiRequest);
         public PolicyAPI PolicyApi => new("Policy",apiRequest);
         public RemoteAccessApi RemoteAccessApi => new("RemoteAccess",apiRequest);
+        public ImageProfileAPI ImageProfileApi => new("ImageProfile",apiRequest);
+        public ImageCategoryAPI ImageCategoryApi => new("ImageCategory",apiRequest);
+        public ImageSchemaAPI ImageSchemaApi => new("ImageSchema",apiRequest);
         /*
         public MessageModuleAPI MessageModuleApi
         {
@@ -323,20 +326,11 @@ namespace Toems_ApiCalls
 
        
 
-        public ImageProfileAPI ImageProfileApi
-        {
-            get { return new ImageProfileAPI("ImageProfile",_protectedSessionStorage); }
-        }
+   
 
-        public ImageSchemaAPI ImageSchemaApi
-        {
-            get { return new ImageSchemaAPI("ImageSchema",_protectedSessionStorage); }
-        }
+     
 
-        public ImageCategoryAPI ImageCategoryApi
-        {
-            get { return new ImageCategoryAPI("ImageCategory",_protectedSessionStorage); }
-        }
+       
 
         public ImageProfileScriptAPI ImageProfileScriptApi
         {

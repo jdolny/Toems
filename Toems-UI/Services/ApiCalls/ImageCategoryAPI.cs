@@ -8,20 +8,16 @@ using Toems_Common.Entity;
 
 namespace Toems_ApiCalls
 {
-    public class ImageCategoryAPI : BaseAPI<EntityImageCategory>
+    public class ImageCategoryAPI (string resource, ApiRequest apiRequest)
+        : BaseAPI<EntityImageCategory>(resource,apiRequest)
     {
 
-        public ImageCategoryAPI(string resource, ProtectedLocalStorage protectedLocalStorage) : base(resource, protectedLocalStorage)
-        {
-            
-        }
-
-        public DtoActionResult Post(List<EntityImageCategory> imageCategories)
+        public async Task<DtoActionResult> Post(List<EntityImageCategory> imageCategories)
         {
             Request.Method = Method.Post;
-            Request.Resource = string.Format("{0}/Post/", Resource);
+            Request.Resource = $"{Resource}/Post/";
             Request.AddParameter("application/json", JsonConvert.SerializeObject(imageCategories), ParameterType.RequestBody);
-            var response = _apiRequest.Execute<DtoActionResult>(Request);
+            var response = await _apiRequest.ExecuteAsync<DtoActionResult>(Request);
             if (response != null)
             {
                 if (response.Id == 0)

@@ -1,0 +1,224 @@
+﻿@page "/images/manage"
+@using Toems_Common.Dto
+@using Toems_Common.Entity
+@using Toems_UI.Site.Pages.Images.Actions
+@using Constants = Constants
+@inject Toems_ApiCalls.APICall Call
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inherits BasePage
+
+
+<ActionButtons>
+    <MainButton>
+        <MudButton OnClick="@(() => DeleteImage())">Delete Image(s)</MudButton>
+    </MainButton>
+    <Content>
+        <MudMenuItem Label="Create Image" OnClick="@(() => CreateNew())"/>
+    </Content>
+</ActionButtons>
+
+ <MudPaper Class="pa-8 mb-8" Elevation="5">
+     <MudGrid >
+         <MudSpacer/>
+         <MudItem xs="12" md="6" Class="d-flex justify-end">
+             <div class="width-150" style="margin-right:20px;">
+                 <MudSelect Dense="true" T="string" Value="_selectedCategoryType" Label="Category Filter" SelectedValuesChanged="@(s => OnCategoryFilterTypeChanged(s))" AdornmentIcon="@Icons.Material.Filled.Category" Variant="Variant.Outlined" AdornmentColor="Color.Primary">
+                     <MudSelectItem Value="@("Any Category")">Any Category</MudSelectItem>
+                     <MudSelectItem Value="@("And Category")">And Category</MudSelectItem>
+                     <MudSelectItem Value="@("Or Category")">Or Category</MudSelectItem>
+                 </MudSelect>
+             </div>
+             <div class="width-150">
+                 <MudSelect T="string" ValueChanged="@(s => LimitUpdated(s))" Label="Limit" Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Stop" Value="_selectedLimit" ShrinkLabel>
+                     @foreach (var limit in Toems_Common.Constants.Limits)
+                     {
+                         <MudSelectItem Value="@limit">@limit</MudSelectItem>
+                     }
+                 </MudSelect>
+             </div>
+         </MudItem>
+         @if (_selectedCategoryType.Equals("And Category") || _selectedCategoryType.Equals("Or Category"))
+         {
+             <MudItem xs="12">
+                 <MudSelect T="string" Label="Selected Categories" MultiSelection="true" SelectedValuesChanged="@(s => OnCategoryChanged(s))" SelectedValues="_selectedCategories">
+                     @foreach (var category in Categories)
+                     {
+                         <MudSelectItem T="string" Value="@category.Name">@category.Name</MudSelectItem>
+                     }
+                 </MudSelect>
+             </MudItem>
+         }
+         <MudFlexBreak/>
+         <MudItem xs="12" lg="6">
+             <MudTextField T="string" ValueChanged="@(s => OnSearchChanged(s))" DebounceInterval="300" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+         </MudItem>
+     </MudGrid>
+    </MudPaper>
+<div style="height: 4px;">
+    @if (_isLoading)
+    {
+        <MudProgressLinear Color="Color.Default" Indeterminate="true" Class="my-2"/>
+    }
+</div>
+
+<MudDataGrid RowsPerPage="@Constants.DefaultPageSize" Dense="true" Hideable="true" ColumnsPanelReordering="true" ShowMenuIcon="true"  T="ImageWithDate" Class="mb-10" Elevation="5" MultiSelection="true" Items="@Images" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive" @bind-SelectedItems="_selectedImages">
+    <ToolBarContent>
+        <MudText Typo="Typo.h5" Color="Color.Primary">Images</MudText>
+        <MudSpacer/>
+    </ToolBarContent>
+    <PagerContent><MudDataGridPager T="ImageWithDate"/></PagerContent>
+    <Columns>
+        <SelectColumn T="ImageWithDate"/>
+        <PropertyColumn Property="x => x.Name" Title="Name"/>
+        <PropertyColumn Property="x => x.SizeOnServer" Title="Size On Server"/>
+        <PropertyColumn Property="x => x.Environment" Title="Imaging Environment"/>
+        <PropertyColumn Property="x => x.Enabled" Title="Enabled"/>
+        <PropertyColumn Property="x => x.Protected" Title="Protected"/>
+        <PropertyColumn Property="x => x.IsVisible" Title="On-Demand"/>
+        <PropertyColumn Property="x => x.LastUsed" Title="Last Used Date"/>
+        <TemplateColumn Title="Actions" StickyRight="true">
+            <CellTemplate>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="@(() => Navigation.NavigateTo($"/images/manage/{context.Item.Id}"))">Details</MudButton>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<ImageWithDate> Images = new List<ImageWithDate>();
+    private IEnumerable<EntityCategory> Categories = new List<EntityCategory>();
+    private IEnumerable<string> _selectedCategories = new HashSet<string> {  };
+    private readonly DtoSearchFilterCategories _imageFilter = new();
+    private HashSet<ImageWithDate> _selectedImages = []; 
+    private string? _selectedCategoryType = "Any Category";
+    private string? _selectedLimit = "50";
+    private bool _isLoading = true;
+    private string? _searchString = "";
+    
+    protected override async Task OnInitializedAsync()
+    {
+        SetTitleAndBreadcrumbs("Manage Images", new ImageBreadcrumbs().Manage());
+        
+        if (_selectedLimit != null) _imageFilter.Limit = int.Parse(_selectedLimit);
+        _imageFilter.SearchText = "";
+        _imageFilter.CategoryType = "";
+        _imageFilter.Categories = new List<string>();
+
+        Categories = await Call.CategoryApi.Get();
+        await LoadImages();
+    }
+
+
+    private async Task LoadImages()
+    {
+        _isLoading = true;
+        
+        _imageFilter.CategoryType = _selectedCategoryType;
+        if (_selectedLimit != null) _imageFilter.Limit = _imageFilter.Limit = int.Parse(_selectedLimit);
+        _imageFilter.SearchText = _searchString;
+        _imageFilter.Categories.Clear();
+        foreach (var cat in _selectedCategories)
+        {
+            _imageFilter.Categories.Add(cat);
+        }
+      
+        Images = await Call.ImageApi.Search(_imageFilter);
+        _isLoading = false;
+    }
+    
+    
+    private Task OnSearchChanged(string searchText)
+    {
+        _searchString = searchText;
+        return LoadImages();
+    }
+    
+    private Task LimitUpdated(string limit)
+    {
+        _selectedLimit = limit;
+        return LoadImages();
+    }
+    
+    private Task OnCategoryChanged(IEnumerable<string> selection)
+    {
+        _selectedCategories = selection;
+        return LoadImages();
+    }
+
+    private Task OnCategoryFilterTypeChanged(IEnumerable<string?> categoryFilterType)
+    {
+        _selectedCategoryType = categoryFilterType.FirstOrDefault();
+        return LoadImages();
+    }
+    
+    private async Task CreateNew()
+    {
+        var dialog = await DialogService.ShowAsync<ActionCreateImage>("Create", new DialogParameters(), Constants.DeleteDialogOptions);
+        await dialog.Result; // wait for the dialog to close
+        await LoadImages();
+    }
+
+    private async Task DeleteImage()
+    {
+          if (!_selectedImages.Any())
+        {
+            Snackbar.Add($"Please select at least one image to delete.", Severity.Warning);
+            return;
+        }
+        
+        var contentText = $"Are you sure you want to delete the following images?\n";
+        foreach (var image in _selectedImages)
+            contentText += $"\n{image.Name}";
+
+        var parameters = new DialogParameters<DialogConfirm>
+        {
+            { x => x.ContentText, contentText },
+            { x => x.ButtonText, "Delete" },
+            { x => x.Color, Color.Error }
+        };
+
+        var dialog = await DialogService.ShowAsync<DialogConfirm>("Delete", parameters, Constants.DeleteDialogOptions);
+        var result = await dialog.Result;
+
+        var errorCount = 0;
+        var successCount = 0;
+        if (!result.Canceled && result.Data is true)
+        {
+            foreach (var image in _selectedImages)
+            {
+                var response = await Call.ImageApi.Delete(image.Id);
+
+                if (response.Success)
+                    successCount++;
+                else
+                    errorCount++;
+            }
+
+            string message;
+            Severity severity;
+
+            if (errorCount == 0)
+            {
+                message = $"Successfully deleted {successCount} image{(successCount == 1 ? "" : "s")}.";
+                severity = Severity.Success;
+            }
+            else if (successCount == 0)
+            {
+                message = $"Failed to delete {errorCount} image{(errorCount == 1 ? "" : "s")}.  Ensure the images are not protected.";
+                severity = Severity.Error;
+            }
+            else
+            {
+                message = $"Deleted {successCount} image{(successCount == 1 ? "" : "s")} successfully. Failed to delete {errorCount}.  Ensure the images are not protected.";
+                severity = Severity.Warning;
+            }
+
+            Snackbar.Add(message, severity);
+            _selectedImages.Clear();
+            await LoadImages();
+        }
+    }
+
+}

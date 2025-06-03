@@ -1,0 +1,123 @@
+﻿@page "/images/manage/{Id:int}"
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@using Toems_UI.Site.Pages.Images.Components
+@using Toems_UI.Site.Pages.Images.Profiles
+@inject Toems_ApiCalls.APICall Call
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@inherits BasePage
+
+<ActionButtons>
+    <Content>
+        <MudMenuItem Label="Delete Image" OnClick="@((e) => DeleteImage())"/>
+    </Content>
+</ActionButtons>
+
+<MudBreakpointProvider OnBreakpointChanged="OnBreakpointChanged" />
+<MudPaper Class="pa-2 " Elevation="5"  >
+    <MudTabs Outlined="true" Position="@pos" Rounded="false" Border="true" ActivePanelIndexChanged="@(x => OnTabChanged(x))"
+             ApplyEffectsToContainer="true" Class="mt-2" PanelClass=" " ActiveTabClass="active-tab" Elevation="0" AlwaysShowScrollButtons="true" KeepPanelsAlive="false" ActivePanelIndex="@_activePanelIndex">
+        <MudTabPanel Text="Categories">
+            <MudStack Class="stack-full pa-4">
+                <Categories Image="@Image"/>
+            </MudStack>
+        </MudTabPanel>
+        <MudTabPanel Text="General">
+            <MudStack Class="stack-full pa-4">
+                <General Image="@Image"/>
+            </MudStack>
+        </MudTabPanel>
+        <MudTabPanel Text="Image History">
+            <MudStack Class="stack-full pa-4">
+                <ImageHistory Image="@Image"/>
+            </MudStack>
+        </MudTabPanel>
+        <MudTabPanel Text="Image Profiles">
+            <MudStack Class="stack-full pa-4">
+                <ImageProfiles Image="@Image" OnProfileSelected="SetProfileTab"></ImageProfiles>
+            </MudStack>
+        </MudTabPanel>
+        <MudTabPanel Text="@ImageProfile?.Name" Visible="@(ImageProfile is not null)" Disabled="@(ImageProfile is null)"  Class="sub-tab" ToolTip="This tab shows the details of the selected image profile.">
+            <MudStack Class="stack-full">
+                <ImageProfileDetails Image="@Image" ImageProfile="ImageProfile"></ImageProfileDetails>
+            </MudStack>
+        </MudTabPanel>
+        <MudTabPanel Text="Image Schema">
+            <MudStack Class="stack-full pa-4">
+                <ImageSchema Image="@Image"/>
+            </MudStack>
+        </MudTabPanel>
+        <MudTabPanel Text="Replication">
+            <MudStack Class="stack-full">
+
+            </MudStack>
+        </MudTabPanel>
+
+     
+
+
+    </MudTabs>
+</MudPaper>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    [Parameter] public EntityImage Image {get; set;} = new();
+    private int _activePanelIndex { get; set; } = 1;
+    private Position pos { get; set; } = Position.Left;
+    private ImageProfileWithImage ImageProfile { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        Image = await Call.ImageApi.Get(Id);
+        if(Image is null || Image.Id == 0)
+            NavigationManager.NavigateTo("/images/manage");
+            
+    }
+
+    private async Task OnTabChanged(int index)
+    {
+        _activePanelIndex = index;
+        Image = await Call.ImageApi.Get(Id); // Refresh the image data when the tab changes
+    }
+    private void OnBreakpointChanged(Breakpoint breakpoint)
+    {
+        pos = breakpoint < Breakpoint.Md ? Position.Top : Position.Left;
+    }
+    
+    private void SetProfileTab(ImageProfileWithImage Profile)
+    {
+        _activePanelIndex = 4;
+        ImageProfile = Profile;
+    }
+    
+    private async Task DeleteImage()
+    {
+        var contentText = $"Are you sure you want to delete this image?\n";
+
+        var parameters = new DialogParameters<DialogConfirm>
+        {
+            { x => x.ContentText, contentText },
+            { x => x.ButtonText, "Delete" },
+            { x => x.Color, Color.Error }
+        };
+
+        var dialog = await DialogService.ShowAsync<DialogConfirm>("Delete", parameters, Constants.DeleteDialogOptions);
+        var result = await dialog.Result;
+
+        if (!result.Canceled && result.Data is true)
+        {
+            var deleteResult = await Call.ImageApi.Delete(Image.Id);
+            if (deleteResult.Success)
+            {
+                
+                NavigationManager.NavigateTo("/images/manage");
+                Snackbar.Add($"Image deleted successfully.", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add(deleteResult.ErrorMessage, Severity.Error);
+            }
+        }
+    }
+}

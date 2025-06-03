@@ -1,0 +1,78 @@
+﻿@using Toems_Common.Dto
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@inject Toems_ApiCalls.APICall Call
+@inject ISnackbar Snackbar
+@layout MainLayout
+@inherits BaseComponent
+
+<ActionButtons InsertAtTop="true">
+    <MainButton>
+        <MudButton OnClick="Update">Update Image</MudButton>
+    </MainButton>
+    <Content>
+       
+    </Content>
+</ActionButtons>
+<MudPaper Elevation="2" Class="pa-4">
+<MudGrid>
+    <MudItem xs="12" lg="6">
+        <MudTextField Label="Image Name" T="string" @bind-Value="@Image.Name" Typo="Typo.body2" Variant="Variant.Outlined"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" lg="6">
+        <MudTextField Label="Description" T="string" AutoGrow="true" Lines="2" @bind-Value="@Image.Description" Typo="Typo.body2" Variant="Variant.Outlined"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" lg="6">
+        <MudTextField T="string" ReadOnly="true" Label="Imaging Client Environment" Value="@Image.Environment" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" lg="6">
+        <MudTextField T="string" ReadOnly="true" Label="Imaging Type" Value="@Image.Type" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+
+    <MudItem xs="12" lg="3">
+        <MudText Typo="Typo.body1">Protected</MudText>
+        <MudToggleGroup T="bool" Class="width-200" SelectionMode="SelectionMode.SingleSelection" @bind-Value="@Image.Protected" Color="Color.Primary" CheckMark FixedContent Size="Size.Medium">
+            <MudToggleItem Value="@(true)" Text="Yes"/>
+            <MudToggleItem Value="@(false)" Text="No"/>
+        </MudToggleGroup>
+    </MudItem>
+    <MudItem xs="12" lg="3">
+        <MudText Typo="Typo.body1">Available On-Demand</MudText>
+        <MudToggleGroup T="bool" Class="width-200" SelectionMode="SelectionMode.SingleSelection" @bind-Value="@Image.IsVisible" Color="Color.Primary"  CheckMark FixedContent Size="Size.Medium">
+            <MudToggleItem Value="@(true)" Text="Yes"/>
+            <MudToggleItem Value="@(false)" Text="No"/>
+        </MudToggleGroup>
+    </MudItem>
+    <MudItem xs="12" lg="3">
+        <MudText Typo="Typo.body1">Enabled</MudText>
+        <MudToggleGroup T="bool" Class="width-200" SelectionMode="SelectionMode.SingleSelection" @bind-Value="@Image.Enabled" Color="Color.Primary"  CheckMark FixedContent Size="Size.Medium">
+            <MudToggleItem Value="@(true)" Text="Yes"/>
+            <MudToggleItem Value="@(false)" Text="No"/>
+        </MudToggleGroup>
+    </MudItem>
+</MudGrid>
+</MudPaper>
+
+
+
+@code {
+    [Parameter] public required EntityImage Image { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Image.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Image.Name}",new ImageBreadcrumbs(Image).General())) return;
+    
+    }
+    
+    private async Task Update()
+    {
+        var result = await Call.ImageApi.Put(Image.Id,Image);
+        if(result.Success)
+            Snackbar.Add("Image updated successfully.", Severity.Success);
+        else
+            Snackbar.Add("Failed to update image.", Severity.Error);
+    }
+
+  
+
+}

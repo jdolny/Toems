@@ -46,13 +46,10 @@
     <Compile Remove="Services\ApiCalls\GroupMembershipAPI.cs" />
     <Compile Remove="Services\ApiCalls\GroupPolicyAPI.cs" />
     <Compile Remove="Services\ApiCalls\HangfireTriggerAPI.cs" />
-    <Compile Remove="Services\ApiCalls\ImageCategoryAPI.cs" />
-    <Compile Remove="Services\ApiCalls\ImageProfileAPI.cs" />
     <Compile Remove="Services\ApiCalls\ImageProfileFileCopyAPI.cs" />
     <Compile Remove="Services\ApiCalls\ImageProfileScriptAPI.cs" />
     <Compile Remove="Services\ApiCalls\ImageProfileSysprepAPI.cs" />
     <Compile Remove="Services\ApiCalls\ImageProfileTemplateApi.cs" />
-    <Compile Remove="Services\ApiCalls\ImageSchemaAPI.cs" />
     <Compile Remove="Services\ApiCalls\ImpersonationAccountAPI.cs" />
     <Compile Remove="Services\ApiCalls\MessageModuleAPI.cs" />
     <Compile Remove="Services\ApiCalls\ModuleAPI.cs" />

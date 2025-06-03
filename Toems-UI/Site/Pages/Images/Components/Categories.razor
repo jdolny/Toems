@@ -1,0 +1,82 @@
+﻿@using Toems_ApiCalls
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@layout MainLayout
+@inject APICall Call
+@inherits BaseComponent
+@inject ISnackbar Snackbar
+<ActionButtons InsertAtTop="true">
+    <MainButton>
+        <MudButton OnClick="@(() => UpdateCategories())">Update Categories</MudButton>
+    </MainButton>
+    <Content/>
+</ActionButtons>
+@if(!_categories.Any())  
+{
+    <MudText Typo="Typo.body2">No categories have been defined.  They can be created in Global Properties.</MudText>
+}
+else
+{
+    <MudDataGrid @bind-SelectedItems="@_selectedCategories" ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize"  MultiSelection="true" Dense="false" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityCategory" Class="mb-2 full-data-grid" Elevation="5" Items="@_categories" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+        <ToolBarContent>
+            <MudText Typo="Typo.h5" Color="Color.Primary">Image Categories</MudText>
+            <MudSpacer/>
+        </ToolBarContent>
+        <PagerContent><MudDataGridPager T="EntityCategory"/></PagerContent>
+        <Columns>
+            <SelectColumn T="EntityCategory"/>
+            <PropertyColumn Property="x => x.Name" Title="Name"/>
+            <PropertyColumn Property="x => x.Description" Title="Description"/>
+        </Columns>
+    </MudDataGrid>
+}
+
+@code {
+    [Parameter] public EntityImage Image { get; set; } = new();
+    private IEnumerable<EntityCategory> _categories = new List<EntityCategory>();
+    private HashSet<EntityCategory> _selectedCategories = []; 
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Image.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Image.Name}",new ImageBreadcrumbs(Image).Categories())) return;
+        await LoadCategories();
+    }
+
+    private async Task LoadCategories()
+    {
+        _categories = await Call.CategoryApi.Get();
+        IEnumerable<EntityImageCategory> imageCategories = await Call.ImageApi.GetImageCategories(Image.Id);
+        _selectedCategories = new HashSet<EntityCategory>(
+            imageCategories
+                .Select(ic => _categories.FirstOrDefault(c => c.Id == ic.CategoryId))
+                .Where(c => c != null)! 
+        );
+      
+    }
+
+    private async Task UpdateCategories()
+    {
+        if (!_selectedCategories.Any())
+        {
+            var result = await Call.ImageCategoryApi.Delete(Image.Id);
+            if (result != null)
+            {
+                Snackbar.Add(result.Success ? "Successfully updated image categories." : result.ErrorMessage, result.Success ? Severity.Success : Severity.Error);
+            }
+        }
+        else
+        {
+            var imageCategories = _selectedCategories.Select(c => new EntityImageCategory
+            {
+                ImageId = Image.Id,
+                CategoryId = c.Id
+            }).ToList();
+            var updateResult = await Call.ImageCategoryApi.Post(imageCategories);
+            if (updateResult != null)
+            {
+                Snackbar.Add(updateResult.Success ? "Successfully updated image categories." : updateResult.ErrorMessage, updateResult.Success ? Severity.Success : Severity.Error);
+            }
+        }
+        await LoadCategories();
+    }
+}

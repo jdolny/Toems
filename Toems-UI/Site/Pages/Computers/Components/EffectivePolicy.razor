@@ -23,14 +23,14 @@
 </ActionButtons>
 
 <MudGrid >
-    <MudItem xs="12" sm="6">
+    <MudItem xs="12" lg="6">
         <MudSelect Dense="true" T="string" Value="_selectedClientAction" Label="Client Action" ValueChanged="@(s => OnClientActionChanged(s))" AdornmentIcon="@Icons.Material.Filled.Category" Variant="Variant.Outlined" AdornmentColor="Color.Primary">
             <MudSelectItem Value="@("Startup")">Startup</MudSelectItem>
             <MudSelectItem Value="@("Checkin")">Checkin</MudSelectItem>
             <MudSelectItem Value="@("Login")">Login</MudSelectItem>
         </MudSelect>
     </MudItem>
-    <MudItem xs="12" sm="6">
+    <MudItem xs="12" lg="6">
     <MudSelect Dense="true" T="string" Value="_selectedComServer" Label="Com Server" ValueChanged="@(s => OnComServerChanged(s))" AdornmentIcon="@Icons.Material.Filled.Category" Variant="Variant.Outlined" AdornmentColor="Color.Primary">
         @foreach (var com in _clientComServers)
         {
@@ -67,10 +67,5 @@
     {
         _selectedComServer = comUrl;
         return LoadEffectivePolicies();
-    }
-    
-    private async Task TestClick()
-    {
-        var updatedPolicyText = await aceEditor.GetValueAsync();
     }
 }

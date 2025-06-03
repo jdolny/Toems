@@ -1,0 +1,43 @@
+﻿@using Toems_ApiCalls
+@using Toems_Common.Dto
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@layout MainLayout
+@inject APICall Call
+@inherits BaseComponent
+<ActionButtons InsertAtTop="true">
+    <MainButton/>
+    <Content/>
+</ActionButtons>
+@if(!_windowsUpdates.Any())  
+{
+    <MudText Typo="Typo.body2">No windows updates have been found.</MudText>
+}
+else
+{
+    <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="DtoComputerUpdates" Class="mb-2 full-data-grid" Elevation="5" Items="@_windowsUpdates" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+        <ToolBarContent>
+            <MudText Typo="Typo.h5" Color="Color.Primary">Computer Windows Updates</MudText>
+            <MudSpacer/>
+        </ToolBarContent>
+        <PagerContent><MudDataGridPager T="DtoComputerUpdates"/></PagerContent>
+        <Columns>
+            <PropertyColumn Property="x => x.IsInstalled" Title="Installed"/>
+            <PropertyColumn Property="x => x.Title" Title="Name"/>
+            <PropertyColumn Property="x => x.InstallDate" Title="Install Date"/>
+            <PropertyColumn Property="x => x.Category" Title="Category"/>
+            <PropertyColumn Property="x => x.UpdateId" Title="Update Id"/>
+        </Columns>
+    </MudDataGrid>
+}
+
+@code {
+    [Parameter] public EntityComputer Computer { get; set; } = new();
+    private IEnumerable<DtoComputerUpdates> _windowsUpdates = new List<DtoComputerUpdates>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Computer.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Computer.Name}",new ComputerBreadcrumbs(Computer.Name).WindowsUpdates())) return;
+        _windowsUpdates = await Call.ComputerApi.GetUpdates(Computer.Id, "");
+    }
+}

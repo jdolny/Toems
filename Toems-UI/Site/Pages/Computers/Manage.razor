@@ -1,10 +1,7 @@
 ﻿@page "/computers/manage"
-@using Toems_Common
 @using Toems_Common.Dto
 @using Toems_Common.Entity
-@using Toems_UI.Site.Layout
 @using Toems_UI.Site.Pages.Computers.Actions
-@using Toems_UI.Site.Pages.Computers.Components
 @using Constants = Constants
 @inject Toems_ApiCalls.APICall Call
 @inject NavigationManager Navigation
@@ -26,8 +23,8 @@
     <MudPaper Class="pa-8 mb-8" Elevation="5">
 
         <MudGrid >
-            <MudItem xs="12" md="6">
-                <MudToggleGroup ValueChanged="@(s => FilterUpdated(s))" Value="_computerSelection" T="string" SelectionMode="SelectionMode.SingleSelection" Color="Color.Primary" Style="width: 350px;">
+            <MudItem xs="12" md="6" Class="lg-max-width-700">
+                <MudToggleGroup ValueChanged="@(s => FilterUpdated(s))" Value="_computerSelection" T="string" SelectionMode="SelectionMode.SingleSelection" Color="Color.Primary" >
                     <MudToggleItem Value="@("Active")" Text="Active"/>
                     <MudToggleItem Value="@("All")" Text="All"/>
                     <MudToggleItem Value="@("Unmanaged")" Text="Unmanaged"/>
@@ -63,10 +60,10 @@
             }
 
 
-            <MudItem xs="12" md="6">
-                <div class="width-600">
+            <MudItem xs="12" lg="6">
+ 
                     <MudTextField T="string" ValueChanged="@(s => OnSearchChanged(s))" DebounceInterval="300" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" HelperText="Computer Name, Serial Number, IP Address, MAC Address, GUID, Installation ID, Custom Attribute"/>
-                </div>
+
             </MudItem>
 
 
@@ -78,7 +75,7 @@
             <MudProgressLinear Color="Color.Default" Indeterminate="true" Class="my-2"/>
         }
     </div>
-<div class="clear"></div>
+
 
     <MudDataGrid RowsPerPage="@Constants.DefaultPageSize" Dense="true" Hideable="true" ColumnsPanelReordering="true" ShowMenuIcon="true"  T="EntityComputer" Class="mb-10" Elevation="5" MultiSelection="true" Items="@Computers" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive" @bind-SelectedItems="_selectedComputers">
         <ToolBarContent>

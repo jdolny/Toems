@@ -1,4 +1,5 @@
-﻿@using Toems_ApiCalls
+﻿@using System.Globalization
+@using Toems_ApiCalls
 @using Toems_Common.Dto
 @using Toems_Common.Entity
 @using Toems_UI.Site.Layout
@@ -7,10 +8,15 @@
 @inherits BaseComponent
 @inject ISnackbar Snackbar
 
+<ActionButtons InsertAtTop="true">
+    <MainButton/>
+    <Content/>
+</ActionButtons>
+
 <MudTabs Outlined="true" Position="Position.Top" Centered="true" Rounded="false" Border="true"  
          ApplyEffectsToContainer="false" Class="mt-2" PanelClass="pa-4" Elevation="0" >
 <MudTabPanel Text="OS">
-<MudStack Class="stack-full">
+
     <MudGrid >
         <MudItem xs="12" md="6">
             <MudTextField T="string" ReadOnly="true" Label="Computer Name" Value="@(_inventory.ComputerSystem.Name ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
@@ -47,11 +53,9 @@
         </MudItem>
         
     </MudGrid>
-</MudStack>
+
 </MudTabPanel>
 <MudTabPanel Text="Hardware">
-    
-    <MudStack Class="stack-full">
         <MudGrid >
             <MudItem xs="12" md="6">
                 <MudTextField T="string" ReadOnly="true" Label="Manufacturer" Value="@(_inventory.ComputerSystem.Manufacturer ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
@@ -72,7 +76,7 @@
                 <MudTextField T="string" ReadOnly="true" Label="Processor" Value="@(_inventory.Processor.Name ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudTextField T="string" ReadOnly="true" Label="Processor Clock Speed" Value="@(_inventory.Processor.MaxClockSpeed.ToString() ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+                <MudTextField T="string" ReadOnly="true" Label="Processor Clock Speed" Value="@(_inventory.Processor.Speed.ToString() ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
             </MudItem>
             <MudItem xs="12" md="6">
                 <MudTextField T="string" ReadOnly="true" Label="Processor Cores" Value="@(_inventory.Processor.Cores.ToString() ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
@@ -135,16 +139,88 @@
                 <PropertyColumn Property="x => x.Memory" Title="Memory (MB)"/>
             </Columns>
         </MudDataGrid>
-    </MudStack>
 </MudTabPanel>
     <MudTabPanel Text="Security">
-     
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="UAC Status" Value="@(_inventory.Os.UacStatus ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Location Services Enabled" Value="@(_inventory.Os.LocationEnabled.ToString() ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Domain Firewall Enabled" Value="@(_inventory.Firewall.DomainEnabled.ToString() ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Private Firewall Enabled" Value="@(_inventory.Firewall.PrivateEnabled.ToString() ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Public Firewall Enabled" Value="@(_inventory.Firewall.PublicEnabled.ToString() ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Update Server" Value="@(_inventory.Os.UpdateServer ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Update Server Target Group" Value="@(string.IsNullOrEmpty(_inventory.Os.SUStargetGroup) ? "N/A" : _inventory.Os.SUStargetGroup )" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+        </MudGrid>
+        <br/>
+        <MudDataGrid RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityAntivirusInventory" Class="mb-2 full-data-grid" Elevation="2" Items="@_inventory.AntiVirus" ColumnResizeMode="ResizeMode.Column">
+            <ToolBarContent>
+                <MudText Typo="Typo.h5" Color="Color.Primary">AntiVirus</MudText>
+                <MudSpacer/>
+            </ToolBarContent>
+            <Columns>
+                <PropertyColumn Property="x => x.DisplayName" Title="Name"/>
+                <PropertyColumn Property="x => x.Provider" Title="Provider"/>
+                <PropertyColumn Property="x => x.RealtimeScanner" Title="Real Time Scanner Status"/>
+                <PropertyColumn Property="x => x.DefinitionStatus" Title="Definition Status"/>
+                <PropertyColumn Property="x => x.ProductState" Title="Product State"/>
+            </Columns>
+        </MudDataGrid>
+        <br/>
+        <MudDataGrid RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityBitlockerInventory" Class="mb-2 full-data-grid" Elevation="2" Items="@_inventory.Bitlocker" ColumnResizeMode="ResizeMode.Column">
+            <ToolBarContent>
+                <MudText Typo="Typo.h5" Color="Color.Primary">Bitlocker</MudText>
+                <MudSpacer/>
+            </ToolBarContent>
+            <Columns>
+                <PropertyColumn Property="x => x.DriveLetter" Title="Drive"/>
+                <PropertyColumn Property="x => x.Status" Title="Status"/>
+            </Columns>
+        </MudDataGrid>
     </MudTabPanel>
     <MudTabPanel Text="Printers">
-     
+        <MudDataGrid RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityPrinterInventory" Class="mb-2 full-data-grid" Elevation="2" Items="@_inventory.Printers" ColumnResizeMode="ResizeMode.Column">
+            <ToolBarContent>
+                <MudText Typo="Typo.h5" Color="Color.Primary">Printers</MudText>
+                <MudSpacer/>
+            </ToolBarContent>
+            <Columns>
+                <PropertyColumn Property="x => x.Name" Title="Name"/>
+                <PropertyColumn Property="x => x.SystemName" Title="System"/>
+                <PropertyColumn Property="x => x.ShareName" Title="Share"/>
+                <PropertyColumn Property="x => x.DriverName" Title="Driver"/>
+                <PropertyColumn Property="x => x.Local" Title="Local"/>
+                <PropertyColumn Property="x => x.Network" Title="Network"/>
+            </Columns>
+        </MudDataGrid>
     </MudTabPanel>
     <MudTabPanel Text="Location">
-       
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Latitude" Value="@(_inventory.Os.Latitude ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Longitude" Value="@(_inventory.Os.Longitude ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" ReadOnly="true" Label="Last Location Update" Value="@(_inventory.Os.LastLocationUpdateUtc.ToString(CultureInfo.InvariantCulture) ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudLink Target="_blank" Href="@($"https://www.google.com/maps/search/?api=1&query={_inventory.Os.Latitude},{_inventory.Os.Longitude}")">View on Google Maps</MudLink>
+                </MudItem>
+        </MudGrid>
     </MudTabPanel>
 
 </MudTabs>

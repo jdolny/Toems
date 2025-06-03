@@ -62,6 +62,18 @@ public class ComputerBreadcrumbs(string computerName = "")
     {
         return [_home, _manage, _computerName, new("System Information", href: null, disabled: true)];
     }
+    public List<BreadcrumbItem> Usages()
+    {
+        return [_home, _manage, _computerName, new("Usages", href: null, disabled: true)];
+    }
+    public List<BreadcrumbItem> UserLogins()
+    {
+        return [_home, _manage, _computerName, new("User Logins", href: null, disabled: true)];
+    }
+    public List<BreadcrumbItem> WindowsUpdates()
+    {
+        return [_home, _manage, _computerName, new("Windows Updates", href: null, disabled: true)];
+    }
     public List<BreadcrumbItem> Manage()
     {
         return [_home, _manage];

@@ -1,0 +1,78 @@
+﻿@using Toems_Common.Dto
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@inject Toems_ApiCalls.APICall Call
+@inject ISnackbar Snackbar
+@layout MainLayout
+@inherits BaseComponent
+
+<ActionButtons InsertAtTop="true">
+    <MainButton>
+        
+    </MainButton>
+    <Content>
+       
+    </Content>
+</ActionButtons>
+
+    <MudTabs Outlined="true" Position="Position.Left" Rounded="false" Border="true"  Style="background-color:blue;"
+             ApplyEffectsToContainer="true" Class="sub-tab" PanelClass="pa-4" TabHeaderClass="sub-tab-header" Elevation="0" AlwaysShowScrollButtons="true" KeepPanelsAlive="false">
+        <MudTabPanel Text="Custom Scripts">
+            <MudStack Class="stack-full">
+               
+            </MudStack>
+        </MudTabPanel>
+        <MudTabPanel Text="Deploy Options">
+            <MudStack Class="stack-full">
+               
+            </MudStack>
+        </MudTabPanel>
+        <MudTabPanel Text="Drivers and Files">
+            <MudStack Class="stack-full">
+               
+            </MudStack>
+        </MudTabPanel>
+        <MudTabPanel Text="General">
+            <MudStack Class="stack-full">
+               
+            </MudStack>
+        </MudTabPanel>
+        <MudTabPanel Text="Multicast Options">
+            <MudStack Class="stack-full">
+               
+            </MudStack>
+        </MudTabPanel>
+        <MudTabPanel Text="PXE Boot Options">
+            <MudStack Class="stack-full">
+               
+            </MudStack>
+        </MudTabPanel>
+      
+        <MudTabPanel Text="Sysprep Modifications">
+            <MudStack Class="stack-full">
+               
+            </MudStack>
+        </MudTabPanel>
+        <MudTabPanel Text="Task Options">
+            <MudStack Class="stack-full">
+               
+            </MudStack>
+        </MudTabPanel>
+        <MudTabPanel Text="Upload Options">
+            <MudStack Class="stack-full">
+               
+            </MudStack>
+        </MudTabPanel>
+     
+    </MudTabs>
+
+
+@code {
+    [Parameter] public required EntityImage Image { get; set; }
+    [Parameter] public required ImageProfileWithImage ImageProfile { get; set; }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Image.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Image.Name}",new ImageBreadcrumbs(Image,ImageProfile).ProfileScripts())) return;
+    
+    }
+}

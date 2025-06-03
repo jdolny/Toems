@@ -7,15 +7,14 @@
 <MudDialog >
     <TitleContent>
         <MudText Typo="Typo.h6">
-            @Computer.Name
+            @Image.Name
         </MudText>
     </TitleContent>
     <DialogContent>
-        <AceEditor Value="@PolicyJson" Mode="json" IsReadOnly="true"/>
+        <AceEditor Value="@ObjectJson" Mode="json" IsReadOnly="true"/>
         <br/>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Export">Export Policy</MudButton>
         <MudButton OnClick="Cancel">Close</MudButton>
 
     </DialogActions>
@@ -26,17 +25,13 @@
     [CascadingParameter]
     private IMudDialogInstance MudDialog { get; set; }
     [Parameter]
-    public EntityComputer Computer { get; set; }
+    public EntityImage Image { get; set; }
+
     [Parameter]
-    public string PolicyName { get; set; }
-    [Parameter]
-    public string PolicyJson { get; set; }
+    public string ObjectJson { get; set; }
 
     private void Cancel() => MudDialog.Cancel();
 
     
-    private async Task Export()
-    {
-        await JSRuntime.InvokeVoidAsync("saveAsTextFile", PolicyJson, $"{Computer.Name}-{PolicyName}.log");
-    }
+ 
 }

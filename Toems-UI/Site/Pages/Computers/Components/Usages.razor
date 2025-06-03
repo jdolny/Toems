@@ -1,0 +1,158 @@
+﻿@using Toems_ApiCalls
+@using Toems_Common.Dto
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@layout MainLayout
+@inject APICall Call
+@inherits BaseComponent
+@inject NavigationManager Navigation
+
+<ActionButtons InsertAtTop="true">
+    <MainButton/>
+    <Content/>
+</ActionButtons>
+
+<MudTabs Outlined="true" Position="Position.Top" Rounded="false" Border="true" 
+         ApplyEffectsToContainer="false" Class="mt-2" PanelClass="pa-4" Elevation="0" Centered="true" >
+    <MudTabPanel Text="Groups">
+        <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="DtoGroupImage" Class="mb-2 full-data-grid" Elevation="5" Items="@_groups" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+            <ToolBarContent>
+                <MudText Typo="Typo.h5" Color="Color.Primary">Groups</MudText>
+                <MudSpacer/>
+            </ToolBarContent>
+            <PagerContent><MudDataGridPager T="DtoGroupImage"/></PagerContent>
+            <Columns>
+                <PropertyColumn Property="x => x.GroupName" Title="Name"/>
+                <PropertyColumn Property="x => x.GroupDn" Title="Dn"/>
+                <PropertyColumn Property="x => x.ImageName" Title="Image"/>
+                <PropertyColumn Property="x => x.ProfileName" Title="Image Profile"/>
+                <PropertyColumn Property="x => x.ImagePriority" Title="Imaging Priority"/>
+                <PropertyColumn Property="x => x.EmPriority" Title="Endpoint Management Priority"/>
+                <TemplateColumn Title="View">
+                    <CellTemplate>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Href="@($"/Groups/Manage/{context.Item.GroupId}")" Target="_blank">View</MudButton>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+        </MudDataGrid>
+    </MudTabPanel>
+    <MudTabPanel Text="Policies">
+        <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityPolicy" Class="mb-2 full-data-grid" Elevation="5" Items="@_policies" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+            <ToolBarContent>
+                <MudText Typo="Typo.h5" Color="Color.Primary">Policies</MudText>
+                <MudSpacer/>
+            </ToolBarContent>
+            <PagerContent><MudDataGridPager T="EntityPolicy"/></PagerContent>
+            <Columns>
+                <PropertyColumn Property="x => x.Name" Title="Name"/>
+                <PropertyColumn Property="x => x.Description" Title="Description" Hidden="true"/>
+                <TemplateColumn Title="View">
+                    <CellTemplate>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Href="@($"/Policies/Manage/{context.Item.Id}")" Target="_blank">View</MudButton>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+        </MudDataGrid>
+    </MudTabPanel>
+    <MudTabPanel Text="Modules">
+        <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="DtoModule" Class="mb-2 full-data-grid" Elevation="5" Items="@_modules" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+            <ToolBarContent>
+                <MudText Typo="Typo.h5" Color="Color.Primary">Modules</MudText>
+                <MudSpacer/>
+            </ToolBarContent>
+            <PagerContent><MudDataGridPager T="DtoModule"/></PagerContent>
+            <Columns>
+                <PropertyColumn Property="x => x.Name" Title="Name"/>
+                <PropertyColumn Property="x => x.ModuleType" Title="Type"/>
+                <PropertyColumn Property="x => x.Guid" Title="Guid"/>
+                <PropertyColumn Property="x => x.Description" Title="Description" Hidden="true"/>
+                <TemplateColumn Title="View">
+                    <CellTemplate>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Href="@($"/Policies/Manage/{context.Item.Id}")" Target="_blank">View</MudButton>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+        </MudDataGrid>
+    </MudTabPanel>
+   
+    <MudTabPanel Text="Image Servers">
+        <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityClientComServer" Class="mb-2 full-data-grid" Elevation="5" Items="@_imageServers" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+            <ToolBarContent>
+                <MudText Typo="Typo.h5" Color="Color.Primary">Image Servers</MudText>
+                <MudSpacer/>
+            </ToolBarContent>
+            <PagerContent><MudDataGridPager T="EntityClientComServer"/></PagerContent>
+            <Columns>
+                <PropertyColumn Property="x => x.DisplayName" Title="Name"/>
+                <PropertyColumn Property="x => x.Url" Title="Url"/>
+                <PropertyColumn Property="x => x.Description" Title="Description" Hidden="true"/>
+                <TemplateColumn Title="View">
+                    <CellTemplate>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Href="@($"/Policies/Manage/{context.Item.Id}")" Target="_blank">View</MudButton>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+        </MudDataGrid>
+    </MudTabPanel>
+    <MudTabPanel Text="Tftp Servers">
+        <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityClientComServer" Class="mb-2 full-data-grid" Elevation="5" Items="@_tftpServers" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+            <ToolBarContent>
+                <MudText Typo="Typo.h5" Color="Color.Primary">Tftp Servers</MudText>
+                <MudSpacer/>
+            </ToolBarContent>
+            <PagerContent><MudDataGridPager T="EntityClientComServer"/></PagerContent>
+            <Columns>
+                <PropertyColumn Property="x => x.DisplayName" Title="Name"/>
+                <PropertyColumn Property="x => x.Url" Title="Url"/>
+                <PropertyColumn Property="x => x.Description" Title="Description" Hidden="true"/>
+                <TemplateColumn Title="View">
+                    <CellTemplate>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Href="@($"/Policies/Manage/{context.Item.Id}")" Target="_blank">View</MudButton>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+        </MudDataGrid>
+    </MudTabPanel>
+    <MudTabPanel Text="Endpoint Management Servers">
+        <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityClientComServer" Class="mb-2 full-data-grid" Elevation="5" Items="@_emServers" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+            <ToolBarContent>
+                <MudText Typo="Typo.h5" Color="Color.Primary">Endpoint Management Servers</MudText>
+                <MudSpacer/>
+            </ToolBarContent>
+            <PagerContent><MudDataGridPager T="EntityClientComServer"/></PagerContent>
+            <Columns>
+                <PropertyColumn Property="x => x.DisplayName" Title="Name"/>
+                <PropertyColumn Property="x => x.Url" Title="Url"/>
+                <PropertyColumn Property="x => x.Description" Title="Description" Hidden="true"/>
+                <TemplateColumn Title="View">
+                    <CellTemplate>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Href="@($"/Policies/Manage/{context.Item.Id}")" Target="_blank">View</MudButton>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+        </MudDataGrid>
+    </MudTabPanel>
+</MudTabs>
+
+
+
+@code {
+    [Parameter] public EntityComputer Computer { get; set; } = new();
+    private IEnumerable<DtoGroupImage> _groups = new List<DtoGroupImage>();
+    private IEnumerable<EntityPolicy> _policies = new List<EntityPolicy>();
+    private IEnumerable<DtoModule> _modules = new List<DtoModule>();
+    private IEnumerable<EntityClientComServer> _emServers = new List<EntityClientComServer>();
+    private IEnumerable<EntityClientComServer> _imageServers = new List<EntityClientComServer>();
+    private IEnumerable<EntityClientComServer> _tftpServers = new List<EntityClientComServer>();
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Computer.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Computer.Name}",new ComputerBreadcrumbs(Computer.Name).Usages())) return;
+        _groups = await Call.ComputerApi.GetComputerGroupsWithImage(Computer.Id);
+        _policies = await Call.ComputerApi.GetComputerPolicies(Computer.Id);
+        _modules = await Call.ComputerApi.GetComputerModules(Computer.Id);
+        _emServers = await Call.ComputerApi.GetComputerEmServers(Computer.Id);
+        _imageServers = await Call.ComputerApi.GetComputerImageServers(Computer.Id);
+        _tftpServers = await Call.ComputerApi.GetComputerTftpServers(Computer.Id);
+    }
+}

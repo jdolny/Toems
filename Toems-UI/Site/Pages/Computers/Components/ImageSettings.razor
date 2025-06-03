@@ -20,7 +20,7 @@
 <MudTabPanel Text="Assigned Image">
 <MudStack Class="stack-full">
     <MudGrid >
-        <MudItem xs="12" sm="6">
+        <MudItem xs="12" lg="6">
             <MudSelect Dense="true" T="int" Value="@Computer.ImageId" Label="Image"  ValueChanged="@(s => OnImageChanged(s))" AdornmentIcon="@Icons.Material.Filled.Category" Variant="Variant.Outlined" AdornmentColor="Color.Primary">
                 <MudSelectItem Value="-1">Select an image</MudSelectItem>
                 @foreach (var image in _images)
@@ -30,7 +30,7 @@
             </MudSelect>
         </MudItem>
         <MudFlexBreak/>
-        <MudItem xs="12" sm="6">
+        <MudItem xs="12" lg="6">
             <MudSelect Dense="true" T="int" @bind-Value="@Computer.ImageProfileId" Label="Image Profile"  AdornmentIcon="@Icons.Material.Filled.Category" Variant="Variant.Outlined" AdornmentColor="Color.Primary">
                 <MudSelectItem Value="-1">Select an image profile</MudSelectItem>
                 @foreach (var profile in _imageProfiles)
@@ -40,7 +40,7 @@
             </MudSelect>
         </MudItem>
         <MudFlexBreak/>
-        <MudItem xs="12" sm="6">
+        <MudItem xs="12" lg="6">
             <MudSelect Dense="true" T="int" @bind-Value="@Computer.WinPeModuleId" Label="WinPE Module" AdornmentIcon="@Icons.Material.Filled.Category" Variant="Variant.Outlined" AdornmentColor="Color.Primary">
                 <MudSelectItem Value="-1">Select a WinPE module</MudSelectItem>
                 @foreach (var module in _winPeModules)
@@ -54,31 +54,31 @@
 </MudTabPanel>
     <MudTabPanel Text="Effective Image">
         <MudGrid>
-            <MudItem xs="12" sm="6">
+            <MudItem xs="12" lg="6">
                 <MudTextField T="string" Label="Effective Image" Value="@_effectiveImage" Typo="Typo.body2" Variant="Variant.Text" ReadOnly="true"></MudTextField>
             </MudItem>
             <MudFlexBreak/>
-            <MudItem xs="12" sm="6">
+            <MudItem xs="12" lg="6">
                 <MudTextField T="string" Label="Effective Image Profile" Value="@_effectiveImageProfile" Typo="Typo.body2" Variant="Variant.Text" ReadOnly="true"></MudTextField>
             </MudItem>
             <MudFlexBreak/>
-        <MudItem xs="12" sm="6">
+        <MudItem xs="12" lg="6">
             <MudTextField T="string" Label="Effective WinPE Module" Value="@_effectiveWinPeModule" Typo="Typo.body2" Variant="Variant.Text" ReadOnly="true"></MudTextField>
         </MudItem>
         </MudGrid>
     </MudTabPanel>
     <MudTabPanel Text="Static IP Settings">
         <MudGrid>
-            <MudItem xs="12" sm="6">
+            <MudItem xs="12" lg="6">
                 <MudTextField T="string" Label="IP Address" @bind-Value="@Computer.PxeIpAddress" Typo="Typo.body2" Variant="Variant.Outlined"></MudTextField>
             </MudItem>
-            <MudItem xs="12" sm="6">
+            <MudItem xs="12" lg="6">
                 <MudTextField T="string" Label="Netmask" @bind-Value="@Computer.PxeNetmask" Typo="Typo.body2" Variant="Variant.Outlined"></MudTextField>
             </MudItem>
-            <MudItem xs="12" sm="6">
+            <MudItem xs="12" lg="6">
                 <MudTextField T="string" Label="Gateway" @bind-Value="@Computer.PxeGateway" Typo="Typo.body2" Variant="Variant.Outlined"></MudTextField>
             </MudItem>
-            <MudItem xs="12" sm="6">
+            <MudItem xs="12" lg="6">
                 <MudTextField T="string" Label="DNS" @bind-Value="@Computer.PxeDns" Typo="Typo.body2" Variant="Variant.Outlined"></MudTextField>
             </MudItem>
         </MudGrid>

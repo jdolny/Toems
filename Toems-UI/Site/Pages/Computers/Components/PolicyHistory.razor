@@ -8,15 +8,20 @@
 @inherits BaseComponent
 @inject IDialogService DialogService
 
+<ActionButtons InsertAtTop="true">
+    <MainButton/>
+    <Content/>
+</ActionButtons>
+
 @if(!_policyHistories.Any())  
 {
     <MudText Typo="Typo.body2">No policies have been run on this computer.</MudText>
 }
 else
 {
-    <MudDataGrid RowsPerPage="@Constants.DefaultPageSize" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="DtoComputerPolicyHistory" Class="mb-2 full-data-grid" Elevation="5" Items="@_policyHistories" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+    <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="DtoComputerPolicyHistory" Class="mb-2 full-data-grid" Elevation="5" Items="@_policyHistories" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
         <ToolBarContent>
-            <MudText Typo="Typo.h5">Policy History</MudText>
+            <MudText Typo="Typo.h5" Color="Color.Primary">Policy History</MudText>
             <MudSpacer/>
         </ToolBarContent>
         <PagerContent><MudDataGridPager T="DtoComputerPolicyHistory"/></PagerContent>

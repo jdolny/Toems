@@ -15,9 +15,9 @@
 }
 else
 {
-    <MudDataGrid RowsPerPage="@Constants.DefaultPageSize" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="DtoCustomComputerInventory" Class="mb-2 full-data-grid" Elevation="5" Items="@_customInventory" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+    <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="DtoCustomComputerInventory" Class="mb-2 full-data-grid" Elevation="5" Items="@_customInventory" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
         <ToolBarContent>
-            <MudText Typo="Typo.h5">Custom Inventory</MudText>
+            <MudText Typo="Typo.h5" Color="Color.Primary">Custom Inventory</MudText>
             <MudSpacer/>
         </ToolBarContent>
         <PagerContent><MudDataGridPager T="DtoCustomComputerInventory"/></PagerContent>

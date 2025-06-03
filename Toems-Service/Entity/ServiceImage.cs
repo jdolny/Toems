@@ -157,11 +157,17 @@ namespace Toems_Service.Entity
         public List<EntityAuditLog> GetImageAuditLogs(int imageId, int limit)
         {
             if (limit == 0) limit = int.MaxValue;
-            return
+            var logs =
                 _uow.AuditLogRepository.Get(x => x.ObjectType == "Image" && x.ObjectId == imageId)
                     .OrderByDescending(x => x.Id)
                     .Take(limit)
                     .ToList();
+            foreach (var log in logs)
+            {
+                if (string.IsNullOrEmpty(log.UserName))
+                    log.UserName = new ServiceUser().GetUserName(log.UserId);
+            }
+            return logs;
         }
 
 
@@ -289,6 +295,7 @@ namespace Toems_Service.Entity
                 imageWithDate.LastUploadGuid = image.LastUploadGuid;
                 imageWithDate.Type = image.Type;
                 imageWithDate.Description = image.Description;
+                imageWithDate.SizeOnServer = ImageSizeOnServerForGridView(image.Name, "0");
                 listWithDate.Add(imageWithDate);
             }
 

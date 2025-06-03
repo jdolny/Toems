@@ -16,17 +16,17 @@
     <MudText Typo="Typo.body2">No imaging logs are available for this computer.</MudText>
 }
 else
-{
-    <MudDataGrid HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityComputerLog" Class="mb-2 full-data-grid" Elevation="5" Items="@_imagingLogs" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+{ 
+    <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityComputerLog" Class="mb-2 full-data-grid" Elevation="5" Items="@_imagingLogs" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
         <ToolBarContent>
-            <MudText Typo="Typo.h5">Imaging Logs</MudText>
+            <MudText Typo="Typo.h5" Color="Color.Primary">Imaging Logs</MudText>
             <MudSpacer/>
         </ToolBarContent>
         <PagerContent><MudDataGridPager T="EntityComputerLog"/></PagerContent>
         <Columns>
             <PropertyColumn Property="x => x.SubType" Title="Type"/>
-            <PropertyColumn Property="x => x.LogTime" Title="Time" c/>
-            <TemplateColumn Title="Actions" StickyRight="true">
+            <PropertyColumn Property="x => x.LogTime" Title="Time"/>
+            <TemplateColumn Title="Actions" >
                 <CellTemplate>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="@(() => ViewLog(context.Item.Id))">View Log</MudButton>
                 </CellTemplate>

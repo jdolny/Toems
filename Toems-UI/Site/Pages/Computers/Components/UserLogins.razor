@@ -1,0 +1,40 @@
+﻿@using Toems_ApiCalls
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@layout MainLayout
+@inject APICall Call
+@inherits BaseComponent
+<ActionButtons InsertAtTop="true">
+    <MainButton/>
+    <Content/>
+</ActionButtons>
+@if(!_userLogins.Any())  
+{
+    <MudText Typo="Typo.body2">No user login history has been found.</MudText>
+}
+else
+{
+    <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityUserLogin" Class="mb-2 full-data-grid" Elevation="5" Items="@_userLogins" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+        <ToolBarContent>
+            <MudText Typo="Typo.h5" Color="Color.Primary">Computer Login History</MudText>
+            <MudSpacer/>
+        </ToolBarContent>
+        <PagerContent><MudDataGridPager T="EntityUserLogin"/></PagerContent>
+        <Columns>
+            <PropertyColumn Property="x => x.UserName" Title="Username"/>
+            <PropertyColumn Property="x => x.LoginDateTime" Title="Login Date"/>
+            <PropertyColumn Property="x => x.LogoutDateTime" Title="Logout Date"/>
+        </Columns>
+    </MudDataGrid>
+}
+
+@code {
+    [Parameter] public EntityComputer Computer { get; set; } = new();
+    private IEnumerable<EntityUserLogin> _userLogins = new List<EntityUserLogin>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Computer.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Computer.Name}",new ComputerBreadcrumbs(Computer.Name).UserLogins())) return;
+        _userLogins = await Call.ComputerApi.GetUserLogins(Computer.Id, "");
+    }
+}

@@ -31,15 +31,16 @@
     </MudAppBar>
    
    
-    <MudDrawer  @bind-Open="_drawerOpen" Elevation="2" Variant="DrawerVariant.Responsive"  Width="250px" >
+    <MudDrawer  @bind-Open="_drawerOpen" Elevation="2" Variant="DrawerVariant.Responsive" Width="250px" >
         <NavMenu/>
         <div>
             Token expires in: <span id="@CountdownElementId">00:00:00</span>
+            <MudButton Color="Color.Primary" FullWidth="true" OnClick="DrawerToggle">Close Menu</MudButton>
         </div>
     </MudDrawer>
     
     
-<MudAppBar Elevation="10" Fixed="true" Width="100%" Class="mt-12" Style="z-index: 2" Color="Color.Secondary"  Contextual>
+<MudAppBar Elevation="10" Fixed="true" Width="100%" Class="mt-12" Style="z-index: 10" Color="Color.Secondary"  Contextual>
     
         <div class="d-flex flex-column">
             <MudBreadcrumbs Items="Breadcrumbs" Separator=" / " Class="mb-0 d-none d-lg-flex" Style="line-height:0; margin-top:-20px;" >

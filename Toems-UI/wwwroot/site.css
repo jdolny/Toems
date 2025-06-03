@@ -37,25 +37,44 @@
     }
 
 
-
 .mud-tabs-panels.mud-tabs-vertical {
     overflow-x: auto !important;
     overflow-y: auto !important;
-    max-height: calc(100vh - 170px);
+    height: calc(100vh - 170px);
     width:100%;
 }
 
-.mud-tabs-tabbar-inner {
+.mud-tabs-vertical.mud-tabs-tabbar-inner {
     max-height: calc(100vh - 170px);
+   width:170px;
 }
+
+.mud-tabs-vertical .mud-tab {
+    max-width: 170px;
+    white-space: normal; 
+    word-wrap: break-word; 
+    overflow-wrap: break-word; 
+}
+
 .mud-table-container{
     max-height: calc(100% - 120px);
 }
 
-.full-data-grid {
-    width: 100% !important;
-    max-width: 100% !important;
-    display: block !important;
+.mud-tabs-vertical .sub-tab {
+    margin-left: 10px;
+    border-left:1px solid #ccc;
+}
+
+.active-tab {
+    background-color: var(--mud-palette-primary-hover) !important;
+    color: var(--mud-palette-text-white) !important;
+}
+
+.sub-tab.mud-paper-outlined {
+    border:none !important;
+}
+.sub-tab-header{
+    background-color: var(--mud-palette-gray-light) !important;
 }
 
 .full-data-grid .mud-table-container {
@@ -95,4 +114,48 @@
 }
 .mud-tabs-panels.mud-tabs-vertical {
     background-color: var(--mud-palette-gray-light);
+}
+
+.mud-input-label {
+    color: #810000 !important; /* Replace with your desired color, e.g., orange (#ff5722) */
+}
+
+.ace_editor{
+    height: calc(100vh - 250px) !important;
+}
+
+@media screen and (max-width: 1280px) {
+    .stack-full {
+        width: 100% !important;
+        height: calc(100vh - 210px) !important;
+        overflow-y: auto !important;
+    }
+
+    .full-data-grid-with-tabs .mud-table-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: calc(100vh - 400px) !important;
+    }
+}
+
+@media screen and (max-width: 960px) {
+    .stack-full {
+        width: 100% !important;
+        height: calc(100vh - 250px) !important;
+        overflow-y: auto !important;
+    }
+
+    .full-data-grid-with-tabs .mud-table-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: calc(100vh - 440px) !important;
+    }
+}
+
+
+
+@media screen and (min-width: 1280px) {
+    .lg-max-width-700{
+        max-width: 700px !important;
+    }
 }

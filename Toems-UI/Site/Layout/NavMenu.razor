@@ -11,12 +11,12 @@
         {
             <MudNavGroup Title="Computers" Expanded="@(IsComputersExpanded)" Icon="@Icons.Material.Filled.Computer">
                 <MudNavLink  Class="@(ShowAllComputersLinks() ? string.Empty : SearchClass("manage"))" Href="/computers/manage" Match="NavLinkMatch.All">Manage Computers</MudNavLink>
-                <MudNavLink  Class="@(ShowAllComputersLinks() ? string.Empty : SearchClass("reset", "approval", "request"))" Href="/computers/approval" Match="NavLinkMatch.Prefix">Approval / Reset Requests</MudNavLink>
+                <MudNavLink  Class="@(ShowAllComputersLinks() ? string.Empty : SearchClass("reset", "approval", "request"))" Href="/computers/approval-and-reset" Match="NavLinkMatch.Prefix">Approval / Reset Requests</MudNavLink>
             </MudNavGroup>
         }
         <MudNavGroup Title="Images" Expanded="@(IsImagesExpanded)" Icon="@Icons.Material.Filled.Camera" >
-            <MudNavLink Class="sub-nav-item" Href="/images/search" Match="NavLinkMatch.All">Image List</MudNavLink>
-            <MudNavLink Href="/images/globalprofiles" Match="NavLinkMatch.Prefix">Global Profiles</MudNavLink>
+            <MudNavLink Class="sub-nav-item" Href="/images/manage" Match="NavLinkMatch.All">Manage Images</MudNavLink>
+            <MudNavLink Href="/images/globalprofiles" Match="NavLinkMatch.Prefix">Global Image Profiles</MudNavLink>
         </MudNavGroup>
         <MudNavGroup Title="Groups" Expanded="@(IsGroupsExpanded)" Icon="@Icons.Material.Filled.Group" >
             <MudNavLink Href="/groups/search" Match="NavLinkMatch.All">Group List</MudNavLink>

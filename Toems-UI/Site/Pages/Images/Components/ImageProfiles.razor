@@ -1,0 +1,50 @@
+﻿@layout MainLayout
+@inject APICall Call
+@using Toems_ApiCalls
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@inherits BaseComponent
+<ActionButtons InsertAtTop="true">
+    <MainButton/>
+    <Content/>
+</ActionButtons>
+
+    <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityImageProfile" Class="mb-2 full-data-grid" Elevation="5" Items="@_profiles" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+        <ToolBarContent>
+            <MudText Typo="Typo.h5" Color="Color.Primary">Image Profiles</MudText>
+            <MudSpacer/>
+        </ToolBarContent>
+        <PagerContent><MudDataGridPager T="EntityImageProfile"/></PagerContent>
+        <Columns>
+            <PropertyColumn Property="x => x.Name" Title="Name"/>
+            <TemplateColumn Title="Actions" StickyRight="true">
+                <CellTemplate>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="@(() => OnProfileClick(context.Item.Id))">Details</MudButton>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+
+
+@code {
+    [Parameter] public EntityImage Image { get; set; } = new();
+    [Parameter] public EventCallback<ImageProfileWithImage> OnProfileSelected { get; set; }
+    private IEnumerable<EntityImageProfile> _profiles = new List<EntityImageProfile>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Image.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Image.Name}",new ImageBreadcrumbs(Image).General())) return;
+        await LoadProfiles();
+    }
+
+    private async Task LoadProfiles()
+    {
+        _profiles = await Call.ImageApi.GetImageProfiles(Image.Id);
+    }
+    
+    private async Task OnProfileClick(int profileId)
+    {
+        var profile = await Call.ImageProfileApi.Get(profileId);
+        await OnProfileSelected.InvokeAsync(profile);
+    }
+}
