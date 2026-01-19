@@ -5,8 +5,8 @@ $AdvInstallerPath = "C:\Program Files (x86)\Caphyon\Advanced Installer 15.1\bin\
 $Root = (Get-Item -Path $PSScriptRoot).Parent.FullName
 $DesktopPath = [Environment]::GetFolderPath("Desktop")
 $WixDir = "C:\Program Files (x86)\WiX Toolset v3.11\bin\"
-$Version = "1.5.7.0"
-$versionDisplay = "1.5.7"
+$Version = "1.5.8.0"
+$versionDisplay = "1.5.8"
 $ToecVersion = "1.5.7.0"
 
 if ([string]::IsNullOrWhiteSpace($MSBuildPath) -or !(Test-Path -Path $MSBuildPath)) {
@@ -36,6 +36,7 @@ del Toems-MSI-main -Force -Recurse
 del msisrc.zip -Force
 
 mkdir "Toems Application\Program Files\Toems-API\private\logs"
+mkdir "Toems Application\Program Files\Toems-API\private\wie_builder\Queue"
 mkdir "Toems Application\Program Files\Toems-API\private\agent"
 mkdir "Toems Application\Program Files\Toems-API\private\winget_manifests"
 mkdir "Toems Application\Program Files\Toems-API\private\agent\RemoteInstaller"
@@ -61,6 +62,61 @@ cd "$Root\Toec\Toec-Installer"
 
 & "$MSBuildPath" "$Root\Toec\Toec-UI" /t:build /p:Configuration=Release /p:Platform=x64
 & "$MSBuildPath" "$Root\Toec\Toec-UI" /t:build /p:Configuration=Release /p:Platform=x86
+
+#Sign all binaries
+# List of files to sign
+$files = @(
+    "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-UI\bin\Toems-ApiCalls.dll",
+    "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-UI\bin\Toems-Common.dll",
+    "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-UI\bin\Toems-FrontEnd.dll",
+    "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\bin\Toems-ApiCalls.dll",
+    "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\bin\Toems-ApplicationApi.dll",
+    "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\bin\Toems-Common.dll",
+    "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\bin\Toems-DataModel.dll",
+    "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\bin\Toems-Service.dll",
+    "$DesktopPath\Theopenem Installer\Toems Application\Program Files\Toems-API\private\agent\RemoteInstaller\Toec-Remote-Installer.exe",
+    "$DesktopPath\Theopenem Installer\Toems Client API\Program Files\Toec-API\bin\Toems-ApiCalls.dll",
+    "$DesktopPath\Theopenem Installer\Toems Client API\Program Files\Toec-API\bin\Toems-ClientApi.dll",
+    "$DesktopPath\Theopenem Installer\Toems Client API\Program Files\Toec-API\bin\Toems-Common.dll",
+    "$DesktopPath\Theopenem Installer\Toems Client API\Program Files\Toec-API\bin\Toems-DataModel.dll",
+    "$DesktopPath\Theopenem Installer\Toems Client API\Program Files\Toec-API\bin\Toems-Service.dll",
+    "$Root\Toec\Toec\bin\x64\Release\Toec.exe",
+    "$Root\Toec\Toec\bin\x64\Release\Toec-Common.dll",
+    "$Root\Toec\Toec\bin\x64\Release\Toec-DataModel.dll",
+    "$Root\Toec\Toec\bin\x64\Release\Toec-ImagePrep.exe",
+    "$Root\Toec\Toec\bin\x64\Release\Toec-LocalApi.dll",
+    "$Root\Toec\Toec\bin\x64\Release\Toec-Common.dll",
+    "$Root\Toec\Toec\bin\x64\Release\Toec-Services.dll",
+    "$Root\Toec\Toec\bin\x86\Release\Toec.exe",
+    "$Root\Toec\Toec\bin\x86\Release\Toec-Common.dll",
+    "$Root\Toec\Toec\bin\x86\Release\Toec-DataModel.dll",
+    "$Root\Toec\Toec\bin\x86\Release\Toec-ImagePrep.exe",
+    "$Root\Toec\Toec\bin\x86\Release\Toec-LocalApi.dll",
+    "$Root\Toec\Toec\bin\x86\Release\Toec-Common.dll",
+    "$Root\Toec\Toec\bin\x86\Release\Toec-Services.dll",
+    "$Root\Toec\Toec-UI\bin\x64\Release\Toec-Services.dll",
+    "$Root\Toec\Toec-UI\bin\x64\Release\Toec-DataModel.dll",
+    "$Root\Toec\Toec-UI\bin\x64\Release\Toec-Common.dll",
+    "$Root\Toec\Toec-UI\bin\x64\Release\Toec-UI.exe",
+    "$Root\Toec\Toec-UI\bin\x86\Release\Toec-Services.dll",
+    "$Root\Toec\Toec-UI\bin\x86\Release\Toec-DataModel.dll",
+    "$Root\Toec\Toec-UI\bin\x86\Release\Toec-Common.dll",
+    "$Root\Toec\Toec-UI\bin\x86\Release\Toec-UI.exe"
+)
+
+
+
+foreach ($file in $files) {
+    Write-Host "Signing $file ..."
+    
+    & "C:\Microsoft Trusted Signing\Microsoft.Windows.SDK.BuildTools\bin\10.0.22621.0\x64\signtool.exe" sign /v /debug /fd SHA256 `
+        /tr "http://timestamp.acs.microsoft.com" `
+        /td SHA256 `
+        /dlib "C:\Microsoft Trusted Signing\Microsoft.Trusted.Signing.Client\bin\x64\Azure.CodeSigning.Dlib.dll" `
+        /dmdf "C:\Microsoft Trusted Signing\profile.json" `
+        "$file"
+}
+
 
 & "$WixDir\candle.exe" -dSolutionDir="$Root\Toec\" `
 -dSolutionExt=".sln" `
@@ -176,5 +232,26 @@ Write-Host "Please Wait...Building Update MSI"
 $advProc=$(Get-Process advinst)
 Wait-Process $advProc.Id
 Write-Host "Complete"
+
+
+#Sign all binaries
+# List of files to sign
+$files = @(
+    "$DesktopPath\Theopenem Installer\Theopenem Update-$versionDisplay-SetupFiles\Theopenem Update-$versionDisplay.msi",
+    "$DesktopPath\Theopenem Installer\Theopenem-$versionDisplay-SetupFiles\Theopenem-$versionDisplay.msi"
+)
+
+
+# Loop through each file
+foreach ($file in $files) {
+    Write-Host "Signing $file ..."
+    
+    & "C:\Microsoft Trusted Signing\Microsoft.Windows.SDK.BuildTools\bin\10.0.22621.0\x64\signtool.exe" sign /v /debug /fd SHA256 `
+        /tr "http://timestamp.acs.microsoft.com" `
+        /td SHA256 `
+        /dlib "C:\Microsoft Trusted Signing\Microsoft.Trusted.Signing.Client\bin\x64\Azure.CodeSigning.Dlib.dll" `
+        /dmdf "C:\Microsoft Trusted Signing\profile.json" `
+        "$file"
+}
 
 Write-Host "All Builds Complete"

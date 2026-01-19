@@ -39,8 +39,8 @@
     <OutputPath>bin\x64\Release\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
-      <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
+    <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
+      <HintPath>..\packages\BouncyCastle.Cryptography.2.6.2\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
     </Reference>
     <Reference Include="Gma.QrCodeNet.Encoding, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\QrCode.Net.0.4.0.0\lib\net45\Gma.QrCodeNet.Encoding.dll</HintPath>
@@ -155,7 +155,6 @@
     <Compile Include="Entity\ServiceToecDeployJob.cs" />
     <Compile Include="PasswordGenerator.cs" />
     <Compile Include="RegParser.cs" />
-    <Compile Include="RunAsUser.cs" />
     <Compile Include="ServiceClientPartition.cs" />
     <Compile Include="Entity\ServiceAntivirusInventory.cs" />
     <Compile Include="Entity\ServiceAssetGroup.cs" />
@@ -259,7 +258,6 @@
     <Compile Include="TokenServices.cs" />
     <Compile Include="StringManipulationServices.cs" />
     <Compile Include="Entity\ServicePrinterModule.cs" />
-    <Compile Include="Workflows\BuildAssetSqlQuery.cs" />
     <Compile Include="Workflows\BuildReportSqlQuery.cs" />
     <Compile Include="Workflows\BuildSqlQuery.cs" />
     <Compile Include="Workflows\CancelAllImagingTasks.cs" />

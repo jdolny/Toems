@@ -37,6 +37,16 @@ namespace Toems_ApiCalls
             return new ApiRequest().Execute<List<DtoReplicationProcess>>(Request);
         }
 
+        public string GetRunningStatus()
+        {
+            Request.Method = Method.GET;
+            Request.Resource = string.Format("{0}/GetRunningStatus/", Resource);
+            var result = new ApiRequest().Execute<DtoApiStringResponse>(Request);
+            if (result == null)
+                return null;
+            return result.Value;
+        }
+
         public bool GetWinPeDriver(DtoClientFileRequest fileRequest, string outputPath, string url, string serverName, string interComKey)
         {
             Request.Method = Method.POST;

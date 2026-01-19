@@ -48,6 +48,24 @@ namespace Toems_Service.Entity
             _uow.Save();
         }
 
+        public string CheckRunningOrComplete()
+        {
+            var lastBuild = _uow.WieBuildRepository.Get().OrderByDescending(x => x.Id).FirstOrDefault();
+            if(lastBuild == null || lastBuild.WieGuid == null)
+                return "No Active Builds Found";
+            
+            var basePath = Path.Combine(HttpContext.Current.Server.MapPath("~"), "private", "wie_builder", "Status");
+            var completedPath = Path.Combine(basePath, lastBuild.WieGuid + ".complete");
+            var runningPath = Path.Combine(basePath, lastBuild.WieGuid + ".log");
+          
+            if (File.Exists(completedPath))
+                return $"{lastBuild.WieGuid} - Complete";
+            if (File.Exists(runningPath))
+                return $"{lastBuild.WieGuid} - Running";
+            
+            return $"{lastBuild.WieGuid} - Waiting To Start";
+        }
+
         public List<DtoReplicationProcess> GetWieProcess()
         {
             var processes = _uow.WieBuildRepository.Get(x => x.Pid != null && x.Status != "Complete").OrderByDescending(x => x.Id);

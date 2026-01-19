@@ -69,22 +69,13 @@ namespace Toems_FrontEnd.views.admin.pxeboot
         protected global::System.Web.UI.Timer Timer;
 
         /// <summary>
-        /// gvProcess control.
+        /// lblRunning control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvProcess;
-
-        /// <summary>
-        /// ddlImpersonation control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlImpersonation;
+        protected global::System.Web.UI.WebControls.Label lblRunning;
 
         /// <summary>
         /// txtTimezone control.

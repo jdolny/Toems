@@ -8,6 +8,7 @@ using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
+using Org.BouncyCastle.Crypto.Operators;
 using Org.BouncyCastle.Crypto.Prng;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Pkcs;
@@ -151,9 +152,9 @@ namespace Toems_Service
             // Set the signature algorithm. This is used to generate the thumbprint which is then signed
             // with the issuer's private key. We'll use SHA-256, which is (currently) considered fairly strong.
             const string signatureAlgorithm = "SHA256WithRSA";
-#pragma warning disable CS0618 // Type or member is obsolete
-            certificateGenerator.SetSignatureAlgorithm(signatureAlgorithm);
-#pragma warning restore CS0618 // Type or member is obsolete
+
+            var signatureFactory = new Asn1SignatureFactory(signatureAlgorithm, issuerKeyPair.Private);
+
 
             var issuerDN = new X509Name(issuerName);
             certificateGenerator.SetIssuerDN(issuerDN);
@@ -181,9 +182,9 @@ namespace Toems_Service
 
             // The certificate is signed with the issuer's private key.
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            var certificate = certificateGenerator.Generate(issuerKeyPair.Private, random);
-#pragma warning restore CS0618 // Type or member is obsolete
+
+            var certificate = certificateGenerator.Generate(signatureFactory);
+
             return certificate;
         }
 
@@ -300,35 +301,27 @@ namespace Toems_Service
         }
 
         private static X509Certificate2 ConvertCertificate(X509Certificate certificate,
-                                                           AsymmetricCipherKeyPair subjectKeyPair,
-                                                           SecureRandom random)
+            AsymmetricCipherKeyPair subjectKeyPair,
+            SecureRandom random)
         {
-            // Now to convert the Bouncy Castle certificate to a .NET certificate.
-            // See http://web.archive.org/web/20100504192226/http://www.fkollmann.de/v2/post/Creating-certificates-using-BouncyCastle.aspx
-            // ...but, basically, we create a PKCS12 store (a .PFX file) in memory, and add the public and private key to that.
-            var store = new Pkcs12Store();
+            var storeBuilder = new Pkcs12StoreBuilder();
+            var store = storeBuilder.Build();
 
-            // What Bouncy Castle calls "alias" is the same as what Windows terms the "friendly name".
             string friendlyName = certificate.SubjectDN.ToString();
-
-            // Add the certificate.
             var certificateEntry = new X509CertificateEntry(certificate);
             store.SetCertificateEntry(friendlyName, certificateEntry);
-
-            // Add the private key.
             store.SetKeyEntry(friendlyName, new AsymmetricKeyEntry(subjectKeyPair.Private), new[] { certificateEntry });
 
-            // Convert it to an X509Certificate2 object by saving/loading it from a MemoryStream.
-            // It needs a password. Since we'll remove this later, it doesn't particularly matter what we use.
-            const string password = "password";
-            var stream = new MemoryStream();
-            store.Save(stream, password.ToCharArray(), random);
+            using (var stream = new MemoryStream())
+            {
+                store.Save(stream, null, random); // No password for BouncyCastle
 
-            var convertedCertificate =
-                new X509Certificate2(stream.ToArray(),
-                                     password,
-                                     X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable);
-            return convertedCertificate;
+                var convertedCertificate =
+                    new X509Certificate2(stream.ToArray(),
+                        (string)null, // Explicitly cast null to string
+                        X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable);
+                return convertedCertificate;
+            }
         }
 
         public static void WriteCertificate(X509Certificate2 certificate,string password)

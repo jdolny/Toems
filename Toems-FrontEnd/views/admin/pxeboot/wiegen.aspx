@@ -61,33 +61,18 @@
             <asp:Timer ID="Timer" runat="server" Interval="4000" OnTick="Timer_Tick">
             </asp:Timer>
         
-            <asp:GridView ID="gvProcess" runat="server" AutoGenerateColumns="False" DataKeyNames="Pid" CssClass="Gridview extraPad" AlternatingRowStyle-CssClass="alt">
-                <Columns>
+            <div class="size-5 column">
+                <asp:Label runat="server" ID="lblRunning"></asp:Label>
+            </div>
 
-                    <asp:BoundField DataField="Pid" HeaderText="PID" InsertVisible="False" ReadOnly="True" ItemStyle-CssClass="width_50"/>
-                
-                    <asp:BoundField DataField="ProcessName" HeaderText="Process" SortExpression="Status" ItemStyle-CssClass="width_200"/>
-                  
-
-                </Columns>
-                <EmptyDataTemplate>
-                    No Active Processes
-                </EmptyDataTemplate>
-            </asp:GridView>
-
+            
         </ContentTemplate>
       
     </asp:UpdatePanel>
      <br class="clear" />
        <hr />
         <br class="clear" />
-         <div class="size-4 column">
-        Run As
-    </div>
-
-    <div class="size-5 column">
-        <asp:DropDownList ID="ddlImpersonation" runat="server" CssClass="ddlist"/>
-    </div>
+       
      <div class="size-4 column">
         Time Zone:
     </div>

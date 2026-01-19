@@ -23,13 +23,7 @@ namespace Toems_Service.Entity
             var sql = new Workflows.BuildReportSqlQuery().Run(queries);
             return new RawSqlRepository().ExecuteReader(sql);
         }
-
-        public DataSet GetAssetInventory(List<DtoCustomComputerQuery> queries)
-        {
-            var sql = new Workflows.BuildAssetSqlQuery().Run(queries);
-            return new RawSqlRepository().ExecuteReader(sql);
-        }
-
+        
         public List<DtoProcessWithTime> GetTopProcessTimes(DateTime dateCutoff, int limit)
         {
             return new ReportRepository().GetTopProcessTimes(dateCutoff,limit);

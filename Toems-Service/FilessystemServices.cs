@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Web;
 using log4net;
 using Toems_ApiCalls;
@@ -115,6 +116,15 @@ namespace Toems_Service
             }
         }
 
+        public string GetFileSha256(string filePath)
+        {
+            using (var sha256 = SHA256.Create())
+            using (var stream = File.OpenRead(filePath))
+            {
+                var hash = sha256.ComputeHash(stream);
+                return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+            }
+        }
 
 
         public List<string> GetLogContents(string name, int limit)

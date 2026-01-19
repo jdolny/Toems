@@ -63,6 +63,7 @@
     <Compile Include="DbUpgrades\130.cs" />
     <Compile Include="DbUpgrades\121.cs" />
     <Compile Include="DbUpgrades\157.cs" />
+    <Compile Include="DbUpgrades\158.cs" />
     <Compile Include="DbUpgrades\IDbScript.cs" />
     <Compile Include="DbUpgrades\VersionMapping.cs" />
     <Compile Include="Dto\clientimaging\AuthResponseDto.cs" />

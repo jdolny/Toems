@@ -16,7 +16,6 @@ namespace Toems_Common.Dto
         public string Token { get; set; } = String.Empty;
         public bool RestrictComServers { get; set; }
         public List<int> Drivers { get; set; } = new List<int>();
-        public int ImpersonationId { get; set; }
         public bool SkipAdkCheck { get; set; } = false;
     }
 }

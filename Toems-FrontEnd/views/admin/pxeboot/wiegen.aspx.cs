@@ -33,42 +33,28 @@ namespace Toems_FrontEnd.views.admin.pxeboot
             gvDrivers.DataSource = Call.FileCopyModuleApi.GetDriverList();
             gvDrivers.DataBind();
 
-            ddlImpersonation.DataSource =
-               Call.ImpersonationAccountApi.GetForDropDown().Select(d => new { d.Id, d.Username });
-            ddlImpersonation.DataValueField = "Id";
-            ddlImpersonation.DataTextField = "Username";
-            ddlImpersonation.DataBind();
-            ddlImpersonation.Items.Insert(0, new ListItem("Select An Impersonation Account", "-1"));
+
             PopulateProcess();
         }
 
 
         private void PopulateProcess()
         {
+            var buildStatus = Call.WieBuildApi.GetRunningStatus();
+            if (buildStatus != null)
+            {
+                lblRunning.Text = buildStatus;
+
+            }
+            
             var latestBuild = Call.WieBuildApi.GetLastBuild();
-            if(latestBuild != null)
+            if (latestBuild != null)
             {
                 lblBuildDate.Text = latestBuild.EndTime.ToString();
                 lblBuildOptions.Text = latestBuild.BuildOptions;
             }
-
-            gvProcess.DataSource = Call.WieBuildApi.GetProcess();
-            gvProcess.DataBind();
-
         }
-        protected void btnCancel_Click(object sender, EventArgs e)
-        {
-            var control = sender as Control;
-            if (control != null)
-            {
-                var gvRow = (GridViewRow)control.Parent.Parent;
-                var dataKey = gvProcess.DataKeys[gvRow.RowIndex];
-                if (dataKey != null)
-                    Call.ClientComServerApi.KillReplicationProcess(ComServer.Id, Convert.ToInt32(dataKey.Value));
-            }
-            PopulateProcess();
-        }
-
+       
         protected void Timer_Tick(object sender, EventArgs e)
         {
             PopulateProcess();
@@ -85,7 +71,6 @@ namespace Toems_FrontEnd.views.admin.pxeboot
             config.Token = txtToken.Text;
             config.RestrictComServers = chkRestrictComServers.Checked;
             config.SkipAdkCheck = chkAdk.Checked;
-            config.ImpersonationId = Convert.ToInt32(ddlImpersonation.SelectedValue);
 
             foreach (GridViewRow row in gvServers.Rows)
             {

@@ -5,6 +5,7 @@
     <projectFile pubXmlPath="Toems-ApplicationApi/Properties/PublishProfiles/FolderProfile.pubxml">Toems-ApplicationApi/Toems-ApplicationApi.csproj</projectFile>
     <projectFile pubXmlPath="Toems-ClientApi/Properties/PublishProfiles/FolderProfile.pubxml">Toems-ClientApi/Toems-ClientApi.csproj</projectFile>
     <projectFile kind="IisApplication">Toems-FrontEnd/Toems-FrontEnd.csproj</projectFile>
+    <projectFile pubXmlPath="Toems-FrontEnd/Properties/PublishProfiles/FolderProfile.pubxml">Toems-FrontEnd/Toems-FrontEnd.csproj</projectFile>
     <projectFile profileName="http">Toems-UI/Toems-UI.csproj</projectFile>
     <projectFile profileName="https">Toems-UI/Toems-UI.csproj</projectFile>
   </component>
@@ -12,7 +13,42 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b75b8386-433b-49f1-8b54-f6c7e9f3b73e" name="Changes" comment="" />
+    <list default="true" id="b75b8386-433b-49f1-8b54-f6c7e9f3b73e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Toems-Common/DbUpgrades/158.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.theopenem-server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.theopenem-server/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Build-Msi.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/Build-Msi.ps1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-ApiCalls/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ApiCalls/Properties/AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-ApiCalls/WieBuildAPI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ApiCalls/WieBuildAPI.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-ApplicationApi/ApplicationStrings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ApplicationApi/ApplicationStrings.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-ApplicationApi/Controllers/ReportController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ApplicationApi/Controllers/ReportController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-ApplicationApi/Controllers/WieBuildController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ApplicationApi/Controllers/WieBuildController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-ApplicationApi/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ApplicationApi/Properties/AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-ClientApi/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ClientApi/Properties/AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-ClientApi/ToecApiStrings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ClientApi/ToecApiStrings.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Common/DbUpgrades/VersionMapping.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Common/DbUpgrades/VersionMapping.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Common/Dto/DtoWieConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Common/Dto/DtoWieConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Common/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Common/Properties/AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Common/SettingStrings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Common/SettingStrings.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Common/Toems-Common.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Common/Toems-Common.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-DataModel/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-DataModel/Properties/AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-FrontEnd/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-FrontEnd/Properties/AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/about.aspx" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/about.aspx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/pxeboot/wiegen.aspx" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/pxeboot/wiegen.aspx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/pxeboot/wiegen.aspx.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/pxeboot/wiegen.aspx.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/pxeboot/wiegen.aspx.designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/pxeboot/wiegen.aspx.designer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Service/Entity/ServiceReport.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/Entity/ServiceReport.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Service/Entity/ServiceWieBuild.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/Entity/ServiceWieBuild.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Service/FilessystemServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/FilessystemServices.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Service/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/Properties/AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Service/RunAsUser.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Service/ServiceGenerateCertificate.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/ServiceGenerateCertificate.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Service/Toems-Service.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/Toems-Service.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Service/Workflows/BuildAssetSqlQuery.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Service/Workflows/BuildReportSqlQuery.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/Workflows/BuildReportSqlQuery.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Service/Workflows/BuildSqlQuery.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/Workflows/BuildSqlQuery.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Service/Workflows/GenerateWie.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/Workflows/GenerateWie.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toems-Service/packages.config" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/packages.config" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -21,15 +57,34 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="Toolset" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="31sIzv8eVUGyuIBK6PQLXhMuKUD" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "git-widget-placeholder": "master",
-    "node.js.selected.package.tslint": "(autodetect)"
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;IIS Application.Toems-FrontEnd - IIS.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;LastWebFormsBuild&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="IIS Application.Toems-FrontEnd - IIS">
     <configuration name="Toems-ClientApi: FolderProfile" type="DotNetMsBuildPublish" factoryName="Publish to IIS">
       <riderPublish publish_profile="FolderProfile.pubxml" pubxml_path="$PROJECT_DIR$/Toems-ClientApi/Properties/PublishProfiles/FolderProfile.pubxml" uuid_high="5582163099764869366" uuid_low="-4849771395074773845" />
@@ -57,7 +112,25 @@
     </list>
   </component>
   <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b75b8386-433b-49f1-8b54-f6c7e9f3b73e" name="Changes" comment="" />
+      <created>1756306620647</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1756306620647</updated>
+      <workItem from="1756306622058" duration="9386000" />
+      <workItem from="1756320212322" duration="820000" />
+      <workItem from="1756348137054" duration="249000" />
+      <workItem from="1756348547836" duration="33000" />
+      <workItem from="1756350831126" duration="360000" />
+      <workItem from="1756385215124" duration="650000" />
+      <workItem from="1756388172799" duration="1551000" />
+      <workItem from="1756394772451" duration="1867000" />
+    </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
 </project>

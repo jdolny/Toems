@@ -15,6 +15,7 @@ using Toems_Common;
 using System.Collections.Generic;
 using Toems_Common.Dto.client;
 using System.IO.Compression;
+using System.Text.RegularExpressions;
 
 namespace Toems_Service.Workflows
 {
@@ -71,8 +72,7 @@ namespace Toems_Service.Workflows
         {
             if (_config == null)
                 return "Missing Build Options";
-            else if (_config.ImpersonationId == -1)
-                return "Missing Impersonation User";
+
             else if (string.IsNullOrEmpty(_config.ComServers))
                 return "No Com Servers Were Selected";
 
@@ -94,47 +94,48 @@ namespace Toems_Service.Workflows
 
         private bool StartProcess()
         {
-            var imp = new ServiceImpersonationAccount().GetAccount(_config.ImpersonationId);
-            var domain = string.Empty;
-            var username = string.Empty;
-            var password = new EncryptionServices().DecryptText(imp.Password);
-            if (imp.Username.Contains("\\"))
-            {
-                username = imp.Username.Split('\\').Last();
-                domain = imp.Username.Split('\\').First();
-            }
-            else
-            {
-                username = imp.Username;
-                domain = Environment.MachineName;
-            }
+            var sha = new FilesystemServices().GetFileSha256(_fullPath);
+            return new FilesystemServices().WritePath(Path.Combine(_basePath,"Queue",_wieBuild.WieGuid+".queue"), sha);
+        }
+        
+        private static readonly Regex SafeValueRegex = new Regex(@"^[A-Za-z0-9\-_\.:\/@ ]{0,200}$", RegexOptions.Compiled);
 
-            try
-            {
-                _wieBuild.Pid = new RunasCs().RunAs(username, password, _fullPath, domain, 0, 2, 2, null, true, true, false);
-                return true;
-            }
-            catch(Exception ex)
-            {
-                _log.Error("Could Not Start Wie Build Process.");
-                _log.Error(ex.Message);
-                _result.ErrorMessage = "Could Not Start Wie Build Process.";
-                _wieBuild.Status = "Failed";
-            }
-            return false;
+        private bool IsSafe(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return true;
+            return SafeValueRegex.IsMatch(value);
+        }
 
+        private string SanitizeForBatch(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return string.Empty;
+            // Trim and normalize newlines
+            value = value.Replace("\r", " ").Replace("\n", " ").Trim();
+
+            // Double any percent signs (prevents variable expansion).
+            value = value.Replace("%", "%%");
+
+            // Remove or escape dangerous characters
+            value = value.Replace("\"", "'"); // convert double quotes to single quotes (batch will drop enclosing quotes)
+            return value;
         }
         private bool CreateConfigFile()
         {
+            if (!IsSafe(_config.Timezone)) { _result.ErrorMessage = "Invalid TimeZone"; return false; }
+            if (!IsSafe(_config.InputLocale)) { _result.ErrorMessage = "Invalid InputLocale"; return false; }
+            if (!IsSafe(_config.Language)) { _result.ErrorMessage = "Invalid Language"; return false; }
+            if (!IsSafe(_config.ComServers)) { _result.ErrorMessage = "Invalid ComServers"; return false; }
+            if (!IsSafe(_config.Token)) { _result.ErrorMessage = "Invalid Token"; return false; }
+
             var configContents = new StringBuilder();
             configContents.AppendLine("@echo off");
             configContents.AppendLine("pushd %~dp0");
-            configContents.AppendLine("set TimeZone=" + _config.Timezone);
-            configContents.AppendLine("set InputLocale=" + _config.InputLocale);
-            configContents.AppendLine("set MyLang=" + _config.Language);
-            configContents.AppendLine("set ComServerURL=" + _config.ComServers);
-            configContents.AppendLine("set UniversalToken=" + _config.Token);
-            configContents.AppendLine("set RestrictComServers=" + _config.RestrictComServers.ToString());
+            configContents.AppendLine($"set \"TimeZone={SanitizeForBatch(_config.Timezone)}\"");
+            configContents.AppendLine($"set \"InputLocale={SanitizeForBatch(_config.InputLocale)}\"");
+            configContents.AppendLine($"set \"MyLang={SanitizeForBatch(_config.Language)}\"");
+            configContents.AppendLine($"set \"ComServerURL={SanitizeForBatch(_config.ComServers)}\"");
+            configContents.AppendLine($"set \"UniversalToken={SanitizeForBatch(_config.Token)}\"");
+            configContents.AppendLine($"set \"RestrictComServers={_config.RestrictComServers.ToString()}\"");
             configContents.AppendLine("set CreateISO=true");
             configContents.AppendLine("set LoginDebug=false");
             configContents.AppendLine("set PLATFORM=x64");
@@ -144,7 +145,7 @@ namespace Toems_Service.Workflows
             configContents.AppendLine($"echo complete > .\\Status\\{_wieBuild.WieGuid}.complete");
 
             return new FilesystemServices().WritePath(_fullPath, configContents.ToString());
-
+          
         }
 
         private bool AddDrivers()

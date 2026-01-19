@@ -77,6 +77,13 @@ namespace Toems_ApplicationApi.Controllers
             return new DtoApiBoolResponse() { Value = _wieBuildServices.CheckIsoExists() };
         }
 
+        [CustomAuth(Permission = AuthorizationStrings.Administrator)]
+        [HttpGet]
+        public DtoApiStringResponse GetRunningStatus()
+        {
+            return new DtoApiStringResponse() { Value = _wieBuildServices.CheckRunningOrComplete() };
+        }
+
 
 
     }

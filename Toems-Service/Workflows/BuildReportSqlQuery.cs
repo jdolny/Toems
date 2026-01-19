@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Toems_Common.Dto;
@@ -15,362 +16,347 @@ namespace Toems_Service.Workflows
         {
             sb = new StringBuilder();
         }
+        
+         private static readonly HashSet<string> AllowedAndOr = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "", "AND", "OR" };
+        private static readonly HashSet<string> AllowedOperators = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "=", "!=", "<", ">", "<=", ">=", "LIKE", "NOT LIKE" };
+        private static readonly HashSet<string> AllowedParentheses = new HashSet<string> { "", "(", ")" };
+        private static readonly HashSet<string> AllowedTables = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "Computer", "Bios", "System", "Hard Drive", "OS", "Printer", "Processor", "Application",
+            "Windows Update", "Firewall", "AntiVirus", "BitLocker", "Logical Volumes", "Network Adapters",
+            "Certificates", "Category", "Gpu", "Group"
+        };
+        
+        private static readonly Dictionary<string, HashSet<string>> AllowedFields = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Computer", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "computer_name", "provisioned_time_local", "last_checkin_time_local", "last_ip", "is_ad_sync", "client_version", "last_inventory_time_local", "ad_disabled", "provision_status" } },
+            { "Bios", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "serial_number", "version" , "sm_bios_version" } },
+            { "System", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "manufacturer", "model", "domain", "workgroup", "memory" } },
+            { "Hard Drive", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "model", "firmware", "serial_number", "size", "smart_status" } },
+            { "OS", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "name", "version", "build", "arch", "sp_major", "sp_minor", "release_id", "uac_status", "local_time_zone", "location_enabled", "last_location_update_utc", "update_server", "update_server_target_group" } },
+            { "Printer", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "name" , "driver_name", "is_local", "is_network", "share_name", "system_name" } },
+            { "Processor", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "name", "clock_speed", "cores" } },
+            { "Application", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "name", "version", "major", "minor", "build", "revision" } },
+            { "Windows Update", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "title", "install_date" , "is_installed" } },
+            { "Firewall", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "domain_enabled", "private_enabled", "public_enabled"} },
+            { "AntiVirus", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "display_name", "provider", "rt_scanner" , "definition_status", "product_state"} },
+            { "BitLocker", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "status" , "drive_letter"  } },
+            { "Logical Volumes", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "drive", "free_space_gb", "free_space_percent", "size_gb" } },
+            { "Network Adapters", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "nic_name", "nic_description", "nic_type", "nic_mac", "nic_status", "nic_speed", "nic_ips", "nic_gateways" } },
+            { "Certificates", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "store","subject", "friendlyname", "thumbprint", "serial", "notbefore_utc" , "notafter_utc"} },
+            { "Category", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "category_name" } },
+            { "Gpu", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "computer_gpu_name", "computer_gpu_ram" } },
+            { "Group", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "group_id", "group_name" } }
+        };
+        
+        private string QuoteIdentifier(string identifier)
+        {
+            if (string.IsNullOrWhiteSpace(identifier))
+                throw new ArgumentException("Invalid field name");
+            return "`" + identifier.Replace("`", "``") + "`";
+        }
+        
+       private void ValidateQuery(DtoCustomComputerQuery query, bool isFirst, bool isNotCase)
+        {
+            if (query == null)
+                throw new ArgumentNullException(nameof(query));
+
+            // Validate Table
+            string normalizedTable = query.Table;
+            if (query.Table.StartsWith("("))
+            {
+                var cia = query.Table.Trim('(').Trim(')');
+                var parts = cia.Split('_');
+                if (parts.Length != 2 || (parts[0] != "ci" && parts[0] != "ca") || !int.TryParse(parts[1], out _))
+                    throw new ArgumentException("Invalid custom table format: " + query.Table);
+                normalizedTable = parts[0]; // e.g., "ci" or "ca"
+            }
+            else if (!AllowedTables.Contains(query.Table))
+            {
+                throw new ArgumentException("Invalid table: " + query.Table);
+            }
+
+            // Validate Field
+            if (normalizedTable == "ci" || normalizedTable == "ca")
+            {
+                // Custom tables always use the 'value' column
+                if (!query.Field.Equals("value", StringComparison.OrdinalIgnoreCase))
+                    throw new ArgumentException($"Invalid field '{query.Field}' for custom table '{query.Table}'. Only 'value' is allowed.");
+            }
+            else if (!AllowedFields[query.Table].Contains(query.Field))
+            {
+                throw new ArgumentException($"Invalid field '{query.Field}' for table '{query.Table}'");
+            }
+
+            // Validate AndOr
+            if (isNotCase)
+            {
+                if (!query.AndOr.Equals("Not", StringComparison.OrdinalIgnoreCase))
+                    throw new ArgumentException("Invalid AndOr for Not case: " + query.AndOr);
+            }
+            else
+            {
+                var normalizedAndOr = isFirst ? "" : query.AndOr;
+                if (!AllowedAndOr.Contains(normalizedAndOr))
+                    throw new ArgumentException("Invalid AndOr: " + query.AndOr);
+            }
+
+            // Validate Operator
+            if (!AllowedOperators.Contains(query.Operator))
+                throw new ArgumentException("Invalid operator: " + query.Operator);
+
+            // Validate Parentheses
+            if (!AllowedParentheses.Contains(query.LeftParenthesis) || (query.LeftParenthesis == ")" && !string.IsNullOrEmpty(query.LeftParenthesis)))
+                throw new ArgumentException("Invalid left parenthesis: " + query.LeftParenthesis);
+            if (!AllowedParentheses.Contains(query.RightParenthesis) || (query.RightParenthesis == "(" && !string.IsNullOrEmpty(query.RightParenthesis)))
+                throw new ArgumentException("Invalid right parenthesis: " + query.RightParenthesis);
+        }
 
         private string BuildGroupBy(string groupBy)
         {
-            if (string.IsNullOrEmpty(groupBy)) return "";
+            if (string.IsNullOrEmpty(groupBy))
+                return "";
 
-                if (groupBy.StartsWith("("))
-                {
-                    var cia = groupBy.Replace(".value", "");
-                    cia = cia.Trim('(').Trim(')');
-                    var ciaType = cia.Split('_').First();
-                    if (ciaType.Equals("ci"))
-                    {
-                        int ciId;
-                        if (int.TryParse(cia.Split('_')[1], out ciId))
-                        {
-                            return @" GROUP BY ci" + ciId + ".value"; 
-                        }
-                    }
-                    else if (ciaType.Equals("ca"))
-                    {
-                        int caId;
-                        if (int.TryParse(cia.Split('_')[1], out caId))
-                        {
-                            return " GROUP BY ca" + caId + ".value"; 
-                    }
-                    }
-                }
-                else
-                {
-                    var table = groupBy.Split('.').First();
-                    var field = groupBy.Split('.')[1];
-
-                    if (table == "Computer")
-                        return " GROUP BY a." + field;
-                    else if (table == "Bios")
-                    return " GROUP BY b." + field;
-                else if (table == "System")
-                    return " GROUP BY c." + field;
-                else if (table == "Hard Drive")
-                    return " GROUP BY d." + field;
-                else if (table == "OS")
-                    return " GROUP BY e." + field;
-                else if (table == "Printer")
-                    return " GROUP BY f." + field;
-                else if (table == "Processor")
-                    return " GROUP BY g." + field;
-                else if (table == "Application")
-                    return " GROUP BY i." + field;
-                else if (table == "Windows Update")
-                    return " GROUP BY k." + field;
-                else if (table == "Firewall")
-                    return " GROUP BY l." + field;
-                else if (table == "AntiVirus")
-                    return " GROUP BY m." + field;
-                else if (table == "BitLocker")
-                    return " GROUP BY n." + field;
-                else if (table == "Logical Volumes")
-                    return " GROUP BY o." + field;
-                else if (table == "Network Adapters")
-                        return " GROUP BY p." + field;
-                else if (table == "Certificates")
-                    return " GROUP BY r." + field;
+            if (groupBy.StartsWith("("))
+            {
+                var cia = groupBy.Replace(".value", "").Trim('(').Trim(')');
+                var parts = cia.Split('_');
+                if (parts.Length != 2 || (parts[0] != "ci" && parts[0] != "ca") || !int.TryParse(parts[1], out int id))
+                    throw new ArgumentException("Invalid custom table format in GroupBy: " + groupBy);
+                if (!groupBy.EndsWith(".value", StringComparison.OrdinalIgnoreCase))
+                    throw new ArgumentException("Invalid field in GroupBy for custom table: only 'value' is allowed");
+                return $" GROUP BY ci{id}.[value]";
             }
+            else
+            {
+                var parts = groupBy.Split('.');
+                if (parts.Length != 2)
+                    throw new ArgumentException("Invalid GroupBy format: " + groupBy);
+                var table = parts[0];
+                var field = parts[1];
 
-            return "";
+                if (!AllowedTables.Contains(table))
+                    throw new ArgumentException("Invalid table in GroupBy: " + table);
+                if (!AllowedFields[table].Contains(field))
+                    throw new ArgumentException($"Invalid field '{field}' in GroupBy for table '{table}'");
+
+                string tableAlias;
+                switch (table.ToLower())
+                {
+                    case "computer": tableAlias = "a"; break;
+                    case "bios": tableAlias = "b"; break;
+                    case "system": tableAlias = "c"; break;
+                    case "hard drive": tableAlias = "d"; break;
+                    case "os": tableAlias = "e"; break;
+                    case "printer": tableAlias = "f"; break;
+                    case "processor": tableAlias = "g"; break;
+                    case "application": tableAlias = "i"; break;
+                    case "windows update": tableAlias = field == "is_installed" || field == "install_date" ? "j" : "k"; break;
+                    case "firewall": tableAlias = "l"; break;
+                    case "antivirus": tableAlias = "m"; break;
+                    case "bitlocker": tableAlias = "n"; break;
+                    case "logical volumes": tableAlias = "o"; break;
+                    case "network adapters": tableAlias = "p"; break;
+                    case "certificates": tableAlias = "r"; break;
+                    case "category": tableAlias = "t"; break;
+                    case "gpu": tableAlias = "u"; break;
+                    case "group": tableAlias = "w"; break;
+                    default: throw new ArgumentException("Invalid table in GroupBy: " + table);
+                }
+                return $" GROUP BY {tableAlias}.[{field}]";
+            }
         }
 
         public DtoRawSqlQuery Run(List<DtoCustomComputerQuery> queries)
         {
+            // Validate all queries upfront
+            for (int i = 0; i < queries.Count; i++)
+            {
+                ValidateQuery(queries[i], i == 0, queries.Count == 1 && queries[0].AndOr.Equals("Not", StringComparison.OrdinalIgnoreCase));
+            }
             var sqlQuery = new DtoRawSqlQuery();
-            if (queries.Count == 1 && queries[0].AndOr.Equals("Not"))
+            if (queries.Count == 1 && queries[0].AndOr.Equals("Not", StringComparison.OrdinalIgnoreCase))
             {
                 var query = queries[0];
-
-                if (query.Table.Equals("Application"))
+                string subWhereClause = string.Empty;
+                string tableField = string.Empty;
+                if (query.Table.Equals("Application", StringComparison.OrdinalIgnoreCase))
                 {
-                    sb.Append(@"select a.computer_name
-                                from computers as a
-                                where a.computer_id not in 
-                                (
-                                    SELECT computers.computer_id
-                                    FROM computers
-                                    LEFT join computer_software on computers.computer_id = computer_software.computer_id 
-                                    LEFT join software_inventory on (computer_software.software_id = software_inventory.software_inventory_id)
-                                    where software_inventory.name " + query.Operator + "'" + query.Value + "'" +
-                              ") and a.last_inventory_time_local > '2019-01-01'");
-                    if (queries.First().IncludeArchived && queries.First().IncludePreProvisioned)
-                    {
-                        sb.Append(" AND (a.provision_status = 8 OR a.provision_status = 11 OR a.provision_status = 6)");
-                    }
-                    else if (queries.First().IncludeArchived)
-                    {
-                        sb.Append(" AND (a.provision_status = 8 OR a.provision_status = 11)");
-                    }
-
-                    else if (queries.First().IncludePreProvisioned)
-                    {
-                        sb.Append(" AND (a.provision_status = 8 OR a.provision_status = 6)");
-                    }
-                    else
-                    {
-                        sb.Append(" AND a.provision_status = 8");
-                    }
-
-                    sb.Append(BuildGroupBy(queries.First().GroupBy));
-                  
-
+                    tableField = "software_inventory.name";
+                    subWhereClause = $@"
+                        SELECT computers.computer_id
+                        FROM computers
+                        LEFT JOIN computer_software ON computers.computer_id = computer_software.computer_id 
+                        LEFT JOIN software_inventory ON computer_software.software_id = software_inventory.software_inventory_id
+                        WHERE {tableField} {query.Operator} @p1";
+                }
+                else if (query.Table.Equals("Windows Update", StringComparison.OrdinalIgnoreCase))
+                {
+                    tableField = "wu_inventory.title";
+                    subWhereClause = $@"
+                        SELECT computers.computer_id
+                        FROM computers
+                        LEFT JOIN computer_updates ON computers.computer_id = computer_updates.computer_id 
+                        LEFT JOIN wu_inventory ON computer_updates.wu_inventory_id = wu_inventory.wu_inventory_id
+                        WHERE {tableField} {query.Operator} @p1";
+                }
+                else if (query.Table.Equals("Certificates", StringComparison.OrdinalIgnoreCase))
+                {
+                    tableField = "certificate_inventory.subject";
+                    subWhereClause = $@"
+                        SELECT computers.computer_id
+                        FROM computers
+                        LEFT JOIN computer_certificates ON computers.computer_id = computer_certificates.computer_id 
+                        LEFT JOIN certificate_inventory ON computer_certificates.certificate_id = certificate_inventory.certificate_inventory_id
+                        WHERE {tableField} {query.Operator} @p1";
+                }
+                else
+                {
+                    throw new ArgumentException("Unsupported table for Not query: " + query.Table);
                 }
 
-                else if (query.Table.Equals("Windows Update"))
-                {
-                    sb.Append(@"select a.computer_name
-                                from computers as a
-                                where a.computer_id not in 
-                                (
-                                    SELECT computers.computer_id
-                                    FROM computers
-                                    LEFT join computer_updates on computers.computer_id = computer_updates.computer_id 
-                                    LEFT join wu_inventory on (computer_updates.wu_inventory_id = wu_inventory.wu_inventory_id)
-                                    where wu_inventory.title " + query.Operator + " " + "'" + query.Value + "'" +
-                              ") and a.last_inventory_time_local > '2019-01-01'");
-                    if (queries.First().IncludeArchived && queries.First().IncludePreProvisioned)
-                    {
-                        sb.Append(" AND (a.provision_status = 8 OR a.provision_status = 11 OR a.provision_status = 6)");
-                    }
-                    else if (queries.First().IncludeArchived)
-                    {
-                        sb.Append(" AND (a.provision_status = 8 OR a.provision_status = 11)");
-                    }
+                string selectColumns = query.Table.Equals("Certificates", StringComparison.OrdinalIgnoreCase)
+                    ? "a.computer_id, a.computer_name"
+                    : "a.computer_name";
+                sb.Append($@"
+                    SELECT {selectColumns}
+                    FROM computers AS a
+                    WHERE a.computer_id NOT IN ({subWhereClause})
+                    AND a.last_inventory_time_local > '2019-01-01'");
 
-                    else if (queries.First().IncludePreProvisioned)
-                    {
-                        sb.Append(" AND (a.provision_status = 8 OR a.provision_status = 6)");
-                    }
-                    else
-                    {
-                        sb.Append(" AND a.provision_status = 8");
-                    }
+                if (query.IncludeArchived && query.IncludePreProvisioned)
+                    sb.Append(" AND (a.provision_status = 8 OR a.provision_status = 11 OR a.provision_status = 6)");
+                else if (query.IncludeArchived)
+                    sb.Append(" AND (a.provision_status = 8 OR a.provision_status = 11)");
+                else if (query.IncludePreProvisioned)
+                    sb.Append(" AND (a.provision_status = 8 OR a.provision_status = 6)");
+                else
+                    sb.Append(" AND a.provision_status = 8");
 
-                    if (!string.IsNullOrEmpty(queries.First().GroupBy))
-                    {
-                        sb.Append($" GROUP BY {queries.First().GroupBy}");
-                    }
-
-                }
-                else if (query.Table.Equals("Certificates"))
-                {
-                    sb.Append(@"select a.computer_id,a.computer_name
-                                from computers as a
-                                where a.computer_id not in 
-                                (
-                                    SELECT computers.computer_id
-                                    FROM computers
-                                    left join computer_certificates on computers.computer_id = computer_certificates.computer_id 
-                                    left join certificate_inventory on (computer_certificates.certificate_id = certificate_inventory.certificate_inventory_id)
-                                    where certificate_inventory.subject " + query.Operator + " " + "'" + query.Value + "'" +
-                              ") and a.last_inventory_time_local > '2019-01-01'");
-
-                    if (queries.First().IncludeArchived && queries.First().IncludePreProvisioned)
-                    {
-                        sb.Append(" AND (a.provision_status = 8 OR a.provision_status = 11 OR a.provision_status = 6)");
-                    }
-                    else if (queries.First().IncludeArchived)
-                    {
-                        sb.Append(" AND (a.provision_status = 8 OR a.provision_status = 11)");
-                    }
-
-                    else if (queries.First().IncludePreProvisioned)
-                    {
-                        sb.Append(" AND (a.provision_status = 8 OR a.provision_status = 6)");
-                    }
-                    else
-                    {
-                        sb.Append(" AND a.provision_status = 8");
-                    }
-
-                    if (!string.IsNullOrEmpty(queries.First().GroupBy))
-                    {
-                        sb.Append($" GROUP BY {queries.First().GroupBy}");
-                    }
-                }
-
-
-                sqlQuery = new DtoRawSqlQuery();
+                sb.Append(BuildGroupBy(query.GroupBy));
                 sqlQuery.Sql = sb.ToString();
+                sqlQuery.Parameters = new List<string> { query.Value };
                 return sqlQuery;
             }
 
             string select = "SELECT a.computer_id, a.computer_name,";
-
-            foreach (var query in queries.Where(x => x.Table.Equals("Computer")))
+            foreach (var query in queries.Where(x => x.Table.Equals("Computer", StringComparison.OrdinalIgnoreCase)))
             {
-                if (query.Field.Equals("computer_name")) continue;
-                select += @" a." + query.Field + ",";
+                if (query.Field.Equals("computer_name", StringComparison.OrdinalIgnoreCase)) continue;
+                select += $" a.{QuoteIdentifier(query.Field)},";
             }
-
-            foreach (var query in queries.Where(x => x.Table.Equals("Bios")))
+            foreach (var query in queries.Where(x => x.Table.Equals("Bios", StringComparison.OrdinalIgnoreCase)))
+                select += $" b.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("System", StringComparison.OrdinalIgnoreCase)))
+                select += $" c.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("Hard Drive", StringComparison.OrdinalIgnoreCase)))
+                select += $" d.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("OS", StringComparison.OrdinalIgnoreCase)))
+                select += $" e.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("Printer", StringComparison.OrdinalIgnoreCase)))
+                select += $" f.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("Processor", StringComparison.OrdinalIgnoreCase)))
+                select += $" g.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("Application", StringComparison.OrdinalIgnoreCase)))
+                select += $" i.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("Windows Update", StringComparison.OrdinalIgnoreCase) && x.Field.Equals("is_installed", StringComparison.OrdinalIgnoreCase)))
+                select += $" j.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("Windows Update", StringComparison.OrdinalIgnoreCase) && x.Field.Equals("install_date", StringComparison.OrdinalIgnoreCase)))
+                select += $" j.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("Windows Update", StringComparison.OrdinalIgnoreCase) && x.Field.Equals("title", StringComparison.OrdinalIgnoreCase)))
+                select += $" k.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("Firewall", StringComparison.OrdinalIgnoreCase)))
+                select += $" l.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("AntiVirus", StringComparison.OrdinalIgnoreCase)))
+                select += $" m.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("BitLocker", StringComparison.OrdinalIgnoreCase)))
+                select += $" n.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("Logical Volumes", StringComparison.OrdinalIgnoreCase)))
+                select += $" o.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("Network Adapters", StringComparison.OrdinalIgnoreCase)))
+                select += $" p.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("Certificates", StringComparison.OrdinalIgnoreCase)))
+                select += $" r.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("Category", StringComparison.OrdinalIgnoreCase)))
+                select += $" t.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("Gpu", StringComparison.OrdinalIgnoreCase)))
+                select += $" u.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.Equals("Group", StringComparison.OrdinalIgnoreCase)))
+                select += $" w.{QuoteIdentifier(query.Field)},";
+            foreach (var query in queries.Where(x => x.Table.StartsWith("(")))
             {
-                select += @" b." + query.Field + ",";
-            }
-
-            foreach (var query in queries.Where(x => x.Table.Equals("System")))
-            {
-                select += @" c." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("Hard Drive")))
-            {
-                select += @" d." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("OS")))
-            {
-                select += @" e." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("Printer")))
-            {
-                select += @" f." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("Processor")))
-            {
-                select += @" g." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("Application")))
-            {
-                select += @" i." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("Windows Update") && x.Field.Equals("is_installed")))
-            {
-                select += @" j." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("Windows Update") && x.Field.Equals("install_date")))
-            {
-                select += @" j." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("Windows Update") && x.Field.Equals("title")))
-            {
-                select += @" k." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("Firewall")))
-            {
-                select += @" l." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("AntiVirus")))
-            {
-                select += @" m." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("BitLocker")))
-            {
-                select += @" n." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("Logical Volumes")))
-            {
-                select += @" o." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("Network Adapters")))
-            {
-                select += @" p." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("Certificates")))
-            {
-                select += @" r." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("Category")))
-            {
-                select += @" t." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("Gpu")))
-            {
-                select += @" u." + query.Field + ",";
-            }
-            foreach (var query in queries.Where(x => x.Table.Equals("Group")))
-            {
-                select += @" w." + query.Field + ",";
-            }
-
-            foreach (var query in queries)
-            {
-                if (query.Table.StartsWith("("))
+                var cia = query.Table.Trim('(').Trim(')');
+                var ciaType = cia.Split('_').First();
+                if (ciaType.Equals("ci", StringComparison.OrdinalIgnoreCase))
                 {
-                    var cia = query.Table.Trim('(').Trim(')');
-                    var ciaType = cia.Split('_').First();
-                    if (ciaType.Equals("ci"))
+                    if (int.TryParse(cia.Split('_')[1], out int ciId))
                     {
-                        int ciId;
-                        if (int.TryParse(cia.Split('_')[1], out ciId))
-                        {
-                            var script = new ServiceScriptModule().GetModule(ciId);
-                            select += @" ci" + ciId + "." + query.Field + " as " + "\"" + script.Name + "\"" + ",";
-                        }
+                        var script = new ServiceScriptModule().GetModule(ciId);
+                        select += $" ci{ciId}.{QuoteIdentifier(query.Field)} AS [{script.Name.Replace("]", "]]")}],";
                     }
-                    else if (ciaType.Equals("ca"))
-                    {
-                        int caId;
-                        if (int.TryParse(cia.Split('_')[1], out caId))
-                        {
-                            var attribute = new ServiceCustomAttribute().GetCustomAttribute(caId);
-                            select += @" ca" + caId + "." + query.Field + " as " + "\"" + attribute.Name + "\"" + ",";
-                        }
-                    }
-
                 }
-             
+                else if (ciaType.Equals("ca", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (int.TryParse(cia.Split('_')[1], out int caId))
+                    {
+                        var attribute = new ServiceCustomAttribute().GetCustomAttribute(caId);
+                        select += $" ca{caId}.{QuoteIdentifier(query.Field)} AS [{attribute.Name.Replace("]", "]]")}],";
+                    }
+                }
             }
 
             var selectTrimmed = select.Trim(',') + " ";
-
             sb.Append(selectTrimmed);
-            sb.Append(@" FROM computers as a ");
+            sb.Append(@"FROM computers AS a ");
 
             if (queries.Any(x => x.Table == "Bios"))
-                sb.Append("LEFT JOIN bios_inventory b on a.computer_id = b.computer_id ");
+                sb.Append("LEFT JOIN bios_inventory b ON a.computer_id = b.computer_id ");
             if (queries.Any(x => x.Table == "System"))
-                sb.Append("LEFT JOIN computer_system_inventory c on a.computer_id = c.computer_id ");
+                sb.Append("LEFT JOIN computer_system_inventory c ON a.computer_id = c.computer_id ");
             if (queries.Any(x => x.Table == "Hard Drive"))
-                sb.Append("LEFT JOIN hdd_inventory d on a.computer_id = d.computer_id ");
+                sb.Append("LEFT JOIN hdd_inventory d ON a.computer_id = d.computer_id ");
             if (queries.Any(x => x.Table == "OS"))
-                sb.Append("LEFT JOIN os_inventory e on a.computer_id = e.computer_id ");
+                sb.Append("LEFT JOIN os_inventory e ON a.computer_id = e.computer_id ");
             if (queries.Any(x => x.Table == "Printer"))
-                sb.Append("LEFT JOIN printer_inventory f on a.computer_id = f.computer_id ");
+                sb.Append("LEFT JOIN printer_inventory f ON a.computer_id = f.computer_id ");
             if (queries.Any(x => x.Table == "Processor"))
-                sb.Append("LEFT JOIN processor_inventory g on a.computer_id = g.computer_id ");
+                sb.Append("LEFT JOIN processor_inventory g ON a.computer_id = g.computer_id ");
             if (queries.Any(x => x.Table == "Application"))
             {
-                sb.Append("LEFT JOIN computer_software h on a.computer_id = h.computer_id ");
-                sb.Append("LEFT JOIN software_inventory i on h.software_id = i.software_inventory_id ");
+                sb.Append("LEFT JOIN computer_software h ON a.computer_id = h.computer_id ");
+                sb.Append("LEFT JOIN software_inventory i ON h.software_id = i.software_inventory_id ");
             }
             if (queries.Any(x => x.Table == "Windows Update"))
             {
-                sb.Append("LEFT JOIN computer_updates j on a.computer_id = j.computer_id ");
-                sb.Append("LEFT JOIN wu_inventory k on j.wu_inventory_id = k.wu_inventory_id ");
+                sb.Append("LEFT JOIN computer_updates j ON a.computer_id = j.computer_id ");
+                sb.Append("LEFT JOIN wu_inventory k ON j.wu_inventory_id = k.wu_inventory_id ");
             }
             if (queries.Any(x => x.Table == "Firewall"))
-                sb.Append("LEFT JOIN firewall_inventory l on a.computer_id = l.computer_id ");
+                sb.Append("LEFT JOIN firewall_inventory l ON a.computer_id = l.computer_id ");
             if (queries.Any(x => x.Table == "AntiVirus"))
-                sb.Append("LEFT JOIN antivirus_inventory m on a.computer_id = m.computer_id ");
+                sb.Append("LEFT JOIN antivirus_inventory m ON a.computer_id = m.computer_id ");
             if (queries.Any(x => x.Table == "BitLocker"))
-                sb.Append("LEFT JOIN bitlocker_inventory n on a.computer_id = n.computer_id ");
+                sb.Append("LEFT JOIN bitlocker_inventory n ON a.computer_id = n.computer_id ");
             if (queries.Any(x => x.Table == "Logical Volumes"))
-                sb.Append("LEFT JOIN logical_volume_inventory o on a.computer_id = o.computer_id ");
+                sb.Append("LEFT JOIN logical_volume_inventory o ON a.computer_id = o.computer_id ");
             if (queries.Any(x => x.Table == "Network Adapters"))
-                sb.Append("LEFT JOIN nic_inventory p on a.computer_id = p.computer_id ");
+                sb.Append("LEFT JOIN nic_inventory p ON a.computer_id = p.computer_id ");
             if (queries.Any(x => x.Table == "Certificates"))
             {
-                sb.Append("LEFT JOIN computer_certificates q on a.computer_id = q.computer_id ");
-                sb.Append("LEFT JOIN certificate_inventory r on q.certificate_id = r.certificate_inventory_id ");
+                sb.Append("LEFT JOIN computer_certificates q ON a.computer_id = q.computer_id ");
+                sb.Append("LEFT JOIN certificate_inventory r ON q.certificate_id = r.certificate_inventory_id ");
             }
             if (queries.Any(x => x.Table == "Category"))
             {
-                sb.Append("LEFT JOIN computer_categories s on a.computer_id = s.computer_id ");
-                sb.Append("LEFT JOIN categories t on s.category_id = t.category_id ");
+                sb.Append("LEFT JOIN computer_categories s ON a.computer_id = s.computer_id ");
+                sb.Append("LEFT JOIN categories t ON s.category_id = t.category_id ");
             }
             if (queries.Any(x => x.Table == "Gpu"))
-                sb.Append("LEFT JOIN computer_gpu_inventory u on a.computer_id = u.computer_id ");
+                sb.Append("LEFT JOIN computer_gpu_inventory u ON a.computer_id = u.computer_id ");
             if (queries.Any(x => x.Table == "Group"))
             {
-                sb.Append($"LEFT JOIN group_memberships v on a.computer_id = v.computer_id ");
-                sb.Append($"LEFT JOIN groups w on v.group_id = w.group_id ");
+                sb.Append("LEFT JOIN group_memberships v ON a.computer_id = v.computer_id ");
+                sb.Append("LEFT JOIN groups w ON v.group_id = w.group_id ");
             }
 
             var scriptModuleIds = new List<int>();
@@ -381,37 +367,32 @@ namespace Toems_Service.Workflows
                 {
                     var cia = query.Table.Trim('(').Trim(')');
                     var ciaType = cia.Split('_').First();
-                    if (ciaType.Equals("ci"))
+                    if (ciaType.Equals("ci", StringComparison.OrdinalIgnoreCase))
                     {
-                        int ciId;
-                        if (int.TryParse(cia.Split('_')[1], out ciId))
+                        if (int.TryParse(cia.Split('_')[1], out int ciId))
                             scriptModuleIds.Add(ciId);
                     }
-                    else if (ciaType.Equals("ca"))
+                    else if (ciaType.Equals("ca", StringComparison.OrdinalIgnoreCase))
                     {
-                        int caId;
-                        if (int.TryParse(cia.Split('_')[1], out caId))
+                        if (int.TryParse(cia.Split('_')[1], out int caId))
                             customAttributeIds.Add(caId);
                     }
-
                 }
             }
 
             if (scriptModuleIds.Count > 0)
             {
-                foreach (var moduleId in scriptModuleIds)
+                foreach (var moduleId in scriptModuleIds.Distinct())
                 {
-                    sb.Append("LEFT JOIN custom_inventory ci" + moduleId + " on a.computer_id = ci" + moduleId + ".computer_id AND ci" + moduleId + ".script_module_id in ");
-                    sb.Append("(" + moduleId + ") ");
+                    sb.Append($"LEFT JOIN custom_inventory ci{moduleId} ON a.computer_id = ci{moduleId}.computer_id AND ci{moduleId}.script_module_id = {moduleId} ");
                 }
             }
 
             if (customAttributeIds.Count > 0)
             {
-                foreach (var attributeId in customAttributeIds)
+                foreach (var attributeId in customAttributeIds.Distinct())
                 {
-                    sb.Append("LEFT JOIN custom_computer_attributes ca" + attributeId + " on a.computer_id = ca" + attributeId + ".computer_id AND ca" + attributeId + ".custom_attribute_id in ");
-                    sb.Append("(" + attributeId + ") ");
+                    sb.Append($"LEFT JOIN custom_computer_attributes ca{attributeId} ON a.computer_id = ca{attributeId}.computer_id AND ca{attributeId}.custom_attribute_id = {attributeId} ");
                 }
             }
 
@@ -419,107 +400,82 @@ namespace Toems_Service.Workflows
             sb.Append("WHERE (");
             int counter = 0;
             var parameters = new List<string>();
+            bool isFirst = true;
             foreach (var query in queries)
             {
                 var tableAs = "";
-                if (query.Table == "Computer")
+                if (query.Table.Equals("Computer", StringComparison.OrdinalIgnoreCase))
                     tableAs = "a";
-                else if (query.Table == "Bios")
+                else if (query.Table.Equals("Bios", StringComparison.OrdinalIgnoreCase))
                     tableAs = "b";
-                else if (query.Table == "System")
+                else if (query.Table.Equals("System", StringComparison.OrdinalIgnoreCase))
                     tableAs = "c";
-                else if (query.Table == "Hard Drive")
+                else if (query.Table.Equals("Hard Drive", StringComparison.OrdinalIgnoreCase))
                     tableAs = "d";
-                else if (query.Table == "OS")
+                else if (query.Table.Equals("OS", StringComparison.OrdinalIgnoreCase))
                     tableAs = "e";
-                else if (query.Table == "Printer")
+                else if (query.Table.Equals("Printer", StringComparison.OrdinalIgnoreCase))
                     tableAs = "f";
-                else if (query.Table == "Processor")
+                else if (query.Table.Equals("Processor", StringComparison.OrdinalIgnoreCase))
                     tableAs = "g";
-                else if (query.Table == "Application")
+                else if (query.Table.Equals("Application", StringComparison.OrdinalIgnoreCase))
                     tableAs = "i";
-                else if (query.Table == "Windows Update" && query.Field == "is_installed")
+                else if (query.Table.Equals("Windows Update", StringComparison.OrdinalIgnoreCase) && (query.Field.Equals("is_installed", StringComparison.OrdinalIgnoreCase) || query.Field.Equals("install_date", StringComparison.OrdinalIgnoreCase)))
                     tableAs = "j";
-                else if (query.Table == "Windows Update" && query.Field == "install_date")
-                    tableAs = "j";
-                else if (query.Table == "Windows Update")
+                else if (query.Table.Equals("Windows Update", StringComparison.OrdinalIgnoreCase))
                     tableAs = "k";
-                else if (query.Table == "Firewall")
+                else if (query.Table.Equals("Firewall", StringComparison.OrdinalIgnoreCase))
                     tableAs = "l";
-                else if (query.Table == "AntiVirus")
+                else if (query.Table.Equals("AntiVirus", StringComparison.OrdinalIgnoreCase))
                     tableAs = "m";
-                else if (query.Table == "BitLocker")
+                else if (query.Table.Equals("BitLocker", StringComparison.OrdinalIgnoreCase))
                     tableAs = "n";
-                else if (query.Table == "Logical Volumes")
+                else if (query.Table.Equals("Logical Volumes", StringComparison.OrdinalIgnoreCase))
                     tableAs = "o";
-                else if (query.Table == "Network Adapters")
+                else if (query.Table.Equals("Network Adapters", StringComparison.OrdinalIgnoreCase))
                     tableAs = "p";
-                else if (query.Table == "Certificates")
+                else if (query.Table.Equals("Certificates", StringComparison.OrdinalIgnoreCase))
                     tableAs = "r";
-                else if (query.Table == "Category")
+                else if (query.Table.Equals("Category", StringComparison.OrdinalIgnoreCase))
                     tableAs = "t";
-                else if (query.Table == "Gpu")
+                else if (query.Table.Equals("Gpu", StringComparison.OrdinalIgnoreCase))
                     tableAs = "u";
-                else if (query.Table == "Group")
+                else if (query.Table.Equals("Group", StringComparison.OrdinalIgnoreCase))
                     tableAs = "w";
-                else
+                else if (query.Table.StartsWith("("))
                 {
-                    if (query.Table.StartsWith("("))
-                    {
-                        var cia = query.Table.Trim('(').Trim(')');
-                        var ciaType = cia.Split('_').First();
-                        if (ciaType.Equals("ci"))
-                        {
-                            int ciId;
-                            if (int.TryParse(cia.Split('_')[1], out ciId))
-                                tableAs = "ci" + ciId;
-                        }
-                        else if (ciaType.Equals("ca"))
-                        {
-                            int caId;
-                            if (int.TryParse(cia.Split('_')[1], out caId))
-                                tableAs = "ca" + caId;
-                        }
-                    }
+                    var cia = query.Table.Trim('(').Trim(')');
+                    var ciaType = cia.Split('_').First().ToLower();
+                    var id = cia.Split('_')[1];
+                    tableAs = ciaType + id;
                 }
-                counter++;
 
-                sb.Append(query.AndOr + " " + query.LeftParenthesis + " " + tableAs + "." + query.Field + " ");                
-                sb.Append(query.Operator + " @p" + counter + " " + query.RightParenthesis);
+                counter++;
+                string andOr = isFirst ? "" : query.AndOr;
+                sb.Append(andOr + " " + query.LeftParenthesis + " " + tableAs + "." + QuoteIdentifier(query.Field) + " ");
+                sb.Append(query.Operator + " @p" + counter + " " + query.RightParenthesis + " ");
 
                 parameters.Add(query.Value);
+                isFirst = false;
             }
 
             if (queries.First().IncludeArchived && queries.First().IncludePreProvisioned)
-            {
                 sb.Append(") AND (a.provision_status = 8 OR a.provision_status = 11 OR a.provision_status = 6 OR a.provision_status = 13)");
-            }
             else if (queries.First().IncludeArchived)
-            {
                 sb.Append(") AND (a.provision_status = 8 OR a.provision_status = 11 OR a.provision_status = 13)");
-            }
-
             else if (queries.First().IncludePreProvisioned)
-            {
                 sb.Append(") AND (a.provision_status = 8 OR a.provision_status = 6 OR a.provision_status = 13)");
-            }
             else
-            {
                 sb.Append(") AND (a.provision_status = 8 OR a.provision_status = 13)");
-            }
 
             var gb = BuildGroupBy(queries.First().GroupBy);
-            if(!string.IsNullOrEmpty(gb))
-            {
+            if (!string.IsNullOrEmpty(gb))
                 sb.Append(gb);
-            }
 
             sqlQuery.Sql = sb.ToString();
             sqlQuery.Parameters = parameters;
-
             return sqlQuery;
 
-           
         }
     }
 }

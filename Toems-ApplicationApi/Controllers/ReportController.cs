@@ -33,14 +33,7 @@ namespace Toems_ApplicationApi.Controllers
             var result = _reportService.GetInventory(queries);
             return new DtoApiStringResponse() { Value = JsonConvert.SerializeObject(result) };
         }
-
-        [HttpPost]
-        [CustomAuth(Permission = AuthorizationStrings.ReportRead)]
-        public DtoApiStringResponse GetCustomAsset(List<DtoCustomComputerQuery> queries)
-        {
-            var result = _reportService.GetAssetInventory(queries);
-            return new DtoApiStringResponse() { Value = JsonConvert.SerializeObject(result) };
-        }
+        
 
         [HttpGet]
         [CustomAuth(Permission = AuthorizationStrings.ReportRead)]
