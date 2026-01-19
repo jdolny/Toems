@@ -1,0 +1,59 @@
+﻿@using Toems_Common.Dto
+@using Toems_Common.Entity
+@using Toems_UI.Site.Layout
+@inject Toems_ApiCalls.APICall Call
+@inject ISnackbar Snackbar
+@layout MainLayout
+@inherits BaseComponent
+
+<ActionButtons InsertAtTop="true">
+    <MainButton>
+        <MudButton OnClick="Update">Update Image Profile</MudButton>
+    </MainButton>
+    <Content>
+       
+    </Content>
+</ActionButtons>
+<MudPaper Elevation="2" Class="pa-4">
+<MudGrid>
+    <MudItem xs="12" lg="6">
+        <MudTextField Label="Image Name" T="string" @bind-Value="@ImageProfile.Name" Typo="Typo.body2" Variant="Variant.Outlined"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" lg="6">
+        <MudTextField Label="Description" T="string" AutoGrow="true" Lines="2" @bind-Value="@ImageProfile.Description" Typo="Typo.body2" Variant="Variant.Outlined"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" lg="6">
+        <MudTextField T="string"  Label="Model Match" Value="@ImageProfile.ModelMatch" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" lg="6">
+        <MudSelect Dense="true" T="string" Label="Client Action" @bind-Value="ImageProfile.ModelMatchType" AdornmentIcon="@Icons.Material.Filled.Category" Variant="Variant.Outlined" AdornmentColor="Color.Primary">
+            <MudSelectItem Value="@("Disabled")">Disabled</MudSelectItem>
+            <MudSelectItem Value="@("Equals")">Equals</MudSelectItem>
+            <MudSelectItem Value="@("Starts With")">Starts With</MudSelectItem>
+            <MudSelectItem Value="@("Ends With")">Ends With</MudSelectItem>
+            <MudSelectItem Value="@("Contains")">Contains</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+</MudPaper>
+
+
+
+@code {
+    [Parameter] public required ImageProfileWithImage ImageProfile { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ImageProfile.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{ImageProfile.Name}",new ImageBreadcrumbs(ImageProfile.Image).General())) return;
+    
+    }
+    
+    private async Task Update()
+    {
+        var result = await Call.ImageProfileApi.Put(ImageProfile.Id,ImageProfile);
+        if(result.Success)
+            Snackbar.Add("Image profile updated successfully.", Severity.Success);
+        else
+            Snackbar.Add("Failed to update image profile.", Severity.Error);
+    }
+}

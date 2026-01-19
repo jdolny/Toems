@@ -29,6 +29,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toems-ClientApi", "Toems-Cl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toems-UI", "Toems-UI\Toems-UI.csproj", "{9778FA8C-21F3-4D41-ACDE-EB5B9106FFC2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toems-ApplicationApiCore", "Toems-ApplicationApiCore\Toems-ApplicationApiCore.csproj", "{884E9383-D577-45E2-A446-17AE4CAB4042}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toems-ServiceCore", "Toems-ServiceCore\Toems-ServiceCore.csproj", "{C6881996-DC88-455A-8227-0F9655C4A5CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +105,22 @@ Global
 		{9778FA8C-21F3-4D41-ACDE-EB5B9106FFC2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9778FA8C-21F3-4D41-ACDE-EB5B9106FFC2}.Release|x64.ActiveCfg = Release|Any CPU
 		{9778FA8C-21F3-4D41-ACDE-EB5B9106FFC2}.Release|x64.Build.0 = Release|Any CPU
+		{884E9383-D577-45E2-A446-17AE4CAB4042}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{884E9383-D577-45E2-A446-17AE4CAB4042}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{884E9383-D577-45E2-A446-17AE4CAB4042}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{884E9383-D577-45E2-A446-17AE4CAB4042}.Debug|x64.Build.0 = Debug|Any CPU
+		{884E9383-D577-45E2-A446-17AE4CAB4042}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{884E9383-D577-45E2-A446-17AE4CAB4042}.Release|Any CPU.Build.0 = Release|Any CPU
+		{884E9383-D577-45E2-A446-17AE4CAB4042}.Release|x64.ActiveCfg = Release|Any CPU
+		{884E9383-D577-45E2-A446-17AE4CAB4042}.Release|x64.Build.0 = Release|Any CPU
+		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Debug|x64.Build.0 = Debug|Any CPU
+		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Release|x64.ActiveCfg = Release|Any CPU
+		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

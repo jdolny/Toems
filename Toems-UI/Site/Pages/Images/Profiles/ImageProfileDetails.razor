@@ -1,6 +1,7 @@
 ﻿@using Toems_Common.Dto
 @using Toems_Common.Entity
 @using Toems_UI.Site.Layout
+@using Toems_UI.Site.Pages.Images.Profiles.Components
 @inject Toems_ApiCalls.APICall Call
 @inject ISnackbar Snackbar
 @layout MainLayout
@@ -34,7 +35,7 @@
         </MudTabPanel>
         <MudTabPanel Text="General">
             <MudStack Class="stack-full">
-               
+                <General ImageProfile="@ImageProfile"/>
             </MudStack>
         </MudTabPanel>
         <MudTabPanel Text="Multicast Options">

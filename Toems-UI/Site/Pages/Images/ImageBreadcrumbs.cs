@@ -34,4 +34,8 @@ public class ImageBreadcrumbs(EntityImage Image = null, ImageProfileWithImage Pr
     {
         return [_home, _manage, _imageNamePath,_profiles,_profileName, new("Custom Scripts", href: null, disabled: true)];
     }
+    public List<BreadcrumbItem> ProfileGeneral()
+    {
+        return [_home, _manage, _imageNamePath,_profiles,_profileName, new("General", href: null, disabled: true)];
+    }
 }

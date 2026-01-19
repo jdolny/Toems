@@ -1161,4 +1161,9 @@
     <AdditionalFiles Include="Site\Pages\Home.razor" />
     <AdditionalFiles Include="Site\Pages\Login.razor" />
   </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Site\Pages\Images\Profiles\Actions\" />
+  </ItemGroup>
 </Project>
