@@ -129,9 +129,15 @@ namespace Toems_Service
 
         public List<string> GetLogContents(string name, int limit)
         {
-            var basePath = HttpContext.Current.Server.MapPath("~");
-            var path = Path.Combine(basePath, "private", "logs", name);
-            return File.ReadLines(path).Reverse().Take(limit).Reverse().ToList();
+            PathUtils.ValidateFileName(name);
+
+            var root = HttpContext.Current.Server.MapPath("~/private/logs");
+            var fullPath = PathUtils.CombineSafe(root, name);
+ 
+            if (!File.Exists(fullPath))
+                throw new FileNotFoundException();
+
+            return File.ReadLines(fullPath).Reverse().Take(limit).Reverse().ToList();
         }
 
         public List<string> GetComServerLogContents(string name, int limit, int comServerId)

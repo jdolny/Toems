@@ -63,6 +63,7 @@
     <Compile Include="DbUpgrades\130.cs" />
     <Compile Include="DbUpgrades\121.cs" />
     <Compile Include="DbUpgrades\157.cs" />
+    <Compile Include="DbUpgrades\159.cs" />
     <Compile Include="DbUpgrades\158.cs" />
     <Compile Include="DbUpgrades\IDbScript.cs" />
     <Compile Include="DbUpgrades\VersionMapping.cs" />
@@ -402,6 +403,7 @@
     <Compile Include="Enum\EnumSoftwareModule.cs" />
     <Compile Include="Enum\EnumStartupDelay.cs" />
     <Compile Include="Enum\EnumUserTracker.cs" />
+    <Compile Include="PathUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingStrings.cs" />
     <Compile Include="Utility.cs" />

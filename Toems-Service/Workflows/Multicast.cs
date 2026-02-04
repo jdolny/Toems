@@ -250,17 +250,17 @@ namespace Toems_Service.Workflows
 
             if (_isOnDemand)
             {
-                multicastArgs.ExtraArgs = string.IsNullOrEmpty(_imageProfile.SenderArguments)
-                    ? comServer.MulticastSenderArguments
-                    : _imageProfile.SenderArguments;
+               // multicastArgs.ExtraArgs = string.IsNullOrEmpty(_imageProfile.SenderArguments)
+                 //   ? comServer.MulticastSenderArguments
+                   // : _imageProfile.SenderArguments;
                 if (!string.IsNullOrEmpty(_clientCount))
                     multicastArgs.clientCount = _clientCount;
             }
             else
             {
-                multicastArgs.ExtraArgs = string.IsNullOrEmpty(_imageProfile.SenderArguments)
-                    ? comServer.MulticastSenderArguments
-                    : _imageProfile.SenderArguments;
+               // multicastArgs.ExtraArgs = string.IsNullOrEmpty(_imageProfile.SenderArguments)
+                 //   ? comServer.MulticastSenderArguments
+                   // : _imageProfile.SenderArguments;
                 multicastArgs.clientCount = _computers.Count.ToString();
             }
 

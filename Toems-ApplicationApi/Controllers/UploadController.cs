@@ -160,22 +160,38 @@ namespace Toems_ApplicationApi.Controllers
                 return;
             }
 
-        
-            //Now on to the upload
 
-            // find filename
+            var uploadsRoot = Path.GetFullPath(Path.Combine(_basePath, "software_uploads"));
+            var moduleGuid = Request["moduleGuid"];
+            if (string.IsNullOrWhiteSpace(moduleGuid))
+                throw new HttpException(400, "Invalid moduleGuid");
+
+            if (!Guid.TryParse(moduleGuid, out _))
+                throw new HttpException(400, "Invalid moduleGuid format");
+
+
+            var destinationDir = PathUtils.CombineSafe(uploadsRoot,moduleGuid);
+
+        
             var formUpload = Request.Files.Count > 0;
             var xFileName = Request.Headers["X-File-Name"];
             var qqFile = Request["qqfile"];
             var formFilename = formUpload ? Request.Files[0].FileName : null;
             var fileName = xFileName ?? qqFile ?? formFilename;
+
+            string safeFileName = Path.GetFileName(fileName);
+
+            if (safeFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+                throw new HttpException(400, "Invalid filename");
+
+
             var upload = new DtoFileUpload
             {
-                Filename = fileName,
+                Filename = safeFileName,
                 InputStream = formUpload ? Request.Files[0].InputStream : Request.InputStream,
                 UploadMethod = Request["uploadMethod"],
-                DestinationDirectory = Path.Combine(_basePath, "software_uploads", Request["moduleGuid"]),
-                ModuleGuid = Request["moduleGuid"]
+                DestinationDirectory = destinationDir,
+                ModuleGuid = moduleGuid
             };
 
             int someval;

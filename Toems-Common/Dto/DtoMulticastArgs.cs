@@ -11,7 +11,7 @@ namespace Toems_Common.Dto
     {
         public string clientCount { get; set; }
         public string Environment { get; set; }
-        public string ExtraArgs { get; set; }
+        //public string ExtraArgs { get; set; }
         public string groupName { get; set; }
         public string ImageName { get; set; }
         public string Port { get; set; }
