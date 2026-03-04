@@ -5,31 +5,37 @@ using Toems_ServiceCore.EntityServices;
 
 namespace Toems_Service.Workflows
 {
-    public class SubmitInventory
+    public class SubmitInventory(ServiceComputer serviceComputer, ServiceBiosInventory serviceBiosInventory, ServiceComputerSystemInventory serviceComputerSystemInventory, 
+        ServiceComputerGpuInventory serviceComputerGpuInventory, ServiceOsInventory serviceOsInventory, ServiceProcessorInventory serviceProcessorInventory, 
+        ServicePrinterInventory servicePrinterInventory, ServiceHardDriveInventory serviceHardDriveInventory, ServiceNicInventory serviceNicInventory, 
+        ServiceWuInventory serviceWuInventory, ServiceComputerUpdates serviceComputerUpdates, ServiceSoftwareInventory serviceSoftwareInventory, 
+        ServiceComputerSoftware serviceComputerSoftware, ServiceCertificateInventory serviceCertificateInventory, ServiceComputerCertificate serviceComputerCertificate, 
+        ServiceAntivirusInventory serviceAntivirusInventory, ServiceLogicalVolumeInventory serviceLogicalVolumeInventory, ServiceBitlockerInventory serviceBitlockerInventory, 
+        ServiceFirewallInventory serviceFirewallInventory, ServiceImagingClientId serviceImagingClientId)
     {
         public bool Run(DtoInventoryCollection collection,string clientIdentifier)
         {
-            var client = new ServiceComputer().GetByGuid(clientIdentifier);
+            var client = serviceComputer.GetByGuid(clientIdentifier);
             if (client == null) return false;
 
-            new ServiceBiosInventory().AddOrUpdate(collection.Bios,client.Id);
-            new ServiceComputerSystemInventory().AddOrUpdate(collection.ComputerSystem,client.Id);
-            new ServiceComputerGpuInventory().AddOrUpdate(collection.Gpu, client.Id);
-            new ServiceOsInventory().AddOrUpdate(collection.Os,client.Id);
-            new ServiceProcessorInventory().AddOrUpdate(collection.Processor,client.Id);
-            new ServicePrinterInventory().AddOrUpdate(collection.Printers, client.Id);
-            new ServiceHardDriveInventory().AddOrUpdate(collection.HardDrives, client.Id);
-            new ServiceNicInventory().AddOrUpdate(collection.NetworkAdapters, client.Id);
-            new ServiceWuInventory().Add(collection.WindowsUpdates);
-            new ServiceComputerUpdates().AddOrUpdate(collection.WindowsUpdates, client.Id);
-            new ServiceSoftwareInventory().Add(collection.Software);
-            new ServiceComputerSoftware().AddOrUpdate(collection.Software, client.Id);
-            new ServiceCertificateInventory().Add(collection.Certificates);
-            new ServiceComputerCertificate().AddOrUpdate(collection.Certificates, client.Id);
-            new ServiceAntivirusInventory().AddOrUpdate(collection.AntiVirus, client.Id);
-            new ServiceLogicalVolumeInventory().AddOrUpdate(collection.LogicalVolume, client.Id);
-            new ServiceBitlockerInventory().AddOrUpdate(collection.Bitlocker, client.Id);
-            new ServiceFirewallInventory().AddOrUpdate(collection.Firewall,client.Id);
+            serviceBiosInventory.AddOrUpdate(collection.Bios,client.Id);
+            serviceComputerSystemInventory.AddOrUpdate(collection.ComputerSystem,client.Id);
+            serviceComputerGpuInventory.AddOrUpdate(collection.Gpu, client.Id);
+            serviceOsInventory.AddOrUpdate(collection.Os,client.Id);
+            serviceProcessorInventory.AddOrUpdate(collection.Processor,client.Id);
+            servicePrinterInventory.AddOrUpdate(collection.Printers, client.Id);
+            serviceHardDriveInventory.AddOrUpdate(collection.HardDrives, client.Id);
+            serviceNicInventory.AddOrUpdate(collection.NetworkAdapters, client.Id);
+            serviceWuInventory.Add(collection.WindowsUpdates);
+            serviceComputerUpdates.AddOrUpdate(collection.WindowsUpdates, client.Id);
+            serviceSoftwareInventory.Add(collection.Software);
+            serviceComputerSoftware.AddOrUpdate(collection.Software, client.Id);
+            serviceCertificateInventory.Add(collection.Certificates);
+            serviceComputerCertificate.AddOrUpdate(collection.Certificates, client.Id);
+            serviceAntivirusInventory.AddOrUpdate(collection.AntiVirus, client.Id);
+            serviceLogicalVolumeInventory.AddOrUpdate(collection.LogicalVolume, client.Id);
+            serviceBitlockerInventory.AddOrUpdate(collection.Bitlocker, client.Id);
+            serviceFirewallInventory.AddOrUpdate(collection.Firewall,client.Id);
 
             client.LastInventoryTime = DateTime.Now;
             if(!string.IsNullOrEmpty(collection.ClientVersion))
@@ -38,8 +44,8 @@ namespace Toems_Service.Workflows
                 client.PushUrl = collection.PushUrl;
             if (!string.IsNullOrEmpty(collection.HardwareUUID))
                 client.UUID = collection.HardwareUUID;
-            new ServiceComputer().UpdateComputer(client);
-            new ServiceImagingClientId().AddOrUpdate(client.Id);
+            serviceComputer.UpdateComputer(client);
+            serviceImagingClientId.AddOrUpdate(client.Id);
 
 
             return true;

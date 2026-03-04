@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
 using log4net;
-using RoboSharp;
 using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
@@ -13,16 +12,15 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class ComServerFreeSpace
+    public class ComServerFreeSpace(InfrastructureContext ictx, FilesystemServices filesystemServices)
     {
-        private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public List<DtoFreeSpace> RunAllServers()
         {
             var uow = new UnitOfWork();
             var comServers = uow.ClientComServerRepository.Get();
            
-            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
 
             var list = new List<DtoFreeSpace>();
             foreach (var com in comServers)
@@ -31,7 +29,7 @@ namespace Toems_Service.Workflows
                 free = new APICall().ClientComServerApi.GetFreeSpace(com.Url, "", decryptedKey);
 
                 if (free == null) {
-                    logger.Error("Com server returned null for status. Check your com server URL!");
+                    ictx.Log.Error("Com server returned null for status. Check your com server URL!");
                 }
                 else
                 {
@@ -45,7 +43,7 @@ namespace Toems_Service.Workflows
 
         public DtoFreeSpace GetFreeSpace()
         {
-            return new FilesystemServices().GetComServerFreeSpace();
+            return filesystemServices.GetComServerFreeSpace();
         }
 
       

@@ -10,17 +10,21 @@ using Toems_Common.Entity;
 using Toems_DataModel;
 using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class CleanTaskBootFiles
+    public class CleanTaskBootFiles(ILog log, 
+        IConfiguration config, 
+        EncryptionServices encryptionServices, 
+        ServiceSetting serviceSetting,
+        ServiceClientComServer serviceClientComServer)
     {
         private const string ConfigFolder = "pxelinux.cfg";
         private EntityComputer _computer;
-        private ServiceComputer _computerServices;
+
         private EntityClientComServer _thisComServer;
         private List<string> _listOfMacs;
-        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public bool RunAllServers(EntityComputer computer)
         {
@@ -28,8 +32,8 @@ namespace Toems_Service.Workflows
             var uow = new UnitOfWork();
             var comServers = uow.ClientComServerRepository.Get(x => x.IsTftpServer);
 
-            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+            var intercomKey = serviceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = encryptionServices.DecryptText(intercomKey);
             var NoErrors = true;
             foreach (var com in comServers)
             {
@@ -55,23 +59,22 @@ namespace Toems_Service.Workflows
                 _listOfMacs.Add(StringManipulationServices.MacToPxeMac(mac));
             }
 
-            _computerServices = new ServiceComputer();
 
-            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
-            _thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            var guid = config["ComServerUniqueId"];
+            _thisComServer = serviceClientComServer.GetServerByGuid(guid);
             if (_thisComServer == null)
             {
-                Logger.Error($"Com Server With Guid {guid} Not Found");
+                log.Error($"Com Server With Guid {guid} Not Found");
                 return false;
             }
 
             if (string.IsNullOrEmpty(_thisComServer.TftpPath))
             {
-                Logger.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
+                log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
                 return false;
             }
 
-            if (ServiceSetting.GetSettingValue(SettingStrings.ProxyDhcpEnabled) == "Yes")
+            if (serviceSetting.GetSettingValue(SettingStrings.ProxyDhcpEnabled) == "Yes")
             {
                 DeleteProxyFile("bios");
                 DeleteProxyFile("bios", ".ipxe");
@@ -83,7 +86,7 @@ namespace Toems_Service.Workflows
             }
             else
             {
-                var mode = ServiceSetting.GetSettingValue(SettingStrings.PxeBootloader);
+                var mode = serviceSetting.GetSettingValue(SettingStrings.PxeBootloader);
                 if (mode.Contains("ipxe"))
                     DeleteStandardFile(".ipxe");
                 else if (mode.Contains("grub"))
@@ -108,7 +111,7 @@ namespace Toems_Service.Workflows
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex.Message);
+                    log.Error(ex.Message);
                 }
             }
         }
@@ -125,11 +128,12 @@ namespace Toems_Service.Workflows
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex.Message);
+                    log.Error(ex.Message);
                 }
             }
 
 
         }
     }
+    
 }

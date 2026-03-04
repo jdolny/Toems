@@ -15,22 +15,21 @@ using Toems_Common.Entity;
 using Toems_DataModel;
 using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class DownloadKernel
+    public class DownloadKernel(InfrastructureContext ictx, ServiceClientComServer serviceClientComServer)
     {
         private EntityClientComServer _thisComServer;
-
-        private readonly ILog log = LogManager.GetLogger(typeof(DefaultBootMenu));
-
+        
         public bool RunAllServers(DtoOnlineKernel onlineKernel)
         {
             var uow = new UnitOfWork();
             var comServers = uow.ClientComServerRepository.Get(x => x.IsTftpServer);
 
-            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
             var NoErrors = true;
             foreach (var com in comServers)
             {
@@ -44,17 +43,17 @@ namespace Toems_Service.Workflows
 
         public bool Download(DtoOnlineKernel onlineKernel)
         {
-            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
-            _thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            var guid = ictx.Config["ComServerUniqueId"];
+            _thisComServer = serviceClientComServer.GetServerByGuid(guid);
             if (_thisComServer == null)
             {
-                log.Error($"Com Server With Guid {guid} Not Found");
+                ictx.Log.Error($"Com Server With Guid {guid} Not Found");
                 return false;
             }
 
             if (string.IsNullOrEmpty(_thisComServer.TftpPath))
             {
-                log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
+                ictx.Log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
                 return false;
             }
 
@@ -70,8 +69,8 @@ namespace Toems_Service.Workflows
                 }
                 catch (Exception ex)
                 {
-                    log.Error("Could Not Download Kernel On Com Server: " + _thisComServer.DisplayName);
-                    log.Error(ex.Message);
+                    ictx.Log.Error("Could Not Download Kernel On Com Server: " + _thisComServer.DisplayName);
+                    ictx.Log.Error(ex.Message);
                     return false;
                 }
             }

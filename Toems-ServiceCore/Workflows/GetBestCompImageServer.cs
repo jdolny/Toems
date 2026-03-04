@@ -7,30 +7,27 @@ using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_DataModel;
 using Toems_Service.Entity;
+using Toems_ServiceCore.EntityServices;
 
 namespace Toems_Service.Workflows
 {
 
-    public class GetBestCompImageServer
+    public class GetBestCompImageServer(ServiceActiveImagingTask serviceActiveImagingTask, GetCompImagingServers getCompImagingServers)
     {
-        private readonly EntityComputer _computer;
-        private readonly string _task;
-        private readonly string _comServers;
-        private readonly Random _random;
-        private readonly UnitOfWork _uow;
-        //private EntityComServerCluster _cluster;
-
-        public GetBestCompImageServer(EntityComputer computer, string task, string comServers)
+        private EntityComputer _computer;
+        private string _task;
+        private string _comServers;
+        private Random _random;
+        private UnitOfWork _uow;
+        
+        public int Run(EntityComputer computer, string task, string comServers)
         {
             _computer = computer;
             _task = task;
             _comServers = comServers;
             _random = new Random();
             _uow = new UnitOfWork();
-        }
-
-        public int Run()
-        {
+            
             var comServerId = -1;
             //Find best com server to use
 
@@ -79,7 +76,7 @@ namespace Toems_Service.Workflows
                 }
                 else
                 {
-                    listOfImagingServers = new GetCompImagingServers().Run(_computer.Id);
+                    listOfImagingServers = getCompImagingServers.Run(_computer.Id);
                 }
             }
 
@@ -101,7 +98,7 @@ namespace Toems_Service.Workflows
             foreach (var comServer in listOfImagingServers)
             {
                 var counter = 0;
-                foreach (var activeTask in new ServiceActiveImagingTask().GetAll().Where(x => x.Status != EnumTaskStatus.ImagingStatus.TaskCreated && x.Status != EnumTaskStatus.ImagingStatus.WaitingForLogin))
+                foreach (var activeTask in serviceActiveImagingTask.GetAll().Where(x => x.Status != EnumTaskStatus.ImagingStatus.TaskCreated && x.Status != EnumTaskStatus.ImagingStatus.WaitingForLogin))
                 {
                     if (activeTask.ComServerId == comServer.Id)
                     {

@@ -12,24 +12,20 @@ using Toems_ServiceCore.EntityServices;
 
 namespace Toems_Service.Workflows
 {
-    public class ImportPolicy
+    public class ImportPolicy(ServicePolicy servicePolicy, ServiceScriptModule serviceScriptModule, ServicePrinterModule servicePrinterModule, 
+        ServiceCommandModule serviceCommandModule, ServiceFileCopyModule serviceFileCopyModule, ServiceSoftwareModule serviceSoftwareModule, 
+        ServiceWuModule serviceWuModule, ServiceMessageModule serviceMessageModule, ServiceWingetModule serviceWingetModule, ServiceExternalDownload serviceExternalDownload)
     {
-        private readonly ServicePolicy _policyService;
         private DtoPolicyExport _export;
-        private UnitOfWork _uow;
-        private EntityPolicy _policy;
+        private UnitOfWork _uow = new();
+        private EntityPolicy _policy = new();
         private bool _policyHasInternalFiles;
         private bool _policyHasExternalFiles;
 
-        public ImportPolicy(DtoPolicyExport export)
+        public DtoImportResult Import(DtoPolicyExport export)
         {
             _export = export;
-            _policyService = new ServicePolicy();
-            _policy = new EntityPolicy();
-            _uow = new UnitOfWork();
-        }
-        public DtoImportResult Import()
-        {
+
             if (_export == null)
             {
                 return new DtoImportResult() {ErrorMessage = "Policy Was Null"};
@@ -42,56 +38,56 @@ namespace Toems_Service.Workflows
             result = CreateScripts();
             if (!result.Success)
             {
-                _policyService.DeletePolicy(_policy.Id);
+                servicePolicy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() {ErrorMessage = result.ErrorMessage};
             }
 
             result = CreatePrinters();
             if (!result.Success)
             {
-                _policyService.DeletePolicy(_policy.Id);
+                servicePolicy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() {ErrorMessage = result.ErrorMessage};
             }
 
             result = CreateCommands();
             if (!result.Success)
             {
-                _policyService.DeletePolicy(_policy.Id);
+                servicePolicy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() {ErrorMessage = result.ErrorMessage};
             }
 
             result = CreateFileCopy();
             if (!result.Success)
             {
-                _policyService.DeletePolicy(_policy.Id);
+                servicePolicy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() {ErrorMessage = result.ErrorMessage};
             }
 
             result = CreateSoftware();
             if (!result.Success)
             {
-                _policyService.DeletePolicy(_policy.Id);
+                servicePolicy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() {ErrorMessage = result.ErrorMessage};
             }
 
             result = CreateWindowsUpdate();
             if (!result.Success)
             {
-                _policyService.DeletePolicy(_policy.Id);
+                servicePolicy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() {ErrorMessage = result.ErrorMessage};
             }
 
             result = CreateMessages();
             if (!result.Success)
             {
-                _policyService.DeletePolicy(_policy.Id);
+                servicePolicy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() { ErrorMessage = result.ErrorMessage };
             }
 
             result = CreateWingets();
             if (!result.Success)
             {
-                _policyService.DeletePolicy(_policy.Id);
+                servicePolicy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() { ErrorMessage = result.ErrorMessage };
             }
 
@@ -99,7 +95,7 @@ namespace Toems_Service.Workflows
 
             if(_export.Instructions.Contains("[skip-policy-create]"))
             {
-                _policyService.DeletePolicy(_policy.Id);
+                servicePolicy.DeletePolicy(_policy.Id);
                 _uow.Save();
             }
                 
@@ -226,7 +222,7 @@ namespace Toems_Service.Workflows
                     }
                 }
 
-                var addResult = new ServiceScriptModule().AddModule(script);
+                var addResult = serviceScriptModule.AddModule(script);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -294,7 +290,7 @@ namespace Toems_Service.Workflows
                     }
                 }
 
-                var addResult = new ServicePrinterModule().AddModule(printer);
+                var addResult = servicePrinterModule.AddModule(printer);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -360,7 +356,7 @@ namespace Toems_Service.Workflows
                     }
                 }
 
-                var addResult = new ServiceMessageModule().AddModule(message);
+                var addResult = serviceMessageModule.AddModule(message);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -436,7 +432,7 @@ namespace Toems_Service.Workflows
                     }
                 }
 
-                var addResult = new ServiceCommandModule().AddModule(command);
+                var addResult = serviceCommandModule.AddModule(command);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -510,7 +506,7 @@ namespace Toems_Service.Workflows
                     }
                 }
 
-                var addResult = new ServiceFileCopyModule().AddModule(fileCopy);
+                var addResult = serviceFileCopyModule.AddModule(fileCopy);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -586,7 +582,7 @@ namespace Toems_Service.Workflows
                     }
                 }
 
-                var addResult = new ServiceSoftwareModule().AddModule(software);
+                var addResult = serviceSoftwareModule.AddModule(software);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -659,7 +655,7 @@ namespace Toems_Service.Workflows
                     }
                 }
 
-                var addResult = new ServiceWuModule().AddModule(wu);
+                var addResult = serviceWuModule.AddModule(wu);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -733,7 +729,7 @@ namespace Toems_Service.Workflows
                     }
                 }
 
-                var addResult = new ServiceWingetModule().AddModule(winget);
+                var addResult = serviceWingetModule.AddModule(winget);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -821,7 +817,7 @@ namespace Toems_Service.Workflows
             {
                 _policyHasExternalFiles = true;
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                var t = new Thread(() => new ServiceExternalDownload().BatchDownload(listToDownload));
+                var t = new Thread(() => serviceExternalDownload.BatchDownload(listToDownload));
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 t.Start();
                 
@@ -832,7 +828,7 @@ namespace Toems_Service.Workflows
         {
             if (condition == null) return 0;
 
-            var scriptModule = new ServiceScriptModule().GetModuleByGuid(condition.Guid);
+            var scriptModule = serviceScriptModule.GetModuleByGuid(condition.Guid);
             if(scriptModule == null)
             {
                 var script = new EntityScriptModule();
@@ -868,7 +864,7 @@ namespace Toems_Service.Workflows
                     }
                 }
 
-                var addResult = new ServiceScriptModule().AddModule(script);
+                var addResult = serviceScriptModule.AddModule(script);
                 if (!addResult.Success) return 0;
                 return script.Id;
             }

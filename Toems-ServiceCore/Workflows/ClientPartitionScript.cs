@@ -11,7 +11,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class ClientPartitionScript
+    public class ClientPartitionScript(ServiceClientPartitionSchema serviceClientPartitionSchema, ServiceImageProfile serviceImageProfile, ServiceClientPartition serviceClientPartition)
     {
         private ServiceClientPartitionSchema clientSchema;
         private ImageProfileWithImage imageProfile;
@@ -26,12 +26,12 @@ namespace Toems_Service.Workflows
 
         public string GeneratePartitionScript()
         {
-            imageProfile = new ServiceImageProfile().ReadProfile(profileId);
-            ImageSchema = new ServiceClientPartition(imageProfile).GetImageSchema();
+            imageProfile = serviceImageProfile.ReadProfile(profileId);
+            serviceClientPartition.SetImageSchema(imageProfile);
+            ImageSchema = serviceClientPartition.GetImageSchema();
+            serviceClientPartitionSchema.SetImageSchema(HdNumberToGet, NewHdSize, imageProfile, partitionPrefix);
+            clientSchema = serviceClientPartitionSchema.GenerateClientSchema();
 
-            clientSchema =
-                new ServiceClientPartitionSchema(HdNumberToGet, NewHdSize, imageProfile, partitionPrefix)
-                    .GenerateClientSchema();
             if (clientSchema == null) return "failed";
 
             //Handle moving from / to hard drives with different sector sizes ie 512 / 4096

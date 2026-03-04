@@ -9,13 +9,13 @@ using Toems_Common;
 using Toems_Common.Entity;
 using Toems_DataModel;
 using Toems_Service.Entity;
+using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class GetBootImages
+    public class GetBootImages(InfrastructureContext ictx)
     {
-        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
+        
         public List<string> Run()
         {
             var uow = new UnitOfWork();
@@ -23,7 +23,7 @@ namespace Toems_Service.Workflows
             EntityClientComServer tftpInfoServer;
             if (tftpComServers.Count == 0)
             {
-                Logger.Error("No Tftp Servers Are Currently Enabled To Retrieve Kernel Listing");
+                ictx.Log.Error("No Tftp Servers Are Currently Enabled To Retrieve Kernel Listing");
                 return null;
             }
             if (tftpComServers.Count > 1)
@@ -31,7 +31,7 @@ namespace Toems_Service.Workflows
                 tftpInfoServer = tftpComServers.Where(x => x.IsTftpInfoServer).FirstOrDefault();
                 if (tftpInfoServer == null)
                 {
-                    Logger.Error("No Tftp Servers Are Currently Set As The Information Server.  Unable To Retrieve Kernel Listing");
+                    ictx.Log.Error("No Tftp Servers Are Currently Set As The Information Server.  Unable To Retrieve Kernel Listing");
                     return null;
                 }
             }
@@ -40,8 +40,8 @@ namespace Toems_Service.Workflows
 
             //Connect To Client Com Server
 
-            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
 
             return new APICall().ClientComServerApi.GetBootImages(tftpInfoServer.Url, "", decryptedKey);
 

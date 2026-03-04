@@ -9,34 +9,35 @@ using Toems_Common.Enum;
 using Toems_DataModel;
 using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class Unicast
+    public class Unicast(InfrastructureContext ictx, ServiceComputer serviceComputer, GroupService groupService, ServiceImageProfile serviceImageProfile,
+        ServiceUser serviceUser, TaskBootMenu taskBootMenu, CreateTaskArguments createTaskArguments, ServiceActiveImagingTask serviceActiveImagingTask)
     {
-        private readonly EntityComputer _computer;
-        private readonly string _direction;
-        private readonly int _userId;
+        private EntityComputer _computer;
+        private string _direction;
+        private int _userId;
         private EntityActiveImagingTask _activeTask;
         private ImageProfileWithImage _imageProfile;
-        private readonly EntityGroup _group;
-        private readonly UnitOfWork _uow;
+        private EntityGroup _group;
+        private UnitOfWork _uow = new();
 
-        public Unicast(int computerId, string direction, int userId)
+        public void InitSingle(int computerId, string direction, int userId)
         {
             _direction = direction;
-            _computer = new ServiceComputer().GetComputer(computerId);
+            _computer = serviceComputer.GetComputer(computerId);
             _userId = userId;
-            _uow = new UnitOfWork();
+
         }
 
-        public Unicast(int computerId, string direction, int userId, int groupId)
+        public void InitGroup(int computerId, string direction, int userId, int groupId)
         {
             _direction = direction;
-            _computer = new ServiceComputer().GetComputer(computerId);
-            _group = new ServiceGroup().GetGroup(groupId);
+            _computer = serviceComputer.GetComputer(computerId);
+            _group = groupService.GetGroup(groupId);
             _userId = userId;
-            _uow = new UnitOfWork();
         }
 
         public string Start()
@@ -47,12 +48,12 @@ namespace Toems_Service.Workflows
             if (_group != null)
             {
                 //unicast started via group, use that groups assigned image
-                _imageProfile = new ServiceImageProfile().ReadProfile(_group.ImageProfileId);
+                _imageProfile = serviceImageProfile.ReadProfile(_group.ImageProfileId);
                 if (_imageProfile == null) return "The Image Profile Doesn't Exist";
             }
             else
             {
-                _imageProfile = new ServiceComputer().GetEffectiveImage(_computer.Id);
+                _imageProfile = serviceComputer.GetEffectiveImage(_computer.Id);
             }
 
             if(_imageProfile == null)
@@ -62,7 +63,7 @@ namespace Toems_Service.Workflows
 
             if (_imageProfile.Image == null) return "The Image Does Not Exist";
 
-            if (new ServiceComputer().IsComputerActive(_computer.Id))
+            if (serviceComputer.IsComputerActive(_computer.Id))
                 return "This Computer Is Already Part Of An Active Task";
 
             _activeTask = new EntityActiveImagingTask
@@ -76,25 +77,25 @@ namespace Toems_Service.Workflows
 
             _activeTask.Type = _direction;
 
-            var activeImagingTaskServices = new ServiceActiveImagingTask();
 
-            if (!activeImagingTaskServices.AddActiveImagingTask(_activeTask))
+            if (!serviceActiveImagingTask.AddActiveImagingTask(_activeTask))
                 return "Could Not Create The Database Entry For This Task";
 
-            if (!new TaskBootMenu().RunAllServers(_computer, _imageProfile))
+            if (!taskBootMenu.RunAllServers(_computer, _imageProfile))
             {
-                activeImagingTaskServices.DeleteActiveImagingTask(_activeTask.Id);
+                serviceActiveImagingTask.DeleteActiveImagingTask(_activeTask.Id);
                 return "Could Not Create PXE Boot File";
             }
 
-            _activeTask.Arguments = new CreateTaskArguments(_computer, _imageProfile, _direction).Execute();
-            if (!activeImagingTaskServices.UpdateActiveImagingTask(_activeTask))
+            createTaskArguments.InitUnicast(_computer, _imageProfile, _direction);
+            _activeTask.Arguments = createTaskArguments.Execute();
+            if (!serviceActiveImagingTask.UpdateActiveImagingTask(_activeTask))
             {
-                activeImagingTaskServices.DeleteActiveImagingTask(_activeTask.Id);
+                serviceActiveImagingTask.DeleteActiveImagingTask(_activeTask.Id);
                 return "Could Not Create Task Arguments";
             }
 
-            new ServiceComputer().Wakeup(_computer.Id);
+            serviceComputer.Wakeup(_computer.Id);
 
             var auditLog = new EntityAuditLog();
             switch (_direction)
@@ -108,19 +109,19 @@ namespace Toems_Service.Workflows
             }
 
             auditLog.ObjectId = _computer.Id;
-            var user = new ServiceUser().GetUser(_userId);
+            var user = serviceUser.GetUser(_userId);
             if (user != null)
                 auditLog.UserName = user.Name;
             auditLog.ObjectName = _computer.Name;
             auditLog.UserId = _userId;
             auditLog.ObjectType = "Computer";
             auditLog.ObjectJson = JsonConvert.SerializeObject(_activeTask);
-            new ServiceAuditLog().AddAuditLog(auditLog);
+            ictx.AuditLog.AddAuditLog(auditLog);
 
             auditLog.ObjectId = _imageProfile.ImageId;
             auditLog.ObjectName = _imageProfile.Image.Name;
             auditLog.ObjectType = "Image";
-            new ServiceAuditLog().AddAuditLog(auditLog);
+            ictx.AuditLog.AddAuditLog(auditLog);
 
             return "Successfully Started Task For " + _computer.Name;
         }

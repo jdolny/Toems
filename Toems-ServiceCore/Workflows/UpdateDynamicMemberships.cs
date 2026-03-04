@@ -10,18 +10,14 @@ using Toems_ServiceCore.EntityServices;
 
 namespace Toems_Service.Workflows
 {
-    public class UpdateDynamicMemberships
+    public class UpdateDynamicMemberships(GroupService serviceGroup, ServiceGroupMembership serviceGroupMembership)
     {
-        private ServiceGroup _groupService;
-        private readonly UnitOfWork _uow;
-        public UpdateDynamicMemberships()
-        {
-            _groupService = new ServiceGroup();
-            _uow = new UnitOfWork();
-        }
+
+        private readonly UnitOfWork _uow = new();
+
         public bool All()
         {
-            var groups = _groupService.GetAllDynamicGroups();
+            var groups = serviceGroup.GetAllDynamicGroups();
             if (groups == null) return false;
             foreach (var group in groups)
             {
@@ -38,8 +34,8 @@ namespace Toems_Service.Workflows
 
         private bool Update(int groupId)
         {
-            var queries = _groupService.GetDynamicQuery(groupId);
-            var members = _groupService.GetDynamicMembers(queries);
+            var queries = serviceGroup.GetDynamicQuery(groupId);
+            var members = serviceGroup.GetDynamicMembers(queries);
             if (members == null)
             {
                 _uow.GroupMembershipRepository.DeleteRange(x => x.GroupId == groupId);
@@ -67,7 +63,7 @@ namespace Toems_Service.Workflows
             }
 
             //Delete members that no longer belong
-            var existingMembers = _groupService.GetGroupMembers(groupId);
+            var existingMembers = serviceGroup.GetGroupMembers(groupId);
             foreach (var existingMember in existingMembers)
             {
                 if(membershipList.All(x => x.ComputerId != existingMember.Id))
@@ -78,7 +74,7 @@ namespace Toems_Service.Workflows
             }
 
             //add the new members
-            var result = new ServiceGroupMembership().AddMembership(membershipList);
+            var result = serviceGroupMembership.AddMembership(membershipList);
             if(result != null)
                 if (result.Success)
                     return true;

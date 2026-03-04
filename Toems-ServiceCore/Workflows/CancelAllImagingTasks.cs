@@ -14,12 +14,18 @@ using Toems_Common.Entity;
 using Toems_DataModel;
 using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class CancelAllImagingTasks
+    public class CancelAllImagingTasks(EncryptionServices encryptionServices, 
+        ServiceClientComServer serviceClientComServer, 
+        ServiceSetting serviceSetting, 
+        ServiceActiveImagingTask activeImagingTask,
+        ServiceActiveMulticastSession activeMulticastSession,
+        ILog log, 
+        IConfiguration config)
     {
-        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private EntityClientComServer _thisComServer;
 
@@ -29,8 +35,8 @@ namespace Toems_Service.Workflows
             var uow = new UnitOfWork();
             var comServers = uow.ClientComServerRepository.Get(x => x.IsTftpServer || x.IsMulticastServer);
 
-            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+            var intercomKey = serviceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = encryptionServices.DecryptText(intercomKey);
             var NoErrors = true;
             foreach (var com in comServers)
             {
@@ -44,17 +50,17 @@ namespace Toems_Service.Workflows
 
         public bool Execute()
         {
-            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
-            _thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            var guid = config["ComServerUniqueId"];
+            _thisComServer = serviceClientComServer.GetServerByGuid(guid);
             if (_thisComServer == null)
             {
-                Logger.Error($"Com Server With Guid {guid} Not Found");
+                log.Error($"Com Server With Guid {guid} Not Found");
                 return false;
             }
 
             if (string.IsNullOrEmpty(_thisComServer.TftpPath))
             {
-                Logger.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
+                log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
                 return false;
             }
 
@@ -85,7 +91,7 @@ namespace Toems_Service.Workflows
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error(ex.ToString());
+                        log.Error(ex.ToString());
                         return false;
                     }
                 }
@@ -141,7 +147,7 @@ namespace Toems_Service.Workflows
                             }
                             catch (Exception ex)
                             {
-                                Logger.Error(ex.ToString());
+                                log.Error(ex.ToString());
                             }
                         }
                         foreach (var p in Process.GetProcessesByName("udp-receiver"))
@@ -153,7 +159,7 @@ namespace Toems_Service.Workflows
                             }
                             catch (Exception ex)
                             {
-                                Logger.Error(ex.ToString());
+                                log.Error(ex.ToString());
                             }
                         }
                         Thread.Sleep(200);
@@ -161,8 +167,8 @@ namespace Toems_Service.Workflows
                 }
             }
 
-            new ServiceActiveImagingTask().DeleteAll();
-            new ServiceActiveMulticastSession().DeleteAll();
+            activeImagingTask.DeleteAll();
+            activeMulticastSession.DeleteAll();
             return true;
         }
     }

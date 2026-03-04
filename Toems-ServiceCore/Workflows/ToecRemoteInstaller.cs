@@ -13,24 +13,19 @@ using System.IO;
 using Toems_Common;
 using System.Threading;
 using System.Web;
+using Toems_ServiceCore;
+using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class ToecRemoteInstaller
+    public class ToecRemoteInstaller(InfrastructureContext ictx, ServiceVersion serviceVersion, UncServices uncServices)
     {
-        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly string ExpectedClientVersion = "";
+
+        private string ExpectedClientVersion = "";
         private string BaseSourcePath = "";
 
-        public ToecRemoteInstaller()
-        {
 
-            var expectedClient = new ServiceVersion().Get(1).LatestClientVersion;
-            var newVersion = expectedClient.Split('.');
-            ExpectedClientVersion = string.Join(".", newVersion.Take(newVersion.Length - 1));
-           
-        }
 
         private void CreateThread(EntityToecDeployJob job, string threadId, UnitOfWork uow)
         {
@@ -65,6 +60,10 @@ namespace Toems_Service.Workflows
 
         public void Run(string applicationPath)
         {
+            var expectedClient = serviceVersion.Get(1).LatestClientVersion;
+            var newVersion = expectedClient.Split('.');
+            ExpectedClientVersion = string.Join(".", newVersion.Take(newVersion.Length - 1));
+            
             var uow = new UnitOfWork();
             BaseSourcePath = Path.Combine(applicationPath, "private", "agent");
             foreach (var job in uow.ToecDeployJobRepository.Get(x => x.Enabled))
@@ -94,7 +93,7 @@ namespace Toems_Service.Workflows
                 {
                     if (DateTime.Now - thread.DateTimeUpdated <= TimeSpan.FromMinutes(15))
                     {
-                        Logger.Debug($"An active thread for {job.Name} is already running .  Skipping.");
+                        ictx.Log.Debug($"An active thread for {job.Name} is already running .  Skipping.");
 
                         //remove any older threads that could somehow still be running
                         uow.ToecDeployThreadRepository.DeleteRange(x => x.Id != thread.Id);
@@ -109,29 +108,32 @@ namespace Toems_Service.Workflows
 
         public void RunSingle(DtoSingleToecDeploy singleJob)
         {
-            BaseSourcePath = Path.Combine(HttpContext.Current.Server.MapPath("~"), "private", "agent");
+            var expectedClient = serviceVersion.Get(1).LatestClientVersion;
+            var newVersion = expectedClient.Split('.');
+            ExpectedClientVersion = string.Join(".", newVersion.Take(newVersion.Length - 1));
+            
+            BaseSourcePath = Path.Combine(ictx.Environment.ContentRootPath, "private", "agent");
             Task.Run(() => RunSingleInstallThread(singleJob));
          
         }
         private async void RunSingleInstallThread(DtoSingleToecDeploy singleJob)
         {
 
-            Logger.Info("Deploying Toec To Computer: " + singleJob.ComputerName);
-            using (var unc = new UncServices())
-            {
+            ictx.Log.Info("Deploying Toec To Computer: " + singleJob.ComputerName);
+
                 var deployId = Guid.NewGuid().ToString();
-                if (unc.ConnectWithCredentials($"\\\\{singleJob.ComputerName}\\admin$", singleJob.Username, singleJob.Domain, singleJob.Password) || unc.LastError == 1219)
+                if (uncServices.ConnectWithCredentials($"\\\\{singleJob.ComputerName}\\admin$", singleJob.Username, singleJob.Domain, singleJob.Password) || uncServices.LastError == 1219)
                 {
                     if (!CopyFilesToAdminShare(singleJob.JobType, singleJob.ComputerName, deployId))
                     {
-                        Logger.Error("Could Not Copy Files To Admin Share ");
+                        ictx.Log.Error("Could Not Copy Files To Admin Share ");
                         return;
                     }
 
                     var deployServiceResult = InstallDeployService(singleJob.Username,singleJob.Password,singleJob.Domain, singleJob.ComputerName);
                     if (deployServiceResult != 0)
                     {
-                        Logger.Error("Could Not Connect To Service Control Manager: " + deployServiceResult.ToString());
+                        ictx.Log.Error("Could Not Connect To Service Control Manager: " + deployServiceResult.ToString());
                         Cleanup(singleJob.Username,singleJob.Password,singleJob.Domain, singleJob.ComputerName);
                         return;
                     }
@@ -143,7 +145,7 @@ namespace Toems_Service.Workflows
                         if (File.Exists($"\\\\{singleJob.ComputerName}\\admin$\\Magaeric Solutions\\{deployId}.success"))
                         {
                             actionComplete = true;
-                            Logger.Info("Successfully deployed Toec to: " + singleJob.ComputerName);
+                            ictx.Log.Info("Successfully deployed Toec to: " + singleJob.ComputerName);
                         }
                         else if (File.Exists($"\\\\{singleJob.ComputerName}\\admin$\\Magaeric Solutions\\{deployId}.failed"))
                         {
@@ -154,14 +156,14 @@ namespace Toems_Service.Workflows
                             }
                             catch { }//ignored
                             actionComplete = true;
-                            Logger.Error("Could Not Complete Toec Action on Computer: " + singleJob.ComputerName + " " + errorMessage);
+                            ictx.Log.Error("Could Not Complete Toec Action on Computer: " + singleJob.ComputerName + " " + errorMessage);
                         }
 
                         if (actionComplete) break;
 
                         if (actionCompleteCounter > 30)
                         {
-                            Logger.Error("Toec Installation Result Could Not Be Determined For Computer " + singleJob.ComputerName + " .  5 Minute Timeout exceeded.");
+                            ictx.Log.Error("Toec Installation Result Could Not Be Determined For Computer " + singleJob.ComputerName + " .  5 Minute Timeout exceeded.");
                             break;
                         }
 
@@ -171,12 +173,12 @@ namespace Toems_Service.Workflows
                 }
                 else
                 {
-                    Logger.Debug($"Could Not Connect To {singleJob.ComputerName} Admin Share");
+                    ictx.Log.Debug($"Could Not Connect To {singleJob.ComputerName} Admin Share");
                     return;
                 }
 
                 Cleanup(singleJob.Username, singleJob.Password, singleJob.Domain, singleJob.ComputerName);
-            }
+            
         }
 
         private async void RunInstallThread(EntityToecDeployJob job)
@@ -261,10 +263,9 @@ namespace Toems_Service.Workflows
                     uow.Save();
 
 
-                    using (var unc = new UncServices())
-                    {
+
                         var deployId = Guid.NewGuid().ToString();
-                        if (unc.ConnectWithCredentials($"\\\\{c.Name}\\admin$", job.Username, job.Domain, new EncryptionServices().DecryptText(job.PasswordEncrypted)) || unc.LastError == 1219)
+                        if (uncServices.ConnectWithCredentials($"\\\\{c.Name}\\admin$", job.Username, job.Domain, ictx.Encryption.DecryptText(job.PasswordEncrypted)) || uncServices.LastError == 1219)
                         {
                             if (!CopyFilesToAdminShare(job.JobType, c.Name, deployId))
                             {
@@ -272,11 +273,11 @@ namespace Toems_Service.Workflows
                                 continue;
                             }
 
-                            var deployServiceResult = InstallDeployService(job.Username, new EncryptionServices().DecryptText(job.PasswordEncrypted),job.Domain, c.Name);
+                            var deployServiceResult = InstallDeployService(job.Username, ictx.Encryption.DecryptText(job.PasswordEncrypted),job.Domain, c.Name);
                             if (deployServiceResult != 0)
                             {
                                 SetError(job, c, "Could Not Connect To Service Control Manager: " + deployServiceResult.ToString(), uow);
-                                Cleanup(job.Username, new EncryptionServices().DecryptText(job.PasswordEncrypted), job.Domain, c.Name);
+                                Cleanup(job.Username, ictx.Encryption.DecryptText(job.PasswordEncrypted), job.Domain, c.Name);
                                 continue;
                             }
 
@@ -316,13 +317,13 @@ namespace Toems_Service.Workflows
                         }
                         else
                         {
-                            Logger.Debug($"Could Not Connect To {c.Name} Admin Share");
-                            SetError(job, c, "Could Not Connect To Admin Share: " + unc.LastError.ToString(),uow);
+                            ictx.Log.Debug($"Could Not Connect To {c.Name} Admin Share");
+                            SetError(job, c, "Could Not Connect To Admin Share: " + uncServices.LastError.ToString(),uow);
                             continue;
                         }
 
-                        Cleanup(job.Username,new EncryptionServices().DecryptText(job.PasswordEncrypted),job.Domain,c.Name);
-                    }
+                        Cleanup(job.Username,ictx.Encryption.DecryptText(job.PasswordEncrypted),job.Domain,c.Name);
+                    
                 }
 
                 await Task.Delay(10000);
@@ -404,7 +405,7 @@ namespace Toems_Service.Workflows
             }
             catch(Exception ex) 
             {
-                Logger.Error($"Could Not Copy Files To Admin Share on {computerName}: {ex.Message}");
+                ictx.Log.Error($"Could Not Copy Files To Admin Share on {computerName}: {ex.Message}");
                 return false; 
             }
             return true;
@@ -417,7 +418,7 @@ namespace Toems_Service.Workflows
             {
                 if (imp.LastError != 0)
                 {
-                    Logger.Debug("Could Not Impersonate User For Service Installation");
+                    ictx.Log.Debug("Could Not Impersonate User For Service Installation");
                     return imp.LastError;
                    
                 }
@@ -433,7 +434,7 @@ namespace Toems_Service.Workflows
                         scManager.Install(service, "c:\\windows\\magaeric solutions\\Toec-Remote-Installer.exe");
                         if(scManager.Start())
                         {
-                            Logger.Debug("Successfully Installed Remote Installer Service");
+                            ictx.Log.Debug("Successfully Installed Remote Installer Service");
                             return 0;
                         }
                     }

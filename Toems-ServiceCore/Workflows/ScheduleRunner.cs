@@ -4,33 +4,30 @@ using System.Linq;
 using log4net;
 using Toems_Common.Entity;
 using Toems_DataModel;
+using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class ScheduleRunner
+    public class ScheduleRunner(InfrastructureContext ictx, PowerManagement powerManagement)
     {
-        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly UnitOfWork _uow;
-        public ScheduleRunner()
-        {
-            _uow = new UnitOfWork();
-        }
+        private readonly UnitOfWork _uow = new();
+
 
         public void Run()
         {
-            Logger.Debug("Starting Schedule Runner");
+            ictx.Log.Debug("Starting Schedule Runner");
 
             var currentDateTime = DateTime.Now;
             var currentHour = currentDateTime.Hour;
             var currentMinute = currentDateTime.Minute;
             var currentDayOfWeek = (int)DateTime.Now.DayOfWeek;
 
-            Logger.Debug("Current Hour: " + currentHour);
-            Logger.Debug("Current Minute: " + currentMinute);
-            Logger.Debug("Current Day: " + currentDayOfWeek);
+            ictx.Log.Debug("Current Hour: " + currentHour);
+            ictx.Log.Debug("Current Minute: " + currentMinute);
+            ictx.Log.Debug("Current Day: " + currentDayOfWeek);
 
 
-            Logger.Debug("Checking For Schedule That Should Run Now");
+            ictx.Log.Debug("Checking For Schedule That Should Run Now");
             //Find any schedules set to run on this day
             var dayMatches = new List<EntitySchedule>();
             switch (currentDayOfWeek)
@@ -60,7 +57,7 @@ namespace Toems_Service.Workflows
 
             if (dayMatches.Count == 0)
             {
-                Logger.Debug("No Schedules Are Set For This Day");
+                ictx.Log.Debug("No Schedules Are Set For This Day");
                 return;
             }
 
@@ -70,7 +67,7 @@ namespace Toems_Service.Workflows
 
             if (hourMatches.Count == 0)
             {
-                Logger.Debug("No Schedules Are Set To Run This Hour");
+                ictx.Log.Debug("No Schedules Are Set To Run This Hour");
                 return;
             }
 
@@ -85,7 +82,7 @@ namespace Toems_Service.Workflows
 
             if (minuteMatches.Count == 0)
             {
-                Logger.Debug("No Schedules Are Set To Run This Minute");
+                ictx.Log.Debug("No Schedules Are Set To Run This Minute");
                 return;
             }
 
@@ -102,20 +99,20 @@ namespace Toems_Service.Workflows
 
             if (wakeUpgroups.Count == 0 && shutdownGroups.Count == 0)
             {
-                Logger.Debug("No Groups Are Assigned To This Schedule");
+                ictx.Log.Debug("No Groups Are Assigned To This Schedule");
                 return;
             }
             
             if (wakeUpgroups.Count > 0)
             {
-                Logger.Debug("Found Groups To Wakeup For This Schedule.  Starting Now. ");
-                new Workflows.PowerManagement().WakeupGroups(wakeUpgroups);
+                ictx.Log.Debug("Found Groups To Wakeup For This Schedule.  Starting Now. ");
+                powerManagement.WakeupGroups(wakeUpgroups);
             }
 
             if (shutdownGroups.Count > 0)
             {
-                Logger.Debug("Found Groups To Shutdown For This Schedule.  Starting Now. ");
-                new Workflows.PowerManagement().ShutdownGroups(shutdownGroups);
+                ictx.Log.Debug("Found Groups To Shutdown For This Schedule.  Starting Now. ");
+                powerManagement.ShutdownGroups(shutdownGroups);
             }
         }     
     }

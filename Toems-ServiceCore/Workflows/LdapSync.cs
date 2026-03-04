@@ -9,40 +9,29 @@ using Toems_Common.Enum;
 using Toems_DataModel;
 using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class LdapSync
+    public class LdapSync(InfrastructureContext ictx, ServiceComputer serviceComputer, GroupService groupService, ServiceGroupMembership serviceGroupMembership)
     {
-        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private string _basePath;
         private string _username;
         private string _password;
-        private List<EntityGroupMembership> _groupMemberships;
+        private List<EntityGroupMembership> _groupMemberships = new();
         private string _baseDn;
         private string _syncOU;
-        private readonly ServiceComputer _computerService;
-        private readonly ServiceGroup _groupService;
-        private readonly ServiceGroupMembership _groupMembershipService;
-      
-        public LdapSync()
-        {
-            _groupMemberships = new List<EntityGroupMembership>();
-            _groupService = new ServiceGroup();
-            _computerService = new ServiceComputer();
-            _groupMembershipService = new ServiceGroupMembership();
-        }
-
+        
         public bool TestBind()
         {
             try
             {
-                _basePath = "LDAP://" + ServiceSetting.GetSettingValue(SettingStrings.LdapServer) + ":" +
-                      ServiceSetting.GetSettingValue(SettingStrings.LdapPort) + "/";
-                _username = ServiceSetting.GetSettingValue(SettingStrings.LdapBindUsername);
+                _basePath = "LDAP://" + ictx.Settings.GetSettingValue(SettingStrings.LdapServer) + ":" +
+                      ictx.Settings.GetSettingValue(SettingStrings.LdapPort) + "/";
+                _username = ictx.Settings.GetSettingValue(SettingStrings.LdapBindUsername);
                 _password =
-                    new EncryptionServices().DecryptText(ServiceSetting.GetSettingValue(SettingStrings.LdapBindPassword));
-                _baseDn = ServiceSetting.GetSettingValue(SettingStrings.LdapBaseDN);
+                    ictx.Encryption.DecryptText(ictx.Settings.GetSettingValue(SettingStrings.LdapBindPassword));
+                _baseDn = ictx.Settings.GetSettingValue(SettingStrings.LdapBaseDN);
 
                 var entry = InitializeEntry();
                 var searcher = new DirectorySearcher(entry);
@@ -56,36 +45,33 @@ namespace Toems_Service.Workflows
             }
             catch(Exception ex)
             {
-                Logger.Debug("Active Directory Bind Failed.");
-                Logger.Error(ex.Message);
+                ictx.Log.Debug("Active Directory Bind Failed.");
+                ictx.Log.Error(ex.Message);
                 return false;
             }
-           
-
-           
         }
 
         public bool Run()
         {
-            Logger.Debug("Starting Active Directory Sync");
-            if (ServiceSetting.GetSettingValue(SettingStrings.LdapEnabled) != "1")
+            ictx.Log.Debug("Starting Active Directory Sync");
+            if (ictx.Settings.GetSettingValue(SettingStrings.LdapEnabled) != "1")
             {
-                Logger.Debug("LDAP integration is not enabled.  Skipping");
+                ictx.Log.Debug("LDAP integration is not enabled.  Skipping");
                 return true;
             }
-            if (string.IsNullOrEmpty(ServiceSetting.GetSettingValue(SettingStrings.LdapServer)))
+            if (string.IsNullOrEmpty(ictx.Settings.GetSettingValue(SettingStrings.LdapServer)))
             {
-                Logger.Debug("LDAP values not populated.  Skipping");
+                ictx.Log.Debug("LDAP values not populated.  Skipping");
                 return true;
             }
 
-            _basePath = "LDAP://" + ServiceSetting.GetSettingValue(SettingStrings.LdapServer) + ":" +
-                        ServiceSetting.GetSettingValue(SettingStrings.LdapPort) + "/";
-            _username = ServiceSetting.GetSettingValue(SettingStrings.LdapBindUsername);
+            _basePath = "LDAP://" + ictx.Settings.GetSettingValue(SettingStrings.LdapServer) + ":" +
+                        ictx.Settings.GetSettingValue(SettingStrings.LdapPort) + "/";
+            _username = ictx.Settings.GetSettingValue(SettingStrings.LdapBindUsername);
             _password =
-                new EncryptionServices().DecryptText(ServiceSetting.GetSettingValue(SettingStrings.LdapBindPassword));
-            _syncOU = ServiceSetting.GetSettingValue(SettingStrings.LdapSyncOU);
-            _baseDn =  _syncOU + "," + ServiceSetting.GetSettingValue(SettingStrings.LdapBaseDN);
+                ictx.Encryption.DecryptText(ictx.Settings.GetSettingValue(SettingStrings.LdapBindPassword));
+            _syncOU = ictx.Settings.GetSettingValue(SettingStrings.LdapSyncOU);
+            _baseDn =  _syncOU + "," + ictx.Settings.GetSettingValue(SettingStrings.LdapBaseDN);
             _baseDn = _baseDn.Trim(',');
 
            
@@ -96,14 +82,14 @@ namespace Toems_Service.Workflows
             UpdateMemberships();
             GetSecurityGroups();
 
-            Logger.Debug("Finished Active Directory Sync");
+            ictx.Log.Debug("Finished Active Directory Sync");
             return true;
         }
 
         private DirectoryEntry InitializeEntry()
         {
             var entry = new DirectoryEntry(_basePath + _baseDn, _username, _password);
-            var ldapAuth = ServiceSetting.GetSettingValue(SettingStrings.LdapAuthType);
+            var ldapAuth = ictx.Settings.GetSettingValue(SettingStrings.LdapAuthType);
             if (ldapAuth == "Basic")
                 entry.AuthenticationType = AuthenticationTypes.None;
             else if (ldapAuth == "Secure")
@@ -117,7 +103,7 @@ namespace Toems_Service.Workflows
 
         private Dictionary<string, string> GetOUs()
         {
-            Logger.Debug("Enumerating Active Directory Organizational Units");
+            ictx.Log.Debug("Enumerating Active Directory Organizational Units");
             var ouDict = new Dictionary<string, string>();
             //add the base dn
             ouDict.Add(_baseDn, _baseDn);
@@ -173,7 +159,7 @@ namespace Toems_Service.Workflows
 
         private void CreateOuGroups(Dictionary<string, string> ous, Dictionary<string, string> parents)
         {
-            Logger.Debug("Creating Groups Based On OU's");
+            ictx.Log.Debug("Creating Groups Based On OU's");
             var addList = new List<EntityGroup>();
             var updateList = new List<EntityGroup>();
             foreach (var p in parents)
@@ -194,12 +180,12 @@ namespace Toems_Service.Workflows
                 addList.Add(group);
             }
 
-            _groupService.AddGroupList(addList);
+            groupService.AddGroupList(addList);
 
-            var groups = _groupService.GetAllAdGroups();
+            var groups = groupService.GetAllAdGroups();
             foreach (var group in groups)
             {
-                var parent = _groupService.GetGroupParentId(group);
+                var parent = groupService.GetGroupParentId(group);
                 if (parent != null)
                 {
                     group.ParentId = parent.Id.ToString();
@@ -208,10 +194,10 @@ namespace Toems_Service.Workflows
              
             }
 
-            _groupService.UpdateGroupList(updateList);
+            groupService.UpdateGroupList(updateList);
           
             //set the root
-            var rootOu = _groupService.GetGroupByName(_baseDn);
+            var rootOu = groupService.GetGroupByName(_baseDn);
             if (rootOu != null)
             {
                 rootOu.ParentId = "0";
@@ -224,7 +210,7 @@ namespace Toems_Service.Workflows
 
         private void SyncComputers()
         {
-            Logger.Debug("Synchronizing Computers From Active Directory");
+            ictx.Log.Debug("Synchronizing Computers From Active Directory");
             var allCompDict = new Dictionary<string ,string>();
 
             //Get All ad enabled computer excluding servers
@@ -267,19 +253,19 @@ namespace Toems_Service.Workflows
        
             if (allCompDict.Count > 0)
             {
-                var currentAdComputers = _computerService.GetAllAdComputers();
+                var currentAdComputers = serviceComputer.GetAllAdComputers();
                 var toArchive = (from adComputer in currentAdComputers
                                 let doesExist = allCompDict.FirstOrDefault(x => x.Value == adComputer.Name)
                                 where doesExist.Value == null
                                 select adComputer.Id).ToList();
 
                 foreach (var compId in toArchive)
-                    _computerService.ArchiveComputer(compId);                 
+                    serviceComputer.ArchiveComputer(compId);                 
             }
 
             foreach (var comp in enabledCompDict)
             {
-                var existing = _computerService.GetByName(comp.Value);
+                var existing = serviceComputer.GetByName(comp.Value);
                 if (existing == null)
                 {
                     var computerEntity = new EntityComputer();
@@ -288,7 +274,7 @@ namespace Toems_Service.Workflows
                     computerEntity.AdDisabled = false;
                     computerEntity.ProvisionStatus = EnumProvisionStatus.Status.PreProvisioned;
                     computerEntity.CertificateId = -1;
-                    var addResult = _computerService.AddComputer(computerEntity);
+                    var addResult = serviceComputer.AddComputer(computerEntity);
                     if (addResult == null) continue;
                     if (addResult.Success)
                         CreateMembershipList(computerEntity, comp.Key);
@@ -299,12 +285,12 @@ namespace Toems_Service.Workflows
                     {
                         existing.IsAdSync = true;
                         existing.AdDisabled = false;
-                        _computerService.UpdateComputer(existing);
+                        serviceComputer.UpdateComputer(existing);
                     }
                     else if (existing.IsAdSync && existing.AdDisabled)
                     {
                         existing.AdDisabled = false;
-                        _computerService.UpdateComputer(existing);
+                        serviceComputer.UpdateComputer(existing);
                     }
                     CreateMembershipList(existing, comp.Key);
                 }
@@ -313,7 +299,7 @@ namespace Toems_Service.Workflows
 
             foreach (var comp in disabledCompDict)
             {
-                var existing = _computerService.GetByName(comp.Value);
+                var existing = serviceComputer.GetByName(comp.Value);
                 if (existing == null)
                 {
                     var computerEntity = new EntityComputer();
@@ -322,7 +308,7 @@ namespace Toems_Service.Workflows
                     computerEntity.AdDisabled = true;
                     computerEntity.ProvisionStatus = EnumProvisionStatus.Status.PreProvisioned;
                     computerEntity.CertificateId = -1;
-                    var addResult = _computerService.AddComputer(computerEntity);
+                    var addResult = serviceComputer.AddComputer(computerEntity);
                     if (addResult == null) continue;
                     if (addResult.Success)
                         CreateMembershipList(computerEntity, comp.Key);
@@ -333,12 +319,12 @@ namespace Toems_Service.Workflows
                     {
                         existing.IsAdSync = true;
                         existing.AdDisabled = true;
-                        _computerService.UpdateComputer(existing);
+                        serviceComputer.UpdateComputer(existing);
                     }
                     else if (existing.IsAdSync && !existing.AdDisabled)
                     {
                         existing.AdDisabled = true;
-                        _computerService.UpdateComputer(existing);
+                        serviceComputer.UpdateComputer(existing);
                     }
                     CreateMembershipList(existing, comp.Key);
                 }
@@ -352,7 +338,7 @@ namespace Toems_Service.Workflows
             if (dn == _baseDn)
                 return;
             var parentOu = dn.Substring(dn.IndexOf(",", StringComparison.Ordinal) + 1);
-            var parentOuGroup = _groupService.GetGroupByDn(parentOu);
+            var parentOuGroup = groupService.GetGroupByDn(parentOu);
             if (parentOuGroup == null) return;
             if (parentOuGroup.Id < 1) return;
             var groupMembership = new EntityGroupMembership();
@@ -364,26 +350,26 @@ namespace Toems_Service.Workflows
 
         private void UpdateMemberships()
         {
-            var ddComputers = _computerService.GetAllAdComputers();
+            var ddComputers = serviceComputer.GetAllAdComputers();
 
             foreach (var computer in ddComputers)
             {
-                var computerAdGroups = _computerService.GetComputerAdGroups(computer.Id);
+                var computerAdGroups = serviceComputer.GetComputerAdGroups(computer.Id);
                 foreach (var adGroup in computerAdGroups)
                 {
                     var membership =
                         _groupMemberships.FirstOrDefault(x => x.ComputerId == computer.Id && x.GroupId == adGroup.Id);
                     if (membership == null)
-                        _groupMembershipService.DeleteByIds(computer.Id, adGroup.Id);
+                        serviceGroupMembership.DeleteByIds(computer.Id, adGroup.Id);
 
                 }
             }
-            _groupMembershipService.AddMembership(_groupMemberships);
+            serviceGroupMembership.AddMembership(_groupMemberships);
         }
 
         private void GetSecurityGroups()
         {
-            Logger.Debug("Getting Active Directory Security Groups");
+            ictx.Log.Debug("Getting Active Directory Security Groups");
             var securityGroups = new Dictionary<string, string>();
             using (DirectoryEntry entry = InitializeEntry())
             {
@@ -425,7 +411,7 @@ namespace Toems_Service.Workflows
 
                 if (securityGroupComputers.Any())
                 {
-                    EntityGroup group = _groupService.GetGroupByDn(securityGroup.Key);
+                    EntityGroup group = groupService.GetGroupByDn(securityGroup.Key);
                     if (group == null)
                     {
                         group = new EntityGroup();
@@ -437,12 +423,12 @@ namespace Toems_Service.Workflows
                         group.Description = "Security Group Imported from Active Directory";
                         group.ClusterId = -1;
 
-                        _groupService.AddGroup(group);
+                        groupService.AddGroup(group);
                     }
                     foreach (var computer in securityGroupComputers)
                     {
                        
-                        var entityComputer = _computerService.GetByName(computer);
+                        var entityComputer = serviceComputer.GetByName(computer);
                         if (entityComputer == null) continue;
 
                         var groupMembership = new EntityGroupMembership();
@@ -453,29 +439,29 @@ namespace Toems_Service.Workflows
                 }
             }
 
-            var ddComputers = _computerService.GetAllAdComputers();
+            var ddComputers = serviceComputer.GetAllAdComputers();
 
             foreach (var computer in ddComputers)
             {
-                var computerAdSecurityGroups = _computerService.GetComputerAdSecurityGroups(computer.Id);
+                var computerAdSecurityGroups = serviceComputer.GetComputerAdSecurityGroups(computer.Id);
                 foreach (var adSecurityGroup in computerAdSecurityGroups)
                 {
                     var membership =
                         listMemberships.FirstOrDefault(x => x.ComputerId == computer.Id && x.GroupId == adSecurityGroup.Id);
                     if (membership == null)
-                        _groupMembershipService.DeleteByIds(computer.Id, adSecurityGroup.Id);
+                        serviceGroupMembership.DeleteByIds(computer.Id, adSecurityGroup.Id);
 
                 }
             }
             
-            _groupMembershipService.AddMembership(listMemberships);
+            serviceGroupMembership.AddMembership(listMemberships);
 
-            foreach (var g in _groupService.GetAllAdSecurityGroups())
+            foreach (var g in groupService.GetAllAdSecurityGroups())
             {
-                if (!_groupService.GetGroupMembers(g.Id).Any())
+                if (!groupService.GetGroupMembers(g.Id).Any())
                 {
                     g.IsHidden = true;
-                    _groupService.UpdateGroup(g);
+                    groupService.UpdateGroup(g);
                 }
             }
         }

@@ -6,7 +6,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    class ServiceAppMonitor(EntityContext ectx)
+    public class ServiceAppMonitor(EntityContext ectx)
     {
         public DtoActionResult AddOrUpdate(List<DtoAppMonitor> appMonitors, int computerId)
         {

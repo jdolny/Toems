@@ -11,36 +11,31 @@ using Toems_Common.Entity;
 using Toems_DataModel;
 using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class PowerManagement
+    public class PowerManagement(InfrastructureContext ictx, ServiceComputer serviceComputer)
     {
-        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly UnitOfWork _uow;
-
-        public PowerManagement()
-        {
-            _uow = new UnitOfWork();
-        }
-
+        private readonly UnitOfWork _uow = new ();
+        
         public bool ShutdownComputer(int computerId)
         {
-            Logger.Debug("Starting Shutdown Task");
-            var shutdownDelay = ServiceSetting.GetSettingValue(SettingStrings.ShutdownDelay);
+            ictx.Log.Debug("Starting Shutdown Task");
+            var shutdownDelay = ictx.Settings.GetSettingValue(SettingStrings.ShutdownDelay);
             return Shutdown(computerId,shutdownDelay);
         }
 
         public bool RebootComputer(int computerId)
         {
-            Logger.Debug("Starting Reboot Task");
-            var shutdownDelay = ServiceSetting.GetSettingValue(SettingStrings.ShutdownDelay);
+            ictx.Log.Debug("Starting Reboot Task");
+            var shutdownDelay = ictx.Settings.GetSettingValue(SettingStrings.ShutdownDelay);
             return Reboot(computerId,shutdownDelay);
         }
 
         public bool WakeupComputer(int computerId)
         {
-            Logger.Debug("Starting Wakeup Task");
+            ictx.Log.Debug("Starting Wakeup Task");
             var computer = _uow.ComputerRepository.GetById(computerId);
             if (computer == null) return false;
             var computerList = new List<EntityComputer>();
@@ -52,8 +47,8 @@ namespace Toems_Service.Workflows
 
         public bool ShutdownGroups(List<EntityGroup> groups)
         {
-            Logger.Debug("Starting Shutdown Tasks");
-            var shutdownDelay = ServiceSetting.GetSettingValue(SettingStrings.ShutdownDelay);
+            ictx.Log.Debug("Starting Shutdown Tasks");
+            var shutdownDelay = ictx.Settings.GetSettingValue(SettingStrings.ShutdownDelay);
 
             //get a distinct list of computers for each group
             var shutdownMembers = new List<EntityComputer>();
@@ -69,8 +64,8 @@ namespace Toems_Service.Workflows
 
         public bool RebootGroups(List<EntityGroup> groups)
         {
-            Logger.Debug("Starting Reboot Tasks");
-            var shutdownDelay = ServiceSetting.GetSettingValue(SettingStrings.ShutdownDelay);
+            ictx.Log.Debug("Starting Reboot Tasks");
+            var shutdownDelay = ictx.Settings.GetSettingValue(SettingStrings.ShutdownDelay);
             //get a distinct list of computers for each group
             var rebootMembers = new List<EntityComputer>();
             foreach (var group in groups)
@@ -87,7 +82,7 @@ namespace Toems_Service.Workflows
 
         public bool WakeupGroups(List<EntityGroup> groups)
         {
-            Logger.Debug("Starting Wakeup Tasks");
+            ictx.Log.Debug("Starting Wakeup Tasks");
             //get a distinct list of computers for each group
             var wakeUpMembers = new List<EntityComputer>();
             foreach (var group in groups)
@@ -103,9 +98,9 @@ namespace Toems_Service.Workflows
         private void Wakeup(IEnumerable<EntityComputer> computers)
         {
             var relayTasks = GenerateWakeupTask(computers);
-            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
-            var checkinInterval = ServiceSetting.GetSettingValue(SettingStrings.CheckinInterval);
+            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
+            var checkinInterval = ictx.Settings.GetSettingValue(SettingStrings.CheckinInterval);
             var dateCutoff = DateTime.Now - TimeSpan.FromMinutes(Convert.ToInt32(checkinInterval));
             foreach (var relayTask in relayTasks)
             {
@@ -115,19 +110,19 @@ namespace Toems_Service.Workflows
                 var destinationRelay = _uow.WolRelayRepository.GetFirstOrDefault(x => x.Gateway.Equals(relayTask.Gateway));
                 if (destinationRelay == null)
                 {
-                    Logger.Debug("No WOL Relays Defined For Gateway: " + relayTask.Gateway +
+                    ictx.Log.Debug("No WOL Relays Defined For Gateway: " + relayTask.Gateway +
                                  " Looking For Available Computers To Serve As Relay");
                     //find up to 10 computers on that network that have checked in recently
                     var potentialRelays = _uow.ComputerRepository.GetPotentialWOLRelays(relayTask.Gateway, dateCutoff);
                     if (potentialRelays == null)
                     {
-                        Logger.Debug("No Computers Were Found To Act As A Relay For: " + relayTask.Gateway +
+                        ictx.Log.Debug("No Computers Were Found To Act As A Relay For: " + relayTask.Gateway +
                                      " Skipping Computers For This Network");
                         continue;
                     }
                     if (potentialRelays.Count == 0)
                     {
-                        Logger.Debug("No Computers Were Found To Act As A Relay For: " + relayTask.Gateway +
+                        ictx.Log.Debug("No Computers Were Found To Act As A Relay For: " + relayTask.Gateway +
                                      " Skipping Computers For This Network");
                         continue;
                     }
@@ -135,7 +130,7 @@ namespace Toems_Service.Workflows
                     var listActiveComputers = new List<EntityComputer>();
                     foreach (var computer in potentialRelays)
                     {
-                        var isPoweredOn = new ServiceComputer().GetStatus(computer.Id);
+                        var isPoweredOn = serviceComputer.GetStatus(computer.Id);
                         if (isPoweredOn)
                         {
                             listActiveComputers.Add(computer);
@@ -144,7 +139,7 @@ namespace Toems_Service.Workflows
 
                     if (listActiveComputers.Count == 0)
                     {
-                        Logger.Debug("No Computers Were Found To Act As A Relay For: " + relayTask.Gateway +
+                        ictx.Log.Debug("No Computers Were Found To Act As A Relay For: " + relayTask.Gateway +
                                      " Skipping Computers For This Network");
                         continue;
                     }
@@ -158,7 +153,7 @@ namespace Toems_Service.Workflows
                         if (computer.CertificateId == -1) continue;
                         if (string.IsNullOrEmpty(computer.PushUrl)) continue;
                         var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
-                        var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, new EncryptionServices().DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                        var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ictx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
                         new APICall().ClientApi.SendWolTask(computer.PushUrl, deviceCert, relayTask);
                         
                     }
@@ -225,9 +220,9 @@ namespace Toems_Service.Workflows
             if (socket != null)
             {
                 var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
-                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, new EncryptionServices().DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-                var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-                var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ictx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Reboot";
@@ -248,9 +243,9 @@ namespace Toems_Service.Workflows
             if (socket != null)
             {
                 var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
-                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, new EncryptionServices().DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-                var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-                var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ictx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Shutdown";

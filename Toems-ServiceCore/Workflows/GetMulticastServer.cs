@@ -10,26 +10,23 @@ using Toems_ServiceCore.EntityServices;
 
 namespace Toems_Service.Workflows
 {
-    public class GetMulticastServer
+    public class GetMulticastServer(ServiceActiveMulticastSession serviceActiveMulticastSession)
     {
-        private readonly EntityGroup _group;
-        private readonly Random _random;
+        private EntityGroup _group;
+        private Random _random;
         private UnitOfWork _uow;
         private EntityComServerCluster _cluster;
-        public GetMulticastServer(EntityGroup group)
+
+        public int? Run(EntityGroup group)
         {
             _group = group;
             _random = new Random();
             _uow = new UnitOfWork();
-        }
-
-        public int? Run()
-        {
+            
             //Find the best multicast server to use
 
             var serverId = -1;
-
-
+            
             if (_group.ClusterId == -1) //-1 is default cluster
             {
                 _cluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
@@ -54,7 +51,7 @@ namespace Toems_Service.Workflows
             foreach (var mServer in availableMulticastServers)
             {
                 var counter =
-                    new ServiceActiveMulticastSession().GetAll()
+                    serviceActiveMulticastSession.GetAll()
                         .Count(x => x.ComServerId == mServer.ComServerId);
 
                 taskInUseDict.Add(mServer.ComServerId, counter);

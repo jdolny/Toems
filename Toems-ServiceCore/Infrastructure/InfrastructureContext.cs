@@ -10,15 +10,16 @@ public class InfrastructureContext
     public IConfiguration Config { get; }
     public EncryptionServices Encryption { get; }
     public ServiceSetting Settings { get; }
-    
+    public IWebHostEnvironment Environment { get; }
     public ServiceAuditLog AuditLog { get; }
     
-    public InfrastructureContext(IConfiguration config, ILog log, UnitOfWork uow, EncryptionServices encryption, ServiceSetting settings, ServiceAuditLog auditLog)   
+    public InfrastructureContext(IConfiguration config, ILog log, UnitOfWork uow, EncryptionServices encryption, ServiceSetting settings, ServiceAuditLog auditLog, IWebHostEnvironment environment)   
     {
         AuditLog = auditLog;
         Config = config;
         Log = log;
         Encryption = encryption;
         Settings = settings;
+        Environment = environment;
     }
 }

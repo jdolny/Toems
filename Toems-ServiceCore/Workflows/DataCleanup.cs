@@ -7,25 +7,19 @@ using Toems_Common.Enum;
 using Toems_DataModel;
 using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class DataCleanup
+    public class DataCleanup(InfrastructureContext ictx, ServiceComputer serviceComputer, ServicePolicy servicePolicy, GroupService serviceGroup)
     {
-        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private UnitOfWork _uow;
-        private DateTime _localCutoff;
-        private DateTime _utcCutoff;
-        public DataCleanup()
-        {
-            _uow = new UnitOfWork();
-            _localCutoff = DateTime.Now - TimeSpan.FromDays(10950); //30 years, to avoid dates of 01/01/0001
-            _utcCutoff = DateTime.UtcNow - TimeSpan.FromDays(10950); //30 years, to avoid dates of 01/01/0001
-        }
+        private UnitOfWork _uow = new ();
+        private DateTime _localCutoff = DateTime.Now - TimeSpan.FromDays(10950); //30 years, to avoid dates of 01/01/0001
+        private DateTime _utcCutoff = DateTime.UtcNow - TimeSpan.FromDays(10950); //30 years, to avoid dates of 01/01/0001
 
         public bool Run()
         {
-            Logger.Info("Running Data Cleanup Job");
+            ictx.Log.Info("Running Data Cleanup Job");
             AutoArchiveComputers();
             AutoArchivePolicies();
             AutoDeleteComputers();
@@ -34,22 +28,22 @@ namespace Toems_Service.Workflows
             PolicyHistory();
             UserLogins();
             ImagingLogs();
-            Logger.Info("Completed Data Cleanup Job");
+            ictx.Log.Info("Completed Data Cleanup Job");
             return true;
         }
 
         private void AutoArchiveComputers()
         {
-            Logger.Debug("Computer Archive Started");
-            var serviceComputer = new ServiceComputer();
-            var archiveDays = ServiceSetting.GetSettingValue(SettingStrings.ComputerAutoArchiveDays);
+            ictx.Log.Debug("Computer Archive Started");
+
+            var archiveDays = ictx.Settings.GetSettingValue(SettingStrings.ComputerAutoArchiveDays);
             int intArchiveDays;
             if (!int.TryParse(archiveDays, out intArchiveDays))
                 return;
 
             if (intArchiveDays <= 0) return;
 
-            Logger.Debug($"Archiving Computers Older Than {intArchiveDays} Days");
+            ictx.Log.Debug($"Archiving Computers Older Than {intArchiveDays} Days");
 
             var activeComputers =
                 _uow.ComputerRepository.Get(x => x.ProvisionStatus == EnumProvisionStatus.Status.Provisioned);
@@ -65,16 +59,16 @@ namespace Toems_Service.Workflows
 
         private void AutoDeleteComputers()
         {
-            Logger.Debug("Computer Delete Started");
-            var serviceComputer = new ServiceComputer();
-            var deleteDays = ServiceSetting.GetSettingValue(SettingStrings.ComputerAutoDelete);
+            ictx.Log.Debug("Computer Delete Started");
+
+            var deleteDays = ictx.Settings.GetSettingValue(SettingStrings.ComputerAutoDelete);
             int intDays;
             if (!int.TryParse(deleteDays, out intDays))
                 return;
 
             if (intDays <= 0) return;
 
-            Logger.Debug($"Deleting Archived Computers Older Than {intDays} Days");
+            ictx.Log.Debug($"Deleting Archived Computers Older Than {intDays} Days");
             var archivedComputers =
                 _uow.ComputerRepository.Get(x => x.ProvisionStatus == EnumProvisionStatus.Status.Archived);
             if (archivedComputers.Count == 0) return;
@@ -89,13 +83,13 @@ namespace Toems_Service.Workflows
 
         private void AutoDeleteAuditLogs()
         {
-            Logger.Debug("Audit Log Delete Started");
-            var deleteDays = ServiceSetting.GetSettingValue(SettingStrings.AuditLogAutoDelete);
+            ictx.Log.Debug("Audit Log Delete Started");
+            var deleteDays = ictx.Settings.GetSettingValue(SettingStrings.AuditLogAutoDelete);
             int intDays;
             if (!int.TryParse(deleteDays, out intDays))
                 return;
             if (intDays <= 0) return;
-            Logger.Debug($"Deleting Audit Logs Older Than {intDays} Days");
+            ictx.Log.Debug($"Deleting Audit Logs Older Than {intDays} Days");
 
             var dateCutOff = DateTime.Now - TimeSpan.FromDays(intDays);
             _uow.AuditLogRepository.DeleteRange(x => x.DateTime < dateCutOff && x.DateTime > _localCutoff);
@@ -104,13 +98,13 @@ namespace Toems_Service.Workflows
 
         private void ComputerProcessHistory()
         {
-            Logger.Debug("Computer Process History Delete Started");
-            var deleteDays = ServiceSetting.GetSettingValue(SettingStrings.ComputerProcessAutoDelete);
+            ictx.Log.Debug("Computer Process History Delete Started");
+            var deleteDays = ictx.Settings.GetSettingValue(SettingStrings.ComputerProcessAutoDelete);
             int intDays;
             if (!int.TryParse(deleteDays, out intDays))
                 return;
             if (intDays <= 0) return;
-            Logger.Debug($"Deleting Process History Older Than {intDays} Days");
+            ictx.Log.Debug($"Deleting Process History Older Than {intDays} Days");
             var dateCutOff = DateTime.UtcNow - TimeSpan.FromDays(intDays);
             _uow.ComputerProcessRepository.DeleteRange(x => x.StartTimeUtc < dateCutOff && x.StartTimeUtc > _utcCutoff);
             _uow.Save();
@@ -118,13 +112,13 @@ namespace Toems_Service.Workflows
 
         private void PolicyHistory()
         {
-            Logger.Debug("Policy History Delete Started");
-            var deleteDays = ServiceSetting.GetSettingValue(SettingStrings.PolicyHistoryAutoDelete);
+            ictx.Log.Debug("Policy History Delete Started");
+            var deleteDays = ictx.Settings.GetSettingValue(SettingStrings.PolicyHistoryAutoDelete);
             int intDays;
             if (!int.TryParse(deleteDays, out intDays))
                 return;
             if (intDays <= 0) return;
-            Logger.Debug($"Deleting Policy History Older Than {intDays} Days");
+            ictx.Log.Debug($"Deleting Policy History Older Than {intDays} Days");
             var dateCutOff = DateTime.UtcNow - TimeSpan.FromDays(intDays);
             _uow.PolicyHistoryRepository.DeleteRange(x => x.LastRunTime < dateCutOff && x.LastRunTime > _utcCutoff);
             _uow.Save();
@@ -132,13 +126,13 @@ namespace Toems_Service.Workflows
 
         private void UserLogins()
         {
-            Logger.Debug("User Login Delete Started");
-            var deleteDays = ServiceSetting.GetSettingValue(SettingStrings.UserLoginHistoryAutoDelete);
+            ictx.Log.Debug("User Login Delete Started");
+            var deleteDays = ictx.Settings.GetSettingValue(SettingStrings.UserLoginHistoryAutoDelete);
             int intDays;
             if (!int.TryParse(deleteDays, out intDays))
                 return;
             if (intDays <= 0) return;
-            Logger.Debug($"Deleting Policy History Older Than {intDays} Days");
+            ictx.Log.Debug($"Deleting Policy History Older Than {intDays} Days");
             var dateCutOff = DateTime.UtcNow - TimeSpan.FromDays(intDays);
             _uow.UserLoginRepository.DeleteRange(x => x.LoginDateTime < dateCutOff && x.LoginDateTime > _utcCutoff);
             _uow.Save();
@@ -146,13 +140,13 @@ namespace Toems_Service.Workflows
 
         private void ImagingLogs()
         {
-            Logger.Debug("Imaging Logs Delete Started");
-            var deleteDays = ServiceSetting.GetSettingValue(SettingStrings.ImagingLogsAutoDeleteDays);
+            ictx.Log.Debug("Imaging Logs Delete Started");
+            var deleteDays = ictx.Settings.GetSettingValue(SettingStrings.ImagingLogsAutoDeleteDays);
             int intDays;
             if (!int.TryParse(deleteDays, out intDays))
                 return;
             if (intDays <= 0) return;
-            Logger.Debug($"Deleting Imaging Logs Older Than {intDays} Days");
+            ictx.Log.Debug($"Deleting Imaging Logs Older Than {intDays} Days");
             var dateCutOff = DateTime.Now - TimeSpan.FromDays(intDays);
             _uow.ComputerLogRepository.DeleteRange(x => x.LogTime < dateCutOff && x.LogTime > _localCutoff && !x.SubType.Equals("ondupload") && !x.SubType.Equals("upload") && !x.SubType.Equals("unregupload")); //don't delete upload logs
             _uow.Save();
@@ -160,8 +154,7 @@ namespace Toems_Service.Workflows
 
         public void AutoArchivePolicies()
         {
-            Logger.Debug("Policy Archive Started");
-            var servicePolicy = new ServicePolicy();
+            ictx.Log.Debug("Policy Archive Started");
             var allPolicies = _uow.PolicyRepository.Get(x => !x.Archived);
             foreach (var policy in allPolicies)
             {
@@ -187,7 +180,7 @@ namespace Toems_Service.Workflows
                     var memberIds = new List<int>();
                     foreach (var group in groupsWithThisPolicy)
                     {
-                        var groupMembers = new ServiceGroup().GetGroupMembers(group.Id);
+                        var groupMembers = serviceGroup.GetGroupMembers(group.Id);
                         memberIds.AddRange(groupMembers.Select(member => member.Id));
                     }
                     var distinctMembers = memberIds.Distinct().ToList();

@@ -1,10 +1,12 @@
+using System.Reflection;
 using System.Text;
 using Hangfire;
 using Hangfire.MySql;
+using log4net;
+using log4net.Config;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Toems_ApplicationApiCore;
-using Toems_Service;
 using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +22,10 @@ builder.Services.AddHangfireServer(options =>
 {
     options.WorkerCount = 1; // Set to 1 to process one job at a time
 });
+
+var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+builder.Services.AddSingleton<ILog>(LogManager.GetLogger(typeof(Program)));
 
 builder.Services.Scan(scan => scan
     .FromAssemblyOf<AuthenticationServices>()  // pick any type from your services assembly

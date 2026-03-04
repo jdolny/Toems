@@ -6,12 +6,12 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceActiveClientPolicy(EntityContext ectx)
+    public class ServiceActiveClientPolicy(EntityContext ectx, ServicePolicy servicePolicy)
     {
         public DtoActionResult InsertOrUpdate(EntityActiveClientPolicy activePolicy)
         {
             var actionResult = new DtoActionResult();
-            var p = new ServicePolicy().GetActivePolicy(activePolicy.PolicyId);
+            var p = servicePolicy.GetActivePolicy(activePolicy.PolicyId);
             if (p == null)
             {
                 //insert

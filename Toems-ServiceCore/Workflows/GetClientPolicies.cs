@@ -15,15 +15,12 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class GetClientPolicies
+    public class GetClientPolicies(InfrastructureContext ictx, ServiceComputer serviceComputer, IpServices ipServices, GroupService serviceGroup, 
+        ServiceUserLogins serviceUserLogins, ServiceSchedule serviceSchedule, ServiceAppMonitor serviceAppMonitor, Unicast unicast)
     {
-        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly UnitOfWork _uow;
 
-        public GetClientPolicies()
-        {
-            _uow = new UnitOfWork();
-        }
+        private readonly UnitOfWork _uow = new();
+        
 
         public DtoTriggerResponse Execute(DtoPolicyRequest policyRequest, int? computerId=null)
         {
@@ -41,7 +38,7 @@ namespace Toems_Service.Workflows
 
             if (string.IsNullOrEmpty(policyRequest.CurrentComServer))
             {
-                Logger.Debug("Could Not Determine The Client's Policy.  A Com Server Was Not Provided.");
+                ictx.Log.Debug("Could Not Determine The Client's Policy.  A Com Server Was Not Provided.");
                 return null;
             }
 
@@ -51,28 +48,28 @@ namespace Toems_Service.Workflows
                 computer.LastCheckinTime = DateTime.Now;
                 computer.ClientVersion = policyRequest.ClientVersion;
                 computer.PushUrl = policyRequest.PushURL;
-                computer.LastIp = IpServices.GetIPAddress();
-                new ServiceComputer().UpdateComputer(computer);
+                computer.LastIp = ipServices.GetIPAddress();
+                serviceComputer.UpdateComputer(computer);
             }
 
             var groupMemberships = _uow.GroupRepository.GetMembershipsForClientPolicy(computer.Id);
             if (policyRequest.UserLogins != null)
             {
-                var userLoginsResult = new ServiceUserLogins().AddOrUpdate(policyRequest.UserLogins, computer.Id);
+                var userLoginsResult = serviceUserLogins.AddOrUpdate(policyRequest.UserLogins, computer.Id);
                 if (userLoginsResult != null)
                     triggerResponse.UserLoginsSubmitted = userLoginsResult.Success;
             }
 
             if (policyRequest.AppMonitors != null)
             {
-                var appMonitorResult = new ServiceAppMonitor().AddOrUpdate(policyRequest.AppMonitors, computer.Id);
+                var appMonitorResult = serviceAppMonitor.AddOrUpdate(policyRequest.AppMonitors, computer.Id);
                 if (appMonitorResult != null)
                     triggerResponse.AppMonitorSubmitted = appMonitorResult.Success;
             }
 
             foreach (var membership in groupMemberships)
             {
-                var clientPoliciesJson = new ServiceGroup().GetActiveGroupPolicy(membership.GroupId);
+                var clientPoliciesJson = serviceGroup.GetActiveGroupPolicy(membership.GroupId);
                 if (clientPoliciesJson == null)
                     continue;
                 if(policyRequest.Trigger == EnumPolicy.Trigger.Startup)
@@ -105,7 +102,6 @@ namespace Toems_Service.Workflows
             //refine list to designated schedules
             var currentDayOfWeek = (int)DateTime.Now.DayOfWeek;
             var currentTimeOfDay = DateTime.Now.TimeOfDay;
-            var serviceSchedule = new ServiceSchedule();
 
             var toRemoveBySchedule = new List<DtoClientPolicy>();
 
@@ -154,8 +150,8 @@ namespace Toems_Service.Workflows
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("Could Not Parse Schedule Times For " + start.Name + " " + end.Name);
-                    Logger.Error(ex.Message);
+                    ictx.Log.Error("Could Not Parse Schedule Times For " + start.Name + " " + end.Name);
+                    ictx.Log.Error(ex.Message);
                     continue;
                 }                  
             }
@@ -171,12 +167,13 @@ namespace Toems_Service.Workflows
             {
                 if (triggerResponse.Policies.Any(x => x.WinPeModules.Any()))
                 {
-                    new Unicast(Convert.ToInt32(computer.Id), "deploy", 0).Start();
+                    unicast.InitSingle(Convert.ToInt32(computer.Id), "deploy", 0);
+                    unicast.Start();
                 }
 
             }
-            triggerResponse.CheckinTime = Convert.ToInt32(ServiceSetting.GetSettingValue(SettingStrings.CheckinInterval));
-            triggerResponse.ShutdownDelay = Convert.ToInt32(ServiceSetting.GetSettingValue(SettingStrings.ShutdownDelay));
+            triggerResponse.CheckinTime = Convert.ToInt32(ictx.Settings.GetSettingValue(SettingStrings.CheckinInterval));
+            triggerResponse.ShutdownDelay = Convert.ToInt32(ictx.Settings.GetSettingValue(SettingStrings.ShutdownDelay));
             return triggerResponse;
             
         }

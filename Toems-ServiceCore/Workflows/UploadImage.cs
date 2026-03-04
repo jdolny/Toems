@@ -13,34 +13,35 @@ using Toems_Common;
 using Toems_Common.Entity;
 using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class UploadImage
+    public class UploadImage(InfrastructureContext ictx, ServiceClientComServer serviceClientComServer, ServiceActiveImagingTask serviceActiveImagingTask, 
+        ServiceImageProfile serviceImageProfile, ServicePort servicePort, ServiceActiveMulticastSession serviceActiveMulticastSession)
     {
-        private readonly ILog log = LogManager.GetLogger(typeof(UploadImage));
         private EntityClientComServer _thisComServer;
         public string Upload(int taskId, string fileName, int profileId, int userId, string hdNumber)
         {
             //no need to find and call com server, client should already be directly communicating with the correct imaging server
-            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
-            _thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            var guid = ictx.Config["ComServerUniqueId"];
+            _thisComServer = serviceClientComServer.GetServerByGuid(guid);
 
             if (_thisComServer == null)
             {
-                log.Error($"Com Server With Guid {guid} Not Found");
+                ictx.Log.Error($"Com Server With Guid {guid} Not Found");
                 return "0";
             }
 
-            var appPath = Path.Combine(HttpContext.Current.Server.MapPath("~"),"private","apps"); 
+            var appPath = Path.Combine(ictx.Environment.ContentRootPath,"private","apps"); 
 
-            var task = new ServiceActiveImagingTask().GetTask(taskId);
+            var task = serviceActiveImagingTask.GetTask(taskId);
             if (task == null)
                 return "0";
 
-            var imageProfile = new ServiceImageProfile().ReadProfile(profileId);
+            var imageProfile = serviceImageProfile.ReadProfile(profileId);
 
-            var uploadPort = new ServicePort().GetNextPort(task.ComServerId);
+            var uploadPort = servicePort.GetNextPort(task.ComServerId);
       
             var path = _thisComServer.LocalStoragePath;
 
@@ -53,8 +54,8 @@ namespace Toems_Service.Workflows
             }
             catch(Exception ex)
             {
-                log.Error("Could Not Create Directory");
-                log.Error(ex.Message);
+                ictx.Log.Error("Could Not Create Directory");
+                ictx.Log.Error(ex.Message);
                 return "0";
             }
 
@@ -78,7 +79,7 @@ namespace Toems_Service.Workflows
                 activeMulticast.UserId = userId;
                 activeMulticast.UploadTaskId = task.Id;
 
-                var result = new ServiceActiveMulticastSession().AddActiveMulticastSession(activeMulticast);
+                var result = serviceActiveMulticastSession.AddActiveMulticastSession(activeMulticast);
                 if (result) return uploadPort.ToString();
             }
             return "0";
@@ -113,7 +114,7 @@ namespace Toems_Service.Workflows
 
             var senderInfo = new ProcessStartInfo { FileName = shell, Arguments = processArguments, UseShellExecute = false};
 
-            var logPath = HttpContext.Current.Server.MapPath("~") + Path.DirectorySeparatorChar + "private" +
+            var logPath = ictx.Environment.ContentRootPath + Path.DirectorySeparatorChar + "private" +
                           Path.DirectorySeparatorChar + "logs" + Path.DirectorySeparatorChar + "multicast.log";
 
             var logText = Environment.NewLine + DateTime.Now.ToString("MM-dd-yy hh:mm") +
@@ -131,7 +132,7 @@ namespace Toems_Service.Workflows
             }
             catch (Exception ex)
             {
-                log.Error(ex.ToString());
+                ictx.Log.Error(ex.ToString());
                 File.AppendAllText(logPath,
                     "Could Not Start Session " + imageName + " Try Pasting The Command Into A Command Prompt");
                 return 0;

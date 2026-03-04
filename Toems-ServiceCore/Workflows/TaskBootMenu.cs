@@ -17,21 +17,21 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class TaskBootMenu
+    public class TaskBootMenu(InfrastructureContext ictx, GetCompTftpServers getCompTftpServers, ServiceClientComServer serviceClientComServer, 
+        FilesystemServices filesystemServices, GetCompImagingServers getCompImagingServers)
     {
 
         private EntityClientComServer _thisComServer;
         private string _userToken { get; set; }
         private EntityComputer _computer;
         private EntityImageProfile _imageProfile;
-        private UnitOfWork _uow;
+        private UnitOfWork _uow = new();
         private readonly ILog log = LogManager.GetLogger(typeof(TaskBootMenu));
 
         public bool RunAllServers(EntityComputer computer, EntityImageProfile imageProfile)
         {
-
-            _uow = new UnitOfWork();
-            var comServers = new Workflows.GetCompTftpServers().Run(computer.Id);
+            
+            var comServers = getCompTftpServers.Run(computer.Id);
             if (comServers == null)
             {
                 log.Error("Could Not Determine Tftp Com Servers For Computer: " + computer.Name);
@@ -43,8 +43,8 @@ namespace Toems_Service.Workflows
                 return false;
             }
 
-            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
             var NoErrors = true;
 
             var dtoTaskBootFile = new DtoTaskBootFile();
@@ -67,8 +67,8 @@ namespace Toems_Service.Workflows
             _computer = computer;
             _imageProfile = imageProfile;
 
-            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
-            _thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            var guid = ictx.Config["ComServerUniqueId"];
+            _thisComServer = serviceClientComServer.GetServerByGuid(guid);
             if (_thisComServer == null)
             {
                 log.Error($"Com Server With Guid {guid} Not Found");
@@ -97,7 +97,7 @@ namespace Toems_Service.Workflows
                 listOfMacs.Add(StringManipulationServices.MacToPxeMac(mac));
             }
 
-            var imageComServers = new Workflows.GetCompImagingServers().Run(computer.Id);
+            var imageComServers = getCompImagingServers.Run(computer.Id);
 
             if (imageComServers == null)
             {
@@ -119,14 +119,14 @@ namespace Toems_Service.Workflows
             webPath = webPath.Trim(' ');
             webPath += "\"";
 
-            var globalComputerArgs = ServiceSetting.GetSettingValue(SettingStrings.GlobalImagingArguments);
+            var globalComputerArgs = ictx.Settings.GetSettingValue(SettingStrings.GlobalImagingArguments);
 
             //add static ip info if populated
             if (computer.PxeIpAddress != null)
                 globalComputerArgs += $" cd_net_ip={computer.PxeIpAddress} cd_net_netmask={computer.PxeNetmask} cd_net_gateway={computer.PxeGateway} cd_net_dns={computer.PxeDns} ";
 
-            globalComputerArgs += $" display_sleep_time={ServiceSetting.GetSettingValue(SettingStrings.LieSleepTime)} ";
-            var compTftpServers = new Workflows.GetCompTftpServers().Run(computer.Id);
+            globalComputerArgs += $" display_sleep_time={ictx.Settings.GetSettingValue(SettingStrings.LieSleepTime)} ";
+            var compTftpServers = getCompTftpServers.Run(computer.Id);
 
             if (compTftpServers == null)
             {
@@ -142,11 +142,11 @@ namespace Toems_Service.Workflows
             var iPxePath = _thisComServer.Url;
             if (iPxePath.Contains("https://"))
             {
-                if (ServiceSetting.GetSettingValue(SettingStrings.IpxeSSL).Equals("False"))
+                if (ictx.Settings.GetSettingValue(SettingStrings.IpxeSSL).Equals("False"))
                 {
                     iPxePath = iPxePath.ToLower().Replace("https://", "http://");
                     var currentPort = iPxePath.Split(':').Last();
-                    iPxePath = iPxePath.Replace(currentPort, ServiceSetting.GetSettingValue(SettingStrings.IpxeHttpPort)) + "/clientimaging/";
+                    iPxePath = iPxePath.Replace(currentPort, ictx.Settings.GetSettingValue(SettingStrings.IpxeHttpPort)) + "/clientimaging/";
                 }
                 else
                     iPxePath += "clientimaging/";
@@ -202,7 +202,7 @@ namespace Toems_Service.Workflows
 
             //In proxy mode all boot files are created regardless of the pxe mode, this way computers can be customized
             //to use a specific boot file without affecting all others, using the proxydhcp reservations file.
-            if (ServiceSetting.GetSettingValue(SettingStrings.ProxyDhcpEnabled) == "Yes")
+            if (ictx.Settings.GetSettingValue(SettingStrings.ProxyDhcpEnabled) == "Yes")
             {
                 foreach (var mac in listOfMacs)
                 {
@@ -214,7 +214,7 @@ namespace Toems_Service.Workflows
                                    mac +
                                    bootMenu.Item2;
 
-                        if (!new FilesystemServices().WritePath(path, bootMenu.Item3))
+                        if (!filesystemServices.WritePath(path, bootMenu.Item3))
                             return false;
                     }
                 }
@@ -224,7 +224,7 @@ namespace Toems_Service.Workflows
             //When not using proxy dhcp, only one boot file is created
             else
             {
-                var mode = ServiceSetting.GetSettingValue(SettingStrings.PxeBootloader);
+                var mode = ictx.Settings.GetSettingValue(SettingStrings.PxeBootloader);
                 foreach (var mac in listOfMacs)
                 {
                     var path = "";
@@ -249,7 +249,7 @@ namespace Toems_Service.Workflows
                         fileContents = grub.ToString();
                     }
 
-                    if (!new FilesystemServices().WritePath(path, fileContents))
+                    if (!filesystemServices.WritePath(path, fileContents))
                         return false;
                 }
 

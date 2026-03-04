@@ -19,14 +19,14 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class MulticastArguments
+    public class MulticastArguments(InfrastructureContext ictx, ServiceClientComServer serviceClientComServer, FilesystemServices filesystemServices)
     {
         private readonly ILog log = LogManager.GetLogger(typeof(MulticastArguments));
         private EntityClientComServer _thisComServer;
         public int RunOnComServer(DtoMulticastArgs mArgs, EntityClientComServer comServer)
         {
-            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
 
 
             var pid = new APICall().ClientComServerApi.StartUdpSender(comServer.Url, "", decryptedKey, mArgs);
@@ -36,8 +36,8 @@ namespace Toems_Service.Workflows
         public int GenerateProcessArguments(DtoMulticastArgs mArgs)
         {
 
-            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
-            _thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            var guid = ictx.Config["ComServerUniqueId"];
+            _thisComServer = serviceClientComServer.GetServerByGuid(guid);
             if (_thisComServer == null)
             {
                 log.Error($"Com Server With Guid {guid} Not Found");
@@ -60,7 +60,7 @@ namespace Toems_Service.Workflows
                     string imageFile = null;
                     foreach (var ext in new[] { "ntfs", "fat", "extfs", "hfsp", "imager", "winpe", "xfs" })
                     {
-                        imageFile = new FilesystemServices().GetMulticastFileNameWithFullPath(mArgs.ImageName,
+                        imageFile = filesystemServices.GetMulticastFileNameWithFullPath(mArgs.ImageName,
                             schemaCounter.ToString(), part.Number, ext,_thisComServer.LocalStoragePath);
 
                         if (!string.IsNullOrEmpty(imageFile)) break;
@@ -70,7 +70,7 @@ namespace Toems_Service.Workflows
                         if (part.VolumeGroup.LogicalVolumes == null) continue;
                         foreach (var lv in part.VolumeGroup.LogicalVolumes.Where(lv => lv.Active))
                         {
-                            imageFile = new FilesystemServices().GetMulticastLVMFileNameWithFullPath(mArgs.ImageName,
+                            imageFile = filesystemServices.GetMulticastLVMFileNameWithFullPath(mArgs.ImageName,
                                 schemaCounter.ToString(), lv.VolumeGroup, lv.Name, ext,_thisComServer.LocalStoragePath);
                         }
                     }
@@ -155,7 +155,7 @@ namespace Toems_Service.Workflows
                     }
                     else
                     {
-                        var appPath = HttpContext.Current.Server.MapPath("~") + Path.DirectorySeparatorChar + "private" +
+                        var appPath = ictx.Environment.ContentRootPath + Path.DirectorySeparatorChar + "private" +
                                       Path.DirectorySeparatorChar + "apps" + Path.DirectorySeparatorChar;
 
                         string prefix = null;
@@ -220,7 +220,7 @@ namespace Toems_Service.Workflows
             var senderInfo = new ProcessStartInfo { FileName = shell, Arguments = processArguments };
 
             //Fix
-            var logPath = HttpContext.Current.Server.MapPath("~") + Path.DirectorySeparatorChar + "private" +
+            var logPath = ictx.Environment.ContentRootPath + Path.DirectorySeparatorChar + "private" +
                           Path.DirectorySeparatorChar + "logs" + Path.DirectorySeparatorChar + "multicast.log";
 
             var logText = Environment.NewLine + DateTime.Now.ToString("MM-dd-yy hh:mm") +

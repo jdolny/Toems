@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -15,69 +16,70 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class Multicast
+    public class Multicast(InfrastructureContext ictx, GroupService serviceGroup, ServiceImageProfile serviceImageProfile,
+        ServiceClientComServer serviceClientComServer, ServicePort servicePort, ServiceActiveMulticastSession serviceActiveMulticastSession, 
+        ServiceActiveImagingTask serviceActiveImagingTask, ServiceClientPartition serviceClientPartition, ServiceUser serviceUser, CreateTaskArguments createTaskArguments,
+        GetMulticastServer getMulticastServer, MulticastArguments multicastArguments, TaskBootMenu taskBootMenu)
     {
-        private readonly string _clientCount;
-        private readonly ServiceComputer _computerServices;
-        private readonly EntityGroup _group;
-        private readonly bool _isOnDemand;
-        private readonly EntityActiveMulticastSession _multicastSession;
-        private readonly int _userId;
+        private string _clientCount;
+        private ServiceComputer _computerServices;
+        private EntityGroup _group;
+        private bool _isOnDemand;
+        private EntityActiveMulticastSession _multicastSession;
+        private int _userId;
 
         private List<EntityComputer> _computers;
         private ImageProfileWithImage _imageProfile;
         private int? _multicastServerId;
-        private readonly int _comServerId;
+        private int _comServerId;
 
         //Constructor For Starting Multicast For Group
-        public Multicast(int groupId, int userId)
+        public void Init(int groupId, int userId)
         {
             _computers = new List<EntityComputer>();
             _multicastSession = new EntityActiveMulticastSession();
             _isOnDemand = false;
-            _group = new ServiceGroup().GetGroup(groupId);
+            _group = serviceGroup.GetGroup(groupId);
             _userId = userId;
-            _computerServices = new ServiceComputer();
         }
 
         //Constructor For Starting Multicast For On Demand
-        public Multicast(int imageProfileId, string clientCount, string sessionName, int userId, int comServerId)
+        public void InitOnDemand(int imageProfileId, string clientCount, string sessionName, int userId, int comServerId)
         {
             _multicastSession = new EntityActiveMulticastSession();
             _isOnDemand = true;
-            _imageProfile = new ServiceImageProfile().ReadProfile(imageProfileId);
+            _imageProfile = serviceImageProfile.ReadProfile(imageProfileId);
             _clientCount = clientCount;
             _group = new EntityGroup { ImageProfileId = _imageProfile.Id };
             _userId = userId;
             _multicastSession.ImageProfileId = _imageProfile.Id;
-            _computerServices = new ServiceComputer();
             _comServerId = comServerId;
             _multicastSession.Name = sessionName;
         }
 
         public string Create()
         {
-            _imageProfile = new ServiceImageProfile().ReadProfile(_group.ImageProfileId);
+            _imageProfile = serviceImageProfile.ReadProfile(_group.ImageProfileId);
             if (_imageProfile == null) return "The Image Profile Does Not Exist";
 
-            if (_imageProfile.Image == null) return "The Image Does Not Exist";  
-          
+            if (_imageProfile.Image == null) return "The Image Does Not Exist";
+
             _multicastServerId = _isOnDemand
                 ? _comServerId
-                : new GetMulticastServer(_group).Run();
+                : getMulticastServer.Run(_group);
 
             if (_multicastServerId == null)
                 return "Could Not Find Any Available Multicast Servers";
 
 
-            var comServer = new ServiceClientComServer().GetServer(Convert.ToInt32(_multicastServerId));
+            var comServer = serviceClientComServer.GetServer(Convert.ToInt32(_multicastServerId));
             if(string.IsNullOrEmpty(comServer.MulticastInterfaceIp))
             {
                 return "The Com Server's Multicast Interface IP Address Is Not Populated";
             }
 
 
-            _multicastSession.Port = new ServicePort().GetNextPort(_multicastServerId);
+            _multicastSession.Port = servicePort.GetNextPort(_multicastServerId);
             if (_multicastSession.Port == 0)
             {
                 return "Could Not Determine Current Port Base";
@@ -102,14 +104,14 @@ namespace Toems_Service.Workflows
                 var ondAuditLog = new EntityAuditLog();
                 ondAuditLog.AuditType = EnumAuditEntry.AuditType.OnDemandMulticast;
                 ondAuditLog.ObjectId = _imageProfile.ImageId;
-                var ondUser = new ServiceUser().GetUser(_userId);
+                var ondUser = serviceUser.GetUser(_userId);
                 if (ondUser != null)
                     ondAuditLog.UserName = ondUser.Name;
                 ondAuditLog.ObjectName = _imageProfile.Image.Name;
                 ondAuditLog.UserId = _userId;
                 ondAuditLog.ObjectType = "Image";
                 ondAuditLog.ObjectJson = JsonConvert.SerializeObject(_multicastSession);
-                new ServiceAuditLog().AddAuditLog(ondAuditLog);
+                ictx.AuditLog.AddAuditLog(ondAuditLog);
                 return "Successfully Started Multicast " + _group.Name;
             }
             //End of the road for starting an on demand multicast
@@ -117,40 +119,40 @@ namespace Toems_Service.Workflows
 
             //Continue On If multicast is for a group
             _multicastSession.Name = _group.Name;
-            _computers = new ServiceGroup().GetGroupMembers(_group.Id);
+            _computers = serviceGroup.GetGroupMembers(_group.Id);
             if (_computers.Count < 1)
             {
                 return "The Group Does Not Have Any Members";
             }
 
-            var activeMulticastSessionServices = new ServiceActiveMulticastSession();
-            if (!activeMulticastSessionServices.AddActiveMulticastSession(_multicastSession))
+
+            if (!serviceActiveMulticastSession.AddActiveMulticastSession(_multicastSession))
             {
                 return "Could Not Create Multicast Database Task.  An Existing Task May Be Running.";
             }
 
             if (!CreateComputerTasks())
             {
-                activeMulticastSessionServices.Delete(_multicastSession.Id);
+                serviceActiveMulticastSession.Delete(_multicastSession.Id);
                 return "Could Not Create Computer Database Tasks.  A Computer May Have An Existing Task.";
             }
 
             if (!CreatePxeFiles())
             {
-                activeMulticastSessionServices.Delete(_multicastSession.Id);
+                serviceActiveMulticastSession.Delete(_multicastSession.Id);
                 return "Could Not Create Computer Boot Files";
             }
 
             if (!CreateTaskArguments())
             {
-                activeMulticastSessionServices.Delete(_multicastSession.Id);
+                serviceActiveMulticastSession.Delete(_multicastSession.Id);
                 return "Could Not Create Computer Task Arguments";
             }
 
             var processArguments = GenerateProcessArguments();
             if (processArguments == 0)
             {
-                activeMulticastSessionServices.Delete(_multicastSession.Id);
+                serviceActiveMulticastSession.Delete(_multicastSession.Id);
                 return "Could Not Start The Multicast Application";
             }
 
@@ -160,19 +162,19 @@ namespace Toems_Service.Workflows
             var auditLog = new EntityAuditLog();
             auditLog.AuditType = EnumAuditEntry.AuditType.Multicast;
             auditLog.ObjectId = _group.Id;
-            var user = new ServiceUser().GetUser(_userId);
+            var user = serviceUser.GetUser(_userId);
             if (user != null)
                 auditLog.UserName = user.Name;
             auditLog.ObjectName = _group.Name;
             auditLog.UserId = _userId;
             auditLog.ObjectType = "Group";
             auditLog.ObjectJson = JsonConvert.SerializeObject(_multicastSession);
-            new ServiceAuditLog().AddAuditLog(auditLog);
+            ictx.AuditLog.AddAuditLog(auditLog);
 
             auditLog.ObjectId = _imageProfile.ImageId;
             auditLog.ObjectName = _imageProfile.Image.Name;
             auditLog.ObjectType = "Image";
-            new ServiceAuditLog().AddAuditLog(auditLog);
+            ictx.AuditLog.AddAuditLog(auditLog);
 
             return "Successfully Started Multicast " + _group.Name;
         }
@@ -181,7 +183,7 @@ namespace Toems_Service.Workflows
         {
             var error = false;
             var activeTaskIds = new List<int>();
-            var activeImagingTaskServices = new ServiceActiveImagingTask();
+
             foreach (var computer in _computers)
             {
                 if (_computerServices.IsComputerActive(computer.Id)) return false;
@@ -196,7 +198,7 @@ namespace Toems_Service.Workflows
                     WebTaskToken = Guid.NewGuid().ToString("N").ToUpper()
                 };
 
-                if (activeImagingTaskServices.AddActiveImagingTask(activeTask))
+                if (serviceActiveImagingTask.AddActiveImagingTask(activeTask))
                 {
                     activeTaskIds.Add(activeTask.Id);
                 }
@@ -209,7 +211,7 @@ namespace Toems_Service.Workflows
             if (error)
             {
                 foreach (var taskId in activeTaskIds)
-                    activeImagingTaskServices.DeleteActiveImagingTask(taskId);
+                    serviceActiveImagingTask.DeleteActiveImagingTask(taskId);
 
                 return false;
             }
@@ -220,7 +222,7 @@ namespace Toems_Service.Workflows
         {
             foreach (var computer in _computers)
             {
-                if (!new TaskBootMenu().RunAllServers(computer, _imageProfile))
+                if (!taskBootMenu.RunAllServers(computer, _imageProfile))
                     return false;
             }
             return true;
@@ -231,10 +233,9 @@ namespace Toems_Service.Workflows
             foreach (var computer in _computers)
             {
                 var activeTask =  _computerServices.GetTaskForComputer(computer.Id);
-                activeTask.Arguments =
-                    new CreateTaskArguments(computer, _imageProfile, "multicast",_multicastSession.ComServerId).Execute(
-                        _multicastSession.Port.ToString());
-                if (!new ServiceActiveImagingTask().UpdateActiveImagingTask(activeTask))
+                createTaskArguments.InitMulticast(computer, _imageProfile, "multicast", _multicastSession.ComServerId);
+                activeTask.Arguments = createTaskArguments.Execute(_multicastSession.Port.ToString());
+                if (!serviceActiveImagingTask.UpdateActiveImagingTask(activeTask))
                     return false;
             }
             return true;
@@ -243,12 +244,13 @@ namespace Toems_Service.Workflows
         private int GenerateProcessArguments()
         {
             var multicastArgs = new DtoMulticastArgs();
-            multicastArgs.schema = new ServiceClientPartition(_imageProfile).GetImageSchema();
+            serviceClientPartition.SetImageSchema(_imageProfile);
+            multicastArgs.schema = serviceClientPartition.GetImageSchema();
             multicastArgs.Environment = _imageProfile.Image.Environment;
             multicastArgs.ImageName = _imageProfile.Image.Name;
             multicastArgs.Port = _multicastSession.Port.ToString();
 
-            var comServer = new ServiceClientComServer().GetServer(_multicastSession.ComServerId);
+            var comServer = serviceClientComServer.GetServer(_multicastSession.ComServerId);
 
             if (_isOnDemand)
             {
@@ -270,22 +272,21 @@ namespace Toems_Service.Workflows
                 return 0;
 
             
-            var pid = new MulticastArguments().RunOnComServer(multicastArgs,comServer);
+            var pid = multicastArguments.RunOnComServer(multicastArgs,comServer);
           
 
             if (pid == 0) return pid;
-
-            var activeMulticastSessionServices = new ServiceActiveMulticastSession();
+            
             if (_isOnDemand)
             {
                 _multicastSession.Pid = pid;
                 _multicastSession.Name = _group.Name;
-                activeMulticastSessionServices.AddActiveMulticastSession(_multicastSession);
+                serviceActiveMulticastSession.AddActiveMulticastSession(_multicastSession);
             }
             else
             {
                 _multicastSession.Pid = pid;
-                activeMulticastSessionServices.UpdateActiveMulticastSession(_multicastSession);
+                serviceActiveMulticastSession.UpdateActiveMulticastSession(_multicastSession);
             }
 
             return pid;

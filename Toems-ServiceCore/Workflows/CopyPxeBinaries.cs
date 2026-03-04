@@ -12,10 +12,8 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class CopyPxeBinaries
+    public class CopyPxeBinaries(InfrastructureContext ictx, ServiceClientComServer serviceClientComServer, FilesystemServices filesystemServices)
     {
-        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         private EntityClientComServer _thisComServer;
         private const string BootFile = "pxeboot.0";
         private readonly string[] _grubEfi64Files = { "bootx64.efi", "grubx64.efi" };
@@ -51,8 +49,8 @@ namespace Toems_Service.Workflows
             var uow = new UnitOfWork();
             var comServers = uow.ClientComServerRepository.Get(x => x.IsTftpServer);
            
-            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
             var NoErrors = true;
             foreach (var com in comServers)
             {
@@ -66,23 +64,23 @@ namespace Toems_Service.Workflows
 
         public bool Copy()
         {
-            var guid = ConfigurationManager.AppSettings["ComServerUniqueId"];
-            _thisComServer = new ServiceClientComServer().GetServerByGuid(guid);
+            var guid = ictx.Config["ComServerUniqueId"];
+            _thisComServer = serviceClientComServer.GetServerByGuid(guid);
             if (_thisComServer == null)
             {
-                Logger.Error($"Com Server With Guid {guid} Not Found");
+                ictx.Log.Error($"Com Server With Guid {guid} Not Found");
                 return false;
             }
 
             if(string.IsNullOrEmpty(_thisComServer.TftpPath))
             {
-                Logger.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
+                ictx.Log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
                 return false;
             }
 
             _sourceRootPath = _thisComServer.TftpPath + "static" +
                                                   Path.DirectorySeparatorChar;
-            var copyResult = ServiceSetting.GetSettingValue(SettingStrings.ProxyDhcpEnabled) == "Yes"
+            var copyResult = ictx.Settings.GetSettingValue(SettingStrings.ProxyDhcpEnabled) == "Yes"
                   ? CopyFilesForProxy()
                   : CopyFilesForNonProxy();
 
@@ -110,7 +108,7 @@ namespace Toems_Service.Workflows
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
+                ictx.Log.Error(ex.Message);
                 return false;
             }
             return true;
@@ -119,7 +117,7 @@ namespace Toems_Service.Workflows
 
         private bool CopyFilesForNonProxy()
         {
-            var pxeMode = ServiceSetting.GetSettingValue(SettingStrings.PxeBootloader);
+            var pxeMode = ictx.Settings.GetSettingValue(SettingStrings.PxeBootloader);
             switch (pxeMode)
             {
                 case "ipxe":
@@ -210,7 +208,7 @@ namespace Toems_Service.Workflows
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error(ex.Message);
+                        ictx.Log.Error(ex.Message);
                         return false;
                     }
                     foreach (var file in _winPEBiosFiles)
@@ -240,7 +238,7 @@ namespace Toems_Service.Workflows
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error(ex.Message);
+                        ictx.Log.Error(ex.Message);
                         return false;
                     }
                     foreach (var file in _winPEBiosFiles)
@@ -270,7 +268,7 @@ namespace Toems_Service.Workflows
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error(ex.Message);
+                        ictx.Log.Error(ex.Message);
                         return false;
                     }
                     if (!CopyCommand("winpe", "", "winpe_efi_32", "", "bootmgfw.efi", BootFile)) return false;
@@ -290,7 +288,7 @@ namespace Toems_Service.Workflows
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error(ex.Message);
+                        ictx.Log.Error(ex.Message);
                         return false;
                     }
                     if (!CopyCommand("winpe", "", "winpe_efi_64", "", "bootmgfw.efi", BootFile)) return false;
@@ -302,9 +300,9 @@ namespace Toems_Service.Workflows
         private bool CopyFilesForProxy()
         {
             var isError = false;
-            var biosFile = ServiceSetting.GetSettingValue(SettingStrings.ProxyBiosBootloader);
-            var efi32File = ServiceSetting.GetSettingValue(SettingStrings.ProxyEfi32Bootloader);
-            var efi64File = ServiceSetting.GetSettingValue(SettingStrings.ProxyEfi64Bootloader);
+            var biosFile = ictx.Settings.GetSettingValue(SettingStrings.ProxyBiosBootloader);
+            var efi32File = ictx.Settings.GetSettingValue(SettingStrings.ProxyEfi32Bootloader);
+            var efi64File = ictx.Settings.GetSettingValue(SettingStrings.ProxyEfi64Bootloader);
 
             foreach (var file in _ipxeBiosFiles)
             {
@@ -359,7 +357,7 @@ namespace Toems_Service.Workflows
             }
 
             if (
-                new FilesystemServices().FileExists(_thisComServer.TftpPath +
+                filesystemServices.FileExists(_thisComServer.TftpPath +
                                                  Path.DirectorySeparatorChar + "boot" +
                                                  Path.DirectorySeparatorChar + "boot.sdi"))
             {

@@ -11,14 +11,14 @@ using Toems_ServiceCore.EntityServices;
 
 namespace Toems_Service.Workflows
 {
-    public class GetCompImagingServers
+    public class GetCompImagingServers(ServiceComputer serviceComputer)
     {
         public List<EntityClientComServer> Run(int computerId, bool includePassive=false)
         {
             var uow = new UnitOfWork();
             var defaultCluster = uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
 
-            var computerGroupMemberships = new ServiceComputer().GetAllGroupMemberships(computerId);
+            var computerGroupMemberships = serviceComputer.GetAllGroupMemberships(computerId);
             var computerGroups = uow.ComputerRepository.GetAllComputerGroups(computerId).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
             List<int> imagingServerIds = new List<int>();
 

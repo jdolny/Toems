@@ -8,15 +8,10 @@ using Toems_ServiceCore.EntityServices;
 
 namespace Toems_Service.Workflows
 {
-    public class BuildReportSqlQuery
+    public class BuildReportSqlQuery(ServiceScriptModule serviceScriptModule, ServiceCustomAttribute serviceCustomAttribute)
     {
-        private StringBuilder sb;
-
-        public BuildReportSqlQuery()
-        {
-            sb = new StringBuilder();
-        }
-
+        private StringBuilder sb = new StringBuilder();
+        
         private string BuildGroupBy(string groupBy)
         {
             if (string.IsNullOrEmpty(groupBy)) return "";
@@ -302,7 +297,7 @@ namespace Toems_Service.Workflows
                         int ciId;
                         if (int.TryParse(cia.Split('_')[1], out ciId))
                         {
-                            var script = new ServiceScriptModule().GetModule(ciId);
+                            var script = serviceScriptModule.GetModule(ciId);
                             select += @" ci" + ciId + "." + query.Field + " as " + "\"" + script.Name + "\"" + ",";
                         }
                     }
@@ -311,7 +306,7 @@ namespace Toems_Service.Workflows
                         int caId;
                         if (int.TryParse(cia.Split('_')[1], out caId))
                         {
-                            var attribute = new ServiceCustomAttribute().GetCustomAttribute(caId);
+                            var attribute = serviceCustomAttribute.GetCustomAttribute(caId);
                             select += @" ca" + caId + "." + query.Field + " as " + "\"" + attribute.Name + "\"" + ",";
                         }
                     }

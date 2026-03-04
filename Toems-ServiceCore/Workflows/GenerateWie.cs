@@ -15,37 +15,31 @@ using Toems_Common;
 using System.Collections.Generic;
 using Toems_Common.Dto.client;
 using System.IO.Compression;
+using System.Text.RegularExpressions;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
 
-    public class GenerateWie
+    public class GenerateWie(InfrastructureContext ictx, ServiceWieBuild serviceWieBuild, ServiceFileCopyModule serviceFileCopyModule, ServiceModule serviceModule, FilesystemServices serviceFilesystem)
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof(GenerateWie));
-
         private const string _fileName = "ToemsPE-Build.cmd";
         private string _fullPath;
         private string _basePath;
         private DtoWieConfig _config;
-        private EntityWieBuild _wieBuild;
-        private UnitOfWork _uow;
-        private DtoActionResult _result;
+        private EntityWieBuild _wieBuild = new();
+        private UnitOfWork _uow = new();
+        private DtoActionResult _result = new();
 
-        public GenerateWie(DtoWieConfig config)
+
+        public DtoActionResult Run(DtoWieConfig config)
         {
             _config = config;
-            _wieBuild = new EntityWieBuild();
-            _uow = new UnitOfWork();
-            _result = new DtoActionResult();
             _result.Success = false;
-        }
-        public DtoActionResult Run()
-        {
-            _log.Info("Starting Wie Build");
+            ictx.Log.Info("Starting Wie Build");
             _wieBuild.Status = "Started";
-            _basePath = Path.Combine(HttpContext.Current.Server.MapPath("~"), "private", "wie_builder");
+            _basePath = Path.Combine(ictx.Environment.ContentRootPath, "private", "wie_builder");
             _fullPath = Path.Combine(_basePath, _fileName);
             _wieBuild.StartTime = DateTime.Now;
             _wieBuild.BuildOptions = JsonConvert.SerializeObject(_config);
@@ -73,8 +67,7 @@ namespace Toems_Service.Workflows
         {
             if (_config == null)
                 return "Missing Build Options";
-            else if (_config.ImpersonationId == -1)
-                return "Missing Impersonation User";
+
             else if (string.IsNullOrEmpty(_config.ComServers))
                 return "No Com Servers Were Selected";
 
@@ -88,7 +81,7 @@ namespace Toems_Service.Workflows
                 }
             }
 
-            if (new ServiceWieBuild().GetWieProcess().Any())
+            if (serviceWieBuild.GetWieProcess().Any())
                 return "An Active Build Process Is Currently Running";
 
             return "Success";
@@ -96,47 +89,48 @@ namespace Toems_Service.Workflows
 
         private bool StartProcess()
         {
-            var imp = new ServiceImpersonationAccount().GetAccount(_config.ImpersonationId);
-            var domain = string.Empty;
-            var username = string.Empty;
-            var password = new EncryptionServices().DecryptText(imp.Password);
-            if (imp.Username.Contains("\\"))
-            {
-                username = imp.Username.Split('\\').Last();
-                domain = imp.Username.Split('\\').First();
-            }
-            else
-            {
-                username = imp.Username;
-                domain = Environment.MachineName;
-            }
+            var sha = serviceFilesystem.GetFileSha256(_fullPath);
+            return serviceFilesystem.WritePath(Path.Combine(_basePath,"Queue",_wieBuild.WieGuid+".queue"), sha);
+        }
+        
+        private static readonly Regex SafeValueRegex = new Regex(@"^[A-Za-z0-9\-_\.:\/@ ]{0,200}$", RegexOptions.Compiled);
 
-            try
-            {
-                _wieBuild.Pid = new RunasCs().RunAs(username, password, _fullPath, domain, 0, 2, 2, null, true, true, false);
-                return true;
-            }
-            catch(Exception ex)
-            {
-                _log.Error("Could Not Start Wie Build Process.");
-                _log.Error(ex.Message);
-                _result.ErrorMessage = "Could Not Start Wie Build Process.";
-                _wieBuild.Status = "Failed";
-            }
-            return false;
+        private bool IsSafe(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return true;
+            return SafeValueRegex.IsMatch(value);
+        }
 
+        private string SanitizeForBatch(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return string.Empty;
+            // Trim and normalize newlines
+            value = value.Replace("\r", " ").Replace("\n", " ").Trim();
+
+            // Double any percent signs (prevents variable expansion).
+            value = value.Replace("%", "%%");
+
+            // Remove or escape dangerous characters
+            value = value.Replace("\"", "'"); // convert double quotes to single quotes (batch will drop enclosing quotes)
+            return value;
         }
         private bool CreateConfigFile()
         {
+            if (!IsSafe(_config.Timezone)) { _result.ErrorMessage = "Invalid TimeZone"; return false; }
+            if (!IsSafe(_config.InputLocale)) { _result.ErrorMessage = "Invalid InputLocale"; return false; }
+            if (!IsSafe(_config.Language)) { _result.ErrorMessage = "Invalid Language"; return false; }
+            if (!IsSafe(_config.ComServers)) { _result.ErrorMessage = "Invalid ComServers"; return false; }
+            if (!IsSafe(_config.Token)) { _result.ErrorMessage = "Invalid Token"; return false; }
+
             var configContents = new StringBuilder();
             configContents.AppendLine("@echo off");
             configContents.AppendLine("pushd %~dp0");
-            configContents.AppendLine("set TimeZone=" + _config.Timezone);
-            configContents.AppendLine("set InputLocale=" + _config.InputLocale);
-            configContents.AppendLine("set MyLang=" + _config.Language);
-            configContents.AppendLine("set ComServerURL=" + _config.ComServers);
-            configContents.AppendLine("set UniversalToken=" + _config.Token);
-            configContents.AppendLine("set RestrictComServers=" + _config.RestrictComServers.ToString());
+            configContents.AppendLine($"set \"TimeZone={SanitizeForBatch(_config.Timezone)}\"");
+            configContents.AppendLine($"set \"InputLocale={SanitizeForBatch(_config.InputLocale)}\"");
+            configContents.AppendLine($"set \"MyLang={SanitizeForBatch(_config.Language)}\"");
+            configContents.AppendLine($"set \"ComServerURL={SanitizeForBatch(_config.ComServers)}\"");
+            configContents.AppendLine($"set \"UniversalToken={SanitizeForBatch(_config.Token)}\"");
+            configContents.AppendLine($"set \"RestrictComServers={_config.RestrictComServers.ToString()}\"");
             configContents.AppendLine("set CreateISO=true");
             configContents.AppendLine("set LoginDebug=false");
             configContents.AppendLine("set PLATFORM=x64");
@@ -145,8 +139,8 @@ namespace Toems_Service.Workflows
             configContents.AppendLine($"call .\\Scripts\\MakePE.cmd > .\\Status\\{_wieBuild.WieGuid}.log");
             configContents.AppendLine($"echo complete > .\\Status\\{_wieBuild.WieGuid}.complete");
 
-            return new FilesystemServices().WritePath(_fullPath, configContents.ToString());
-
+            return serviceFilesystem.WritePath(_fullPath, configContents.ToString());
+          
         }
 
         private bool AddDrivers()
@@ -154,10 +148,10 @@ namespace Toems_Service.Workflows
             var filesToDownload = new List<DtoClientFileRequest>();
             foreach (var driverId in _config.Drivers)
             {
-                var module = new ServiceFileCopyModule().GetModule(driverId);
+                var module = serviceFileCopyModule.GetModule(driverId);
                
 
-                var moduleFiles = new ServiceModule().GetModuleFiles(module.Guid);
+                var moduleFiles = serviceModule.GetModuleFiles(module.Guid);
                 foreach (var file in moduleFiles.OrderBy(x => x.FileName))
                 {
                     var fr = new DtoClientFileRequest();
@@ -169,8 +163,8 @@ namespace Toems_Service.Workflows
 
             var comServer = _uow.ClientComServerRepository.Get().FirstOrDefault();
 
-            var intercomKey = ServiceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = new EncryptionServices().DecryptText(intercomKey);
+            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
 
             foreach (var file in filesToDownload)
             {
@@ -200,8 +194,8 @@ namespace Toems_Service.Workflows
                     }
                     catch(Exception ex)
                     {
-                        _log.Error("Could not unzip file");
-                        _log.Error(ex.Message);
+                        ictx.Log.Error("Could not unzip file");
+                        ictx.Log.Error(ex.Message);
                     }
                 }
             }

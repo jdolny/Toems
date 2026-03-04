@@ -11,22 +11,26 @@ using Toems_Common.Dto.exports;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_Service.Entity;
+using Toems_ServiceCore;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class ValidatePolicy
+    public class ValidatePolicy(InfrastructureContext ictx, ServicePolicy servicePolicy, ServiceSchedule serviceSchedule, ServiceClientComServer serviceClientComServer, 
+        ServiceScriptModule serviceScriptModule, ServiceCommandModule serviceCommandModule, ServiceFileCopyModule serviceFileCopyModule, 
+        ServiceWinPeModule serviceWinPeModule, ServiceMessageModule serviceMessageModule, ServiceImpersonationAccount serviceImpersonationAccount, 
+        ServiceUploadedFile serviceUploadedFile, ServiceExternalDownload serviceExternalDownload, UncServices uncServices, ServicePrinterModule servicePrinterModule,
+        ServiceSoftwareModule serviceSoftwareModule, ServiceWuModule serviceWuModule, ServiceWingetModule serviceWingetModule)
     {
-        private static readonly ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private DtoActionResult _result;
-        private readonly ServicePolicy _policyService;
-        private EntityPolicy _policy;
-        private readonly DtoModuleSearchFilter _filter;
 
-        public ValidatePolicy()
+        private EntityPolicy _policy;
+        private DtoModuleSearchFilter _filter;
+        
+        public DtoActionResult Validate(int policyId)
         {
             _result = new DtoActionResult();
-            _policyService = new ServicePolicy();
             _filter = new DtoModuleSearchFilter();
             _filter.IncludeCommand = true;
             _filter.IncludeFileCopy = true;
@@ -38,11 +42,8 @@ namespace Toems_Service.Workflows
             _filter.IncludeWinPe = true;
             _filter.IncludeWinget = true;
             _filter.Limit = Int32.MaxValue;
-        }
-
-        public DtoActionResult Validate(int policyId)
-        {
-            _policy = _policyService.GetPolicy(policyId);
+            
+            _policy = servicePolicy.GetPolicy(policyId);
             if (_policy == null)
             {
                 _result.Success = false;
@@ -59,7 +60,7 @@ namespace Toems_Service.Workflows
                 return _result;
             }
 
-            var policyModules = _policyService.SearchAssignedPolicyModules(policyId, _filter);
+            var policyModules = servicePolicy.SearchAssignedPolicyModules(policyId, _filter);
             foreach (var policyModule in policyModules.OrderBy(x => x.Name))
             {
                 verifyResult = VerifyConditions(policyModule, policyModules);
@@ -229,12 +230,12 @@ namespace Toems_Service.Workflows
 
             if (_policy.WindowStartScheduleId != -1)
             {
-                var schedule = new ServiceSchedule().GetSchedule(_policy.WindowStartScheduleId);
+                var schedule = serviceSchedule.GetSchedule(_policy.WindowStartScheduleId);
                 if(schedule == null) return "The Policy's Start Schedule Id Is Not Valid.";
             }
             if (_policy.WindowEndScheduleId != -1)
             {
-                var schedule = new ServiceSchedule().GetSchedule(_policy.WindowEndScheduleId);
+                var schedule = serviceSchedule.GetSchedule(_policy.WindowEndScheduleId);
                 if (schedule == null) return "The Policy's End Schedule Id Is Not Valid.";
             }
 
@@ -243,12 +244,12 @@ namespace Toems_Service.Workflows
                 return "The Policy's Com Server Condition Is Not Valid";
             if (_policy.PolicyComCondition == EnumPolicy.PolicyComCondition.Selective)
             {
-                var policyComServers = _policyService.GetPolicyComServers(_policy.Id);
+                var policyComServers = servicePolicy.GetPolicyComServers(_policy.Id);
                 if(policyComServers == null) return "The Policy's Selected Com Servers Are Not Valid";
                 if (policyComServers.Count == 0) return "The Policy's Selected Com Servers Are Not Valid.  At Least One Server Must Be Selected.";
                 foreach (var policyComServer in policyComServers)
                 {
-                    var comServer = new ServiceClientComServer().GetServer(policyComServer.ComServerId);
+                    var comServer = serviceClientComServer.GetServer(policyComServer.ComServerId);
                     if(comServer == null) return "The Policy's Selected Com Servers Are Not Valid.  A Specified Com Server Does Not Exist";
                 }
             }
@@ -256,32 +257,32 @@ namespace Toems_Service.Workflows
             if(_policy.JoinDomain)
             {
                 //get domain join creds
-                var domainUser = ServiceSetting.GetSettingValue(SettingStrings.DomainJoinUser);
+                var domainUser = ictx.Settings.GetSettingValue(SettingStrings.DomainJoinUser);
                 if (string.IsNullOrEmpty(domainUser))
                     return $"The Policy {_policy.Name} Cannot Use Join Domain.  The Domain User Is Not Set.";
                 if (!domainUser.Contains("\\"))
                     return $"The Policy {_policy.Name} Cannot Use Join Domain.  The Domain User Must Be in NetBIOS Format.  Domain\\User";
 
-                var domainName = ServiceSetting.GetSettingValue(SettingStrings.DomainJoinName);
+                var domainName = ictx.Settings.GetSettingValue(SettingStrings.DomainJoinName);
                 if (string.IsNullOrEmpty(domainName))
                     return $"The Policy {_policy.Name} Cannot Use Join Domain.  The Domain Name Is Not Set.";
 
                 try
                 {
-                    var domainPassword = new EncryptionServices().DecryptText(ServiceSetting.GetSettingValue(SettingStrings.DomainJoinPasswordEncrypted));
+                    var domainPassword = ictx.Encryption.DecryptText(ictx.Settings.GetSettingValue(SettingStrings.DomainJoinPasswordEncrypted));
                     if(string.IsNullOrEmpty(domainPassword))
                         return $"The Policy {_policy.Name} Cannot Use Join Domain.  The Domain User Password Is Not Set.";
                 }
                 catch(Exception ex)
                 {
-                    Logger.Error(ex.Message);
+                    ictx.Log.Error(ex.Message);
                     return $"The Policy {_policy.Name} Cannot Use Join Domain.  The Domain User Password Could Not Be Decrypted.";
                 }
             }
 
             if (_policy.ConditionId != -1) // -1 = disabled
             {
-                var conditionScript = new ServiceScriptModule().GetModule(_policy.ConditionId);
+                var conditionScript = serviceScriptModule.GetModule(_policy.ConditionId);
                 if (conditionScript == null)
                     return $"Condition Script For {_policy.Name} Does Not Exist";
 
@@ -334,7 +335,7 @@ namespace Toems_Service.Workflows
 
                 if (conditionScript.ImpersonationId != -1)
                 {
-                    var impAccount = new ServiceImpersonationAccount().GetAccount(conditionScript.ImpersonationId);
+                    var impAccount = serviceImpersonationAccount.GetAccount(conditionScript.ImpersonationId);
                     if (impAccount == null) return "Condition Script: " + conditionScript.Name + " Has An Invalid Impersonation Account";
                 }
 
@@ -350,7 +351,7 @@ namespace Toems_Service.Workflows
 
         private string VerifyCommand(EntityPolicyModules policyModule)
         {
-            var commandModule = new ServiceCommandModule().GetModule(policyModule.ModuleId);
+            var commandModule = serviceCommandModule.GetModule(policyModule.ModuleId);
             if (commandModule == null) return "An Assigned Command Module No Longer Exists";
 
             if (string.IsNullOrEmpty(commandModule.Name))
@@ -395,20 +396,19 @@ namespace Toems_Service.Workflows
 
             if (commandModule.ImpersonationId != -1)
             {
-                var impAccount = new ServiceImpersonationAccount().GetAccount(commandModule.ImpersonationId);
+                var impAccount = serviceImpersonationAccount.GetAccount(commandModule.ImpersonationId);
                 if(impAccount == null) return "Command Module: " + commandModule.Name + " Has An Invalid Impersonation Account";
             }
 
             if (!int.TryParse(policyModule.Order.ToString(), out value))
                 return "Command Module: " + commandModule.Name + " Has An Invalid Order";
 
-            var uploadedFiles = new ServiceUploadedFile().GetFilesForModule(commandModule.Guid);
-            var externalFiles = new ServiceExternalDownload().GetForModule(commandModule.Guid);
+            var uploadedFiles = serviceUploadedFile.GetFilesForModule(commandModule.Guid);
+            var externalFiles = serviceExternalDownload.GetForModule(commandModule.Guid);
 
-            var basePath = Path.Combine(ServiceSetting.GetSettingValue(SettingStrings.StoragePath), "software_uploads");
-            using (var unc = new UncServices())
-            {
-                if (unc.NetUseWithCredentials() || unc.LastError == 1219)
+            var basePath = Path.Combine(ictx.Settings.GetSettingValue(SettingStrings.StoragePath), "software_uploads");
+
+                if (uncServices.NetUseWithCredentials() || uncServices.LastError == 1219)
                 {
                     try
                     {
@@ -435,7 +435,7 @@ namespace Toems_Service.Workflows
                     }
                     catch (Exception ex)
                     {
-                        Logger.Debug(ex.Message);
+                        ictx.Log.Debug(ex.Message);
                         return "Command Module: " + commandModule.Name + " Unknown Error Trying To Verify Files";
                     }
                 }
@@ -443,7 +443,7 @@ namespace Toems_Service.Workflows
                 {
                     return "Could Not Reach Storage Path";
                 }
-            }
+            
 
             return null;
         }
@@ -452,7 +452,7 @@ namespace Toems_Service.Workflows
         {
             if (policyModule.ConditionId != -1) // -1 = disabled
             {
-                var conditionScript = new ServiceScriptModule().GetModule(policyModule.ConditionId);
+                var conditionScript = serviceScriptModule.GetModule(policyModule.ConditionId);
                 if(conditionScript == null)
                     return $"Condition Script For {policyModule.Name} Does Not Exist";
 
@@ -505,7 +505,7 @@ namespace Toems_Service.Workflows
 
                 if (conditionScript.ImpersonationId != -1)
                 {
-                    var impAccount = new ServiceImpersonationAccount().GetAccount(conditionScript.ImpersonationId);
+                    var impAccount = serviceImpersonationAccount.GetAccount(conditionScript.ImpersonationId);
                     if (impAccount == null) return "Condition Script: " + conditionScript.Name + " Has An Invalid Impersonation Account";
                 }
 
@@ -535,7 +535,7 @@ namespace Toems_Service.Workflows
 
         private string VerifyFileCopy(EntityPolicyModules policyModule)
         {
-            var fileCopyModule = new ServiceFileCopyModule().GetModule(policyModule.ModuleId);
+            var fileCopyModule = serviceFileCopyModule.GetModule(policyModule.ModuleId);
 
             if (string.IsNullOrEmpty(fileCopyModule.Name))
                 return "A File Copy Module Has An Invalid Name";
@@ -554,8 +554,8 @@ namespace Toems_Service.Workflows
             if (!int.TryParse(policyModule.Order.ToString(), out value))
                 return "File Copy Module: " + fileCopyModule.Name + " Has An Invalid Order";
 
-            var uploadedFiles = new ServiceUploadedFile().GetFilesForModule(fileCopyModule.Guid);
-            var externalFiles = new ServiceExternalDownload().GetForModule(fileCopyModule.Guid);
+            var uploadedFiles = serviceUploadedFile.GetFilesForModule(fileCopyModule.Guid);
+            var externalFiles = serviceExternalDownload.GetForModule(fileCopyModule.Guid);
 
             if(uploadedFiles == null && externalFiles == null)
                 return "File Copy Module: " + fileCopyModule.Name + " Does Not Have Any Associated Files";
@@ -570,10 +570,9 @@ namespace Toems_Service.Workflows
                 return "File Copy Module: " + fileCopyModule.Name + " Error While Determining Associated Files";
             }
 
-            var basePath = Path.Combine(ServiceSetting.GetSettingValue(SettingStrings.StoragePath), "software_uploads");         
-            using (var unc = new UncServices())
-            {
-                if (unc.NetUseWithCredentials() || unc.LastError == 1219)
+            var basePath = Path.Combine(ictx.Settings.GetSettingValue(SettingStrings.StoragePath), "software_uploads");         
+
+                if (uncServices.NetUseWithCredentials() || uncServices.LastError == 1219)
                 {
                     try
                     {
@@ -600,7 +599,7 @@ namespace Toems_Service.Workflows
                     }
                     catch (Exception ex)
                     {
-                        Logger.Debug(ex.Message);
+                        ictx.Log.Debug(ex.Message);
                         return "File Copy Module: " + fileCopyModule.Name + " Unknown Error Trying To Verify Files";
                     }
                 }
@@ -608,14 +607,14 @@ namespace Toems_Service.Workflows
                 {
                     return "Could Not Reach Storage Path";
                 }
-            }
+            
         
             return null;
         }
 
         private string VerifyWinPe(EntityPolicyModules policyModule)
         {
-            var winPeModule = new ServiceWinPeModule().GetModule(policyModule.ModuleId);
+            var winPeModule = serviceWinPeModule.GetModule(policyModule.ModuleId);
 
             if (string.IsNullOrEmpty(winPeModule.Name))
                 return "A WinPE Module Has An Invalid Name";
@@ -630,7 +629,7 @@ namespace Toems_Service.Workflows
             if (!int.TryParse(policyModule.Order.ToString(), out value))
                 return "WinPE Module: " + winPeModule.Name + " Has An Invalid Order";
 
-            var uploadedFiles = new ServiceUploadedFile().GetFilesForModule(winPeModule.Guid);
+            var uploadedFiles = serviceUploadedFile.GetFilesForModule(winPeModule.Guid);
 
             if (uploadedFiles == null)
                 return "WinPE Module: " + winPeModule.Name + " Does Not Have Any Associated Files";
@@ -645,10 +644,9 @@ namespace Toems_Service.Workflows
                 return "WinPE Module: " + winPeModule.Name + " Error While Determining Associated Files";
             }
 
-            var basePath = Path.Combine(ServiceSetting.GetSettingValue(SettingStrings.StoragePath), "software_uploads");
-            using (var unc = new UncServices())
-            {
-                if (unc.NetUseWithCredentials() || unc.LastError == 1219)
+            var basePath = Path.Combine(ictx.Settings.GetSettingValue(SettingStrings.StoragePath), "software_uploads");
+
+                if (uncServices.NetUseWithCredentials() || uncServices.LastError == 1219)
                 {
                     try
                     {
@@ -663,7 +661,7 @@ namespace Toems_Service.Workflows
                     }
                     catch (Exception ex)
                     {
-                        Logger.Debug(ex.Message);
+                        ictx.Log.Debug(ex.Message);
                         return "File Copy Module: " + winPeModule.Name + " Unknown Error Trying To Verify Files";
                     }
                 }
@@ -671,13 +669,13 @@ namespace Toems_Service.Workflows
                 {
                     return "Could Not Reach Storage Path";
                 }
-            }
+            
 
             return null;
         }
         private string VerifyMessage(EntityPolicyModules policyModule)
         {
-            var messageModule = new ServiceMessageModule().GetModule(policyModule.ModuleId);
+            var messageModule = serviceMessageModule.GetModule(policyModule.ModuleId);
 
             if (string.IsNullOrEmpty(messageModule.Name))
                 return "A Message Module Has An Invalid Name";
@@ -708,7 +706,7 @@ namespace Toems_Service.Workflows
 
         private string VerifyScript(EntityPolicyModules policyModule)
         {
-            var scriptModule = new ServiceScriptModule().GetModule(policyModule.ModuleId);
+            var scriptModule = serviceScriptModule.GetModule(policyModule.ModuleId);
             if (scriptModule == null) return "An Assigned Script Module No Longer Exists";
 
             if (string.IsNullOrEmpty(scriptModule.Name))
@@ -757,7 +755,7 @@ namespace Toems_Service.Workflows
 
             if (scriptModule.ImpersonationId != -1)
             {
-                var impAccount = new ServiceImpersonationAccount().GetAccount(scriptModule.ImpersonationId);
+                var impAccount = serviceImpersonationAccount.GetAccount(scriptModule.ImpersonationId);
                 if (impAccount == null) return "Script Module: " + scriptModule.Name + " Has An Invalid Impersonation Account";
             }
 
@@ -769,7 +767,7 @@ namespace Toems_Service.Workflows
 
         private string VerifyPrinter(EntityPolicyModules policyModule)
         {
-            var printerModule = new ServicePrinterModule().GetModule(policyModule.ModuleId);
+            var printerModule = servicePrinterModule.GetModule(policyModule.ModuleId);
 
             if (printerModule == null) return "An Assigned Printer Module No Longer Exists";
 
@@ -799,7 +797,7 @@ namespace Toems_Service.Workflows
 
         private string VerifySoftware(EntityPolicyModules policyModule)
         {
-            var softwareModule = new ServiceSoftwareModule().GetModule(policyModule.ModuleId);
+            var softwareModule = serviceSoftwareModule.GetModule(policyModule.ModuleId);
             if (string.IsNullOrEmpty(softwareModule.Name))
                 return "A Software Module Has An Invalid Name";
 
@@ -831,8 +829,8 @@ namespace Toems_Service.Workflows
                 return "Software Module: " + softwareModule.Name + " Has An Invalid Success Code";
             }
 
-            var uploadedFiles = new ServiceUploadedFile().GetFilesForModule(softwareModule.Guid);
-            var externalFiles = new ServiceExternalDownload().GetForModule(softwareModule.Guid);
+            var uploadedFiles = serviceUploadedFile.GetFilesForModule(softwareModule.Guid);
+            var externalFiles = serviceExternalDownload.GetForModule(softwareModule.Guid);
 
             if (uploadedFiles == null && externalFiles == null)
                 return "Software Module: " + softwareModule.Name + " Does Not Have Any Associated Files";
@@ -847,10 +845,9 @@ namespace Toems_Service.Workflows
                 return "Software Module: " + softwareModule.Name + " Error While Determining Associated Files";
             }
 
-            var basePath = Path.Combine(ServiceSetting.GetSettingValue(SettingStrings.StoragePath), "software_uploads");
-            using (var unc = new UncServices())
-            {
-                if (unc.NetUseWithCredentials() || unc.LastError == 1219)
+            var basePath = Path.Combine(ictx.Settings.GetSettingValue(SettingStrings.StoragePath), "software_uploads");
+
+                if (uncServices.NetUseWithCredentials() || uncServices.LastError == 1219)
                 {
                     try
                     {
@@ -877,7 +874,7 @@ namespace Toems_Service.Workflows
                     }
                     catch (Exception ex)
                     {
-                        Logger.Debug(ex.Message);
+                        ictx.Log.Debug(ex.Message);
                         return "Software Module: " + softwareModule.Name + " Unknown Error Trying To Verify Files";
                     }
                 }
@@ -885,12 +882,12 @@ namespace Toems_Service.Workflows
                 {
                     return "Could Not Reach Storage Path";
                 }
-            }
+            
 
 
             if (softwareModule.ImpersonationId != -1)
             {
-                var impAccount = new ServiceImpersonationAccount().GetAccount(softwareModule.ImpersonationId);
+                var impAccount = serviceImpersonationAccount.GetAccount(softwareModule.ImpersonationId);
                 if (impAccount == null) return "Software Module: " + softwareModule.Name + " Has An Invalid Impersonation Account";
             }
 
@@ -900,7 +897,7 @@ namespace Toems_Service.Workflows
 
         private string VerifyWindowsUpdate(EntityPolicyModules policyModule)
         {
-            var wuModule = new ServiceWuModule().GetModule(policyModule.ModuleId);
+            var wuModule = serviceWuModule.GetModule(policyModule.ModuleId);
             if (string.IsNullOrEmpty(wuModule.Name))
                 return "A Windows Update Module Has An Invalid Name";
             if (wuModule.Archived)
@@ -927,8 +924,8 @@ namespace Toems_Service.Workflows
                 return "Windows Update Module: " + wuModule.Name + " Has An Invalid Success Code";
             }
 
-            var uploadedFiles = new ServiceUploadedFile().GetFilesForModule(wuModule.Guid);
-            var externalFiles = new ServiceExternalDownload().GetForModule(wuModule.Guid);
+            var uploadedFiles = serviceUploadedFile.GetFilesForModule(wuModule.Guid);
+            var externalFiles = serviceExternalDownload.GetForModule(wuModule.Guid);
 
             if (uploadedFiles == null && externalFiles == null)
                 return "Windows Update Module: " + wuModule.Name + " Does Not Have Any Associated Files";
@@ -984,10 +981,9 @@ namespace Toems_Service.Workflows
 
 
 
-            var basePath = Path.Combine(ServiceSetting.GetSettingValue(SettingStrings.StoragePath), "software_uploads");
-            using (var unc = new UncServices())
-            {
-                if (unc.NetUseWithCredentials() || unc.LastError == 1219)
+            var basePath = Path.Combine(ictx.Settings.GetSettingValue(SettingStrings.StoragePath), "software_uploads");
+
+                if (uncServices.NetUseWithCredentials() || uncServices.LastError == 1219)
                 {
                     try
                     {
@@ -1014,7 +1010,7 @@ namespace Toems_Service.Workflows
                     }
                     catch (Exception ex)
                     {
-                        Logger.Debug(ex.Message);
+                        ictx.Log.Debug(ex.Message);
                         return "Windows Update Module: " + wuModule.Name + " Unknown Error Trying To Verify Files";
                     }
                 }
@@ -1022,14 +1018,14 @@ namespace Toems_Service.Workflows
                 {
                     return "Could Not Reach Storage Path";
                 }
-            }
+            
 
             return null;
         }
 
         private string VerifyWinget(EntityPolicyModules policyModule)
         {
-            var wingetModule = new ServiceWingetModule().GetModule(policyModule.ModuleId);
+            var wingetModule = serviceWingetModule.GetModule(policyModule.ModuleId);
             if (wingetModule == null) return "An Assigned Winget Module No Longer Exists";
 
             if (string.IsNullOrEmpty(wingetModule.Name))
@@ -1054,7 +1050,7 @@ namespace Toems_Service.Workflows
 
             if (wingetModule.ImpersonationId != -1)
             {
-                var impAccount = new ServiceImpersonationAccount().GetAccount(wingetModule.ImpersonationId);
+                var impAccount = serviceImpersonationAccount.GetAccount(wingetModule.ImpersonationId);
                 if (impAccount == null) return "Winget Module: " + wingetModule.Name + " Has An Invalid Impersonation Account";
             }
 

@@ -10,7 +10,7 @@ namespace Toems_ServiceCore.EntityServices
     {
         private DtoImageSchemaGridView _imageSchema;
 
-        public void SetSchema(DtoImageSchemaRequest schemaRequest)
+        public void Init(DtoImageSchemaRequest schemaRequest)
         {
             string schema = null;
 

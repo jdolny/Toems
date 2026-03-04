@@ -8,30 +8,25 @@ using Toems_Common;
 using Toems_Common.DbUpgrades;
 using Toems_Common.Dto;
 using Toems_Service.Entity;
+using Toems_ServiceCore.EntityServices;
 
 namespace Toems_Service.Workflows
 {
-    public class DbUpdater
+    public class DbUpdater(ServiceVersion serviceVersion)
     {
-        private readonly ServiceRawSql _rawSqlServices;
+        private readonly ServiceRawSql _rawSqlServices = new();
         private readonly ILog log = LogManager.GetLogger(typeof(DbUpdater));
-
-        public DbUpdater()
-        {
-            _rawSqlServices = new ServiceRawSql();
-        }
-
+        
         public DtoActionResult Update()
         {
-            var versionService = new ServiceVersion();
-            var versions = versionService.GetAllVersionInfo();
+            var versions = serviceVersion.GetAllVersionInfo();
             if (versions.DatabaseVersion == versions.TargetDbVersion)
                 return new DtoActionResult { Success = true };
 
             var result = new DtoActionResult();
 
             var updatesToRun = new List<int>();
-            var currentDbVersion = versionService.Get(1).DatabaseVersion;
+            var currentDbVersion = serviceVersion.Get(1).DatabaseVersion;
             var currentAppVersion = SettingStrings.GlobalVersion;
             var versionMapping = new VersionMapping().Get();
             var targetDbVersion = versionMapping[currentAppVersion];

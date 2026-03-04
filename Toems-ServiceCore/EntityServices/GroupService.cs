@@ -6,7 +6,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class GroupService(EntityContext ectx)
+    public class GroupService(EntityContext ectx, ServiceComputer computerService, ServiceUser userService)
     {
         public DtoActionResult AddGroup(EntityGroup group)
         {
@@ -145,7 +145,6 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool SendMessage(int id, DtoMessage message)
         {
-            var computerService = new ServiceComputer();
             foreach (var computer in GetGroupMembers(id))
                 computerService.SendMessage(computer.Id, message);
 
@@ -154,7 +153,6 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool ForceCheckin(int id)
         {
-            var computerService = new ServiceComputer();
             foreach (var computer in GetGroupMembers(id))
                 computerService.ForceCheckin(computer.Id);
 
@@ -163,7 +161,6 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool CollectInventory(int id)
         {
-            var computerService = new ServiceComputer();
             foreach (var computer in GetGroupMembers(id))
                 computerService.CollectInventory(computer.Id);
 
@@ -317,14 +314,14 @@ namespace Toems_ServiceCore.EntityServices
                 groupWithcount.Type = group.Type;
                 groupWithcount.Description = group.Description;
                 if (group.Id == -1)
-                    groupWithcount.MemberCount = new ServiceComputer().TotalActiveCount();
+                    groupWithcount.MemberCount = computerService.TotalActiveCount();
                 else
                     groupWithcount.MemberCount = ectx.Uow.GroupMembershipRepository.Count(x => x.GroupId == group.Id);
                 if (groupWithcount.MemberCount == "0" && group.IsOu) continue;
                 returnList.Add(groupWithcount);
             }
 
-            var groupAcl = new ServiceUser().GetAllowedGroups(userId);
+            var groupAcl = userService.GetAllowedGroups(userId);
             if (!groupAcl.GroupManagementEnforced)
                 return returnList.Take(filter.Limit).OrderBy(x => x.Name).ToList();
             else
@@ -490,7 +487,7 @@ namespace Toems_ServiceCore.EntityServices
             var members = ectx.Uow.GroupRepository.GetGroupMembers(groupId, "");
             foreach (var computer in members)
             {
-                new ServiceComputer().DeployImageViaWindows(computer.Id, userId);
+                computerService.DeployImageViaWindows(computer.Id, userId);
             }
         }
     }
