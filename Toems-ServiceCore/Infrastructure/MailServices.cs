@@ -11,7 +11,7 @@ namespace Toems_ServiceCore.Infrastructure
     /// </summary>
     public class MailServices(InfrastructureContext ictx)
     {
-        private async Task SendMailAsync(string body, string mailTo, string subject)
+        public async Task SendMailAsync(string body, string mailTo, string subject)
         {
             try
             {

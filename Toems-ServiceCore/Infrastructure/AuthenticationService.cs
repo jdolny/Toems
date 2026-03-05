@@ -14,7 +14,8 @@ namespace Toems_ServiceCore.Infrastructure
         ServiceUserGroupMembership userGroupMembershipService,
         ServiceUserLockout userLockoutService, 
         ServiceUser userService,
-        ServiceClientComServer clientComServerService)
+        ServiceClientComServer clientComServerService,
+        LdapServices ldapServices)
     {
         public string ConsoleLogin(string username, string password, string task, string ip)
         {
@@ -69,7 +70,7 @@ namespace Toems_ServiceCore.Infrastructure
                     var userCreated = false;
                     foreach (var ldapGroup in userGroupService.GetLdapGroups())
                     {
-                        if (new LdapServices().Authenticate(userName, password, ldapGroup.GroupLdapName))
+                        if (ldapServices.Authenticate(userName, password, ldapGroup.GroupLdapName))
                         {
                             if (!userCreated)
                             {
@@ -182,7 +183,7 @@ namespace Toems_ServiceCore.Infrastructure
                     foreach (var ldapGroup in ldapGroups)
                     {
                        
-                        if (new LdapServices().Authenticate(userName, password, ldapGroup.GroupLdapName))
+                        if (ldapServices.Authenticate(userName, password, ldapGroup.GroupLdapName))
                         {
                             //put user back in group if removed at some point
 
@@ -193,7 +194,7 @@ namespace Toems_ServiceCore.Infrastructure
                         else
                         {
                             //user is either not in that group anymore, or bad password
-                            if (new LdapServices().Authenticate(userName, password))
+                            if (ldapServices.Authenticate(userName, password))
                             {
                                 //password was good but user is no longer in the group
                                 //remove user from group
@@ -205,7 +206,7 @@ namespace Toems_ServiceCore.Infrastructure
                 else
                 {
                     //user is not part of an ldap group, check creds against directory
-                    if (new LdapServices().Authenticate(userName, password)) validationResult.Success = true;
+                    if (ldapServices.Authenticate(userName, password)) validationResult.Success = true;
                 }
             }
             else if (user.IsLdapUser == 1 && ictx.Settings.GetSettingValue(SettingStrings.LdapEnabled) != "1")

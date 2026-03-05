@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Management;
 using log4net;
+using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -12,7 +13,8 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceActiveMulticastSession(EntityContext ectx, ServiceUser userService, ServiceActiveImagingTask activeImagingTaskService)
+    public class ServiceActiveMulticastSession(EntityContext ectx, ServiceUser userService, ServiceActiveImagingTask activeImagingTaskService, MailServices mailServices,
+        CleanTaskBootFiles cleanTaskBootFiles, ServiceClientComServer serviceClientComServer)
     {
         public string ActiveCount(int userId)
         {
@@ -61,12 +63,12 @@ namespace Toems_ServiceCore.EntityServices
                 foreach (var computer in computers)
                 {
                     if (computer != null)
-                        new CleanTaskBootFiles().Execute(computer);
+                        cleanTaskBootFiles.Execute(computer);
                 }
             }
 
 
-            var comServer = new ServiceClientComServer().GetServer(multicast.ComServerId);
+            var comServer = serviceClientComServer.GetServer(multicast.ComServerId);
             if(comServer == null)
             {
                 actionResult.Success = false;
@@ -183,7 +185,7 @@ namespace Toems_ServiceCore.EntityServices
             }
         }
 
-        public void SendMulticastCompletedEmail(EntityActiveMulticastSession session)
+        public async Task SendMulticastCompletedEmail(EntityActiveMulticastSession session)
         {
             //Mail not enabled
             if (ectx.Settings.GetSettingValue(SettingStrings.SmtpEnabled) == "0") return;
@@ -197,13 +199,7 @@ namespace Toems_ServiceCore.EntityServices
                 {
                     if (session.UserId == user.Id)
                     {
-                        var mail = new MailServices
-                        {
-                            MailTo = user.Email,
-                            Body = session.Name + " Multicast Task Has Completed.",
-                            Subject = "Multicast Completed"
-                        };
-                        mail.Send();
+                        await mailServices.SendMailAsync(session.Name + " Multicast Task Has Completed.",user.Email, "Multicast Completed");
                     }
                 }
             }

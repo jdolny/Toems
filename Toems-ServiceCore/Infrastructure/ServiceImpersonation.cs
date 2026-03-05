@@ -4,44 +4,38 @@ using System.Security.Principal;
 
 namespace Toems_ServiceCore.Infrastructure
 {
-    public class ServiceImpersonation : IDisposable
+    public class ServiceImpersonation(InfrastructureContext ictx) : IDisposable
     {
-        private readonly InfrastructureContext _ictx;
         private IntPtr _handle = IntPtr.Zero;
         private bool _disposed;
 
         public int LastError { get; private set; }
 
-        public ServiceImpersonation(InfrastructureContext ictx)
-        {
-            _ictx = ictx;
-        }
-
-        public void RunAs(string domain, string username, string password, Action action)
+        public T RunAs<T>(string domain, string username, string password, Func<T> func)
         {
             const int LOGON32_PROVIDER_DEFAULT = 0;
-            const int LOGON32_LOGON_INTERACTIVE = 2;
+            const int LOGON32_LOGON_NEW_CREDENTIALS = 9; // better for remote
 
             if (string.IsNullOrEmpty(domain))
                 domain = Environment.MachineName;
 
             bool loggedOn = LogonUser(username,
-                                      domain,
-                                      password,
-                                      LOGON32_LOGON_INTERACTIVE,
-                                      LOGON32_PROVIDER_DEFAULT,
-                                      ref _handle);
+                domain,
+                password,
+                LOGON32_LOGON_NEW_CREDENTIALS,
+                LOGON32_PROVIDER_DEFAULT,
+                ref _handle);
 
             if (!loggedOn)
             {
                 LastError = Marshal.GetLastWin32Error();
-                _ictx.Log.Debug("Could not impersonate user, error code: " + LastError);
-                return;
+                ictx.Log.Debug("Could not impersonate user, error code: " + LastError);
+                throw new InvalidOperationException($"Impersonation failed. Win32: {LastError}");
             }
 
             using var identity = new WindowsIdentity(_handle);
 
-            WindowsIdentity.RunImpersonated(identity.AccessToken, action);
+            return WindowsIdentity.RunImpersonated(identity.AccessToken, func);
         }
 
         [DllImport("advapi32.dll", SetLastError = true)]

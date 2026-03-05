@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json;
+using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Dto.client;
@@ -12,7 +13,9 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceComputer(EntityContext ectx, ServiceUser userService)
+    public class ServiceComputer(EntityContext ectx, ServiceUser userService, ServiceWinPeModule serviceWinPeModule, ServiceImageProfile serviceImageProfile, 
+        GetClientPolicies getClientPolicies, GetCompImagingServers getCompImagingServers, GetCompTftpServers getCompTftpServers, ServiceModule serviceModule,
+        ClientPolicyJson clientPolicyJson, PowerManagement powerManagement, Unicast unicast)
     {
         public List<EntityComputer> SearchComputers(DtoComputerFilter filter, int userId)
         {
@@ -171,7 +174,7 @@ namespace Toems_ServiceCore.EntityServices
         public EntityWinPeModule GetEffectiveWinPeModule(int computerId)
         {
             var computer = GetComputer(computerId);
-            var winPeModule = new ServiceWinPeModule().GetModule(computer.WinPeModuleId);
+            var winPeModule = serviceWinPeModule.GetModule(computer.WinPeModuleId);
             if (winPeModule != null) return winPeModule;
 
             //check for an image profile via group since computer doesn't have image directly assigned
@@ -185,7 +188,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var group in computerGroups)
                 {
-                    winPeModule = new ServiceWinPeModule().GetModule(group.WinPeModuleId);
+                    winPeModule = serviceWinPeModule.GetModule(group.WinPeModuleId);
                     if (winPeModule != null) return winPeModule;
                 }
 
@@ -198,7 +201,7 @@ namespace Toems_ServiceCore.EntityServices
         public ImageProfileWithImage GetEffectiveImage(int computerId)
         {
             var computer = GetComputer(computerId);
-            var imageProfile = new ServiceImageProfile().ReadProfile(computer.ImageProfileId);
+            var imageProfile = serviceImageProfile.ReadProfile(computer.ImageProfileId);
             if (imageProfile != null) return imageProfile;
             
             var computerGroups = ectx.Uow.ComputerRepository.GetAllComputerGroups(computerId).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
@@ -211,7 +214,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var group in computerGroups)
                 {
-                    imageProfile = new ServiceImageProfile().ReadProfile(group.ImageProfileId);
+                    imageProfile = serviceImageProfile.ReadProfile(group.ImageProfileId);
                     if (imageProfile != null) return imageProfile;
                 }
 
@@ -232,7 +235,7 @@ namespace Toems_ServiceCore.EntityServices
             policyRequest.ClientIdentity.Guid = computer.Guid;
             policyRequest.ClientIdentity.Name = computer.Name;
 
-            var policy = new Toems_Service.Workflows.GetClientPolicies().Execute(policyRequest,computerId);
+            var policy = getClientPolicies.Execute(policyRequest,computerId);
             return JsonConvert.SerializeObject(policy.Policies, Formatting.Indented);
         }
 
@@ -265,12 +268,12 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityClientComServer> GetTftpServers(int computerId)
         {
-            return new Toems_Service.Workflows.GetCompTftpServers().Run(computerId);
+            return getCompTftpServers.Run(computerId);
         }
 
         public List<EntityClientComServer> GetImageServers(int computerId)
         {
-            return new Toems_Service.Workflows.GetCompImagingServers().Run(computerId,true);
+            return getCompImagingServers.Run(computerId,true);
         }
 
         public EntityComputer GetByInstallationId(string installationid)
@@ -418,9 +421,9 @@ namespace Toems_ServiceCore.EntityServices
             if (computer == null) return false;
             if (computer.CertificateId == -1) return false;
 
-            var module = new ServiceModule().GetModuleIdFromGuid(moduleGuid);
+            var module = serviceModule.GetModuleIdFromGuid(moduleGuid);
             if (module == null) return false;
-            var clientPolicy = new ClientPolicyJson().CreateInstantModule(module);
+            var clientPolicy = clientPolicyJson.CreateInstantModule(module);
 
             var socket = ectx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
             if (socket != null)
@@ -545,17 +548,17 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool Reboot(int id)
         {
-            return new Toems_Service.Workflows.PowerManagement().RebootComputer(id);
+            return powerManagement.RebootComputer(id);
         }
 
         public bool Shutdown(int id)
         {
-            return new Toems_Service.Workflows.PowerManagement().ShutdownComputer(id);
+            return powerManagement.ShutdownComputer(id);
         }
 
         public bool Wakeup(int id)
         {
-            new Toems_Service.Workflows.PowerManagement().WakeupComputer(id);
+            powerManagement.WakeupComputer(id);
             return true;
         }
 
@@ -843,8 +846,10 @@ namespace Toems_ServiceCore.EntityServices
                 System.Threading.Thread.Sleep(1000);
                 counter++;
             }
+            
+            unicast.InitSingle(computerId,"deploy",userId);
+            var startImagingTaskResult = unicast.Start();
 
-            var startImagingTaskResult = new Toems_Service.Workflows.Unicast(computerId,"deploy",userId).Start();
 
             if (!startImagingTaskResult.Contains("Successfully"))
                 return startImagingTaskResult;
@@ -858,7 +863,7 @@ namespace Toems_ServiceCore.EntityServices
             moduleTypeMapping.moduleId = winPeModule.Id;
             moduleTypeMapping.moduleType = EnumModule.ModuleType.WinPE;
 
-            var clientPolicy = new ClientPolicyJson().CreateInstantModule(moduleTypeMapping);
+            var clientPolicy = clientPolicyJson.CreateInstantModule(moduleTypeMapping);
 
             var socket = ectx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
             if (socket != null)
@@ -1022,7 +1027,7 @@ namespace Toems_ServiceCore.EntityServices
             }
 
 
-            var computerAcl = new ServiceUser().GetAllowedComputers(userId);
+            var computerAcl = userService.GetAllowedComputers(userId);
             return computerAcl.ComputerManagementEnforced
                 ? list.Where(c => computerAcl.AllowedComputerIds.Contains(c.Id)).ToList()
                 : list.ToList();

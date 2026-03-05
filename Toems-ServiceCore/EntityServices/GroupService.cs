@@ -2,11 +2,13 @@
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_DataModel;
+using Toems_Service.Workflows;
 using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class GroupService(EntityContext ectx, ServiceComputer computerService, ServiceUser userService)
+    public class GroupService(EntityContext ectx, ServiceComputer computerService, ServiceUser userService, UpdateDynamicMemberships updateDynamicMemberships,
+        BuildSqlQuery buildSqlQuery, PowerManagement powerManagement, Unicast unicast)
     {
         public DtoActionResult AddGroup(EntityGroup group)
         {
@@ -120,14 +122,14 @@ namespace Toems_ServiceCore.EntityServices
             var existing =ectx.Uow.SmartGroupQueryRepository.GetFirstOrDefault(x => x.GroupId == groupId);
             if (existing != null) return false;
             //Assume all entries were deleted, and nothing is being added
-            if (first.Table == null) return new Workflows.UpdateDynamicMemberships().Single(groupId);
+            if (first.Table == null) return updateDynamicMemberships.Single(groupId);
             foreach (var query in queries)
             {
                 ectx.Uow.SmartGroupQueryRepository.Insert(query);
             }
             ectx.Uow.Save();
 
-            return new Workflows.UpdateDynamicMemberships().Single(groupId);
+            return updateDynamicMemberships.Single(groupId);
         }
 
         public List<EntitySmartGroupQuery> GetDynamicQuery(int groupId)
@@ -137,7 +139,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public DataSet GetDynamicMembers(List<EntitySmartGroupQuery> queries)
         {
-            var sql = new Workflows.BuildSqlQuery().Run(queries);
+            var sql = buildSqlQuery.Run(queries);
             if(sql == null) return null;
             return new RawSqlRepository().ExecuteReader(sql);
         }
@@ -172,7 +174,7 @@ namespace Toems_ServiceCore.EntityServices
             var group = GetGroup(id);
             var list = new List<EntityGroup>();
             list.Add(group);
-            return new Workflows.PowerManagement().RebootGroups(list);
+            return powerManagement.RebootGroups(list);
         }
 
         public bool Shutdown(int id)
@@ -180,7 +182,7 @@ namespace Toems_ServiceCore.EntityServices
             var group = GetGroup(id);
             var list = new List<EntityGroup>();
             list.Add(group);
-            return new Workflows.PowerManagement().ShutdownGroups(list);
+            return powerManagement.ShutdownGroups(list);
         }
 
         public bool Wakeup(int id)
@@ -188,7 +190,7 @@ namespace Toems_ServiceCore.EntityServices
             var group = GetGroup(id);
             var list = new List<EntityGroup>();
             list.Add(group);
-            return new Workflows.PowerManagement().WakeupGroups(list);
+            return powerManagement.WakeupGroups(list);
         }
 
         public EntityGroup GetGroupByName(string name)
@@ -469,7 +471,8 @@ namespace Toems_ServiceCore.EntityServices
             var members = ectx.Uow.GroupRepository.GetGroupMembersWithImages(groupId, "");
             foreach (var computer in members)
             {
-                if (new Toems_Service.Workflows.Unicast(computer.Id, "deploy", userId,groupId).Start().Contains("Successfully"))
+                unicast.InitGroup(computer.Id, "deploy", userId,groupId);
+                if (unicast.Start().Contains("Successfully"))
                     count++;
             }
             return count;

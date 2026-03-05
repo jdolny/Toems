@@ -8,7 +8,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceFileCopyModule(EntityContext ectx)
+    public class ServiceFileCopyModule(EntityContext ectx, ServiceModule serviceModule, FilesystemServices filesystemServices)
     {
         public DtoActionResult AddModule(EntityFileCopyModule module)
         {
@@ -39,14 +39,14 @@ namespace Toems_ServiceCore.EntityServices
         {
             var u = GetModule(moduleId);
             if (u == null) return new DtoActionResult {ErrorMessage = "Module Not Found", Id = 0};
-            var isActiveModule = new ServiceModule().IsModuleActive(moduleId, EnumModule.ModuleType.FileCopy);
+            var isActiveModule = serviceModule.IsModuleActive(moduleId, EnumModule.ModuleType.FileCopy);
             if (!string.IsNullOrEmpty(isActiveModule)) return new DtoActionResult() { ErrorMessage = isActiveModule, Id = 0 };
             if (string.IsNullOrEmpty(u.Guid)) return new DtoActionResult() { ErrorMessage = "Unknown Guid", Id = 0 };
             ectx.Uow.ModuleRepository.DeleteRange(x => x.Guid == u.Guid);
             //ectx.Uow.FileCopyModuleRepository.Delete(moduleId);
             ectx.Uow.Save();
             var actionResult = new DtoActionResult();
-            var deleteDirectoryResult = new FilesystemServices().DeleteModuleDirectory(u.Guid);
+            var deleteDirectoryResult = filesystemServices.DeleteModuleDirectory(u.Guid);
             if (deleteDirectoryResult)
             {
                 actionResult.Success = true;
@@ -84,7 +84,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var module in list)
                 {
-                    var moduleCategories = new ServiceModule().GetModuleCategories(module.Guid);
+                    var moduleCategories = serviceModule.GetModuleCategories(module.Guid);
                     if (moduleCategories == null) continue;
 
                     if (filter.Categories.Count == 0)
@@ -108,7 +108,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var module in list)
                 {
-                    var mCategories = new ServiceModule().GetModuleCategories(module.Guid);
+                    var mCategories = serviceModule.GetModuleCategories(module.Guid);
                     if (mCategories == null) continue;
                     if (filter.Categories.Count == 0)
                     {
@@ -161,7 +161,7 @@ namespace Toems_ServiceCore.EntityServices
         {
             var u = GetModule(module.Id);
             if (u == null) return new DtoActionResult {ErrorMessage = "Module Not Found", Id = 0};
-            var isActiveModule = new ServiceModule().IsModuleActive(module.Id, EnumModule.ModuleType.FileCopy);
+            var isActiveModule = serviceModule.IsModuleActive(module.Id, EnumModule.ModuleType.FileCopy);
             if (!string.IsNullOrEmpty(isActiveModule)) return new DtoActionResult() { ErrorMessage = isActiveModule, Id = 0 };
             var validationResult = ValidateModule(module, false);
             var actionResult = new DtoActionResult();

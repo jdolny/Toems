@@ -19,7 +19,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_Service.Workflows
 {
-    public class ToecRemoteInstaller(InfrastructureContext ictx, ServiceVersion serviceVersion, UncServices uncServices)
+    public class ToecRemoteInstaller(InfrastructureContext ictx, ServiceVersion serviceVersion, UncServices uncServices, ServiceImpersonation impersonation)
     {
 
         private string ExpectedClientVersion = "";
@@ -334,22 +334,22 @@ namespace Toems_Service.Workflows
 
         }
 
-        private void Cleanup(string username, string password, string domain, string computerName)
+        private int Cleanup(string username, string password, string domain, string computerName)
         {
-            using (var imp = new ServiceImpersonation(domain, username, password))
+            return impersonation.RunAs(domain, username, password, () =>
             {
-                using (var scManager = new ServiceScManager(computerName))
-                {
-                    if (scManager.ConnectionSuccessful)
-                    {
-                        var service = "Toec-Remote-Installer";
-                        scManager.OpenService(service);
-                        scManager.Stop();
-                        scManager.Uninstall(service);
-                    }
-                }
-            }
-         
+                using var scManager = new ServiceScManager(computerName);
+
+                if (!scManager.ConnectionSuccessful)
+                    return scManager.LastError;
+
+                var service = "Toec-Remote-Installer";
+                scManager.OpenService(service);
+                scManager.Stop();
+                scManager.Uninstall(service);
+
+                return 0;
+            });
         }
 
         private void SetComplete(EntityToecDeployJob job, EntityToecTargetListComputer c, UnitOfWork uow)
@@ -414,39 +414,27 @@ namespace Toems_Service.Workflows
 
         private int InstallDeployService(string username, string password, string domain, string computerName)
         {
-            using (var imp = new ServiceImpersonation(domain, username, password))
+            return impersonation.RunAs(domain, username, password, () =>
             {
-                if (imp.LastError != 0)
+                using var scManager = new ServiceScManager(computerName);
+
+                if (!scManager.ConnectionSuccessful)
+                    return scManager.LastError;
+
+                var service = "Toec-Remote-Installer";
+
+                scManager.OpenService(service);
+
+                scManager.Install(service, @"c:\windows\magaeric solutions\Toec-Remote-Installer.exe");
+
+                if (scManager.Start())
                 {
-                    ictx.Log.Debug("Could Not Impersonate User For Service Installation");
-                    return imp.LastError;
-                   
+                    ictx.Log.Debug("Successfully Installed Remote Installer Service");
+                    return 0;
                 }
 
-                using (var scManager = new ServiceScManager(computerName))
-                {
-                    if (scManager.ConnectionSuccessful)
-                    {
-
-                        var service = "Toec-Remote-Installer";
-                        scManager.OpenService(service);
-                        //todo:  how to determine location of c:\windows on a remote computer? instead of hardcoding?
-                        scManager.Install(service, "c:\\windows\\magaeric solutions\\Toec-Remote-Installer.exe");
-                        if(scManager.Start())
-                        {
-                            ictx.Log.Debug("Successfully Installed Remote Installer Service");
-                            return 0;
-                        }
-                    }
-                    else
-                    {
-                        return scManager.LastError;
-                    }
-
-                }
-            }
-
-            return 0;
+                return scManager.LastError;
+            });
         }
     }
 }

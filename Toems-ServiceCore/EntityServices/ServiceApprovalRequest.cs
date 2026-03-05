@@ -10,7 +10,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceApprovalRequest(EntityContext ectx, ServiceUser userService, ServiceCertificate certificateService, ServiceComputer computerService)
+    public class ServiceApprovalRequest(EntityContext ectx, ServiceUser userService, ServiceCertificate certificateService, ServiceComputer computerService, MailServices mailServices)
     {
         public DtoActionResult CreateRequest(EntityApprovalRequest request)
         {
@@ -74,7 +74,7 @@ namespace Toems_ServiceCore.EntityServices
             return new DtoActionResult() { Success = true, Id = requestId };
         }
 
-        public bool SendApprovalRequestReport()
+        public async Task<bool> SendApprovalRequestReport()
         {
             if (ectx.Settings.GetSettingValue(SettingStrings.SmtpEnabled) != "1")
                 return true;
@@ -111,14 +111,7 @@ namespace Toems_ServiceCore.EntityServices
 
             foreach (var email in emailList)
             {
-                var mail = new MailServices
-                {
-                    Subject = "Approval Request Report",
-                    Body = sb.ToString(),
-                    MailTo = email
-                };
-
-                mail.Send();
+                await mailServices.SendMailAsync(sb.ToString(),email,"Approval Request Report");
             }
 
             return true;

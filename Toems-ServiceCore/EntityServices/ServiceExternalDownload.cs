@@ -9,7 +9,8 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceExternalDownload(EntityContext ectx)
+    public class ServiceExternalDownload(EntityContext ectx, ServiceModule serviceModule, FilesystemServices filesystemServices,
+        ServiceSoftwareModule serviceSoftwareModule, ServiceFileDownloader serviceFileDownloader, FolderSync folderSync)
     {
         public DtoActionResult Add(EntityExternalDownload download)
         {
@@ -30,21 +31,21 @@ namespace Toems_ServiceCore.EntityServices
             var u = GetDownload(downloadId);
             if (u == null) return new DtoActionResult { ErrorMessage = "External Download Not Found", Id = 0 };
 
-            var f = new ServiceModule().GetModuleIdFromGuid(u.ModuleGuid);
+            var f = serviceModule.GetModuleIdFromGuid(u.ModuleGuid);
             if (f != null)
             {
-                var isActive = new ServiceModule().IsModuleActive(f.moduleId, f.moduleType);
+                var isActive = serviceModule.IsModuleActive(f.moduleId, f.moduleType);
                 if (!string.IsNullOrEmpty(isActive)) return new DtoActionResult() { ErrorMessage = isActive, Id = 0 };
             }
 
             ectx.Uow.ExternalDownloadRepository.Delete(downloadId);
             ectx.Uow.Save();
-            new FilesystemServices().DeleteExternalFile(u);
+            filesystemServices.DeleteExternalFile(u);
 
             var module = ectx.Uow.SoftwareModuleRepository.Get(x => x.Guid == u.ModuleGuid).FirstOrDefault();
             //arguments may need changed now that file is deleted, update arguments.
             if (module != null)
-                new ServiceSoftwareModule().GenerateArguments(module.Id);
+                serviceSoftwareModule.GenerateArguments(module.Id);
 
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
@@ -83,7 +84,7 @@ namespace Toems_ServiceCore.EntityServices
 
             foreach (var ed in entityList)
             {
-                await new ServiceFileDownloader(ed).DownloadFile();
+                await serviceFileDownloader.DownloadFile(ed);
             }
 
             var first = fileDownloads.FirstOrDefault();
@@ -91,7 +92,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 if (first.SyncWhenDone)
                 {
-                    new FolderSync().RunAllServers();
+                    folderSync.RunAllServers();
                 }
             }
         }
@@ -106,7 +107,7 @@ namespace Toems_ServiceCore.EntityServices
             entityExternalDownload.Id = fileDownload.ExternalDownloadId;
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            new ServiceFileDownloader(entityExternalDownload).DownloadFile();
+            serviceFileDownloader.DownloadFile(entityExternalDownload);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
         }

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Management;
 using log4net;
+using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -8,11 +9,13 @@ using Toems_Common.Enum;
 using Toems_DataModel;
 using Toems_Service;
 using Toems_Service.Entity;
+using Toems_Service.Workflows;
 using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceActiveImagingTask(EntityContext ectx, ServiceUser userService)
+    public class ServiceActiveImagingTask(EntityContext ectx, ServiceUser userService, CleanTaskBootFiles cleanTaskBootFiles,
+        ServiceComputer serviceComputer, MailServices mailServices)
     {
         public string ActiveCountNotOwnedByuser(int userId)
         {
@@ -80,8 +83,8 @@ namespace Toems_ServiceCore.EntityServices
             actionResult.Id = activeImagingTaskId;
 
             if (computer != null)
-                new CleanTaskBootFiles().RunAllServers(computer);
-
+                cleanTaskBootFiles.RunAllServers(computer);
+    
             if(activeImagingTask.Type.Contains("upload"))
             {
                 var comServer = ectx.Uow.ClientComServerRepository.GetById(activeImagingTask.ComServerId);
@@ -294,11 +297,11 @@ namespace Toems_ServiceCore.EntityServices
             return activeImagingTasks;
         }
 
-        public void SendTaskCompletedEmail(EntityActiveImagingTask task)
+        public async Task SendTaskCompletedEmail(EntityActiveImagingTask task)
         {
             //Mail not enabled
             if (ectx.Settings.GetSettingValue(SettingStrings.SmtpEnabled) == "0") return;
-            var computer = new ServiceComputer().GetComputer(task.ComputerId);
+            var computer = serviceComputer.GetComputer(task.ComputerId);
             if (computer == null) return;
             foreach (
                 var user in
@@ -309,23 +312,17 @@ namespace Toems_ServiceCore.EntityServices
                 {
                     if (task.UserId == user.Id)
                     {
-                        var mail = new MailServices
-                        {
-                            MailTo = user.Email,
-                            Body = computer.Name + " Image Task Has Completed.",
-                            Subject = "Task Completed"
-                        };
-                        mail.Send();
+                        await mailServices.SendMailAsync(computer.Name + " Image Task Has Completed.",user.Email, "Task Completed");
                     }
                 }
             }
         }
 
-        public void SendTaskErrorEmail(EntityActiveImagingTask task, string error)
+        public async Task SendTaskErrorEmail(EntityActiveImagingTask task, string error)
         {
             //Mail not enabled
             if (ectx.Settings.GetSettingValue(SettingStrings.SmtpEnabled) == "0") return;
-            var computer = new ServiceComputer().GetComputer(task.ComputerId);
+            var computer = serviceComputer.GetComputer(task.ComputerId);
             foreach (
                 var user in
                     userService.GetAll().Where(x => !string.IsNullOrEmpty(x.Email)))
@@ -340,13 +337,7 @@ namespace Toems_ServiceCore.EntityServices
                             computer = new EntityComputer();
                             computer.Name = "Unknown Computer";
                         }
-                        var mail = new MailServices
-                        {
-                            MailTo = user.Email,
-                            Body = computer.Name + " Image Task Has Failed. " + error,
-                            Subject = "Task Failed"
-                        };
-                        mail.Send();
+                        await mailServices.SendMailAsync(computer.Name + " Image Task Has Failed. " + error,user.Email, "Task Failed");
                     }
                 }
             }

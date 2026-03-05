@@ -1,18 +1,14 @@
 ﻿using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
-using Toems_DataModel;
-using Toems_Service.Entity;
 using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceCommandModule(EntityContext ectx)
+    public class ServiceCommandModule(EntityContext ectx, ServiceModule serviceModule)
     {
         public DtoActionResult AddModule(EntityCommandModule module)
         {
-           
-          
             var validationResult = ValidateModule(module, true);
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
@@ -40,7 +36,7 @@ namespace Toems_ServiceCore.EntityServices
         {
             var u = GetModule(moduleId);
             if (u == null) return new DtoActionResult {ErrorMessage = "Module Not Found", Id = 0};
-            var isActiveModule = new ServiceModule().IsModuleActive(moduleId, EnumModule.ModuleType.Command);
+            var isActiveModule = serviceModule.IsModuleActive(moduleId, EnumModule.ModuleType.Command);
             if (!string.IsNullOrEmpty(isActiveModule)) return new DtoActionResult() { ErrorMessage = isActiveModule, Id = 0 };
             if (string.IsNullOrEmpty(u.Guid)) return new DtoActionResult() { ErrorMessage = "Unknown Guid", Id = 0 };
             ectx.Uow.ModuleRepository.DeleteRange(x => x.Guid == u.Guid);
@@ -77,7 +73,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var module in list)
                 {
-                    var moduleCategories = new ServiceModule().GetModuleCategories(module.Guid);
+                    var moduleCategories = serviceModule.GetModuleCategories(module.Guid);
                     if (moduleCategories == null) continue;
 
                     if (filter.Categories.Count == 0)
@@ -101,7 +97,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var module in list)
                 {
-                    var mCategories = new ServiceModule().GetModuleCategories(module.Guid);
+                    var mCategories = serviceModule.GetModuleCategories(module.Guid);
                     if (mCategories == null) continue;
                     if (filter.Categories.Count == 0)
                     {
@@ -154,7 +150,7 @@ namespace Toems_ServiceCore.EntityServices
         {
             var u = GetModule(module.Id);
             if (u == null) return new DtoActionResult {ErrorMessage = "Module Not Found", Id = 0};
-            var isActiveModule = new ServiceModule().IsModuleActive(module.Id, EnumModule.ModuleType.Command);
+            var isActiveModule = serviceModule.IsModuleActive(module.Id, EnumModule.ModuleType.Command);
             if (!string.IsNullOrEmpty(isActiveModule)) return new DtoActionResult() { ErrorMessage = isActiveModule, Id = 0 };
             var validationResult = ValidateModule(module, false);
             var actionResult = new DtoActionResult();

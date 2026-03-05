@@ -30,7 +30,14 @@ namespace Toems_ServiceCore.Infrastructure
         ServiceSysprepModule sysprepModuleService,
         AuthorizationServices authService,
         UncServices uncService,
-        ServiceComputerLog computerLogService)
+        ServiceComputerLog computerLogService,
+        ServiceClientPartition serviceClientPartition,
+        GetBestCompImageServer getBestCompImageServer,
+        ImageSync imageSync,
+        FilesystemServices filesystemServices,
+        GetCompImagingServers getCompImagingServers,
+        CreateTaskArguments createTaskArguments)
+        
     {
         public string AddComputer(string name, string mac, string clientIdentifier)
         {
@@ -234,8 +241,8 @@ namespace Toems_ServiceCore.Infrastructure
             var result = new HardDriveSchema();
 
             var imageProfile = imageProfileService.ReadProfile(profileId);
-            var partitionHelper = new ServiceClientPartition(imageProfile);
-            var imageSchema = partitionHelper.GetImageSchema();
+            serviceClientPartition.SetImageSchema(imageProfile);
+            var imageSchema = serviceClientPartition.GetImageSchema();
 
             if (clientHdNumber > imageSchema.HardDrives.Count())
             {
@@ -249,7 +256,7 @@ namespace Toems_ServiceCore.Infrastructure
             var listSchemaDrives = new List<int>();
             if (!string.IsNullOrEmpty(imageSchemaDrives))
                 listSchemaDrives.AddRange(imageSchemaDrives.Split(' ').Select(hd => Convert.ToInt32(hd)));
-            result.SchemaHdNumber = partitionHelper.NextActiveHardDrive(listSchemaDrives, clientHdNumber);
+            result.SchemaHdNumber = serviceClientPartition.NextActiveHardDrive(listSchemaDrives, clientHdNumber);
 
             if (result.SchemaHdNumber == -1)
             {
@@ -259,7 +266,7 @@ namespace Toems_ServiceCore.Infrastructure
             }
 
             var newHdBytes = Convert.ToInt64(newHdSize);
-            var minimumSize = partitionHelper.HardDrive(result.SchemaHdNumber, newHdBytes);
+            var minimumSize = serviceClientPartition.HardDrive(result.SchemaHdNumber, newHdBytes);
 
             if (clientLbs != 0) //if zero should be from the winpe imaging environment
             {
@@ -295,21 +302,21 @@ namespace Toems_ServiceCore.Infrastructure
             if (minimumSize == newHdBytes)
             {
                 result.IsValid = "original";
-                result.PhysicalPartitions = partitionHelper.GetActivePartitions(result.SchemaHdNumber, imageProfile);
-                result.PhysicalPartitionCount = partitionHelper.GetActivePartitionCount(result.SchemaHdNumber);
+                result.PhysicalPartitions = serviceClientPartition.GetActivePartitions(result.SchemaHdNumber, imageProfile);
+                result.PhysicalPartitionCount = serviceClientPartition.GetActivePartitionCount(result.SchemaHdNumber);
                 result.PartitionType = imageSchema.HardDrives[result.SchemaHdNumber].Table;
                 result.BootPartition = imageSchema.HardDrives[result.SchemaHdNumber].Boot;
-                result.UsesLvm = partitionHelper.CheckForLvm(result.SchemaHdNumber);
+                result.UsesLvm = serviceClientPartition.CheckForLvm(result.SchemaHdNumber);
                 result.Guid = imageSchema.HardDrives[result.SchemaHdNumber].Guid;
                 return JsonConvert.SerializeObject(result);
             }
 
             result.IsValid = "true";
-            result.PhysicalPartitions = partitionHelper.GetActivePartitions(result.SchemaHdNumber, imageProfile);
-            result.PhysicalPartitionCount = partitionHelper.GetActivePartitionCount(result.SchemaHdNumber);
+            result.PhysicalPartitions = serviceClientPartition.GetActivePartitions(result.SchemaHdNumber, imageProfile);
+            result.PhysicalPartitionCount = serviceClientPartition.GetActivePartitionCount(result.SchemaHdNumber);
             result.PartitionType = imageSchema.HardDrives[result.SchemaHdNumber].Table;
             result.BootPartition = imageSchema.HardDrives[result.SchemaHdNumber].Boot;
-            result.UsesLvm = partitionHelper.CheckForLvm(result.SchemaHdNumber);
+            result.UsesLvm = serviceClientPartition.CheckForLvm(result.SchemaHdNumber);
             result.Guid = imageSchema.HardDrives[result.SchemaHdNumber].Guid;
             return JsonConvert.SerializeObject(result);
         }
@@ -319,8 +326,8 @@ namespace Toems_ServiceCore.Infrastructure
             var result = new HardDriveSchema();
 
             var imageProfile = imageProfileService.ReadProfile(profileId);
-            var partitionHelper = new ServiceClientPartition(imageProfile);
-            var imageSchema = partitionHelper.GetImageSchema();
+            serviceClientPartition.SetImageSchema(imageProfile);
+            var imageSchema = serviceClientPartition.GetImageSchema();
 
             if (clientHdNumber > imageSchema.HardDrives.Count())
             {
@@ -334,7 +341,7 @@ namespace Toems_ServiceCore.Infrastructure
             var listSchemaDrives = new List<int>();
             if (!string.IsNullOrEmpty(imageSchemaDrives))
                 listSchemaDrives.AddRange(imageSchemaDrives.Split(' ').Select(hd => Convert.ToInt32(hd)));
-            result.SchemaHdNumber = partitionHelper.NextActiveHardDrive(listSchemaDrives, clientHdNumber);
+            result.SchemaHdNumber = serviceClientPartition.NextActiveHardDrive(listSchemaDrives, clientHdNumber);
 
             if (result.SchemaHdNumber == -1)
             {
@@ -426,8 +433,8 @@ namespace Toems_ServiceCore.Infrastructure
                 checkIn.Message = "The Computer Assigned To This Task Was Not Found";
                 return JsonConvert.SerializeObject(checkIn);
             }
-
-            var comServerId = new GetBestCompImageServer(computer, task.Type,comServers).Run();
+            
+            var comServerId = getBestCompImageServer.Run(computer, task.Type,comServers);
 
             task.Status = EnumTaskStatus.ImagingStatus.CheckedIn;
             task.ComServerId = comServerId;
@@ -494,7 +501,7 @@ namespace Toems_ServiceCore.Infrastructure
                 imageService.Update(imageProfile.Image);
                 var replicationTime = ictx.Settings.GetSettingValue(SettingStrings.ImageReplicationTime);
                 if(replicationTime.Equals("Immediately"))
-                    new Toems_Service.Workflows.ImageSync().RunAllServers();
+                    imageSync.RunAllServers();
 
             }
 
@@ -593,7 +600,7 @@ namespace Toems_ServiceCore.Infrastructure
             profile.Image.LastUploadGuid = string.Empty;
             imageService.Update(profile.Image);
 
-            var delResult = new FilesystemServices().DeleteImageFolders(profile.Image.Name);
+            var delResult = filesystemServices.DeleteImageFolders(profile.Image.Name);
 
         }
 
@@ -686,7 +693,7 @@ namespace Toems_ServiceCore.Infrastructure
         {
             var rnd = new Random();
             
-            var imagingServers = new Toems_Service.Workflows.GetCompImagingServers().Run(computerId,true);
+            var imagingServers = getCompImagingServers.Run(computerId,true);
             if (imagingServers == null) return "false";
 
             var randomDpList = new List<string>();
@@ -764,8 +771,9 @@ namespace Toems_ServiceCore.Infrastructure
 
             var imageProfile = imageProfileService.ReadProfile(profileId);
             var hdNumberToGet = Convert.ToInt32(hdToGet);
-            var partitionHelper = new ServiceClientPartition(imageProfile);
-            var imageSchema = partitionHelper.GetImageSchema();
+            serviceClientPartition.SetImageSchema(imageProfile);
+            
+            var imageSchema = serviceClientPartition.GetImageSchema();
             foreach (var part in from part in imageSchema.HardDrives[hdNumberToGet].Partitions
                                  where part.Active
                                  where part.VolumeGroup != null
@@ -1054,20 +1062,22 @@ namespace Toems_ServiceCore.Infrastructure
                 task == "unregupload" || task == "unregdeploy" || task == "modelmatchdeploy")
             {
                 imageProfile = imageProfileService.ReadProfile(objectId);
-                arguments = new CreateTaskArguments(computer, imageProfile, task).Execute();
+                createTaskArguments.InitUnicast(computer, imageProfile, task);
+                arguments = createTaskArguments.Execute();
 
             }
             else //Multicast
             {
                 var multicast = activeMulticastService.Get(objectId);
                 imageProfile = imageProfileService.ReadProfile(multicast.ImageProfileId);
-                arguments = new CreateTaskArguments(computer, imageProfile, task,multicast.ComServerId).Execute(multicast.Port.ToString());
+                createTaskArguments.InitMulticast(computer, imageProfile, task,multicast.ComServerId);
+                arguments = createTaskArguments.Execute(multicast.Port.ToString());
             }
 
             int imageDistributionPoint = -1;
             try
             {
-                imageDistributionPoint = new GetBestCompImageServer(computer, task,comServers).Run();
+                imageDistributionPoint = getBestCompImageServer.Run(computer, task,comServers);
             }
             catch
             {
