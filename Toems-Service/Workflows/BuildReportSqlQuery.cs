@@ -292,7 +292,7 @@ namespace Toems_Service.Workflows
                     if (int.TryParse(cia.Split('_')[1], out int ciId))
                     {
                         var script = new ServiceScriptModule().GetModule(ciId);
-                        select += $" ci{ciId}.{QuoteIdentifier(query.Field)} AS [{script.Name.Replace("]", "]]")}],";
+                        select += $" ci{ciId}.{QuoteIdentifier(query.Field)} AS `{script.Name.Replace("]", "]]")}`,";
                     }
                 }
                 else if (ciaType.Equals("ca", StringComparison.OrdinalIgnoreCase))
@@ -300,7 +300,7 @@ namespace Toems_Service.Workflows
                     if (int.TryParse(cia.Split('_')[1], out int caId))
                     {
                         var attribute = new ServiceCustomAttribute().GetCustomAttribute(caId);
-                        select += $" ca{caId}.{QuoteIdentifier(query.Field)} AS [{attribute.Name.Replace("]", "]]")}],";
+                        select += $" ca{caId}.{QuoteIdentifier(query.Field)} AS `{attribute.Name.Replace("]", "]]")}`,";
                     }
                 }
             }
