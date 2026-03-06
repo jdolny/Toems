@@ -7,7 +7,7 @@ namespace Toems_ApplicationApi
 {
     public static class ApplicationStrings
     {
-        public const string ApplicationVersion = "1.5.9.0";
+        public const string ApplicationVersion = "1.6.0.0";
 
     }
 }

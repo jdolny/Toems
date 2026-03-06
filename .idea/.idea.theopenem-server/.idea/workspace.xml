@@ -13,42 +13,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b75b8386-433b-49f1-8b54-f6c7e9f3b73e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Toems-Common/DbUpgrades/158.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.theopenem-server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.theopenem-server/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build-Msi.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/Build-Msi.ps1" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-ApiCalls/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ApiCalls/Properties/AssemblyInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-ApiCalls/WieBuildAPI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ApiCalls/WieBuildAPI.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-ApplicationApi/ApplicationStrings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ApplicationApi/ApplicationStrings.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-ApplicationApi/Controllers/ReportController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ApplicationApi/Controllers/ReportController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-ApplicationApi/Controllers/WieBuildController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ApplicationApi/Controllers/WieBuildController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-ApplicationApi/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ApplicationApi/Properties/AssemblyInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-ClientApi/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ClientApi/Properties/AssemblyInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-ClientApi/ToecApiStrings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-ClientApi/ToecApiStrings.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Common/DbUpgrades/VersionMapping.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Common/DbUpgrades/VersionMapping.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Common/Dto/DtoWieConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Common/Dto/DtoWieConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Common/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Common/Properties/AssemblyInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Common/SettingStrings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Common/SettingStrings.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Common/Toems-Common.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Common/Toems-Common.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-DataModel/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-DataModel/Properties/AssemblyInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-FrontEnd/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-FrontEnd/Properties/AssemblyInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/about.aspx" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/about.aspx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/pxeboot/wiegen.aspx" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/pxeboot/wiegen.aspx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/pxeboot/wiegen.aspx.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/pxeboot/wiegen.aspx.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/pxeboot/wiegen.aspx.designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-FrontEnd/views/admin/pxeboot/wiegen.aspx.designer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Service/Entity/ServiceReport.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/Entity/ServiceReport.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Service/Entity/ServiceWieBuild.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/Entity/ServiceWieBuild.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Service/FilessystemServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/FilessystemServices.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Service/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/Properties/AssemblyInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Service/RunAsUser.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Service/ServiceGenerateCertificate.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/ServiceGenerateCertificate.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Service/Toems-Service.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/Toems-Service.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Service/Workflows/BuildAssetSqlQuery.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Service/Workflows/BuildReportSqlQuery.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/Workflows/BuildReportSqlQuery.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Service/Workflows/BuildSqlQuery.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/Workflows/BuildSqlQuery.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Service/Workflows/GenerateWie.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/Workflows/GenerateWie.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Toems-Service/packages.config" beforeDir="false" afterPath="$PROJECT_DIR$/Toems-Service/packages.config" afterDir="false" />
-    </list>
+    <list default="true" id="b75b8386-433b-49f1-8b54-f6c7e9f3b73e" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -126,6 +91,7 @@
       <workItem from="1756385215124" duration="650000" />
       <workItem from="1756388172799" duration="1551000" />
       <workItem from="1756394772451" duration="1867000" />
+      <workItem from="1772724223237" duration="5158000" />
     </task>
     <servers />
   </component>
@@ -133,4 +99,23 @@
     <option name="version" value="3" />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Toems-Service/Workflows/BuildReportSqlQuery.cs</url>
+          <line>64</line>
+          <properties documentPath="C:\Users\dolnyj.SHALERNT1\development\Toems\Toems-Service\Workflows\BuildReportSqlQuery.cs" containingFunctionPresentation="Method 'ValidateQuery'">
+            <startOffsets>
+              <option value="4742" />
+            </startOffsets>
+            <endOffsets>
+              <option value="4779" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
 </project>

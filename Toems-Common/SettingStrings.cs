@@ -198,7 +198,7 @@
 
         public const string LieSleepTime = "LIE Sleep Time";
 
-        public const int GlobalVersion = 159;
+        public const int GlobalVersion = 160;
 
     }
 }

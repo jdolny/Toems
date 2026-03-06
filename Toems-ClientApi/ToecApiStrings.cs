@@ -7,6 +7,6 @@ namespace Toems_ClientApi
 {
     public static class ToecApiStrings
     {
-        public const string ToecApiVersion = "1.5.9.0";
+        public const string ToecApiVersion = "1.6.0.0";
     }
 }
