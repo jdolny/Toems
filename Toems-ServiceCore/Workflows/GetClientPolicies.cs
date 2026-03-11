@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using log4net;
+﻿using System.Globalization;
 using Newtonsoft.Json;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_DataModel;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class GetClientPolicies(InfrastructureContext ictx, ServiceComputer serviceComputer, IpServices ipServices, GroupService serviceGroup, 
-        ServiceUserLogins serviceUserLogins, ServiceSchedule serviceSchedule, ServiceAppMonitor serviceAppMonitor, Unicast unicast)
+    public class GetClientPolicies(ServiceContext ctx)
     {
 
         private readonly UnitOfWork _uow = new();
@@ -38,38 +32,38 @@ namespace Toems_Service.Workflows
 
             if (string.IsNullOrEmpty(policyRequest.CurrentComServer))
             {
-                ictx.Log.Debug("Could Not Determine The Client's Policy.  A Com Server Was Not Provided.");
+                ctx.Log.Debug("Could Not Determine The Client's Policy.  A Com Server Was Not Provided.");
                 return null;
             }
-
+            
             //without this, viewing the computer's effective policy, clears these values
             if (!string.IsNullOrEmpty(policyRequest.ClientVersion) && !string.IsNullOrEmpty(policyRequest.PushURL))
             {
                 computer.LastCheckinTime = DateTime.Now;
                 computer.ClientVersion = policyRequest.ClientVersion;
                 computer.PushUrl = policyRequest.PushURL;
-                computer.LastIp = ipServices.GetIPAddress();
-                serviceComputer.UpdateComputer(computer);
+                computer.LastIp = ctx.Ip.GetIPAddress();
+                ctx.Computer.UpdateComputer(computer);
             }
 
             var groupMemberships = _uow.GroupRepository.GetMembershipsForClientPolicy(computer.Id);
             if (policyRequest.UserLogins != null)
             {
-                var userLoginsResult = serviceUserLogins.AddOrUpdate(policyRequest.UserLogins, computer.Id);
+                var userLoginsResult = ctx.UserLogins.AddOrUpdate(policyRequest.UserLogins, computer.Id);
                 if (userLoginsResult != null)
                     triggerResponse.UserLoginsSubmitted = userLoginsResult.Success;
             }
 
             if (policyRequest.AppMonitors != null)
             {
-                var appMonitorResult = serviceAppMonitor.AddOrUpdate(policyRequest.AppMonitors, computer.Id);
+                var appMonitorResult = ctx.AppMonitor.AddOrUpdate(policyRequest.AppMonitors, computer.Id);
                 if (appMonitorResult != null)
                     triggerResponse.AppMonitorSubmitted = appMonitorResult.Success;
             }
 
             foreach (var membership in groupMemberships)
             {
-                var clientPoliciesJson = serviceGroup.GetActiveGroupPolicy(membership.GroupId);
+                var clientPoliciesJson = ctx.Group.GetActiveGroupPolicy(membership.GroupId);
                 if (clientPoliciesJson == null)
                     continue;
                 if(policyRequest.Trigger == EnumPolicy.Trigger.Startup)
@@ -108,8 +102,8 @@ namespace Toems_Service.Workflows
             foreach (var p in distinctList.Where(x => x.StartWindowScheduleId != -1 && x.EndWindowScheduleId != -1 && x.Trigger != EnumPolicy.Trigger.Login))
             {
                 //items in here have a more refined schedule.  Check if they should be removed from the current run list.
-                var start = serviceSchedule.GetSchedule(p.StartWindowScheduleId);
-                var end = serviceSchedule.GetSchedule(p.EndWindowScheduleId);
+                var start = ctx.Schedule.GetSchedule(p.StartWindowScheduleId);
+                var end = ctx.Schedule.GetSchedule(p.EndWindowScheduleId);
                 if (start == null || end == null)
                     continue;
                 if (!start.IsActive || !end.IsActive)
@@ -150,8 +144,8 @@ namespace Toems_Service.Workflows
                 }
                 catch (Exception ex)
                 {
-                    ictx.Log.Error("Could Not Parse Schedule Times For " + start.Name + " " + end.Name);
-                    ictx.Log.Error(ex.Message);
+                    ctx.Log.Error("Could Not Parse Schedule Times For " + start.Name + " " + end.Name);
+                    ctx.Log.Error(ex.Message);
                     continue;
                 }                  
             }
@@ -167,13 +161,13 @@ namespace Toems_Service.Workflows
             {
                 if (triggerResponse.Policies.Any(x => x.WinPeModules.Any()))
                 {
-                    unicast.InitSingle(Convert.ToInt32(computer.Id), "deploy", 0);
-                    unicast.Start();
+                    ctx.Unicast.InitSingle(Convert.ToInt32(computer.Id), "deploy", 0);
+                    ctx.Unicast.Start();
                 }
 
             }
-            triggerResponse.CheckinTime = Convert.ToInt32(ictx.Settings.GetSettingValue(SettingStrings.CheckinInterval));
-            triggerResponse.ShutdownDelay = Convert.ToInt32(ictx.Settings.GetSettingValue(SettingStrings.ShutdownDelay));
+            triggerResponse.CheckinTime = Convert.ToInt32(ctx.Setting.GetSettingValue(SettingStrings.CheckinInterval));
+            triggerResponse.ShutdownDelay = Convert.ToInt32(ctx.Setting.GetSettingValue(SettingStrings.ShutdownDelay));
             return triggerResponse;
             
         }

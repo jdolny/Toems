@@ -1,10 +1,9 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
-using Toems_Service;
 
 namespace Toems_ServiceCore.Infrastructure
 {
-    public class BcdServices(IWebHostEnvironment env)
+    public class BcdServices(ServiceContext ctx)
     {
         public string GetStandardLegacy(string diskSignature)
         {
@@ -16,7 +15,7 @@ namespace Toems_ServiceCore.Infrastructure
             var hexDiskSignature = diskSignature.Reverse().ToList();
             var reorderedDiskSigHex = HexReorder(hexDiskSignature);
 
-            var path = Path.Combine(env.ContentRootPath, "private", "bcd", "legacy");
+            var path = Path.Combine(ctx.Environment.ContentRootPath, "private", "bcd", "legacy");
             var bcd = File.ReadAllText(path);
 
             var regex = new Regex("DISK_SIGNATURE", RegexOptions.IgnoreCase);
@@ -30,7 +29,7 @@ namespace Toems_ServiceCore.Infrastructure
             var reorderedRecovery = GuidReorder(recoveryGuid);
             var reorderedWindows = GuidReorder(windowsGuid);
             var reorderedEfi = GuidReorder(efiGuid);
-            var path = Path.Combine(env.ContentRootPath, "private", "bcd", "efi");
+            var path = Path.Combine(ctx.Environment.ContentRootPath, "private", "bcd", "efi");
 
             var bcd = File.ReadAllText(path);
 

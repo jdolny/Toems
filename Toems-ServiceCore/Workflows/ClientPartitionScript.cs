@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Toems_Common.Dto.imageschemabe;
+﻿using Toems_Common.Dto.imageschemabe;
 using Toems_Common.Entity;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class ClientPartitionScript(ServiceClientPartitionSchema serviceClientPartitionSchema, ServiceImageProfile serviceImageProfile, ServiceClientPartition serviceClientPartition)
+    public class ClientPartitionScript(ServiceContext ctx)
     {
         private ServiceClientPartitionSchema clientSchema;
         private ImageProfileWithImage imageProfile;
@@ -26,11 +20,11 @@ namespace Toems_Service.Workflows
 
         public string GeneratePartitionScript()
         {
-            imageProfile = serviceImageProfile.ReadProfile(profileId);
-            serviceClientPartition.SetImageSchema(imageProfile);
-            ImageSchema = serviceClientPartition.GetImageSchema();
-            serviceClientPartitionSchema.SetImageSchema(HdNumberToGet, NewHdSize, imageProfile, partitionPrefix);
-            clientSchema = serviceClientPartitionSchema.GenerateClientSchema();
+            imageProfile = ctx.ImageProfile.ReadProfile(profileId);
+            ctx.ClientPartition.SetImageSchema(imageProfile);
+            ImageSchema = ctx.ClientPartition.GetImageSchema();
+            ctx.ClientPartitionSchema.SetImageSchema(HdNumberToGet, NewHdSize, imageProfile, partitionPrefix);
+            clientSchema = ctx.ClientPartitionSchema.GenerateClientSchema();
 
             if (clientSchema == null) return "failed";
 

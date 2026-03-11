@@ -1,68 +1,62 @@
-﻿using System;
-using System.Configuration;
-using System.IO;
-using log4net;
-using RoboSharp;
+﻿using RoboSharp;
 using Toems_ApiCalls;
 using Toems_Common;
 using Toems_DataModel;
-using Toems_Service.Entity;
-using Toems_ServiceCore;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
 //https://code.msdn.microsoft.com/windowsdesktop/File-Sync-with-Simple-c497bf87/sourcecode?fileId=19013&pathId=1314099233
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class FolderSync(InfrastructureContext ictx, ServiceClientComServer serviceClientComServer, UncServices uncServices, ImageSync imageSync)
+    public class FolderSync(ServiceContext ctx)
     {
         public bool RunAllServers()
         {
            
-            if (!ictx.Settings.GetSettingValue(SettingStrings.StorageType).Equals("SMB")) return true;
-            if (ictx.Settings.GetSettingValue(SettingStrings.ReplicationInProgress).Equals("True"))
+            if (!ctx.Setting.GetSettingValue(SettingStrings.StorageType).Equals("SMB")) return true;
+            if (ctx.Setting.GetSettingValue(SettingStrings.ReplicationInProgress).Equals("True"))
             {
-                ictx.Log.Info("A Replication process is already in progress.");
+                ctx.Log.Info("A Replication process is already in progress.");
                 return true;
             }
 
             var uow = new UnitOfWork();
             var comServers = uow.ClientComServerRepository.Get(x => x.ReplicateStorage);
            
-            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
             foreach (var com in comServers)
             {
-                ictx.Log.Info("Replicating Storage To Com Server, images will be replicated after this task. " + com.DisplayName);
+                ctx.Log.Info("Replicating Storage To Com Server, images will be replicated after this task. " + com.DisplayName);
                 new APICall().ClientComServerApi.SyncStorage(com.Url, "", decryptedKey);
-                ictx.Log.Info("Finished Replicating Storage To Com Server " + com.DisplayName);
+                ctx.Log.Info("Finished Replicating Storage To Com Server " + com.DisplayName);
             }
 
             //sync images separately after the modules are synced
-            imageSync.RunAllServers();
+            ctx.ImageSync.RunAllServers();
 
-            ictx.Log.Info("All replication tasks complete");
+            ctx.Log.Info("All replication tasks complete");
             return true;
 
         }
 
         public bool Sync()
         {
-            if (!ictx.Settings.GetSettingValue(SettingStrings.StorageType).Equals("SMB")) return true;
+            if (!ctx.Setting.GetSettingValue(SettingStrings.StorageType).Equals("SMB")) return true;
 
-            var guid = ictx.Config["ComServerUniqueId"];
-            var thisComServer = serviceClientComServer.GetServerByGuid(guid);
+            var guid = ctx.Config["ComServerUniqueId"];
+            var thisComServer = ctx.ClientComServer.GetServerByGuid(guid);
             if (thisComServer == null)
             {
-                ictx.Log.Error($"Com Server With Guid {guid} Not Found");
+                ctx.Log.Error($"Com Server With Guid {guid} Not Found");
                 return false;
             }
 
 
            
 
-                if (uncServices.NetUseWithCredentials() || uncServices.LastError == 1219)
+                if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
                 {
                     foreach (var folder in new []{ "client_versions", "software_uploads" })
                     {
@@ -72,9 +66,9 @@ namespace Toems_Service.Workflows
                         backup.OnError += Backup_OnError;
 
                         // copy options
-                        backup.CopyOptions.Source = ictx.Settings.GetSettingValue(SettingStrings.StoragePath) + folder;
+                        backup.CopyOptions.Source = ctx.Setting.GetSettingValue(SettingStrings.StoragePath) + folder;
                         backup.CopyOptions.Destination = thisComServer.LocalStoragePath + folder.Trim('\\');
-                        ictx.Log.Info($"Replicating Folder {folder} From {backup.CopyOptions.Source} to {backup.CopyOptions.Destination} on {thisComServer.DisplayName}");
+                        ctx.Log.Info($"Replicating Folder {folder} From {backup.CopyOptions.Source} to {backup.CopyOptions.Destination} on {thisComServer.DisplayName}");
                         backup.CopyOptions.CopySubdirectories = true;
                         backup.CopyOptions.UseUnbufferedIo = true;
                         if (thisComServer.ReplicationRateIpg != 0)
@@ -91,17 +85,17 @@ namespace Toems_Service.Workflows
                         backup.RetryOptions.RetryWaitTime = 10;
                         try
                         {
-                            ictx.Settings.UpdateSetting(SettingStrings.ReplicationInProgress, "True");
+                            ctx.Setting.UpdateSetting(SettingStrings.ReplicationInProgress, "True");
                             backup.Start().Wait();
                         }
                         catch(Exception ex)
                         {
-                            ictx.Log.Error("Could Not Start Replication");
-                            ictx.Log.Error(ex.Message);
+                            ctx.Log.Error("Could Not Start Replication");
+                            ctx.Log.Error(ex.Message);
                         }
                         finally 
                         {
-                            ictx.Settings.UpdateSetting(SettingStrings.ReplicationInProgress, "False");
+                            ctx.Setting.UpdateSetting(SettingStrings.ReplicationInProgress, "False");
                         }
                         
                     }
@@ -114,9 +108,9 @@ namespace Toems_Service.Workflows
 
         private void Backup_OnError(object sender, RoboSharp.ErrorEventArgs e)
         {
-            ictx.Log.Error($"Folder Replication Failed.");
-            ictx.Log.Error(e.ErrorCode + " " + e.Error);
-            ictx.Settings.UpdateSetting(SettingStrings.ReplicationInProgress, "False");
+            ctx.Log.Error($"Folder Replication Failed.");
+            ctx.Log.Error(e.ErrorCode + " " + e.Error);
+            ctx.Setting.UpdateSetting(SettingStrings.ReplicationInProgress, "False");
         }
     }
 }

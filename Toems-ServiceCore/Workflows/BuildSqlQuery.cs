@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
     public class BuildSqlQuery
     {

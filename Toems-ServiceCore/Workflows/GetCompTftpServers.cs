@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Toems_Common.Entity;
+﻿using Toems_Common.Entity;
 using Toems_DataModel;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class GetCompTftpServers(ServiceComputer serviceComputer)
+    public class GetCompTftpServers(ServiceContext ctx)
     {
 
         public List<EntityClientComServer> Run(int computerId)
         {
             var uow = new UnitOfWork();
             var defaultCluster = uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
-            var computerGroupMemberships = serviceComputer.GetAllGroupMemberships(computerId);
+            var computerGroupMemberships = ctx.Computer.GetAllGroupMemberships(computerId);
             var computerGroups = uow.ComputerRepository.GetAllComputerGroups(computerId).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
             List<int> tftpServerIds = new List<int>();
 

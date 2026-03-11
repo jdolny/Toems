@@ -1,16 +1,15 @@
 ﻿using Newtonsoft.Json;
+using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_DataModel;
-using Toems_Service;
-using Toems_Service.Entity;
 using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceImage(EntityContext ectx, GroupService groupService, ServiceComputer computerService, UncServices UncService, ServiceUser userService)
+    public class ServiceImage(ServiceContext ctx)
     {
         public DtoActionResult Add(EntityImage image)
         {
@@ -19,13 +18,13 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(image,true);
             if (validationResult.Success)
             {
-                ectx.Uow.ImageRepository.Insert(image);
-                ectx.Uow.Save();
+                ctx.Uow.ImageRepository.Insert(image);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = image.Id;
                 var defaultProfile = SeedDefaultImageProfile(image.Id);
                 defaultProfile.ImageId = image.Id;
-                new ServiceImageProfile().Add(defaultProfile);
+                ctx.ImageProfile.Add(defaultProfile);
             }
             else
             {
@@ -45,8 +44,8 @@ namespace Toems_ServiceCore.EntityServices
                 return new DtoActionResult { ErrorMessage = "This Image Is Protected And Cannot Be Deleted", Id = u.Id };
             }
 
-            ectx.Uow.ImageRepository.Delete(imageId);
-            ectx.Uow.Save();
+            ctx.Uow.ImageRepository.Delete(imageId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -54,25 +53,25 @@ namespace Toems_ServiceCore.EntityServices
             //Check if image name is empty or null, return if so or something will be deleted that shouldn't be
             if (string.IsNullOrEmpty(u.Name)) return actionResult;
 
-            var computers = ectx.Uow.ComputerRepository.Get(x => x.ImageId == imageId);
+            var computers = ctx.Uow.ComputerRepository.Get(x => x.ImageId == imageId);
           
             foreach (var computer in computers)
             {
                 computer.ImageId = -1;
                 computer.ImageProfileId = -1;
-                computerService.UpdateComputer(computer);
+                ctx.Computer.UpdateComputer(computer);
             }
 
-            var groups = ectx.Uow.GroupRepository.Get(x => x.ImageId == imageId);
+            var groups = ctx.Uow.GroupRepository.Get(x => x.ImageId == imageId);
            
             foreach (var group in groups)
             {
                 group.ImageId = -1;
                 group.ImageProfileId = -1;
-                groupService.UpdateGroup(group);
+                ctx.Uow.GroupRepository.Update(group,group.Id);
             }
 
-            var delDirectoryResult = new FilesystemServices().DeleteImageFolders(u.Name);
+            var delDirectoryResult = ctx.Filessystem.DeleteImageFolders(u.Name);
 
             return actionResult;
         }
@@ -81,9 +80,9 @@ namespace Toems_ServiceCore.EntityServices
         {
             var list = new List<DtoServerImageRepStatus>();
             var image = GetImage(imageId);
-            var comServers = ectx.Uow.ClientComServerRepository.Get(x => x.IsImagingServer);
-            var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+            var comServers = ctx.Uow.ClientComServerRepository.Get(x => x.IsImagingServer);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
             foreach(var com in comServers)
             {
@@ -99,9 +98,9 @@ namespace Toems_ServiceCore.EntityServices
             }
 
             //check if images already exist on smb share
-            var basePath = ectx.Settings.GetSettingValue(SettingStrings.StoragePath);
+            var basePath = ctx.Setting.GetSettingValue(SettingStrings.StoragePath);
            
-                if (UncService.NetUseWithCredentials() || UncService.LastError == 1219)
+                if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
                 {
 
                     var imagePath = Path.Combine(basePath, "images", image.Name);
@@ -147,14 +146,14 @@ namespace Toems_ServiceCore.EntityServices
         {
             if (limit == 0) limit = int.MaxValue;
             var logs =
-                ectx.Uow.AuditLogRepository.Get(x => x.ObjectType == "Image" && x.ObjectId == imageId)
+                ctx.Uow.AuditLogRepository.Get(x => x.ObjectType == "Image" && x.ObjectId == imageId)
                     .OrderByDescending(x => x.Id)
                     .Take(limit)
                     .ToList();
             foreach (var log in logs)
             {
                 if (string.IsNullOrEmpty(log.UserName))
-                    log.UserName = userService.GetUserName(log.UserId);
+                    log.UserName = ctx.User.GetUserName(log.UserId);
             }
             return logs;
         }
@@ -164,17 +163,17 @@ namespace Toems_ServiceCore.EntityServices
          string selectedPartition)
         {
             var image = GetImage(imageId);
-            return new FilesystemServices().GetPartitionFileSize(image.Name, selectedHd, selectedPartition);
+            return ctx.Filessystem.GetPartitionFileSize(image.Name, selectedHd, selectedPartition);
         }
 
         public string ImageSizeOnServerForGridView(string imageName, string hdNumber)
         {
-            return new FilesystemServices().GetHdFileSize(imageName, hdNumber);
+            return ctx.Filessystem.GetHdFileSize(imageName, hdNumber);
         }
 
         public EntityImage GetImage(int imageId)
         {
-            return ectx.Uow.ImageRepository.GetById(imageId);
+            return ctx.Uow.ImageRepository.GetById(imageId);
         }
 
         public List<ImageWithDate> Search(DtoSearchFilterCategories filter, int userId)
@@ -182,12 +181,12 @@ namespace Toems_ServiceCore.EntityServices
             if(filter.Limit == 0)
                 filter.Limit = Int32.MaxValue;
             
-            var images = ectx.Uow.ImageRepository.Get(x => x.Name.Contains(filter.SearchText)).OrderBy(x => x.Name).ToList();
+            var images = ctx.Uow.ImageRepository.Get(x => x.Name.Contains(filter.SearchText)).OrderBy(x => x.Name).ToList();
 
             var categoryFilterIds = new List<int>();
             foreach (var catName in filter.Categories)
             {
-                var category = ectx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
+                var category = ctx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
                 if (category != null)
                     categoryFilterIds.Add(category.Id);
             }
@@ -261,7 +260,7 @@ namespace Toems_ServiceCore.EntityServices
             var listWithDate = new List<ImageWithDate>();
             foreach (var image in images)
             {
-                var auditLog = ectx.Uow.AuditLogRepository.Get(
+                var auditLog = ctx.Uow.AuditLogRepository.Get(
                x =>
                    x.ObjectType == "Image" && x.ObjectId == image.Id &&
                    (x.AuditType.ToString().ToLower().Contains("deploy") || x.AuditType.ToString().ToLower().Contains("upload") || x.AuditType.ToString().ToLower().Contains("push") || x.AuditType.ToString().ToLower().Contains("multicast")))
@@ -288,7 +287,7 @@ namespace Toems_ServiceCore.EntityServices
                 listWithDate.Add(imageWithDate);
             }
 
-            var imageAcl = userService.GetAllowedImages(userId);
+            var imageAcl = ctx.User.GetAllowedImages(userId);
             if(!imageAcl.ImageManagementEnforced)
                 return listWithDate.Take(filter.Limit).ToList();
             else
@@ -317,9 +316,9 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityImage> GetAll(int userId)
         {
-            var images = ectx.Uow.ImageRepository.Get();
+            var images = ctx.Uow.ImageRepository.Get();
 
-            var imageAcl = userService.GetAllowedImages(userId);
+            var imageAcl = ctx.User.GetAllowedImages(userId);
             if (!imageAcl.ImageManagementEnforced)
                 return images.ToList();
             else
@@ -336,7 +335,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public string TotalCount()
         {
-            return ectx.Uow.ImageRepository.Count();
+            return ctx.Uow.ImageRepository.Count();
         }
 
         public DtoActionResult Update(EntityImage image)
@@ -351,13 +350,13 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(image,false);
             if (validationResult.Success)
             {
-                ectx.Uow.ImageRepository.Update(image, u.Id);
-                ectx.Uow.Save();
+                ctx.Uow.ImageRepository.Update(image, u.Id);
+                ctx.Uow.Save();
 
                 actionResult.Id = image.Id;
                 if (updateFolderName)
                 {
-                    actionResult.Success = new FilesystemServices().RenameImageFolder(oldName, image.Name);
+                    actionResult.Success = ctx.Filessystem.RenameImageFolder(oldName, image.Name);
                 }
                 else
                 {
@@ -373,7 +372,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityImageCategory> GetImageCategories(int imageId)
         {
-            return ectx.Uow.ImageCategoryRepository.Get(x => x.ImageId == imageId);
+            return ctx.Uow.ImageCategoryRepository.Get(x => x.ImageId == imageId);
         }
 
         public DtoValidationResult Validate(EntityImage image, bool isNew)
@@ -389,7 +388,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.ImageRepository.Exists(h => h.Name == image.Name))
+                if (ctx.Uow.ImageRepository.Exists(h => h.Name == image.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Image With This Name Already Exists";
@@ -398,10 +397,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var original = ectx.Uow.ImageRepository.GetById(image.Id);
+                var original = ctx.Uow.ImageRepository.GetById(image.Id);
                 if (original.Name != image.Name)
                 {
-                    if (ectx.Uow.ImageRepository.Exists(h => h.Name == image.Name))
+                    if (ctx.Uow.ImageRepository.Exists(h => h.Name == image.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Image With This Name Already Exists";
@@ -420,7 +419,7 @@ namespace Toems_ServiceCore.EntityServices
             if (image.Environment.Equals("linux") && image.Type.Equals("Block"))
             {
                 var template =
-                    new ServiceImageProfileTemplate().GetTemplate(EnumProfileTemplate.TemplateType.LinuxBlock);
+                    ctx.ImageProfileTemplate.GetTemplate(EnumProfileTemplate.TemplateType.LinuxBlock);
                 var json = JsonConvert.SerializeObject(template);
                 return JsonConvert.DeserializeObject<EntityImageProfile>(json);
 
@@ -428,7 +427,7 @@ namespace Toems_ServiceCore.EntityServices
             else if (image.Environment.Equals("linux") && image.Type.Equals("File"))
             {
                 var template =
-                   new ServiceImageProfileTemplate().GetTemplate(EnumProfileTemplate.TemplateType.LinuxFile);
+                   ctx.ImageProfileTemplate.GetTemplate(EnumProfileTemplate.TemplateType.LinuxFile);
                 var json = JsonConvert.SerializeObject(template);
                 return JsonConvert.DeserializeObject<EntityImageProfile>(json);
             }
@@ -436,7 +435,7 @@ namespace Toems_ServiceCore.EntityServices
             else //winpe
             {
                 var template =
-                   new ServiceImageProfileTemplate().GetTemplate(EnumProfileTemplate.TemplateType.WinPE);
+                   ctx.ImageProfileTemplate.GetTemplate(EnumProfileTemplate.TemplateType.WinPE);
                 var json = JsonConvert.SerializeObject(template);
                 return JsonConvert.DeserializeObject<EntityImageProfile>(json);
             }
@@ -446,11 +445,11 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityImage> GetOnDemandImageList(string task, int userId = 0)
         {
-            var images = ectx.Uow.ImageRepository.Get(i => i.IsVisible && i.Enabled, q => q.OrderBy(p => p.Name));
+            var images = ctx.Uow.ImageRepository.Get(i => i.IsVisible && i.Enabled, q => q.OrderBy(p => p.Name));
             if (userId == 0)
                 return images;
 
-            var imageAcl = userService.GetAllowedImages(userId);
+            var imageAcl = ctx.User.GetAllowedImages(userId);
             if (!imageAcl.ImageManagementEnforced)
                 return images.ToList();
             else
@@ -467,7 +466,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityImageReplicationServer> GetImageReplicationComServers(int imageId)
         {
-            return ectx.Uow.ImageReplicationServerRepository.Get(x => x.ImageId == imageId);
+            return ctx.Uow.ImageReplicationServerRepository.Get(x => x.ImageId == imageId);
         }
 
         public DtoActionResult AddOrUpdateImageReplicationServers(List<EntityImageReplicationServer> imageComServers)
@@ -477,13 +476,13 @@ namespace Toems_ServiceCore.EntityServices
             var allSame = imageComServers.All(x => x.ImageId == first.ImageId);
             if (!allSame) return new DtoActionResult { ErrorMessage = "The List Must Be For A Single Image.", Id = 0 };
             var actionResult = new DtoActionResult();
-            var pToRemove = ectx.Uow.ImageReplicationServerRepository.Get(x => x.ImageId == first.ImageId);
+            var pToRemove = ctx.Uow.ImageReplicationServerRepository.Get(x => x.ImageId == first.ImageId);
             foreach (var imageComServer in imageComServers)
             {
-                var existing = ectx.Uow.ImageReplicationServerRepository.GetFirstOrDefault(x => x.ImageId == imageComServer.ImageId && x.ComServerId == imageComServer.ComServerId);
+                var existing = ctx.Uow.ImageReplicationServerRepository.GetFirstOrDefault(x => x.ImageId == imageComServer.ImageId && x.ComServerId == imageComServer.ComServerId);
                 if (existing == null)
                 {
-                    ectx.Uow.ImageReplicationServerRepository.Insert(imageComServer);
+                    ctx.Uow.ImageReplicationServerRepository.Insert(imageComServer);
                 }
                 else
                 {
@@ -496,10 +495,10 @@ namespace Toems_ServiceCore.EntityServices
             //anything left in pToRemove does not exist anymore
             foreach (var p in pToRemove)
             {
-                ectx.Uow.ImageReplicationServerRepository.Delete(p.Id);
+                ctx.Uow.ImageReplicationServerRepository.Delete(p.Id);
             }
 
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             actionResult.Success = true;
             return actionResult;
         }

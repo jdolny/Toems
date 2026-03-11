@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceUserLogins(EntityContext ectx)
+    public class ServiceUserLogins(ServiceContext ctx)
     {
         public DtoActionResult AddOrUpdate(List<EntityUserLogin> inventory, int computerId)
         {
@@ -15,22 +15,22 @@ namespace Toems_ServiceCore.EntityServices
                 login.ComputerId = computerId;
                 login.ClientLoginId = login.Id;
 
-                var existing = ectx.Uow.UserLoginRepository.GetFirstOrDefault(x => x.ComputerId == login.ComputerId && x.LoginDateTime == login.LoginDateTime && x.ClientLoginId == login.ClientLoginId);
+                var existing = ctx.Uow.UserLoginRepository.GetFirstOrDefault(x => x.ComputerId == login.ComputerId && x.LoginDateTime == login.LoginDateTime && x.ClientLoginId == login.ClientLoginId);
                 if (existing == null)
                 {
-                    ectx.Uow.UserLoginRepository.Insert(login);
+                    ctx.Uow.UserLoginRepository.Insert(login);
                     actionResult.Id = login.Id;
                 }
                 else if (login.LogoutDateTime != nullTime)
                 {
                     existing.LogoutDateTime = login.LogoutDateTime;
-                    ectx.Uow.UserLoginRepository.Update(existing, existing.Id);
+                    ctx.Uow.UserLoginRepository.Update(existing, existing.Id);
                     actionResult.Id = existing.Id;
 
                 }
 
 
-                ectx.Uow.Save();
+                ctx.Uow.Save();
             }
 
             actionResult.Success = true;

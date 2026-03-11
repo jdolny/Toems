@@ -7,26 +7,28 @@ using Toems_Common.Dto.client;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_DataModel;
-using Toems_Service.Entity;
-using Toems_Service.Workflows;
 using Toems_ServiceCore.Infrastructure;
+using Toems_ServiceCore.Workflows;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceComputer(EntityContext ectx, ServiceUser userService, ServiceWinPeModule serviceWinPeModule, ServiceImageProfile serviceImageProfile, 
-        GetClientPolicies getClientPolicies, GetCompImagingServers getCompImagingServers, GetCompTftpServers getCompTftpServers, ServiceModule serviceModule,
-        ClientPolicyJson clientPolicyJson, PowerManagement powerManagement, Unicast unicast)
+    public class ServiceComputer(ServiceContext ctx)
     {
+        public List<EntityComputer> GetComputers()
+        {
+            return ctx.Uow.ComputerRepository.Get();
+        }
+        
         public List<EntityComputer> SearchComputers(DtoComputerFilter filter, int userId)
         {
             if(filter.Categories == null) filter.Categories = new List<string>();
             var categoryFilterIds = filter.Categories
-                   .Select(catName => ectx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName)))
+                   .Select(catName => ctx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName)))
                    .Where(category => category != null)
                    .Select(category => category.Id)
                    .ToList();
 
-            var list = ectx.Uow.ComputerRepository.SearchAllComputers(filter,userId,categoryFilterIds);
+            var list = ctx.Uow.ComputerRepository.SearchAllComputers(filter,userId,categoryFilterIds);
             
             
             
@@ -37,7 +39,7 @@ namespace Toems_ServiceCore.EntityServices
             }
 
 
-            var computerAcl = userService.GetAllowedComputers(userId);
+            var computerAcl = ctx.User.GetAllowedComputers(userId);
             return computerAcl.ComputerManagementEnforced
                 ? list.Where(c => computerAcl.AllowedComputerIds.Contains(c.Id)).ToList()
                 : list.ToList();
@@ -52,10 +54,10 @@ namespace Toems_ServiceCore.EntityServices
             u.ArchiveDateTime = null;
             u.Name = u.Name.Split('#').First();
             if (u.Name.Contains(":")) u.ProvisionStatus = EnumProvisionStatus.Status.ImageOnly;
-            if(ectx.Uow.ComputerRepository.Exists(x => x.Name.Equals(u.Name)))
+            if(ctx.Uow.ComputerRepository.Exists(x => x.Name.Equals(u.Name)))
                 return new DtoActionResult() { ErrorMessage = "Could Not Restore Computer.  A Computer With Name " + u.Name + " Already Exists"};
-            ectx.Uow.ComputerRepository.Update(u, u.Id);
-            ectx.Uow.Save();
+            ctx.Uow.ComputerRepository.Update(u, u.Id);
+            ctx.Uow.Save();
             return new DtoActionResult() { Id = u.Id, Success = true };
         }
 
@@ -69,12 +71,12 @@ namespace Toems_ServiceCore.EntityServices
             u.ArchiveDateTime = DateTime.Now;
             u.ImagingClientId = null;
             u.ImagingMac = null;
-            ectx.Uow.ComputerRepository.Update(u,u.Id);
-            ectx.Uow.CertificateRepository.DeleteRange(x => x.Id == u.CertificateId);
-            ectx.Uow.GroupMembershipRepository.DeleteRange(x => x.ComputerId == u.Id);
-            ectx.Uow.NicInventoryRepository.DeleteRange(x => x.ComputerId == u.Id);
+            ctx.Uow.ComputerRepository.Update(u,u.Id);
+            ctx.Uow.CertificateRepository.DeleteRange(x => x.Id == u.CertificateId);
+            ctx.Uow.GroupMembershipRepository.DeleteRange(x => x.ComputerId == u.Id);
+            ctx.Uow.NicInventoryRepository.DeleteRange(x => x.ComputerId == u.Id);
             u.CertificateId = -1;
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             return new DtoActionResult() {Id = u.Id, Success = true};
         }
 
@@ -86,10 +88,10 @@ namespace Toems_ServiceCore.EntityServices
             u.ProvisionStatus = EnumProvisionStatus.Status.Archived;
             u.Name = u.Name + "#" + DateTime.Now.ToString("MM-dd-yyyy_HH:mm");
             u.ArchiveDateTime = DateTime.Now;
-            ectx.Uow.ComputerRepository.Update(u, u.Id);
-            ectx.Uow.CertificateRepository.DeleteRange(x => x.Id == u.CertificateId);
+            ctx.Uow.ComputerRepository.Update(u, u.Id);
+            ctx.Uow.CertificateRepository.DeleteRange(x => x.Id == u.CertificateId);
             u.CertificateId = -1;
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             return new DtoActionResult() { Id = u.Id, Success = true };
         }
 
@@ -100,8 +102,8 @@ namespace Toems_ServiceCore.EntityServices
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
-                ectx.Uow.ComputerRepository.Insert(computer);
-                ectx.Uow.Save();
+                ctx.Uow.ComputerRepository.Insert(computer);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = computer.Id;
             }
@@ -119,8 +121,8 @@ namespace Toems_ServiceCore.EntityServices
             if (u == null) return new DtoActionResult { ErrorMessage = "Computer Not Found", Id = 0 };
             u.ImagingClientId = string.Empty;
             u.ImagingMac = string.Empty;
-            ectx.Uow.ComputerRepository.Update(u, u.Id);
-            ectx.Uow.Save();
+            ctx.Uow.ComputerRepository.Update(u, u.Id);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -131,9 +133,9 @@ namespace Toems_ServiceCore.EntityServices
         {
             var u = GetComputer(computerId);
             if (u == null) return new DtoActionResult {ErrorMessage = "Computer Not Found", Id = 0};
-            ectx.Uow.ComputerRepository.Delete(computerId);
-            ectx.Uow.ComputerLogRepository.DeleteRange(x => x.ComputerId == computerId);
-            ectx.Uow.Save();
+            ctx.Uow.ComputerRepository.Delete(computerId);
+            ctx.Uow.ComputerLogRepository.DeleteRange(x => x.ComputerId == computerId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -142,43 +144,43 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityGroup> GetComputerGroups(int computerId)
         {
-            return ectx.Uow.ComputerRepository.GetAllComputerGroups(computerId);
+            return ctx.Uow.ComputerRepository.GetAllComputerGroups(computerId);
         }
 
         public List<DtoGroupImage> GetComputerGroupsWithImage(int computerId)
         {
-            return ectx.Uow.ComputerRepository.GetAllComputerGroupsWithImage(computerId);
+            return ctx.Uow.ComputerRepository.GetAllComputerGroupsWithImage(computerId);
         }
 
         public List<EntityPolicy> GetComputerPolicies(int computerId)
         {
-            return ectx.Uow.ComputerRepository.GetComputerPolicies(computerId);
+            return ctx.Uow.ComputerRepository.GetComputerPolicies(computerId);
         }
 
         public List<DtoComputerPolicyHistory> GetPolicyHistory(int computerId)
         {
-            return ectx.Uow.ComputerRepository.GetPolicyHistory(computerId);
+            return ctx.Uow.ComputerRepository.GetPolicyHistory(computerId);
         }
 
         public List<DtoModule> GetComputerModules(int computerId)
         {
-            return ectx.Uow.ComputerRepository.GetComputerModules(computerId);
+            return ctx.Uow.ComputerRepository.GetComputerModules(computerId);
         }
 
         public List<EntityWingetModule> GetComputerWingetUpgrades(string clientGuid)
         {
-            var client = ectx.Uow.ComputerRepository.GetFirstOrDefault(x => x.Guid == clientGuid);
-            return ectx.Uow.ComputerRepository.GetComputerWingetUpdateModules(client.Id);
+            var client = ctx.Uow.ComputerRepository.GetFirstOrDefault(x => x.Guid == clientGuid);
+            return ctx.Uow.ComputerRepository.GetComputerWingetUpdateModules(client.Id);
         }
 
         public EntityWinPeModule GetEffectiveWinPeModule(int computerId)
         {
             var computer = GetComputer(computerId);
-            var winPeModule = serviceWinPeModule.GetModule(computer.WinPeModuleId);
+            var winPeModule = ctx.WinPeModule.GetModule(computer.WinPeModuleId);
             if (winPeModule != null) return winPeModule;
 
             //check for an image profile via group since computer doesn't have image directly assigned
-            var computerGroups = ectx.Uow.ComputerRepository.GetAllComputerGroups(computerId).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
+            var computerGroups = ctx.Uow.ComputerRepository.GetAllComputerGroups(computerId).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
 
             if (computerGroups.Count == 0)
             {
@@ -188,7 +190,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var group in computerGroups)
                 {
-                    winPeModule = serviceWinPeModule.GetModule(group.WinPeModuleId);
+                    winPeModule = ctx.WinPeModule.GetModule(group.WinPeModuleId);
                     if (winPeModule != null) return winPeModule;
                 }
 
@@ -201,10 +203,10 @@ namespace Toems_ServiceCore.EntityServices
         public ImageProfileWithImage GetEffectiveImage(int computerId)
         {
             var computer = GetComputer(computerId);
-            var imageProfile = serviceImageProfile.ReadProfile(computer.ImageProfileId);
+            var imageProfile = ctx.ImageProfile.ReadProfile(computer.ImageProfileId);
             if (imageProfile != null) return imageProfile;
             
-            var computerGroups = ectx.Uow.ComputerRepository.GetAllComputerGroups(computerId).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
+            var computerGroups = ctx.Uow.ComputerRepository.GetAllComputerGroups(computerId).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
 
             if (computerGroups.Count == 0)
             {
@@ -214,7 +216,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var group in computerGroups)
                 {
-                    imageProfile = serviceImageProfile.ReadProfile(group.ImageProfileId);
+                    imageProfile = ctx.ImageProfile.ReadProfile(group.ImageProfileId);
                     if (imageProfile != null) return imageProfile;
                 }
 
@@ -225,7 +227,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public string GetEffectivePolicy(int computerId, EnumPolicy.Trigger trigger, string comServerUrl)
         {
-            var computer = ectx.Uow.ComputerRepository.GetById(computerId);
+            var computer = ctx.Uow.ComputerRepository.GetById(computerId);
             if (computer == null) return string.Empty;
 
             var policyRequest = new DtoPolicyRequest();
@@ -235,78 +237,78 @@ namespace Toems_ServiceCore.EntityServices
             policyRequest.ClientIdentity.Guid = computer.Guid;
             policyRequest.ClientIdentity.Name = computer.Name;
 
-            var policy = getClientPolicies.Execute(policyRequest,computerId);
+            var policy = ctx.GetClientPolicies.Execute(policyRequest,computerId);
             return JsonConvert.SerializeObject(policy.Policies, Formatting.Indented);
         }
 
         public EntityComputer GetComputer(int computerId)
         {
-            return ectx.Uow.ComputerRepository.GetById(computerId);
+            return ctx.Uow.ComputerRepository.GetById(computerId);
         }
 
         public List<EntityGroup> GetComputerAdGroups(int computerId)
         {
-           return ectx.Uow.ComputerRepository.GetComputerAdGroups(computerId);
+           return ctx.Uow.ComputerRepository.GetComputerAdGroups(computerId);
         }
 
         public List<EntityGroup> GetComputerAdSecurityGroups(int computerId)
         {
-            return ectx.Uow.ComputerRepository.GetComputerAdSecurityGroups(computerId);
+            return ctx.Uow.ComputerRepository.GetComputerAdSecurityGroups(computerId);
         }
 
         public List<EntityClientComServer> GetEmServers(int computerId)
         {
             var list = new List<EntityClientComServer>();
             var computer = GetComputer(computerId);
-            var result = new Toems_Service.Workflows.GetCompEmServers().Run(computer.Guid);
+            var result = new GetCompEmServers().Run(computer.Guid);
             foreach(var r in result)
             {
-                list.Add(ectx.Uow.ClientComServerRepository.GetById(r.ComServerId));
+                list.Add(ctx.Uow.ClientComServerRepository.GetById(r.ComServerId));
             }
             return list;
         }
 
         public List<EntityClientComServer> GetTftpServers(int computerId)
         {
-            return getCompTftpServers.Run(computerId);
+            return ctx.GetCompTftpServers.Run(computerId);
         }
 
         public List<EntityClientComServer> GetImageServers(int computerId)
         {
-            return getCompImagingServers.Run(computerId,true);
+            return ctx.GetCompImagingServers.Run(computerId,true);
         }
 
         public EntityComputer GetByInstallationId(string installationid)
         {
-            return ectx.Uow.ComputerRepository.GetFirstOrDefault(x => x.InstallationId == installationid);
+            return ctx.Uow.ComputerRepository.GetFirstOrDefault(x => x.InstallationId == installationid);
         }
 
         public EntityComputer GetByName(string computerName)
         {
-            return ectx.Uow.ComputerRepository.GetFirstOrDefault(x => x.Name == computerName && x.ProvisionStatus != EnumProvisionStatus.Status.Archived);
+            return ctx.Uow.ComputerRepository.GetFirstOrDefault(x => x.Name == computerName && x.ProvisionStatus != EnumProvisionStatus.Status.Archived);
         }
 
         public EntityComputer GetByNameForReset(string computerName)
         {
-            return ectx.Uow.ComputerRepository.GetFirstOrDefault(x => x.Name == computerName);
+            return ctx.Uow.ComputerRepository.GetFirstOrDefault(x => x.Name == computerName);
         }
 
 
         public EntityComputer GetByGuid(string computerGuid)
         {
-            return ectx.Uow.ComputerRepository.GetFirstOrDefault(x => x.Guid == computerGuid);
+            return ctx.Uow.ComputerRepository.GetFirstOrDefault(x => x.Guid == computerGuid);
         }
 
       
 
         public List<EntityComputerCategory> GetComputerCategories(int computerId)
         {
-            return ectx.Uow.ComputerCategoryRepository.Get(x => x.ComputerId == computerId);
+            return ctx.Uow.ComputerCategoryRepository.Get(x => x.ComputerId == computerId);
         }
 
         public List<EntityCustomComputerAttribute> GetCustomAttributes(int computerId)
         {
-            return ectx.Uow.CustomComputerAttributeRepository.Get(x => x.ComputerId == computerId);
+            return ctx.Uow.CustomComputerAttributeRepository.Get(x => x.ComputerId == computerId);
         }
 
 
@@ -314,58 +316,58 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityComputer> GetArchived(DtoSearchFilterCategories filter)
         {
-            return ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText)) && s.ProvisionStatus == EnumProvisionStatus.Status.Archived).OrderBy(x => x.Name).Take(filter.Limit).ToList();
+            return ctx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText)) && s.ProvisionStatus == EnumProvisionStatus.Status.Archived).OrderBy(x => x.Name).Take(filter.Limit).ToList();
         }
 
         public List<EntityComputer> GetAllAdComputers()
         {
-            return ectx.Uow.ComputerRepository.Get(s => s.IsAdSync);
+            return ctx.Uow.ComputerRepository.Get(s => s.IsAdSync);
         }
 
         public List<EntityComputer> SearchForGroup(DtoSearchFilter filter)
         {
-            return ectx.Uow.ComputerRepository.Get(s => s.Name.Contains(filter.SearchText) && (s.ProvisionStatus == EnumProvisionStatus.Status.PreProvisioned || s.ProvisionStatus == EnumProvisionStatus.Status.Provisioned || s.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly)).OrderBy(x => x.Name).Take(filter.Limit).ToList();
+            return ctx.Uow.ComputerRepository.Get(s => s.Name.Contains(filter.SearchText) && (s.ProvisionStatus == EnumProvisionStatus.Status.PreProvisioned || s.ProvisionStatus == EnumProvisionStatus.Status.Provisioned || s.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly)).OrderBy(x => x.Name).Take(filter.Limit).ToList();
         }
 
         public List<EntityComputer> SearchPreProvision(DtoSearchFilter filter)
         {
-            return ectx.Uow.ComputerRepository.Get(s => s.Name.Contains(filter.SearchText) && s.ProvisionStatus == EnumProvisionStatus.Status.PreProvisioned).OrderBy(x => x.Name).Take(filter.Limit).ToList();
+            return ctx.Uow.ComputerRepository.Get(s => s.Name.Contains(filter.SearchText) && s.ProvisionStatus == EnumProvisionStatus.Status.PreProvisioned).OrderBy(x => x.Name).Take(filter.Limit).ToList();
         }
 
         public List<EntitySoftwareInventory> GetComputerSoftware(int id, string searchString = "")
         {
-            return ectx.Uow.ComputerRepository.GetComputerSoftware(id, searchString);
+            return ctx.Uow.ComputerRepository.GetComputerSoftware(id, searchString);
           
         }
 
         public List<EntityCertificateInventory> GetComputerCertificates(int id, string searchString = "")
         {
-            return ectx.Uow.ComputerRepository.GetComputerCertificates(id, searchString);
+            return ctx.Uow.ComputerRepository.GetComputerCertificates(id, searchString);
 
         }
 
         public DtoActionResult UpdateSocketResult(string result, string clientIdentity)
         {
-            var client = ectx.Uow.ComputerRepository.GetFirstOrDefault(x => x.Guid == clientIdentity);
+            var client = ctx.Uow.ComputerRepository.GetFirstOrDefault(x => x.Guid == clientIdentity);
             if (client == null) return new DtoActionResult() { ErrorMessage = "Client Not Found", Success = false };
             client.LastSocketResult = result;
-            ectx.Uow.ComputerRepository.Update(client, client.Id);
-            ectx.Uow.Save();
+            ctx.Uow.ComputerRepository.Update(client, client.Id);
+            ctx.Uow.Save();
             return new DtoActionResult() { Success = true, Id = client.Id };
         }
 
         public bool SendMessage(int id, DtoMessage message)
         {
-            var computer = ectx.Uow.ComputerRepository.GetById(id);
+            var computer = ctx.Uow.ComputerRepository.GetById(id);
             if (computer == null) return false;
             if (computer.CertificateId == -1) return false;
-            var socket = ectx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            var socket = ctx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
             if (socket != null)
             {
-                var deviceCertEntity = ectx.Uow.CertificateRepository.GetById(computer.CertificateId);
-                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ectx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-                var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-                var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+                var deviceCertEntity = ctx.Uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ctx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Message";
@@ -377,16 +379,16 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool StartRemoteControl(int id)
         {
-            var computer = ectx.Uow.ComputerRepository.GetById(id);
+            var computer = ctx.Uow.ComputerRepository.GetById(id);
             if (computer == null) return false;
             if (computer.CertificateId == -1) return false;
-            var socket = ectx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            var socket = ctx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
             if (socket != null)
             {
-                var deviceCertEntity = ectx.Uow.CertificateRepository.GetById(computer.CertificateId);
-                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ectx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-                var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-                var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+                var deviceCertEntity = ctx.Uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ctx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Start_Remote_Control";
@@ -397,16 +399,16 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool GetSystemUptime(int id)
         {
-            var computer = ectx.Uow.ComputerRepository.GetById(id);
+            var computer = ctx.Uow.ComputerRepository.GetById(id);
             if (computer == null) return false;
             if (computer.CertificateId == -1) return false;
-            var socket = ectx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            var socket = ctx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
             if (socket != null)
             {
-                var deviceCertEntity = ectx.Uow.CertificateRepository.GetById(computer.CertificateId);
-                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ectx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-                var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-                var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+                var deviceCertEntity = ctx.Uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ctx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "System_Uptime";
@@ -417,21 +419,21 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool RunModule(int computerId, string moduleGuid)
         {
-            var computer = ectx.Uow.ComputerRepository.GetById(computerId);
+            var computer = ctx.Uow.ComputerRepository.GetById(computerId);
             if (computer == null) return false;
             if (computer.CertificateId == -1) return false;
 
-            var module = serviceModule.GetModuleIdFromGuid(moduleGuid);
+            var module = ctx.Module.GetModuleIdFromGuid(moduleGuid);
             if (module == null) return false;
-            var clientPolicy = clientPolicyJson.CreateInstantModule(module);
+            var clientPolicy = ctx.ClientPolicyJson.CreateInstantModule(module);
 
-            var socket = ectx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            var socket = ctx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
             if (socket != null)
             {
-                var deviceCertEntity = ectx.Uow.CertificateRepository.GetById(computer.CertificateId);
-                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ectx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-                var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-                var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+                var deviceCertEntity = ctx.Uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ctx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Run_Module";
@@ -444,16 +446,16 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool ForceCheckin(int id)
         {
-            var computer = ectx.Uow.ComputerRepository.GetById(id);
+            var computer = ctx.Uow.ComputerRepository.GetById(id);
             if (computer == null) return false;
             if (computer.CertificateId == -1) return false;
-            var socket = ectx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            var socket = ctx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
             if (socket != null)
             {
-                var deviceCertEntity = ectx.Uow.CertificateRepository.GetById(computer.CertificateId);
-                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ectx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-                var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-                var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+                var deviceCertEntity = ctx.Uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ctx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Force_Checkin";
@@ -464,16 +466,16 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool CollectInventory(int id)
         {
-            var computer = ectx.Uow.ComputerRepository.GetById(id);
+            var computer = ctx.Uow.ComputerRepository.GetById(id);
             if (computer == null) return false;
             if (computer.CertificateId == -1) return false;
-            var socket = ectx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            var socket = ctx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
             if(socket != null)
             {
-                var deviceCertEntity = ectx.Uow.CertificateRepository.GetById(computer.CertificateId);
-                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ectx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-                var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-                var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+                var deviceCertEntity = ctx.Uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ctx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Collect_Inventory";
@@ -485,16 +487,16 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool GetLoggedInUsers(int id)
         {
-            var computer = ectx.Uow.ComputerRepository.GetById(id);
+            var computer = ctx.Uow.ComputerRepository.GetById(id);
             if (computer == null) return false;
             if (computer.CertificateId == -1) return false;
-            var socket = ectx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            var socket = ctx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
             if (socket != null)
             {
-                var deviceCertEntity = ectx.Uow.CertificateRepository.GetById(computer.CertificateId);
-                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ectx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-                var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-                var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+                var deviceCertEntity = ctx.Uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ctx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Current_Users";
@@ -505,16 +507,16 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool GetStatus(int id)
         {
-            var computer = ectx.Uow.ComputerRepository.GetById(id);
+            var computer = ctx.Uow.ComputerRepository.GetById(id);
             if (computer == null) return false;
             if (computer.CertificateId == -1) return false;
-            var socket = ectx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            var socket = ctx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
             if (socket != null)
             {
-                var deviceCertEntity = ectx.Uow.CertificateRepository.GetById(computer.CertificateId);
-                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ectx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-                var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-                var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+                var deviceCertEntity = ctx.Uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ctx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Get_Status";
@@ -526,16 +528,16 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool GetServiceLog(int id)
         {
-            var computer = ectx.Uow.ComputerRepository.GetById(id);
+            var computer = ctx.Uow.ComputerRepository.GetById(id);
             if (computer == null) return false;
             if (computer.CertificateId == -1) return false;
-            var socket = ectx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            var socket = ctx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
             if (socket != null)
             {
-                var deviceCertEntity = ectx.Uow.CertificateRepository.GetById(computer.CertificateId);
-                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ectx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-                var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-                var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+                var deviceCertEntity = ctx.Uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ctx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Logs";
@@ -548,81 +550,81 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool Reboot(int id)
         {
-            return powerManagement.RebootComputer(id);
+            return ctx.PowerManagement.RebootComputer(id);
         }
 
         public bool Shutdown(int id)
         {
-            return powerManagement.ShutdownComputer(id);
+            return ctx.PowerManagement.ShutdownComputer(id);
         }
 
         public bool Wakeup(int id)
         {
-            powerManagement.WakeupComputer(id);
+            ctx.PowerManagement.WakeupComputer(id);
             return true;
         }
 
         public List<DtoComputerUpdates> GetUpdates(int id, string searchString = "")
         {
-            return ectx.Uow.ComputerRepository.GetWindowsUpdates(id, searchString);
+            return ctx.Uow.ComputerRepository.GetWindowsUpdates(id, searchString);
 
         }
 
         public List<EntityUserLogin> GetUserLogins(int id, string searchString = "")
         {
-            return ectx.Uow.UserLoginRepository.Get(x => x.ComputerId == id && x.UserName.Contains(searchString)).OrderByDescending(x => x.LoginDateTime).ToList();
+            return ctx.Uow.UserLoginRepository.Get(x => x.ComputerId == id && x.UserName.Contains(searchString)).OrderByDescending(x => x.LoginDateTime).ToList();
         }
 
         public List<DtoCustomComputerInventory> GetCustomInventory(int id)
         {
-            return ectx.Uow.ComputerRepository.GetCustomComputerInventory(id);
+            return ctx.Uow.ComputerRepository.GetCustomComputerInventory(id);
         }
 
         public string AllCount()
         {
-            return ectx.Uow.ComputerRepository.Count();
+            return ctx.Uow.ComputerRepository.Count();
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.ComputerRepository.Count(s => s.ProvisionStatus == EnumProvisionStatus.Status.PreProvisioned || s.ProvisionStatus == EnumProvisionStatus.Status.Provisioned);
+            return ctx.Uow.ComputerRepository.Count(s => s.ProvisionStatus == EnumProvisionStatus.Status.PreProvisioned || s.ProvisionStatus == EnumProvisionStatus.Status.Provisioned);
         }
 
         public string TotalActiveCount()
         {
-            return ectx.Uow.ComputerRepository.Count(s => s.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && s.ProvisionStatus != EnumProvisionStatus.Status.Archived && s.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved && s.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly);
+            return ctx.Uow.ComputerRepository.Count(s => s.ProvisionStatus != EnumProvisionStatus.Status.PreProvisioned && s.ProvisionStatus != EnumProvisionStatus.Status.Archived && s.ProvisionStatus != EnumProvisionStatus.Status.ProvisionApproved && s.ProvisionStatus != EnumProvisionStatus.Status.ImageOnly);
         }
 
         public string ClearLastSocketResult(int id)
         {
-            var computer = ectx.Uow.ComputerRepository.GetById(id);
+            var computer = ctx.Uow.ComputerRepository.GetById(id);
             if (computer == null) return string.Empty;
             computer.LastSocketResult = string.Empty;
-            ectx.Uow.ComputerRepository.Update(computer, computer.Id);
-            ectx.Uow.Save();
+            ctx.Uow.ComputerRepository.Update(computer, computer.Id);
+            ctx.Uow.Save();
             return computer.LastSocketResult;
         }
 
         public string LastSocketResult(int id)
         {
-            var computer = ectx.Uow.ComputerRepository.GetById(id);
+            var computer = ctx.Uow.ComputerRepository.GetById(id);
             if (computer == null) return string.Empty;
             return computer.LastSocketResult;
         }
 
         public string ArchivedCount()
         {
-            return ectx.Uow.ComputerRepository.Count(s => s.ProvisionStatus == EnumProvisionStatus.Status.Archived);
+            return ctx.Uow.ComputerRepository.Count(s => s.ProvisionStatus == EnumProvisionStatus.Status.Archived);
         }
 
         public string ImageOnlyCount()
         {
-            return ectx.Uow.ComputerRepository.Count(s => s.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly);
+            return ctx.Uow.ComputerRepository.Count(s => s.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly);
         }
 
         public string TotalPreProvisionCount()
         {
-            return ectx.Uow.ComputerRepository.Count(x => x.ProvisionStatus == EnumProvisionStatus.Status.PreProvisioned);
+            return ctx.Uow.ComputerRepository.Count(x => x.ProvisionStatus == EnumProvisionStatus.Status.PreProvisioned);
         }
 
 
@@ -635,8 +637,8 @@ namespace Toems_ServiceCore.EntityServices
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
-                ectx.Uow.ComputerRepository.Update(computer, computer.Id);
-                ectx.Uow.Save();
+                ctx.Uow.ComputerRepository.Update(computer, computer.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = computer.Id;
             }
@@ -659,16 +661,16 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityGroupMembership> GetAllGroupMemberships(int computerId)
         {
-            return ectx.Uow.GroupMembershipRepository.Get(x => x.ComputerId == computerId);
+            return ctx.Uow.GroupMembershipRepository.Get(x => x.ComputerId == computerId);
         }
 
         public DtoProvisionHardware GetProvisionHardware(int computerId)
         {
             var dtoHardware = new DtoProvisionHardware();
-            var bios = ectx.Uow.BiosInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault();
-            var processor = ectx.Uow.ProcessorInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault();
-            var system = ectx.Uow.ComputerSystemInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault();
-            var nics = ectx.Uow.NicInventoryRepository.Get(x => x.ComputerId == computerId);
+            var bios = ctx.Uow.BiosInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault();
+            var processor = ctx.Uow.ProcessorInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault();
+            var system = ctx.Uow.ComputerSystemInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault();
+            var nics = ctx.Uow.NicInventoryRepository.Get(x => x.ComputerId == computerId);
 
             if (bios == null)
                 dtoHardware.SerialNumber = string.Empty;
@@ -710,19 +712,19 @@ namespace Toems_ServiceCore.EntityServices
         public DtoInventoryCollection GetSystemInfo(int computerId)
         {
             var systemInfo = new DtoInventoryCollection();
-            systemInfo.Bios = ectx.Uow.BiosInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault() ?? new EntityBiosInventory();
-            systemInfo.ComputerSystem = ectx.Uow.ComputerSystemInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault() ?? new EntityComputerSystemInventory();
-            systemInfo.Gpu = ectx.Uow.ComputerGpuRepository.Get(x => x.ComputerId == computerId) ?? new List<EntityComputerGpuInventory>();
-            systemInfo.Os = ectx.Uow.OsInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault() ?? new EntityOsInventory();
+            systemInfo.Bios = ctx.Uow.BiosInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault() ?? new EntityBiosInventory();
+            systemInfo.ComputerSystem = ctx.Uow.ComputerSystemInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault() ?? new EntityComputerSystemInventory();
+            systemInfo.Gpu = ctx.Uow.ComputerGpuRepository.Get(x => x.ComputerId == computerId) ?? new List<EntityComputerGpuInventory>();
+            systemInfo.Os = ctx.Uow.OsInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault() ?? new EntityOsInventory();
             systemInfo.Processor =
-                ectx.Uow.ProcessorInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault() ?? new EntityProcessorInventory();
-            systemInfo.HardDrives = ectx.Uow.HardDriveInventoryRepository.Get(x => x.ComputerId == computerId);
-            systemInfo.Printers = ectx.Uow.PrinterInventoryRepository.Get(x => x.ComputerId == computerId);
-            systemInfo.Nics = ectx.Uow.NicInventoryRepository.Get(x => x.ComputerId == computerId);
-            systemInfo.AntiVirus = ectx.Uow.AntivirusRepository.Get(x => x.ComputerId == computerId);
-            systemInfo.Bitlocker = ectx.Uow.BitlockerRepository.Get(x => x.ComputerId == computerId);
-            systemInfo.Firewall = ectx.Uow.FirewallRepository.Get(x => x.ComputerId == computerId).FirstOrDefault() ?? new EntityFirewallInventory();
-            systemInfo.LogicalVolume = ectx.Uow.LogicalVolumeRepository.Get(x => x.ComputerId == computerId);
+                ctx.Uow.ProcessorInventoryRepository.Get(x => x.ComputerId == computerId).FirstOrDefault() ?? new EntityProcessorInventory();
+            systemInfo.HardDrives = ctx.Uow.HardDriveInventoryRepository.Get(x => x.ComputerId == computerId);
+            systemInfo.Printers = ctx.Uow.PrinterInventoryRepository.Get(x => x.ComputerId == computerId);
+            systemInfo.Nics = ctx.Uow.NicInventoryRepository.Get(x => x.ComputerId == computerId);
+            systemInfo.AntiVirus = ctx.Uow.AntivirusRepository.Get(x => x.ComputerId == computerId);
+            systemInfo.Bitlocker = ctx.Uow.BitlockerRepository.Get(x => x.ComputerId == computerId);
+            systemInfo.Firewall = ctx.Uow.FirewallRepository.Get(x => x.ComputerId == computerId).FirstOrDefault() ?? new EntityFirewallInventory();
+            systemInfo.LogicalVolume = ctx.Uow.LogicalVolumeRepository.Get(x => x.ComputerId == computerId);
             return systemInfo;   
         }
 
@@ -733,7 +735,7 @@ namespace Toems_ServiceCore.EntityServices
                 return new DtoActionResult() { ErrorMessage = "Comments Cannot Be Empty" };
             }
 
-            var user = userService.GetUser(userId);
+            var user = ctx.User.GetUser(userId);
             if (user == null)
                 return new DtoActionResult() { ErrorMessage = "Could Not Determine Current User" };
 
@@ -741,27 +743,27 @@ namespace Toems_ServiceCore.EntityServices
             entityComment.CommentText = comment.Comment;
             entityComment.CommentTime = DateTime.Now;
             entityComment.Username = user.Name;
-            ectx.Uow.CommentRepository.Insert(entityComment);
-            ectx.Uow.Save();
+            ctx.Uow.CommentRepository.Insert(entityComment);
+            ctx.Uow.Save();
 
             var computerComment = new EntityComputerComment();
             computerComment.ComputerId = comment.ComputerId;
             computerComment.CommentId = entityComment.Id;
-            ectx.Uow.ComputerCommentRepository.Insert(computerComment);
-            ectx.Uow.Save();
+            ctx.Uow.ComputerCommentRepository.Insert(computerComment);
+            ctx.Uow.Save();
 
             return new DtoActionResult() { Success = true, Id = computerComment.Id };
         }
 
         public List<DtoComputerComment> GetComments(int computerId)
         {
-            var commentIds = ectx.Uow.ComputerCommentRepository.Get(x => x.ComputerId == computerId).Select(x => x.CommentId).ToList();
+            var commentIds = ctx.Uow.ComputerCommentRepository.Get(x => x.ComputerId == computerId).Select(x => x.CommentId).ToList();
             if (commentIds.Count == 0) return new List<DtoComputerComment>();
 
             var list = new List<DtoComputerComment>();
             foreach (var commentId in commentIds)
             {
-                var comment = ectx.Uow.CommentRepository.GetById(commentId);
+                var comment = ctx.Uow.CommentRepository.GetById(commentId);
                 if (comment == null) continue;
                 var computerComment = new DtoComputerComment();
                 computerComment.Comment = comment.CommentText;
@@ -775,7 +777,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityAttachment> GetAttachments(int computerId)
         {
-            return ectx.Uow.AssetAttachmentRepository.GetComputerAttachments(computerId);
+            return ctx.Uow.AssetAttachmentRepository.GetComputerAttachments(computerId);
         }
 
         public List<DtoProcessWithTime> GetComputerProcessTimes(DateTime dateCutoff, int limit, int computerId)
@@ -795,18 +797,18 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool IsComputerActive(int computerId)
         {
-            return ectx.Uow.ActiveImagingTaskRepository.Exists(a => a.ComputerId == computerId);
+            return ctx.Uow.ActiveImagingTaskRepository.Exists(a => a.ComputerId == computerId);
         }
 
         public EntityActiveImagingTask GetTaskForComputer(int computerId)
         {
-            return ectx.Uow.ActiveImagingTaskRepository.GetFirstOrDefault(x => x.ComputerId == computerId);
+            return ctx.Uow.ActiveImagingTaskRepository.GetFirstOrDefault(x => x.ComputerId == computerId);
         }
 
         public EntityActiveImagingTask GetTaskForComputerCheckin(int computerId)
         {
             return
-                ectx.Uow.ActiveImagingTaskRepository.GetFirstOrDefault(
+                ctx.Uow.ActiveImagingTaskRepository.GetFirstOrDefault(
                     x =>
                         x.ComputerId == computerId &&
                         (x.Type == "upload" || x.Type == "deploy" ||
@@ -847,14 +849,14 @@ namespace Toems_ServiceCore.EntityServices
                 counter++;
             }
             
-            unicast.InitSingle(computerId,"deploy",userId);
-            var startImagingTaskResult = unicast.Start();
+            ctx.Unicast.InitSingle(computerId,"deploy",userId);
+            var startImagingTaskResult = ctx.Unicast.Start();
 
 
             if (!startImagingTaskResult.Contains("Successfully"))
                 return startImagingTaskResult;
 
-            var computer = ectx.Uow.ComputerRepository.GetById(computerId);
+            var computer = ctx.Uow.ComputerRepository.GetById(computerId);
 
             var moduleTypeMapping = new DtoGuidTypeMapping();
 
@@ -863,15 +865,15 @@ namespace Toems_ServiceCore.EntityServices
             moduleTypeMapping.moduleId = winPeModule.Id;
             moduleTypeMapping.moduleType = EnumModule.ModuleType.WinPE;
 
-            var clientPolicy = clientPolicyJson.CreateInstantModule(moduleTypeMapping);
+            var clientPolicy = ctx.ClientPolicyJson.CreateInstantModule(moduleTypeMapping);
 
-            var socket = ectx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            var socket = ctx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
             if (socket != null)
             {
-                var deviceCertEntity = ectx.Uow.CertificateRepository.GetById(computer.CertificateId);
-                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ectx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-                var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-                var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+                var deviceCertEntity = ctx.Uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ctx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
+                var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+                var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "WinPE_Image";
@@ -908,25 +910,25 @@ namespace Toems_ServiceCore.EntityServices
             }
 
             //check image only computers first
-            result = ectx.Uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == clientIdentifier && p.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly);
+            result = ctx.Uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == clientIdentifier && p.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly);
             if (result != null) return result;
-            result = ectx.Uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == prettyIdentifier && p.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly);
+            result = ctx.Uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == prettyIdentifier && p.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly);
             if (result != null) return result;
 
             //Check provisiond computers next
-            result = ectx.Uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == clientIdentifier && p.ProvisionStatus == EnumProvisionStatus.Status.Provisioned);
+            result = ctx.Uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == clientIdentifier && p.ProvisionStatus == EnumProvisionStatus.Status.Provisioned);
             if (result != null) return result;
-            result = ectx.Uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == prettyIdentifier && p.ProvisionStatus == EnumProvisionStatus.Status.Provisioned);
+            result = ctx.Uow.ComputerRepository.GetFirstOrDefault(p => p.ImagingClientId == prettyIdentifier && p.ProvisionStatus == EnumProvisionStatus.Status.Provisioned);
             if (result != null) return result;
 
             //check in global list of id's for matching computer
-            var computerClientIds = ectx.Uow.ClientImagingIdRepository.Get(x => x.ClientIdentifier == clientIdentifier);
+            var computerClientIds = ctx.Uow.ClientImagingIdRepository.Get(x => x.ClientIdentifier == clientIdentifier);
             var matchingComps = new List<EntityComputer>();
             if(computerClientIds.Count > 0)
             {
                 foreach(var clientId in computerClientIds)
                 {
-                    var computer = ectx.Uow.ComputerRepository.GetById(clientId.ComputerId);
+                    var computer = ctx.Uow.ComputerRepository.GetById(clientId.ComputerId);
                     if (computer.ProvisionStatus == EnumProvisionStatus.Status.Provisioned)
                         matchingComps.Add(computer);
                 }
@@ -937,21 +939,21 @@ namespace Toems_ServiceCore.EntityServices
                     var mac = clientIdentifier.Split('.').First();
                     matchingComps.First().ImagingMac = mac;
                     matchingComps.First().ImagingClientId = clientIdentifier;
-                    ectx.Uow.ComputerRepository.Update(matchingComps.First(), matchingComps.First().Id);
-                    ectx.Uow.Save();
+                    ctx.Uow.ComputerRepository.Update(matchingComps.First(), matchingComps.First().Id);
+                    ctx.Uow.Save();
                     return matchingComps.First();
                     
                 }
             }
 
-            computerClientIds = ectx.Uow.ClientImagingIdRepository.Get(x => x.ClientIdentifier == prettyIdentifier);
+            computerClientIds = ctx.Uow.ClientImagingIdRepository.Get(x => x.ClientIdentifier == prettyIdentifier);
             matchingComps.Clear();
             matchingComps = new List<EntityComputer>();
             if (computerClientIds.Count > 0)
             {
                 foreach (var clientId in computerClientIds)
                 {
-                    var computer = ectx.Uow.ComputerRepository.GetById(clientId.ComputerId);
+                    var computer = ctx.Uow.ComputerRepository.GetById(clientId.ComputerId);
                     if (computer.ProvisionStatus == EnumProvisionStatus.Status.Provisioned)
                         matchingComps.Add(computer);
                 }
@@ -962,8 +964,8 @@ namespace Toems_ServiceCore.EntityServices
                     var mac = clientIdentifier.Split('.').First();
                     matchingComps.First().ImagingMac = mac;
                     matchingComps.First().ImagingClientId = clientIdentifier;
-                    ectx.Uow.ComputerRepository.Update(matchingComps.First(), matchingComps.First().Id);
-                    ectx.Uow.Save();
+                    ctx.Uow.ComputerRepository.Update(matchingComps.First(), matchingComps.First().Id);
+                    ctx.Uow.Save();
                     return matchingComps.First();
                 }
             }
@@ -975,347 +977,12 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityComputerLog> GetComputerLogs(int computerId)
         {
-            return ectx.Uow.ComputerLogRepository.Get(x => x.ComputerId == computerId,
+            return ctx.Uow.ComputerLogRepository.Get(x => x.ComputerId == computerId,
                 q => q.OrderByDescending(x => x.LogTime));
         }
         
-        //todo: remove
-         //no longer used since Blazor UI
-        public List<EntityComputer> Search(DtoSearchFilterCategories filter, int userId)
-        {
-            if(filter.Categories == null) filter.Categories = new List<string>();
-            var list = ectx.Uow.ComputerRepository.SearchActiveComputers(filter,userId);
-            
-            if (!string.IsNullOrEmpty(filter.CategoryType) && filter.CategoryType != "Any Category")
-            {
-                var categoryFilterIds = filter.Categories
-                    .Select(catName => ectx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName)))
-                    .Where(category => category != null)
-                    .Select(category => category.Id)
-                    .ToList();
+       
 
-                var toRemove = new List<EntityComputer>();
-
-                if (filter.CategoryType == "And Category")
-                {
-                    toRemove = list.Where(computer =>
-                    {
-                        var cCategories = GetComputerCategories(computer.Id);
-                        if (cCategories == null) return true;
-                        if (filter.Categories.Count == 0) return cCategories.Count > 0;
-                        return categoryFilterIds.Any(id => !cCategories.Any(x => x.CategoryId == id));
-                    }).ToList();
-                }
-                else if (filter.CategoryType == "Or Category")
-                {
-                    toRemove = list.Where(computer =>
-                    {
-                        var cCategories = GetComputerCategories(computer.Id);
-                        if (cCategories == null) return true;
-                        if (filter.Categories.Count == 0) return cCategories.Count > 0;
-                        return !categoryFilterIds.Any(id => cCategories.Any(x => x.CategoryId == id));
-                    }).ToList();
-                }
-
-                list.RemoveAll(x => toRemove.Contains(x));
-            }
-            
-            foreach (var c in list)
-            {
-                var currentImage = GetEffectiveImage(c.Id);
-                c.CurrentImage = currentImage?.Name;
-            }
-
-
-            var computerAcl = userService.GetAllowedComputers(userId);
-            return computerAcl.ComputerManagementEnforced
-                ? list.Where(c => computerAcl.AllowedComputerIds.Contains(c.Id)).ToList()
-                : list.ToList();
-
-        }
-
-        //todo: remove
-        //no longer used since Blazor UI
-        public List<EntityComputer> SearchImageOnlyComputers(DtoSearchFilterCategories filter, int userId)
-        {
-            var list = new List<EntityComputer>();
-            if(filter.Categories == null) filter.Categories = new List<string>();
-            var sortMode = userService.GetUserComputerSort(userId);
-
-            if (sortMode == null)
-                list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly).OrderByDescending(x => x.LastCheckinTime).ThenBy(x => x.Name).ToList();
-            else if(sortMode.Equals("Last Checkin"))
-                list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly).OrderByDescending(x => x.LastCheckinTime).ThenBy(x => x.Name).ToList();
-            else if (sortMode.Equals("Name"))
-                list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly).OrderBy(x => x.Name).ToList();
-            else
-                list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus == EnumProvisionStatus.Status.ImageOnly).OrderByDescending(x => x.LastCheckinTime).ThenBy(x => x.Name).ToList();
-
-            if (list.Count == 0) return list;
-
-            var categoryFilterIds = new List<int>();
-            foreach (var catName in filter.Categories)
-            {
-                var category = ectx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
-                if (category != null)
-                    categoryFilterIds.Add(category.Id);
-            }
-
-            var toRemove = new List<EntityComputer>();
-            if (filter.CategoryType.Equals("Any Category") || filter.CategoryType.Equals(string.Empty) || filter.CategoryType == null)
-            { 
-                //do nothing
-            }
-            else if (filter.CategoryType.Equals("And Category"))
-            {
-                foreach (var computer in list)
-                {
-                    var cCategories = GetComputerCategories(computer.Id);
-                    if (cCategories == null) continue;
-
-                    if (filter.Categories.Count == 0)
-                    {
-                        if (cCategories.Count > 0)
-                        {
-                            toRemove.Add(computer);
-                            continue;
-                        }
-                    }
-
-                    foreach (var id in categoryFilterIds)
-                    {
-                        if (cCategories.Any(x => x.CategoryId == id)) continue;
-                        toRemove.Add(computer);
-                        break;
-                    }
-                }
-            }
-            else if (filter.CategoryType.Equals("Or Category"))
-            {
-                foreach (var computer in list)
-                {
-                    var cCategories = GetComputerCategories(computer.Id);
-                    if (cCategories == null) continue;
-                    if (filter.Categories.Count == 0)
-                    {
-                        if (cCategories.Count > 0)
-                        {
-                            toRemove.Add(computer);
-                            continue;
-                        }
-                    }
-                    var catFound = false;
-                    foreach (var id in categoryFilterIds)
-                    {
-                        if (cCategories.Any(x => x.CategoryId == id))
-                        {
-                            catFound = true;
-                            break;
-                        }
-
-                    }
-                    if (!catFound)
-                        toRemove.Add(computer);
-                }
-            }
-
-            foreach (var p in toRemove)
-            {
-                list.Remove(p);
-            }
-
-            var computerAcl = userService.GetAllowedComputers(userId);
-            if (!computerAcl.ComputerManagementEnforced)
-                return list.Take(filter.Limit).ToList();
-            else
-            {
-                var computers = new List<EntityComputer>();
-                foreach (var c in list)
-                {
-                    if (computerAcl.AllowedComputerIds.Contains(c.Id))
-                        computers.Add(c);
-                }
-
-
-                return computers.Take(filter.Limit).ToList();
-            }
-
-        }
-        
-        //todo: remove
-          //no longer used since Blazor UI
-        public List<EntityComputer> SearchAllComputers(DtoSearchFilterAllComputers filter, int userId)
-        {
-            var sortMode = userService.GetUserComputerSort(userId);
-            var list = new List<EntityComputer>();
-            if (filter.State.Equals("Enabled"))
-                filter.State = "false";
-            else if (filter.State.Equals("Disabled"))
-                filter.State = "true";
-
-
-            if (sortMode == null)
-            {
-                if (filter.State.Equals("Any State") && filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)).OrderBy(x => x.Name).ToList();
-                else if (filter.State.Equals("Any State") && !filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status).OrderBy(x => x.Name).ToList();
-
-                else if (filter.State.Equals("true") && !filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status && s.AdDisabled).OrderBy(x => x.Name).ToList();
-                else if (filter.State.Equals("false") && !filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status && !s.AdDisabled).OrderBy(x => x.Name).ToList();
-                else if (filter.State.Equals("true") && filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.AdDisabled).OrderBy(x => x.Name).ToList();
-                else if (filter.State.Equals("false") && filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && !s.AdDisabled).OrderBy(x => x.Name).ToList();
-
-            }
-            else if (sortMode.Equals("Last Checkin"))
-            {
-                if (filter.State.Equals("Any State") && filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)).OrderByDescending(x => x.LastCheckinTime).ThenBy(x=> x.Name).ToList();
-                else if (filter.State.Equals("Any State") && !filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status).OrderByDescending(x => x.LastCheckinTime).ThenBy(x => x.Name).ToList();
-
-                else if (filter.State.Equals("true") && !filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status && s.AdDisabled).OrderByDescending(x => x.LastCheckinTime).ThenBy(x => x.Name).ToList();
-                else if (filter.State.Equals("false") && !filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status && !s.AdDisabled).OrderByDescending(x => x.LastCheckinTime).ThenBy(x => x.Name).ToList();
-                else if (filter.State.Equals("true") && filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.AdDisabled).OrderByDescending(x => x.LastCheckinTime).ThenBy(x => x.Name).ToList();
-                else if (filter.State.Equals("false") && filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && !s.AdDisabled).OrderByDescending(x => x.LastCheckinTime).ThenBy(x => x.Name).ToList();
-
-            }
-            else if (sortMode.Equals("Name"))
-            {
-                if (filter.State.Equals("Any State") && filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)).OrderBy(x => x.Name).ToList();
-                else if (filter.State.Equals("Any State") && !filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status).OrderBy(x => x.Name).ToList();
-
-                else if (filter.State.Equals("true") && !filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status && s.AdDisabled).OrderBy(x => x.Name).ToList();
-                else if (filter.State.Equals("false") && !filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status && !s.AdDisabled).OrderBy(x => x.Name).ToList();
-                else if (filter.State.Equals("true") && filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.AdDisabled).OrderBy(x => x.Name).ToList();
-                else if (filter.State.Equals("false") && filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && !s.AdDisabled).OrderBy(x => x.Name).ToList();
-
-            }
-            else
-            {
-                if (filter.State.Equals("Any State") && filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)).OrderBy(x => x.Name).ToList();
-                else if (filter.State.Equals("Any State") && !filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status).OrderBy(x => x.Name).ToList();
-
-                else if (filter.State.Equals("true") && !filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status && s.AdDisabled).OrderBy(x => x.Name).ToList();
-                else if (filter.State.Equals("false") && !filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.ProvisionStatus.ToString() == filter.Status && !s.AdDisabled).OrderBy(x => x.Name).ToList();
-                else if (filter.State.Equals("true") && filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && s.AdDisabled).OrderBy(x => x.Name).ToList();
-                else if (filter.State.Equals("false") && filter.Status.Equals("Any Status"))
-                    list = ectx.Uow.ComputerRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText) || s.InstallationId.Contains(filter.SearchText) || s.UUID.Contains(filter.SearchText) || s.ImagingClientId.Contains(filter.SearchText) || s.LastIp.Contains(filter.SearchText)) && !s.AdDisabled).OrderBy(x => x.Name).ToList();
-
-            }
-
-
-
-
-            if (list.Count == 0) return list;
-
-            var categoryFilterIds = new List<int>();
-            foreach (var catName in filter.Categories)
-            {
-                var category = ectx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
-                if(category != null)
-                    categoryFilterIds.Add(category.Id);
-            }
-
-            var toRemove = new List<EntityComputer>();
-            if (filter.CategoryType.Equals("Any Category"))
-            {
-                //ignore
-            }
-            else if (filter.CategoryType.Equals("And Category"))
-            {
-                foreach (var computer in list)
-                {
-                    var cCategories = GetComputerCategories(computer.Id);
-                    if (cCategories == null) continue;
-
-                    if (filter.Categories.Count == 0)
-                    {
-                        if (cCategories.Count > 0)
-                        {
-                            toRemove.Add(computer);
-                            continue;
-                        }
-                    }
-
-                    foreach (var id in categoryFilterIds)
-                    {
-                        if (cCategories.Any(x => x.CategoryId == id)) continue;
-                        toRemove.Add(computer);
-                        break;
-                    }
-                }
-            }
-            else if (filter.CategoryType.Equals("Or Category"))
-            {
-                foreach (var computer in list)
-                {
-                    var cCategories = GetComputerCategories(computer.Id);
-                    if (cCategories == null) continue;
-                    if (filter.Categories.Count == 0)
-                    {
-                        if (cCategories.Count > 0)
-                        {
-                            toRemove.Add(computer);
-                            continue;
-                        } 
-                    }
-                    var catFound = false;
-                    foreach (var id in categoryFilterIds)
-                    {
-                        if (cCategories.Any(x => x.CategoryId == id))
-                        {
-                            catFound = true;
-                            break;
-                        }
-
-                    }
-                    if (!catFound)
-                        toRemove.Add(computer);
-                }
-            }
-
-            foreach (var p in toRemove)
-            {
-                list.Remove(p);
-            }
-
-            var computerAcl = userService.GetAllowedComputers(userId);
-            if (!computerAcl.ComputerManagementEnforced)
-                return list.Take(filter.Limit).ToList();
-            else
-            {
-                var computers = new List<EntityComputer>();
-                foreach (var c in list)
-                {
-                    if (computerAcl.AllowedComputerIds.Contains(c.Id))
-                        computers.Add(c);
-                }
-
-
-                return computers.Take(filter.Limit).ToList();
-            }
-            
-
-        }
+       
     }
 }

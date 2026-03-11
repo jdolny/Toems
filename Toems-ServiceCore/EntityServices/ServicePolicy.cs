@@ -5,25 +5,12 @@ using Toems_Common.Dto;
 using Toems_Common.Dto.exports;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
-using Toems_Service.Entity;
-using Toems_Service.Workflows;
 using Toems_ServiceCore.Infrastructure;
+using Toems_ServiceCore.Workflows;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServicePolicy(EntityContext ectx, 
-        ServiceModule moduleService,
-        ServiceWuModule wuModuleService,
-        ServicePrinterModule printerModuleService,
-        ServiceSoftwareModule softwareModuleService,
-        ServiceCommandModule commandModuleService,
-        ServiceFileCopyModule fileCopyModuleService,
-        ServiceScriptModule scriptModuleService,
-        ServiceMessageModule messageModuleService,
-        ServiceWinPeModule winPeModuleService,
-        ServiceWingetModule wingetModuleService,
-        ServiceActiveClientPolicy activeClientPolicyService
-        )
+    public class ServicePolicy(ServiceContext ctx)
     {
         public DtoActionResult AddPolicy(EntityPolicy policy)
         {
@@ -32,8 +19,8 @@ namespace Toems_ServiceCore.EntityServices
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
-                ectx.Uow.PolicyRepository.Insert(policy);
-                ectx.Uow.Save();
+                ctx.Uow.PolicyRepository.Insert(policy);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = policy.Id;
             }
@@ -52,14 +39,14 @@ namespace Toems_ServiceCore.EntityServices
             u.Archived = false;
             u.ArchiveDateTime = null;
             u.Name = u.Name.Split('#').First();
-            if (ectx.Uow.PolicyRepository.Exists(x => x.Name.Equals(u.Name)))
+            if (ctx.Uow.PolicyRepository.Exists(x => x.Name.Equals(u.Name)))
             {
                 return new DtoActionResult()
                     { ErrorMessage = "Could Not Restore Policy.  A Policy With The Name " + u.Name + " Already Exists" };
             }
 
-            ectx.Uow.PolicyRepository.Update(u, u.Id);
-            ectx.Uow.Save();
+            ctx.Uow.PolicyRepository.Update(u, u.Id);
+            ctx.Uow.Save();
 
             return new DtoActionResult() { Success = true, Id = u.Id };
         }
@@ -75,35 +62,35 @@ namespace Toems_ServiceCore.EntityServices
             u.Name = u.Name + "#" + DateTime.Now.ToString("MM-dd-yyyy_HH:mm");
             u.ArchiveDateTime = DateTime.Now;
 
-            var policyWithModules = ectx.Uow.PolicyRepository.GetDetailed(policyId);
+            var policyWithModules = ctx.Uow.PolicyRepository.GetDetailed(policyId);
             var moduleArchiveError = false;
 
             foreach (var m in policyWithModules.CommandModules)
-                if (!moduleService.ArchiveModule(m.Id, EnumModule.ModuleType.Command).Success)
+                if (!ctx.Module.ArchiveModule(m.Id, EnumModule.ModuleType.Command).Success)
                     moduleArchiveError = true;
             foreach (var m in policyWithModules.FileCopyModules)
-                if (!moduleService.ArchiveModule(m.Id, EnumModule.ModuleType.FileCopy).Success)
+                if (!ctx.Module.ArchiveModule(m.Id, EnumModule.ModuleType.FileCopy).Success)
                     moduleArchiveError = true;
             foreach (var m in policyWithModules.PrinterModules)
-                if (!moduleService.ArchiveModule(m.Id, EnumModule.ModuleType.Printer).Success)
+                if (!ctx.Module.ArchiveModule(m.Id, EnumModule.ModuleType.Printer).Success)
                     moduleArchiveError = true;
             foreach (var m in policyWithModules.ScriptModules)
-                if (!moduleService.ArchiveModule(m.Id, EnumModule.ModuleType.Script).Success)
+                if (!ctx.Module.ArchiveModule(m.Id, EnumModule.ModuleType.Script).Success)
                     moduleArchiveError = true;
             foreach (var m in policyWithModules.SoftwareModules)
-                if (!moduleService.ArchiveModule(m.Id, EnumModule.ModuleType.Software).Success)
+                if (!ctx.Module.ArchiveModule(m.Id, EnumModule.ModuleType.Software).Success)
                     moduleArchiveError = true;
             foreach (var m in policyWithModules.WuModules)
-                if (!moduleService.ArchiveModule(m.Id, EnumModule.ModuleType.Wupdate).Success)
+                if (!ctx.Module.ArchiveModule(m.Id, EnumModule.ModuleType.Wupdate).Success)
                     moduleArchiveError = true;
             foreach (var m in policyWithModules.MessageModules)
-                if (!moduleService.ArchiveModule(m.Id, EnumModule.ModuleType.Message).Success)
+                if (!ctx.Module.ArchiveModule(m.Id, EnumModule.ModuleType.Message).Success)
                     moduleArchiveError = true;
             foreach (var m in policyWithModules.WinPeModules)
-                if (!moduleService.ArchiveModule(m.Id, EnumModule.ModuleType.WinPE).Success)
+                if (!ctx.Module.ArchiveModule(m.Id, EnumModule.ModuleType.WinPE).Success)
                     moduleArchiveError = true;
-            ectx.Uow.GroupPolicyRepository.DeleteRange(x => x.PolicyId == policyId);
-            ectx.Uow.Save();
+            ctx.Uow.GroupPolicyRepository.DeleteRange(x => x.PolicyId == policyId);
+            ctx.Uow.Save();
             if (moduleArchiveError)
                 return new DtoActionResult()
                 {
@@ -113,8 +100,8 @@ namespace Toems_ServiceCore.EntityServices
                 };
             else
             {
-                ectx.Uow.PinnedPolicyRepository.DeleteRange(x => x.PolicyId == policyId);
-                ectx.Uow.Save();
+                ctx.Uow.PinnedPolicyRepository.DeleteRange(x => x.PolicyId == policyId);
+                ctx.Uow.Save();
                 return new DtoActionResult() { Id = u.Id, Success = true };
             }
 
@@ -127,8 +114,8 @@ namespace Toems_ServiceCore.EntityServices
             if (u == null) return new DtoActionResult { ErrorMessage = "Policy Not Found", Id = 0 };
             var activePolicy = GetActivePolicy(policyId);
             if (activePolicy != null) return new DtoActionResult() { ErrorMessage = "Active Policies Cannot Be Deleted.  You Must Deactivate It First.", Id = 0, Success = false };
-            ectx.Uow.PolicyRepository.Delete(policyId);
-            ectx.Uow.Save();
+            ctx.Uow.PolicyRepository.Delete(policyId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -137,20 +124,20 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityPolicy GetPolicy(int policyId)
         {
-            return ectx.Uow.PolicyRepository.GetById(policyId);
+            return ctx.Uow.PolicyRepository.GetById(policyId);
         }
 
         public List<EntityPolicy> SearchPolicies(DtoSearchFilterCategories filter)
         {
             if (filter.Limit == 0) filter.Limit = int.MaxValue;
             if (string.IsNullOrEmpty(filter.SearchText)) filter.SearchText = "";
-            var list = ectx.Uow.PolicyRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && !s.Archived).OrderBy(x => x.Name).ToList();
+            var list = ctx.Uow.PolicyRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && !s.Archived).OrderBy(x => x.Name).ToList();
             if (list.Count == 0) return list;
 
             var categoryFilterIds = new List<int>();
             foreach (var catName in filter.Categories)
             {
-                var category = ectx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
+                var category = ctx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
                 if (category != null)
                     categoryFilterIds.Add(category.Id);
             }
@@ -224,17 +211,17 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityPolicy> GetArchived(DtoSearchFilterCategories filter)
         {
-            return ectx.Uow.PolicyRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && s.Archived).OrderBy(x => x.Name).Take(filter.Limit).ToList();
+            return ctx.Uow.PolicyRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && s.Archived).OrderBy(x => x.Name).Take(filter.Limit).ToList();
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.PolicyRepository.Count(x => !x.Archived);
+            return ctx.Uow.PolicyRepository.Count(x => !x.Archived);
         }
 
         public string ArchivedCount()
         {
-            return ectx.Uow.PolicyRepository.Count(x => x.Archived);
+            return ctx.Uow.PolicyRepository.Count(x => x.Archived);
         }
 
         public DtoActionResult UpdatePolicy(EntityPolicy policy)
@@ -247,8 +234,8 @@ namespace Toems_ServiceCore.EntityServices
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
-                ectx.Uow.PolicyRepository.Update(policy, policy.Id);
-                ectx.Uow.Save();
+                ctx.Uow.PolicyRepository.Update(policy, policy.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = policy.Id;
             }
@@ -273,7 +260,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.PolicyRepository.Exists(h => h.Name == policy.Name))
+                if (ctx.Uow.PolicyRepository.Exists(h => h.Name == policy.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Policy With This Name Already Exists";
@@ -282,10 +269,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var originalPolicy = ectx.Uow.PolicyRepository.GetById(policy.Id);
+                var originalPolicy = ctx.Uow.PolicyRepository.GetById(policy.Id);
                 if (originalPolicy.Name != policy.Name)
                 {
-                    if (ectx.Uow.PolicyRepository.Exists(h => h.Name == policy.Name))
+                    if (ctx.Uow.PolicyRepository.Exists(h => h.Name == policy.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Policy With This Name Already Exists";
@@ -310,7 +297,7 @@ namespace Toems_ServiceCore.EntityServices
                     return new DtoActionResult() { ErrorMessage = "Could Not Determine A Policy Name" };
 
                 newName = u.Name + "_" + c;
-                if (!ectx.Uow.PolicyRepository.Exists(h => h.Name == newName))
+                if (!ctx.Uow.PolicyRepository.Exists(h => h.Name == newName))
                 {
                     break;
                 }
@@ -339,10 +326,10 @@ namespace Toems_ServiceCore.EntityServices
             foreach (var module in SearchAssignedPolicyModules(policyId, searchFilter))
             {
                 module.PolicyId = clonedPolicy.Id;
-                ectx.Uow.PolicyModulesRepository.Insert(module);
+                ctx.Uow.PolicyModulesRepository.Insert(module);
             }
 
-            ectx.Uow.Save();
+            ctx.Uow.Save();
 
             var categories = GetPolicyCategories(u.Id);
             foreach (var cat in categories)
@@ -350,7 +337,7 @@ namespace Toems_ServiceCore.EntityServices
                 cat.PolicyId = clonedPolicy.Id;
             }
 
-            new ServicePolicyCategory().AddOrUpdate(categories);
+            ctx.PolicyCategory.AddOrUpdate(categories);
 
 
             if (u.PolicyComCondition == EnumPolicy.PolicyComCondition.Selective)
@@ -361,7 +348,7 @@ namespace Toems_ServiceCore.EntityServices
                     com.PolicyId = clonedPolicy.Id;
                 }
 
-                new ServicePolicyComServer().AddOrUpdate(comServers);
+                ctx.PolicyComServer.AddOrUpdate(comServers);
             }
 
             return new DtoActionResult() { Id = clonedPolicy.Id, Success = true };
@@ -377,7 +364,7 @@ namespace Toems_ServiceCore.EntityServices
             if (filter.Limit == 0) filter.Limit = int.MaxValue;
             if (filter.IncludePrinter)
             {
-                listModules.AddRange(printerModuleService.SearchModules(catfilter).Select(printerModule => new DtoModule
+                listModules.AddRange(ctx.PrinterModule.SearchModules(catfilter).Select(printerModule => new DtoModule
                 {
                     Id = printerModule.Id,
                     Name = printerModule.Name,
@@ -389,7 +376,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (filter.IncludeSoftware)
             {
-                listModules.AddRange(softwareModuleService.SearchModules(catfilter).Select(softwareModule => new DtoModule
+                listModules.AddRange(ctx.SoftwareModule.SearchModules(catfilter).Select(softwareModule => new DtoModule
                 {
                     Id = softwareModule.Id,
                     Name = softwareModule.Name,
@@ -401,7 +388,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (filter.IncludeCommand)
             {
-                listModules.AddRange(commandModuleService.SearchModules(catfilter).Select(commandModule => new DtoModule
+                listModules.AddRange(ctx.CommandModule.SearchModules(catfilter).Select(commandModule => new DtoModule
                 {
                     Id = commandModule.Id,
                     Name = commandModule.Name,
@@ -413,7 +400,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (filter.IncludeWinget)
             {
-                listModules.AddRange(wingetModuleService.SearchModules(catfilter).Select(wingetModule => new DtoModule
+                listModules.AddRange(ctx.WingetModule.SearchModules(catfilter).Select(wingetModule => new DtoModule
                 {
                     Id = wingetModule.Id,
                     Name = wingetModule.Name,
@@ -425,7 +412,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (filter.IncludeFileCopy)
             {
-                listModules.AddRange(fileCopyModuleService.SearchModules(catfilter).Select(fileCopyModule => new DtoModule
+                listModules.AddRange(ctx.FileCopyModule.SearchModules(catfilter).Select(fileCopyModule => new DtoModule
                 {
                     Id = fileCopyModule.Id,
                     Name = fileCopyModule.Name,
@@ -437,7 +424,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (filter.IncludeWinPe)
             {
-                listModules.AddRange(winPeModuleService.SearchModules(catfilter).Select(winPeModule => new DtoModule
+                listModules.AddRange(ctx.WinPeModule.SearchModules(catfilter).Select(winPeModule => new DtoModule
                 {
                     Id = winPeModule.Id,
                     Name = winPeModule.Name,
@@ -449,7 +436,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (filter.IncludeMessage)
             {
-                listModules.AddRange(messageModuleService.SearchModules(catfilter).Select(messageModule => new DtoModule
+                listModules.AddRange(ctx.MessageModule.SearchModules(catfilter).Select(messageModule => new DtoModule
                 {
                     Id = messageModule.Id,
                     Name = messageModule.Name,
@@ -461,7 +448,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (filter.IncludeScript)
             {
-                listModules.AddRange(scriptModuleService.SearchModules(catfilter).Select(scriptModule => new DtoModule
+                listModules.AddRange(ctx.ScriptModule.SearchModules(catfilter).Select(scriptModule => new DtoModule
                 {
                     Id = scriptModule.Id,
                     Name = scriptModule.Name,
@@ -473,7 +460,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (filter.IncludeWu)
             {
-                listModules.AddRange(wuModuleService.SearchModules(catfilter).Select(wuModule => new DtoModule
+                listModules.AddRange(ctx.WuModule.SearchModules(catfilter).Select(wuModule => new DtoModule
                 {
                     Id = wuModule.Id,
                     Name = wuModule.Name,
@@ -486,7 +473,7 @@ namespace Toems_ServiceCore.EntityServices
             if (filter.IncludeUnassigned) //actually is only unassigned
             {
                 var modulesToRemove = new List<DtoModule>();
-                var allPolicies = ectx.Uow.PolicyRepository.Get();
+                var allPolicies = ctx.Uow.PolicyRepository.Get();
                 foreach (var policy in allPolicies)
                 {
                     var policyDetailed = GetDetailed(policy.Id);
@@ -551,13 +538,13 @@ namespace Toems_ServiceCore.EntityServices
             var list = new List<EntityPolicyModules>();
             if (filter.Limit == 0) filter.Limit = int.MaxValue;
 
-            foreach (var module in ectx.Uow.PolicyModulesRepository.Get(x => x.PolicyId == policyId))
+            foreach (var module in ctx.Uow.PolicyModulesRepository.Get(x => x.PolicyId == policyId))
             {
                 if (module.ModuleType == EnumModule.ModuleType.Printer)
                 {
                     if (filter.IncludePrinter)
                     {
-                        var pModule = printerModuleService.GetModule(module.ModuleId);
+                        var pModule = ctx.PrinterModule.GetModule(module.ModuleId);
                         if (pModule != null)
                         {
                             module.Name = pModule.Name;
@@ -569,7 +556,7 @@ namespace Toems_ServiceCore.EntityServices
                 {
                     if (filter.IncludeSoftware)
                     {
-                        var pModule = softwareModuleService.GetModule(module.ModuleId);
+                        var pModule = ctx.SoftwareModule.GetModule(module.ModuleId);
                         if (pModule != null)
                         {
                             module.Name = pModule.Name;
@@ -581,7 +568,7 @@ namespace Toems_ServiceCore.EntityServices
                 {
                     if (filter.IncludeCommand)
                     {
-                        var pModule = commandModuleService.GetModule(module.ModuleId);
+                        var pModule = ctx.CommandModule.GetModule(module.ModuleId);
                         if (pModule != null)
                         {
                             module.Name = pModule.Name;
@@ -593,7 +580,7 @@ namespace Toems_ServiceCore.EntityServices
                 {
                     if (filter.IncludeFileCopy)
                     {
-                        var pModule = fileCopyModuleService.GetModule(module.ModuleId);
+                        var pModule = ctx.FileCopyModule.GetModule(module.ModuleId);
                         if (pModule != null)
                         {
                             module.Name = pModule.Name;
@@ -605,7 +592,7 @@ namespace Toems_ServiceCore.EntityServices
                 {
                     if (filter.IncludeScript)
                     {
-                        var pModule = scriptModuleService.GetModule(module.ModuleId);
+                        var pModule = ctx.ScriptModule.GetModule(module.ModuleId);
                         if (pModule != null)
                         {
                             module.Name = pModule.Name;
@@ -617,7 +604,7 @@ namespace Toems_ServiceCore.EntityServices
                 {
                     if (filter.IncludeWu)
                     {
-                        var pModule = wuModuleService.GetModule(module.ModuleId);
+                        var pModule = ctx.WuModule.GetModule(module.ModuleId);
                         if (pModule != null)
                         {
                             module.Name = pModule.Name;
@@ -629,7 +616,7 @@ namespace Toems_ServiceCore.EntityServices
                 {
                     if (filter.IncludeMessage)
                     {
-                        var pModule = messageModuleService.GetModule(module.ModuleId);
+                        var pModule = ctx.MessageModule.GetModule(module.ModuleId);
                         if (pModule != null)
                         {
                             module.Name = pModule.Name;
@@ -641,7 +628,7 @@ namespace Toems_ServiceCore.EntityServices
                 {
                     if (filter.IncludeWinPe)
                     {
-                        var pModule = winPeModuleService.GetModule(module.ModuleId);
+                        var pModule = ctx.WinPeModule.GetModule(module.ModuleId);
                         if (pModule != null)
                         {
                             module.Name = pModule.Name;
@@ -653,7 +640,7 @@ namespace Toems_ServiceCore.EntityServices
                 {
                     if (filter.IncludeWinget)
                     {
-                        var pModule = wingetModuleService.GetModule(module.ModuleId);
+                        var pModule = ctx.WingetModule.GetModule(module.ModuleId);
                         if (pModule != null)
                         {
                             module.Name = pModule.Name;
@@ -671,49 +658,49 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityPolicyComServer> GetPolicyComServers(int policyId)
         {
-            return ectx.Uow.PolicyComServerRepository.Get(x => x.PolicyId == policyId);
+            return ctx.Uow.PolicyComServerRepository.Get(x => x.PolicyId == policyId);
         }
 
         public List<EntityGroup> GetPolicyGroups(int policyId)
         {
-            return ectx.Uow.PolicyRepository.GetPolicyGroups(policyId);
+            return ctx.Uow.PolicyRepository.GetPolicyGroups(policyId);
         }
 
         public List<EntityPolicyHistory> GetHistoryWithComputer(int policyId, DtoSearchFilter filter)
         {
-            return ectx.Uow.PolicyHistoryRepository.GetHistoryWithComputer(policyId, filter.Limit, filter.SearchText);
+            return ctx.Uow.PolicyHistoryRepository.GetHistoryWithComputer(policyId, filter.Limit, filter.SearchText);
         }
 
 
         public List<EntityPolicyCategory> GetPolicyCategories(int policyId)
         {
-            return ectx.Uow.PolicyCategoryRepository.Get(x => x.PolicyId == policyId);
+            return ctx.Uow.PolicyCategoryRepository.Get(x => x.PolicyId == policyId);
         }
 
         public List<EntityComputer> GetPolicyComputers(int policyId)
         {
-            return ectx.Uow.PolicyRepository.GetPolicyComputers(policyId);
+            return ctx.Uow.PolicyRepository.GetPolicyComputers(policyId);
         }
 
         public string AssignedModuleCount(int policyId)
         {
-            return ectx.Uow.PolicyModulesRepository.Count(x => x.PolicyId == policyId);
+            return ctx.Uow.PolicyModulesRepository.Count(x => x.PolicyId == policyId);
         }
 
         public PolicyModules GetDetailed(int policyId)
         {
-            return ectx.Uow.PolicyRepository.GetDetailed(policyId);
+            return ctx.Uow.PolicyRepository.GetDetailed(policyId);
         }
 
         public EntityActiveClientPolicy GetActivePolicy(int policyId)
         {
-            return ectx.Uow.ActiveClientPolicies.GetFirstOrDefault(x => x.PolicyId == policyId);
+            return ctx.Uow.ActiveClientPolicies.GetFirstOrDefault(x => x.PolicyId == policyId);
         }
 
         public List<EntityPolicyHashHistory> GetHashHistory(int policyId)
         {
             return
-                ectx.Uow.PolicyHashHistoryRepository.Get(x => x.PolicyId == policyId)
+                ctx.Uow.PolicyHashHistoryRepository.Get(x => x.PolicyId == policyId)
                     .OrderByDescending(x => x.ModifyTime)
                     .ToList();
         }
@@ -733,13 +720,13 @@ namespace Toems_ServiceCore.EntityServices
                 return result;
             }
 
-            return new Toems_Service.Workflows.ValidatePolicy().Validate(info.PolicyId);
+            return ctx.ValidatePolicy.Validate(info.PolicyId);
 
         }
 
         public string GetHashDetail(int policyId, string hash)
         {
-            var hashEntity = ectx.Uow.PolicyHashHistoryRepository.Get(x => x.PolicyId == policyId && x.Hash == hash).FirstOrDefault();
+            var hashEntity = ctx.Uow.PolicyHashHistoryRepository.Get(x => x.PolicyId == policyId && x.Hash == hash).FirstOrDefault();
             if (hashEntity == null) return string.Empty;
             var a = JsonConvert.DeserializeObject(hashEntity.Json);
             return JsonConvert.SerializeObject(a, Formatting.Indented);
@@ -752,7 +739,7 @@ namespace Toems_ServiceCore.EntityServices
             if (string.IsNullOrEmpty(policy.Hash))
                 return "new";
             var originalHash = policy.Hash;
-            var json = JsonConvert.SerializeObject(new Toems_Service.Workflows.ClientPolicyJson().Create(policyId));
+            var json = JsonConvert.SerializeObject(ctx.ClientPolicyJson.Create(policyId));
             var newHash = GetMd5Hash(json);
 
             if (policy.Frequency != EnumPolicy.Frequency.OncePerComputer && policy.Frequency != EnumPolicy.Frequency.OncePerUserPerComputer)
@@ -776,7 +763,7 @@ namespace Toems_ServiceCore.EntityServices
             if (policy.Archived)
                 return new DtoActionResult { ErrorMessage = "Archived Policies Cannot Be Activated", Id = 0 };
 
-            var validationResult = new ValidatePolicy().Validate(policyId);
+            var validationResult = ctx.ValidatePolicy.Validate(policyId);
             if (!validationResult.Success)
             {
                 return new DtoActionResult()
@@ -785,10 +772,10 @@ namespace Toems_ServiceCore.EntityServices
 
             var originalHash = policy.Hash;
             //Update the existing policies hash
-            var json = JsonConvert.SerializeObject(new Toems_Service.Workflows.ClientPolicyJson().Create(policyId));
+            var json = JsonConvert.SerializeObject(ctx.ClientPolicyJson.Create(policyId));
             var newHash = GetMd5Hash(json);
             policy.Hash = newHash;
-            ectx.Uow.PolicyRepository.Update(policy, policy.Id);
+            ctx.Uow.PolicyRepository.Update(policy, policy.Id);
             if (policy.Hash != originalHash)
             {
                 var policyHashHistory = new EntityPolicyHashHistory();
@@ -796,10 +783,10 @@ namespace Toems_ServiceCore.EntityServices
                 policyHashHistory.Hash = newHash;
                 policyHashHistory.Json = json;
                 policyHashHistory.ModifyTime = DateTime.UtcNow;
-                ectx.Uow.PolicyHashHistoryRepository.Insert(policyHashHistory);
+                ctx.Uow.PolicyHashHistoryRepository.Insert(policyHashHistory);
             }
 
-            ectx.Uow.Save();
+            ctx.Uow.Save();
 
             //verify the new hash was saved correctly
             var updatedHashPolicy = GetPolicy(policyId);
@@ -814,10 +801,10 @@ namespace Toems_ServiceCore.EntityServices
             var activeClientPolicy = new EntityActiveClientPolicy();
             activeClientPolicy.PolicyId = policy.Id;
             activeClientPolicy.PolicyJson = jsonWithHash;
-            activeClientPolicyService.InsertOrUpdate(activeClientPolicy);
+            ctx.ActiveClientPolicy.InsertOrUpdate(activeClientPolicy);
 
             //Verify hash one last time
-            var finalActivePolicy = activeClientPolicyService.Get(activeClientPolicy.Id);
+            var finalActivePolicy = ctx.ActiveClientPolicy.Get(activeClientPolicy.Id);
             if (finalActivePolicy == null) return new DtoActionResult { ErrorMessage = "Could Not Activate Policy", Id = 0 };
             //verify deserialization
             try
@@ -825,7 +812,7 @@ namespace Toems_ServiceCore.EntityServices
                 var deserializedClientPolicy = JsonConvert.DeserializeObject<DtoClientPolicy>(finalActivePolicy.PolicyJson);
                 if (deserializedClientPolicy.Hash != newHash)
                 {
-                    activeClientPolicyService.Delete(finalActivePolicy.Id);
+                    ctx.ActiveClientPolicy.Delete(finalActivePolicy.Id);
                     return new DtoActionResult { ErrorMessage = "Could Not Verify Hash", Id = 0 };
                 }
                 else
@@ -836,7 +823,7 @@ namespace Toems_ServiceCore.EntityServices
             }
             catch (Exception)
             {
-                activeClientPolicyService.Delete(finalActivePolicy.Id);
+                ctx.ActiveClientPolicy.Delete(finalActivePolicy.Id);
                 return new DtoActionResult { ErrorMessage = "Could Not Verify Client Policy Deserialization", Id = 0 };
                 //todo: add logging
             }
@@ -847,8 +834,8 @@ namespace Toems_ServiceCore.EntityServices
             var policy = GetPolicy(policyId);
             if (policy == null) return new DtoActionResult { ErrorMessage = "Policy Not Found", Id = 0 };
 
-            ectx.Uow.ActiveClientPolicies.DeleteRange(x => x.PolicyId == policyId);
-            ectx.Uow.Save();
+            ctx.Uow.ActiveClientPolicies.DeleteRange(x => x.PolicyId == policyId);
+            ctx.Uow.Save();
             //verify active policy was removed
             var activePolicy = GetActivePolicy(policyId);
             if (activePolicy == null)
@@ -865,16 +852,16 @@ namespace Toems_ServiceCore.EntityServices
         private void UpdateActiveGroups(int policyId)
         {
             //find all groups that use this policy and update their active json
-            var policyGroups = ectx.Uow.GroupPolicyRepository.Get(x => x.PolicyId == policyId);
+            var policyGroups = ctx.Uow.GroupPolicyRepository.Get(x => x.PolicyId == policyId);
             foreach (var policyGroup in policyGroups)
             {
-                new Toems_Service.Workflows.GenerateClientGroupPolicy().Execute(policyGroup.GroupId);
+                ctx.GenerateClientGroupPolicy.Execute(policyGroup.GroupId);
             }
         }
 
         public List<DtoPinnedPolicy> GetAllActiveStatus()
         {
-            return ectx.Uow.PolicyRepository.GetActivePolicyStatus();
+            return ctx.Uow.PolicyRepository.GetActivePolicyStatus();
         }
 
 

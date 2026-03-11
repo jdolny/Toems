@@ -1,26 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web;
-using YamlDotNet.Serialization;
-using System.Dynamic;
-using System.Net;
-using Toems_Common.Enum;
-using Toems_Service.Entity;
-using Toems_Common.Entity;
+﻿using System.Dynamic;
 using System.IO.Compression;
-using log4net;
-using Toems_DataModel;
-using YamlDotNet.Core;
+using System.Net;
 using Toems_Common;
-using System.Diagnostics;
+using Toems_Common.Entity;
+using Toems_Common.Enum;
+using Toems_DataModel;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
+using YamlDotNet.Serialization;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class WinGetManifestImporter(InfrastructureContext ictx, ServiceManifestDownload serviceManifestDownload)
+    public class WinGetManifestImporter(ServiceContext ctx)
     {
         private WebClient _webClient;
         private string _manifestDownloadUrl;
@@ -32,11 +23,11 @@ namespace Toems_Service.Workflows
 
         public void Run(string path = null)
         {
-            ictx.Log.Info("Starting Winget Manifest Import Process");
-            _manifestDownloadUrl = ictx.Settings.GetSettingValue(SettingStrings.WingetPackageSource);
-            ictx.Log.Debug("Manifest package url set to: " +  _manifestDownloadUrl);
+            ctx.Log.Info("Starting Winget Manifest Import Process");
+            _manifestDownloadUrl = ctx.Setting.GetSettingValue(SettingStrings.WingetPackageSource);
+            ctx.Log.Debug("Manifest package url set to: " +  _manifestDownloadUrl);
             if (path == null)
-                _basePath = ictx.Environment.ContentRootPath;
+                _basePath = ctx.Environment.ContentRootPath;
             _basePath = Path.Combine(path, "private", "winget_manifests");
             
             if (!DownloadManifests())
@@ -55,18 +46,18 @@ namespace Toems_Service.Workflows
 
             CleanupFiles();
 
-            ictx.Log.Info("Completed Winget Manifest Import Process");
+            ctx.Log.Info("Completed Winget Manifest Import Process");
 
         }
         private void ClearTables()
         {
-            ictx.Log.Info("Clearing Tables");
+            ctx.Log.Info("Clearing Tables");
             new ServiceRawSql().ExecuteQuery("truncate winget_installer_manifests;truncate winget_locale_manifests;truncate winget_version_manifests;");
         }
 
         private bool CleanupFiles()
         {
-            ictx.Log.Info("Cleaning Files");
+            ctx.Log.Info("Cleaning Files");
             var directory = Path.Combine(_basePath, "winget-pkgs-master");
             try
             {
@@ -82,7 +73,7 @@ namespace Toems_Service.Workflows
             }
             catch (Exception ex)
             {
-                ictx.Log.Error(ex.Message);
+                ctx.Log.Error(ex.Message);
                 return false;
             }
 
@@ -91,9 +82,9 @@ namespace Toems_Service.Workflows
 
         private bool ExtractManifests()
         {
-            ictx.Log.Info("Extracting Manifests");
+            ctx.Log.Info("Extracting Manifests");
             _manifestDownload.Status = EnumManifestImport.ImportStatus.Extracting;
-            serviceManifestDownload.Update(_manifestDownload);
+            ctx.ManifestDownload.Update(_manifestDownload);
             try
             {
                 var path = Path.Combine(_basePath, "master.zip");
@@ -108,22 +99,22 @@ namespace Toems_Service.Workflows
             }
             catch(Exception ex)
             {
-                ictx.Log.Info("Could not extract manifests");
-                ictx.Log.Error(ex.ToString());
+                ctx.Log.Info("Could not extract manifests");
+                ctx.Log.Error(ex.ToString());
                 _manifestDownload.ErrorMessage = "Could not extract manifests";
                 _manifestDownload.Status = EnumManifestImport.ImportStatus.Error;
-                serviceManifestDownload.Update(_manifestDownload);
+                ctx.ManifestDownload.Update(_manifestDownload);
             }
             return false;
            
         }
         private bool DownloadManifests()
         {
-            ictx.Log.Info("Downloading Updated Manifests");
+            ctx.Log.Info("Downloading Updated Manifests");
 
             _manifestDownload.Url = _manifestDownloadUrl;
             _manifestDownload.Status = EnumManifestImport.ImportStatus.Downloading;
-            serviceManifestDownload.Add(_manifestDownload);
+            ctx.ManifestDownload.Add(_manifestDownload);
             try
             {
                 using (_webClient = new WebClient())
@@ -134,11 +125,11 @@ namespace Toems_Service.Workflows
             }
             catch(Exception ex)
             {
-                ictx.Log.Info("Could not download manifests");
-                ictx.Log.Error(ex.ToString());
+                ctx.Log.Info("Could not download manifests");
+                ctx.Log.Error(ex.ToString());
                 _manifestDownload.ErrorMessage = "Could not download manifests";
                 _manifestDownload.Status = EnumManifestImport.ImportStatus.Error;
-                serviceManifestDownload.Update(_manifestDownload);
+                ctx.ManifestDownload.Update(_manifestDownload);
             }
             return false;
             
@@ -146,7 +137,7 @@ namespace Toems_Service.Workflows
      
         private bool ImportManifests()
         {
-            ictx.Log.Info("Importing Manifests");
+            ctx.Log.Info("Importing Manifests");
             var path = Path.Combine(_basePath, "winget-pkgs-master", "manifests");
             var allFiles = Directory.GetFiles(path, "*.yaml", SearchOption.AllDirectories);
             var deserializer = new DeserializerBuilder().Build();
@@ -157,7 +148,7 @@ namespace Toems_Service.Workflows
             var listOfLocales = new List<EntityWingetLocaleManifest>();
 
             _manifestDownload.Status = EnumManifestImport.ImportStatus.Importing;
-            serviceManifestDownload.Update(_manifestDownload);
+            ctx.ManifestDownload.Update(_manifestDownload);
 
             foreach (var file in allFiles)
             {
@@ -307,7 +298,7 @@ namespace Toems_Service.Workflows
 
             _manifestDownload.Status = EnumManifestImport.ImportStatus.Complete;
             _manifestDownload.DateDownloaded = DateTime.Now;
-            serviceManifestDownload.Update(_manifestDownload);
+            ctx.ManifestDownload.Update(_manifestDownload);
             return true;
         }
 

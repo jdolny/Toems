@@ -13,7 +13,7 @@ namespace Toems_ServiceCore.Infrastructure
     /// <summary>
     ///     Calculates the minimum sizes required for various hard drives / partitions for the client imaging process
     /// </summary>
-    public class ServiceClientPartition(InfrastructureContext ictx, FilesystemServices fileSystemService)
+    public class ServiceClientPartition(ServiceContext ctx)
     {
         private ImageProfileWithImage _imageProfile;
         private DtoImageSchema _imageSchema;
@@ -33,7 +33,7 @@ namespace Toems_ServiceCore.Infrastructure
                 }
                 else
                 {
-                    schema = fileSystemService.ReadSchemaFile(imageProfile.Image.Name);
+                    schema = ctx.Filessystem.ReadSchemaFile(imageProfile.Image.Name);
                 }
             }
 
@@ -179,7 +179,7 @@ namespace Toems_ServiceCore.Infrastructure
                 string imageFile = null;
                 foreach (var ext in new[] {"ntfs", "fat", "extfs", "hfsp", "imager", "xfs"})
                 {
-                    imageFile = fileSystemService.GetFileNameWithFullPath(imageProfile.Image.Name,
+                    imageFile = ctx.Filessystem.GetFileNameWithFullPath(imageProfile.Image.Name,
                         schemaHdNumber.ToString(), partition.Number,  ext);
 
                     if (!string.IsNullOrEmpty(imageFile))
@@ -223,7 +223,7 @@ namespace Toems_ServiceCore.Infrastructure
 
                         foreach (var ext in new[] {"ntfs", "fat", "extfs", "hfsp", "imager", "xfs"})
                         {
-                            imageFile = fileSystemService.GetLVMFileNameWithFullPath(imageProfile.Image.Name,
+                            imageFile = ctx.Filessystem.GetLVMFileNameWithFullPath(imageProfile.Image.Name,
                                 schemaHdNumber.ToString(), partition.VolumeGroup.Name, logicalVolume.Name, ext);
 
                             if (!string.IsNullOrEmpty(imageFile))
@@ -335,7 +335,7 @@ namespace Toems_ServiceCore.Infrastructure
                 string imageFile = null;
                 foreach (var ext in new[] {"ntfs", "fat", "extfs", "hfsp", "imager", "xfs"})
                 {
-                    imageFile = fileSystemService.GetLVMFileNameWithFullPath(_imageProfile.Image.Name,
+                    imageFile = ctx.Filessystem.GetLVMFileNameWithFullPath(_imageProfile.Image.Name,
                         hdNumberToGet.ToString(), lv.VolumeGroup, lv.Name, ext);
 
                     if (!string.IsNullOrEmpty(imageFile)) break;
@@ -458,7 +458,7 @@ namespace Toems_ServiceCore.Infrastructure
                     string imageFile = null;
                     foreach (var ext in new[] {"ntfs", "fat", "extfs", "hfsp", "imager", "winpe", "xfs"})
                     {
-                        imageFile = fileSystemService.GetFileNameWithFullPath(_imageProfile.Image.Name,
+                        imageFile = ctx.Filessystem.GetFileNameWithFullPath(_imageProfile.Image.Name,
                             hdNumberToGet.ToString(), partition.Number, ext);
 
                         if (!string.IsNullOrEmpty(imageFile)) break;

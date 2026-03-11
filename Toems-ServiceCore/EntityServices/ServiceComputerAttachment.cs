@@ -4,15 +4,15 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceComputerAttachment(EntityContext ectx)
+    public class ServiceComputerAttachment(ServiceContext ctx)
     {
         public DtoActionResult Add(EntityComputerAttachment attachment)
         {
             var actionResult = new DtoActionResult();
 
 
-            ectx.Uow.ComputerAttachmentRepository.Insert(attachment);
-            ectx.Uow.Save();
+            ctx.Uow.ComputerAttachmentRepository.Insert(attachment);
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = attachment.Id;
 

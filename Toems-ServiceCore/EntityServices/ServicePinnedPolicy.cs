@@ -4,15 +4,15 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServicePinnedPolicy(EntityContext ectx)
+    public class ServicePinnedPolicy(ServiceContext ctx)
     {
         public DtoActionResult Add(EntityPinnedPolicy pinnedPolicy)
         {
             var actionResult = new DtoActionResult();
-            var u = ectx.Uow.PinnedPolicyRepository.Get(x => x.PolicyId == pinnedPolicy.PolicyId && x.UserId == pinnedPolicy.UserId).FirstOrDefault();
+            var u = ctx.Uow.PinnedPolicyRepository.Get(x => x.PolicyId == pinnedPolicy.PolicyId && x.UserId == pinnedPolicy.UserId).FirstOrDefault();
             if (u != null) return new DtoActionResult() { ErrorMessage = "Policy Is Already Pinned" };
-            ectx.Uow.PinnedPolicyRepository.Insert(pinnedPolicy);
-            ectx.Uow.Save();
+            ctx.Uow.PinnedPolicyRepository.Insert(pinnedPolicy);
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = pinnedPolicy.Id;
 
@@ -22,10 +22,10 @@ namespace Toems_ServiceCore.EntityServices
         public DtoActionResult Delete(int policyId, int userId)
         {
             if (policyId == 0 || userId == 0) return new DtoActionResult() {ErrorMessage = "Policy Not Defined"};
-            var u = ectx.Uow.PinnedPolicyRepository.Get(x => x.PolicyId == policyId && x.UserId == userId).FirstOrDefault();
+            var u = ctx.Uow.PinnedPolicyRepository.Get(x => x.PolicyId == policyId && x.UserId == userId).FirstOrDefault();
             if (u == null) return new DtoActionResult() {ErrorMessage = "Pinned Policy Not Found"};
-            ectx.Uow.PinnedPolicyRepository.Delete(u.Id);
-            ectx.Uow.Save();
+            ctx.Uow.PinnedPolicyRepository.Delete(u.Id);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -34,7 +34,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityPinnedPolicy GetPinnedPolicy(int pinnedPolicyId)
         {
-            return ectx.Uow.PinnedPolicyRepository.GetById(pinnedPolicyId);
+            return ctx.Uow.PinnedPolicyRepository.GetById(pinnedPolicyId);
         }
     }
 }

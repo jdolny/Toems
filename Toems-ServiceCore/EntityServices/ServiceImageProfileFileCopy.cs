@@ -4,12 +4,12 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceImageProfileFileCopy(EntityContext ectx)
+    public class ServiceImageProfileFileCopy(ServiceContext ctx)
     {
         public DtoActionResult AddImageProfileFileCopy(EntityImageProfileFileCopy imageProfileFileCopy)
         {
-            ectx.Uow.ImageProfileFileCopyRepository.Insert(imageProfileFileCopy);
-            ectx.Uow.Save();
+            ctx.Uow.ImageProfileFileCopyRepository.Insert(imageProfileFileCopy);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = imageProfileFileCopy.Id;

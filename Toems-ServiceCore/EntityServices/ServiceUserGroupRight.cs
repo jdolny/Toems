@@ -4,18 +4,18 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceUserGroupRight(EntityContext ectx)
+    public class ServiceUserGroupRight(ServiceContext ctx)
     {
         public DtoActionResult AddUserGroupRights(List<EntityUserGroupRight> listOfRights)
         {
             if (!listOfRights.Any()) return new DtoActionResult();
             var userGroupId = listOfRights.First().UserGroupId;
-            ectx.Uow.UserGroupRightRepository.DeleteRange(x => x.UserGroupId == userGroupId);
-            ectx.Uow.Save();
+            ctx.Uow.UserGroupRightRepository.DeleteRange(x => x.UserGroupId == userGroupId);
+            ctx.Uow.Save();
 
             foreach (var right in listOfRights)
-                ectx.Uow.UserGroupRightRepository.Insert(right);
-            ectx.Uow.Save();
+                ctx.Uow.UserGroupRightRepository.Insert(right);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             return actionResult;

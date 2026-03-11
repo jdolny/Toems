@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Toems_Common.Entity;
+﻿using Toems_Common.Entity;
 using Toems_DataModel;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class GetMulticastServer(ServiceActiveMulticastSession serviceActiveMulticastSession)
+    public class GetMulticastServer(ServiceContext ctx)
     {
         private EntityGroup _group;
         private Random _random;
@@ -51,7 +46,7 @@ namespace Toems_Service.Workflows
             foreach (var mServer in availableMulticastServers)
             {
                 var counter =
-                    serviceActiveMulticastSession.GetAll()
+                    ctx.ActiveMulticastSession.GetAll()
                         .Count(x => x.ComServerId == mServer.ComServerId);
 
                 taskInUseDict.Add(mServer.ComServerId, counter);

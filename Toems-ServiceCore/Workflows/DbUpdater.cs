@@ -1,32 +1,27 @@
 ﻿using log4net;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Toems_Common;
 using Toems_Common.DbUpgrades;
 using Toems_Common.Dto;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class DbUpdater(ServiceVersion serviceVersion)
+    public class DbUpdater(ServiceContext ctx)
     {
         private readonly ServiceRawSql _rawSqlServices = new();
         private readonly ILog log = LogManager.GetLogger(typeof(DbUpdater));
         
         public DtoActionResult Update()
         {
-            var versions = serviceVersion.GetAllVersionInfo();
+            var versions = ctx.Version.GetAllVersionInfo();
             if (versions.DatabaseVersion == versions.TargetDbVersion)
                 return new DtoActionResult { Success = true };
 
             var result = new DtoActionResult();
 
             var updatesToRun = new List<int>();
-            var currentDbVersion = serviceVersion.Get(1).DatabaseVersion;
+            var currentDbVersion = ctx.Version.Get(1).DatabaseVersion;
             var currentAppVersion = SettingStrings.GlobalVersion;
             var versionMapping = new VersionMapping().Get();
             var targetDbVersion = versionMapping[currentAppVersion];

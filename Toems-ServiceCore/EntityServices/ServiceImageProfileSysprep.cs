@@ -4,12 +4,12 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceImageProfileSysprep(EntityContext ectx)
+    public class ServiceImageProfileSysprep(ServiceContext ctx)
     {
         public DtoActionResult AddImageProfileSysprep(EntityImageProfileSysprepTag imageProfileSysprep)
         {
-            ectx.Uow.ImageProfileSysprepRepository.Insert(imageProfileSysprep);
-            ectx.Uow.Save();
+            ctx.Uow.ImageProfileSysprepRepository.Insert(imageProfileSysprep);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = imageProfileSysprep.Id;

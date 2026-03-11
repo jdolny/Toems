@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceGroupMembership(EntityContext ectx)
+    public class ServiceGroupMembership(ServiceContext ctx)
     {
         public DtoActionResult AddMembership(List<EntityGroupMembership> groupMemberships)
         {
@@ -12,13 +12,13 @@ namespace Toems_ServiceCore.EntityServices
             foreach (var membership in groupMemberships)
             {
                 if (
-                    ectx.Uow.GroupMembershipRepository.Exists(
+                    ctx.Uow.GroupMembershipRepository.Exists(
                         x => x.ComputerId == membership.ComputerId && x.GroupId == membership.GroupId))
                     continue;
-                ectx.Uow.GroupMembershipRepository.Insert(membership);
+                ctx.Uow.GroupMembershipRepository.Insert(membership);
             }
 
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = 1;
 
@@ -27,8 +27,8 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool DeleteByIds(int computerId, int groupId)
         {
-            ectx.Uow.GroupMembershipRepository.DeleteRange(x => x.ComputerId == computerId && x.GroupId == groupId);
-            ectx.Uow.Save();
+            ctx.Uow.GroupMembershipRepository.DeleteRange(x => x.ComputerId == computerId && x.GroupId == groupId);
+            ctx.Uow.Save();
             return true;
         }
 

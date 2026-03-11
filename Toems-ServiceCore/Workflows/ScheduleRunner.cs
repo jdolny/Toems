@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using log4net;
-using Toems_Common.Entity;
+﻿using Toems_Common.Entity;
 using Toems_DataModel;
 using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class ScheduleRunner(InfrastructureContext ictx, PowerManagement powerManagement)
+    public class ScheduleRunner(ServiceContext ictx, PowerManagement powerManagement)
     {
         private readonly UnitOfWork _uow = new();
 

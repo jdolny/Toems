@@ -7,7 +7,7 @@ namespace Toems_ServiceCore.Infrastructure
     /// <summary>
     ///     Summary http://www.codeproject.com/Articles/769741/Csharp-AES-bits-Encryption-Library-with-Salt
     /// </summary>
-    public class EncryptionServices(ILog log, IConfigurationManager config)
+    public class EncryptionServices(ServiceContext ctx)
     {
         private byte[] AES_Decrypt(byte[] bytesToBeDecrypted, byte[] passwordBytes)
         {
@@ -74,12 +74,12 @@ namespace Toems_ServiceCore.Infrastructure
         public string DecryptText(string input)
         {
             if (input == null) {
-                log.Error("No input to decrypt! Provision key generated?");
+                ctx.Log.Error("No input to decrypt! Provision key generated?");
                 return null;
             }
 
             var bytesToBeDecrypted = Convert.FromBase64String(input);
-            var passwordBytes = Encoding.UTF8.GetBytes(config["DbEncryptionKey"]);
+            var passwordBytes = Encoding.UTF8.GetBytes(ctx.Config["DbEncryptionKey"]);
             passwordBytes = SHA256.Create().ComputeHash(passwordBytes);
 
 
@@ -92,7 +92,7 @@ namespace Toems_ServiceCore.Infrastructure
             }
             catch (Exception)
             {
-                log.Error("Could Not Decrypt Password.  Ensure Your Encryption Key is Correct.");
+                ctx.Log.Error("Could Not Decrypt Password.  Ensure Your Encryption Key is Correct.");
                 return null;
             }
         }
@@ -100,7 +100,7 @@ namespace Toems_ServiceCore.Infrastructure
         public string EncryptText(string input)
         {
             var bytesToBeEncrypted = Encoding.UTF8.GetBytes(input);
-            var passwordBytes = Encoding.UTF8.GetBytes(config["DbEncryptionKey"]);
+            var passwordBytes = Encoding.UTF8.GetBytes(ctx.Config["DbEncryptionKey"]);
 
             passwordBytes = SHA256.Create().ComputeHash(passwordBytes);
 

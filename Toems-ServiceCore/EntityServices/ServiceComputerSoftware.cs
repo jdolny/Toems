@@ -5,22 +5,22 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceComputerSoftware(EntityContext ectx)
+    public class ServiceComputerSoftware(ServiceContext ctx)
     {
         public DtoActionResult AddOrUpdate(List<EntitySoftwareInventory> inventory, int computerId)
         {
             var actionResult = new DtoActionResult();
-            var pToRemove = ectx.Uow.ComputerSoftwareRepository.Get(x => x.ComputerId == computerId);
+            var pToRemove = ctx.Uow.ComputerSoftwareRepository.Get(x => x.ComputerId == computerId);
             foreach (var software in inventory)
             {
                 var localSoftware = software;
-                var s = ectx.Uow.SoftwareInventoryRepository.GetFirstOrDefault(x => x.Name == localSoftware.Name && x.Version == localSoftware.Version);
+                var s = ctx.Uow.SoftwareInventoryRepository.GetFirstOrDefault(x => x.Name == localSoftware.Name && x.Version == localSoftware.Version);
                 //check if software exists before adding computer relationship
                 if (s == null)
                     continue;
 
                 var existingRelationship =
-                    ectx.Uow.ComputerSoftwareRepository.GetFirstOrDefault(
+                    ctx.Uow.ComputerSoftwareRepository.GetFirstOrDefault(
                         x => x.ComputerId == computerId && x.SoftwareId == s.Id);
 
                 if (existingRelationship == null)
@@ -28,7 +28,7 @@ namespace Toems_ServiceCore.EntityServices
                     existingRelationship = new EntityComputerSoftware();
                     existingRelationship.ComputerId = computerId;
                     existingRelationship.SoftwareId = s.Id;
-                    ectx.Uow.ComputerSoftwareRepository.Insert(existingRelationship);
+                    ctx.Uow.ComputerSoftwareRepository.Insert(existingRelationship);
                 }
                 else
                 {
@@ -39,10 +39,10 @@ namespace Toems_ServiceCore.EntityServices
             //anything left in pToRemove does not exist on that computer anymore
             foreach (var p in pToRemove)
             {
-                ectx.Uow.ComputerSoftwareRepository.Delete(p.Id);
+                ctx.Uow.ComputerSoftwareRepository.Delete(p.Id);
             }
 
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             actionResult.Success = true;
             return actionResult;
         }

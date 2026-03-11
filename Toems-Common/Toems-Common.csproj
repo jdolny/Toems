@@ -42,6 +42,9 @@
     <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
       <HintPath>..\packages\BouncyCastle.Cryptography.2.6.2\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -220,6 +223,8 @@
     <Compile Include="Dto\DtoToken.cs" />
     <Compile Include="Dto\DtoValidationResult.cs" />
     <Compile Include="Dto\DtoWolTask.cs" />
+    <Compile Include="Dto\FileHashingProgressArgs.cs" />
+    <Compile Include="Dto\FineUploaderResult.cs" />
     <Compile Include="Dto\formdata\ActiveTaskDTO.cs" />
     <Compile Include="Dto\formdata\AddComputerDTO.cs" />
     <Compile Include="Dto\formdata\CheckInTaskDTO.cs" />

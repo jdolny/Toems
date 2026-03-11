@@ -1,30 +1,15 @@
-﻿using log4net;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using log4net;
 using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Entity;
 using Toems_DataModel;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class CancelAllImagingTasks(EncryptionServices encryptionServices, 
-        ServiceClientComServer serviceClientComServer, 
-        ServiceSetting serviceSetting, 
-        ServiceActiveImagingTask activeImagingTask,
-        ServiceActiveMulticastSession activeMulticastSession,
-        ILog log, 
-        IConfiguration config)
+    public class CancelAllImagingTasks(ServiceContext ctx)
     {
 
         private EntityClientComServer _thisComServer;
@@ -35,8 +20,8 @@ namespace Toems_Service.Workflows
             var uow = new UnitOfWork();
             var comServers = uow.ClientComServerRepository.Get(x => x.IsTftpServer || x.IsMulticastServer);
 
-            var intercomKey = serviceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = encryptionServices.DecryptText(intercomKey);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
             var NoErrors = true;
             foreach (var com in comServers)
             {
@@ -50,17 +35,17 @@ namespace Toems_Service.Workflows
 
         public bool Execute()
         {
-            var guid = config["ComServerUniqueId"];
-            _thisComServer = serviceClientComServer.GetServerByGuid(guid);
+            var guid = ctx.Config["ComServerUniqueId"];
+            _thisComServer = ctx.ClientComServer.GetServerByGuid(guid);
             if (_thisComServer == null)
             {
-                log.Error($"Com Server With Guid {guid} Not Found");
+                ctx.Log.Error($"Com Server With Guid {guid} Not Found");
                 return false;
             }
 
             if (string.IsNullOrEmpty(_thisComServer.TftpPath))
             {
-                log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
+                ctx.Log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
                 return false;
             }
 
@@ -91,7 +76,7 @@ namespace Toems_Service.Workflows
                     }
                     catch (Exception ex)
                     {
-                        log.Error(ex.ToString());
+                        ctx.Log.Error(ex.ToString());
                         return false;
                     }
                 }
@@ -147,7 +132,7 @@ namespace Toems_Service.Workflows
                             }
                             catch (Exception ex)
                             {
-                                log.Error(ex.ToString());
+                                ctx.Log.Error(ex.ToString());
                             }
                         }
                         foreach (var p in Process.GetProcessesByName("udp-receiver"))
@@ -159,7 +144,7 @@ namespace Toems_Service.Workflows
                             }
                             catch (Exception ex)
                             {
-                                log.Error(ex.ToString());
+                                ctx.Log.Error(ex.ToString());
                             }
                         }
                         Thread.Sleep(200);
@@ -167,8 +152,8 @@ namespace Toems_Service.Workflows
                 }
             }
 
-            activeImagingTask.DeleteAll();
-            activeMulticastSession.DeleteAll();
+            ctx.ActiveImagingTask.DeleteAll();
+            ctx.ActiveMulticastSession.DeleteAll();
             return true;
         }
     }

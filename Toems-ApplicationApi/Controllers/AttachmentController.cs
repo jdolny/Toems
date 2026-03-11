@@ -31,11 +31,12 @@ namespace Toems_ApplicationApi.Controllers
         
         public HttpResponseMessage GetAttachment(int id, string token)
         {
-            var isValidToken = new ServiceBrowserToken().Use(token);
-            if (!isValidToken)
-            {
-                return new HttpResponseMessage(HttpStatusCode.NotFound);
-            }
+           // var isValidToken = new ServiceBrowserToken().Use(token);
+           return null;
+         //   if (!isValidToken)
+           // {
+          //      return new HttpResponseMessage(HttpStatusCode.NotFound);
+           // }
             
             var attachment = new ServiceAttachment().Get(id);
             if(attachment == null) return new HttpResponseMessage(HttpStatusCode.NotFound);

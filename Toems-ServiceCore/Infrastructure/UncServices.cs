@@ -4,11 +4,10 @@ using System.Runtime.InteropServices;
 using log4net;
 using Toems_Common;
 using Toems_ServiceCore.EntityServices;
-using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_ServiceCore
+namespace Toems_ServiceCore.Infrastructure
 {
-    public class UncServices(EncryptionServices encryption, ILog log, ServiceSetting settings) : IDisposable
+    public class UncServices(ServiceContext ctx) : IDisposable
     {
         private bool disposed;
         private string sDomain;
@@ -114,29 +113,29 @@ namespace Toems_ServiceCore
                 LastError = (int)returncode;
                 if (returncode != 1219 && returncode != 0)
                 {
-                    log.Error("Could Not Connect To: " + sUNCPath);
-                    log.Error("Error Code: " + returncode);
+                    ctx.Log.Error("Could Not Connect To: " + sUNCPath);
+                    ctx.Log.Error("Error Code: " + returncode);
                 }
                 return returncode == 0;
             }
             catch (Exception ex)
             {
                 LastError = Marshal.GetLastWin32Error();
-                log.Error("Could Not Connect To Share: " + sUNCPath);
-                log.Error(ex.Message);
+                ctx.Log.Error("Could Not Connect To Share: " + sUNCPath);
+                ctx.Log.Error(ex.Message);
                 return false;
             }
         }
 
         public bool NetUseWithCredentials()
         {
-            if(settings.GetSetting(SettingStrings.StorageType).Value == "Local")
+            if(ctx.Setting.GetSetting(SettingStrings.StorageType).Value == "Local")
             return true;
-            sUNCPath = settings.GetSetting(SettingStrings.StoragePath).Value.TrimEnd('\\'); //dont' know why, but mount fails if path ends with \
-            sUser = settings.GetSetting(SettingStrings.StorageUsername).Value;
+            sUNCPath = ctx.Setting.GetSetting(SettingStrings.StoragePath).Value.TrimEnd('\\'); //dont' know why, but mount fails if path ends with \
+            sUser = ctx.Setting.GetSetting(SettingStrings.StorageUsername).Value;
             sPassword =
-                encryption.DecryptText(settings.GetSetting(SettingStrings.StoragePassword).Value);
-            sDomain = settings.GetSetting(SettingStrings.StorageDomain).Value;
+                ctx.Encryption.DecryptText(ctx.Setting.GetSetting(SettingStrings.StoragePassword).Value);
+            sDomain = ctx.Setting.GetSetting(SettingStrings.StorageDomain).Value;
             uint returncode;
             try
             {
@@ -153,16 +152,16 @@ namespace Toems_ServiceCore
                 LastError = (int) returncode;
                 if (returncode != 1219 && returncode != 0)
                 {
-                    log.Error("Could Not Connect To Storage Location: " + sUNCPath);
-                    log.Error("Error Code: " + returncode);
+                    ctx.Log.Error("Could Not Connect To Storage Location: " + sUNCPath);
+                    ctx.Log.Error("Error Code: " + returncode);
                 }
                 return returncode == 0;
             }
             catch (Exception ex)
             {
                 LastError = Marshal.GetLastWin32Error();
-                log.Error("Could Not Connect To Share");
-                log.Error(ex.Message);
+                ctx.Log.Error("Could Not Connect To Share");
+                ctx.Log.Error(ex.Message);
                 return false;
             }
         }

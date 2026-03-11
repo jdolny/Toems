@@ -12,22 +12,18 @@ using Toems_ServiceCore.EntityServices;
 
 namespace Toems_ServiceCore.Infrastructure
 {
-    public class FilesystemServices(InfrastructureContext ictx,
-        UncServices uncService,
-        IWebHostEnvironment env,
-        ServiceClientComServer clientComServerService,
-        ServiceImage imageService)
+    public class FilesystemServices(ServiceContext ctx)
     {
         public bool DeleteModuleFile(EntityUploadedFile file)
         {
             if (file == null) return false;
             if (string.IsNullOrEmpty(file.Name) || file.Name == Path.DirectorySeparatorChar.ToString()) return false;
             if (string.IsNullOrEmpty(file.Guid) || file.Guid == Path.DirectorySeparatorChar.ToString()) return false;
-            var basePath = Path.Combine(ictx.Settings.GetSettingValue(SettingStrings.StoragePath), "software_uploads");
+            var basePath = Path.Combine(ctx.Setting.GetSettingValue(SettingStrings.StoragePath), "software_uploads");
             var fullPath = Path.Combine(basePath, file.Guid, file.Name);
 
 
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 try
                 {
@@ -36,14 +32,14 @@ namespace Toems_ServiceCore.Infrastructure
                 }
                 catch (Exception ex)
                 {
-                    ictx.Log.Error("Could Not Delete " + fullPath);
-                    ictx.Log.Error(ex.Message);
+                    ctx.Log.Error("Could Not Delete " + fullPath);
+                    ctx.Log.Error(ex.Message);
                     return false;
                 }
             }
             else
             {
-                ictx.Log.Error("Could Not Reach Storage Path");
+                ctx.Log.Error("Could Not Reach Storage Path");
                 return false;
             }
 
@@ -64,10 +60,10 @@ namespace Toems_ServiceCore.Infrastructure
             if (file == null) return false;
             if (string.IsNullOrEmpty(file.FileName) || file.FileName == Path.DirectorySeparatorChar.ToString()) return false;
             if (string.IsNullOrEmpty(file.ModuleGuid) || file.ModuleGuid == Path.DirectorySeparatorChar.ToString()) return false;
-            var basePath = Path.Combine(ictx.Settings.GetSettingValue(SettingStrings.StoragePath), "software_uploads");
+            var basePath = Path.Combine(ctx.Setting.GetSettingValue(SettingStrings.StoragePath), "software_uploads");
             var fullPath = Path.Combine(basePath, file.ModuleGuid, file.FileName);
             
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 try
                 {
@@ -76,14 +72,14 @@ namespace Toems_ServiceCore.Infrastructure
                 }
                 catch (Exception ex)
                 {
-                    ictx.Log.Error("Could Not Delete " + fullPath);
-                    ictx.Log.Error(ex.Message);
+                    ctx.Log.Error("Could Not Delete " + fullPath);
+                    ctx.Log.Error(ex.Message);
                     return false;
                 }
             }
             else
             {
-                ictx.Log.Error("Could Not Reach Storage Path");
+                ctx.Log.Error("Could Not Reach Storage Path");
                 return false;
             }
 
@@ -92,11 +88,11 @@ namespace Toems_ServiceCore.Infrastructure
         public bool DeleteModuleDirectory(string moduleGuid)
         {
             if (string.IsNullOrEmpty(moduleGuid) || moduleGuid == Path.DirectorySeparatorChar.ToString()) return false;
-            var basePath = Path.Combine(ictx.Settings.GetSettingValue(SettingStrings.StoragePath), "software_uploads");
+            var basePath = Path.Combine(ctx.Setting.GetSettingValue(SettingStrings.StoragePath), "software_uploads");
             var fullPath = Path.Combine(basePath, moduleGuid);
 
 
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 if (!Directory.Exists(fullPath)) return true;
                 try
@@ -106,13 +102,13 @@ namespace Toems_ServiceCore.Infrastructure
                 }
                 catch (Exception ex)
                 {
-                    ictx.Log.Error(ex.Message);
+                    ctx.Log.Error(ex.Message);
                     return false;
                 }
             }
             else
             {
-                ictx.Log.Error("Could Not Reach Storage Path");
+                ctx.Log.Error("Could Not Reach Storage Path");
                 return false;
             }
 
@@ -120,15 +116,15 @@ namespace Toems_ServiceCore.Infrastructure
         
         public List<string> GetLogContents(string name, int limit)
         {
-            var path = Path.Combine(env.ContentRootPath, "private", "logs", name);
+            var path = Path.Combine(ctx.Environment.ContentRootPath, "private", "logs", name);
             return File.ReadLines(path).Reverse().Take(limit).Reverse().ToList();
         }
 
         public List<string> GetComServerLogContents(string name, int limit, int comServerId)
         {
-            var comServer = clientComServerService.GetServer(comServerId);
-            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
+            var comServer = ctx.ClientComServer.GetServer(comServerId);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
             return new APICall().ClientComServerApi.GetComServerLogContents(comServer.Url, "", decryptedKey, name, limit);
         }
@@ -149,17 +145,17 @@ namespace Toems_ServiceCore.Infrastructure
         {
             var result = new List<string>();
 
-            var guid = ictx.Config["ComServerUniqueId"];
-            var thisComServer = clientComServerService.GetServerByGuid(guid);
+            var guid = ctx.Config["ComServerUniqueId"];
+            var thisComServer = ctx.ClientComServer.GetServerByGuid(guid);
             if (thisComServer == null)
             {
-                ictx.Log.Error($"Com Server With Guid {guid} Not Found");
+                ctx.Log.Error($"Com Server With Guid {guid} Not Found");
                 return result;
             }
 
             if (string.IsNullOrEmpty(thisComServer.TftpPath))
             {
-                ictx.Log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
+                ctx.Log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
                 return result;
             }
 
@@ -175,7 +171,7 @@ namespace Toems_ServiceCore.Infrastructure
 
             catch (Exception ex)
             {
-                ictx.Log.Error(ex.Message);
+                ctx.Log.Error(ex.Message);
             }
             return result;
         }
@@ -211,17 +207,17 @@ namespace Toems_ServiceCore.Infrastructure
         {
             var result = new List<string>();
 
-            var guid = ictx.Config["ComServerUniqueId"];
-            var thisComServer = clientComServerService.GetServerByGuid(guid);
+            var guid = ctx.Config["ComServerUniqueId"];
+            var thisComServer = ctx.ClientComServer.GetServerByGuid(guid);
             if (thisComServer == null)
             {
-                ictx.Log.Error($"Com Server With Guid {guid} Not Found");
+                ctx.Log.Error($"Com Server With Guid {guid} Not Found");
                 return result;
             }
 
             if (string.IsNullOrEmpty(thisComServer.TftpPath))
             {
-                ictx.Log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
+                ctx.Log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
                 return result;
             }
 
@@ -237,17 +233,17 @@ namespace Toems_ServiceCore.Infrastructure
 
             catch (Exception ex)
             {
-                ictx.Log.Error(ex.Message);
+                ctx.Log.Error(ex.Message);
             }
             return result;
         }
 
         public List<DtoImageFileInfo> GetPartitionFileSize(string imageName, string hd, string partition)
         {
-            var basePath = ictx.Settings.GetSettingValue(SettingStrings.StoragePath);
+            var basePath = ctx.Setting.GetSettingValue(SettingStrings.StoragePath);
             var imageFileInfo = new DtoImageFileInfo();
 
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 try
                 {
@@ -267,13 +263,13 @@ namespace Toems_ServiceCore.Infrastructure
                 }
                 catch (Exception ex)
                 {
-                    ictx.Log.Error(ex.Message);
+                    ctx.Log.Error(ex.Message);
                     return null;
                 }
             }
             else
             {
-                ictx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + uncService.LastError);
+                ctx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + ctx.Unc.LastError);
             }
 
 
@@ -284,15 +280,16 @@ namespace Toems_ServiceCore.Infrastructure
         public bool CheckImageExists(int imageId)
         {
             //storage type is set to smb, get this current com server's storage
-            var guid = ictx.Config["ComServerUniqueId"];
-            var thisComServer = clientComServerService.GetServerByGuid(guid);
+            var guid = ctx.Config["ComServerUniqueId"];
+
+            var thisComServer = ctx.ClientComServer.GetServerByGuid(guid);
             if (thisComServer == null)
             {
-                ictx.Log.Error($"Com Server With Guid {guid} Not Found");
+                ctx.Log.Error($"Com Server With Guid {guid} Not Found");
                 return false;
             }
 
-            var image = imageService.GetImage(imageId);
+            var image = ctx.Image.GetImage(imageId);
 
             var basePath = thisComServer.LocalStoragePath;
 
@@ -328,10 +325,10 @@ namespace Toems_ServiceCore.Infrastructure
             //Check again
             if (string.IsNullOrEmpty(imageName)) return false;
 
-            var basePath = ictx.Settings.GetSettingValue(SettingStrings.StoragePath);
+            var basePath = ctx.Setting.GetSettingValue(SettingStrings.StoragePath);
 
 
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 try
                 {
@@ -341,13 +338,13 @@ namespace Toems_ServiceCore.Infrastructure
                 }
                 catch (Exception ex)
                 {
-                    ictx.Log.Error(ex.Message);
+                    ctx.Log.Error(ex.Message);
                     return false;
                 }
             }
             else
             {
-                ictx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + uncService.LastError);
+                ctx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + ctx.Unc.LastError);
                 return false;
 
             }
@@ -359,9 +356,9 @@ namespace Toems_ServiceCore.Infrastructure
             //Check again
             if (string.IsNullOrEmpty(oldName) || string.IsNullOrEmpty(newName)) return false;
 
-            var basePath = ictx.Settings.GetSettingValue(SettingStrings.StoragePath);
+            var basePath = ctx.Setting.GetSettingValue(SettingStrings.StoragePath);
 
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 try
                 {
@@ -371,13 +368,13 @@ namespace Toems_ServiceCore.Infrastructure
                 }
                 catch (Exception ex)
                 {
-                    ictx.Log.Error(ex.Message);
+                    ctx.Log.Error(ex.Message);
                     return false;
                 }
             }
             else
             {
-                ictx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + uncService.LastError);
+                ctx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + ctx.Unc.LastError);
                 return false;
 
             }
@@ -387,11 +384,11 @@ namespace Toems_ServiceCore.Infrastructure
         {
 
             var schemaText = "";
-            var basePath = ictx.Settings.GetSettingValue(SettingStrings.StoragePath);
+            var basePath = ctx.Setting.GetSettingValue(SettingStrings.StoragePath);
             var path = basePath + "images" + Path.DirectorySeparatorChar +
                        imageName + Path.DirectorySeparatorChar + "schema";
 
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 try
                 {
@@ -402,13 +399,13 @@ namespace Toems_ServiceCore.Infrastructure
                 }
                 catch (Exception ex)
                 {
-                    ictx.Log.Error("Could Not Read Schema File.");
-                    ictx.Log.Error(ex.Message);
+                    ctx.Log.Error("Could Not Read Schema File.");
+                    ctx.Log.Error(ex.Message);
                 }
             }
             else
             {
-                ictx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + uncService.LastError);
+                ctx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + ctx.Unc.LastError);
                 return null;
             }
             
@@ -417,10 +414,10 @@ namespace Toems_ServiceCore.Infrastructure
 
         public string GetHdFileSize(string imageName, string hd)
         {
-            var basePath = ictx.Settings.GetSettingValue(SettingStrings.StoragePath);
+            var basePath = ctx.Setting.GetSettingValue(SettingStrings.StoragePath);
 
 
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 try
                 {
@@ -436,7 +433,7 @@ namespace Toems_ServiceCore.Infrastructure
             }
             else
             {
-                ictx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + uncService.LastError);
+                ctx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + ctx.Unc.LastError);
                 return "N/A";
             }
 
@@ -445,16 +442,16 @@ namespace Toems_ServiceCore.Infrastructure
 
         public List<string> GetComServerLogs(int comServerId)
         {
-            var comServer = clientComServerService.GetServer(comServerId);
-            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
+            var comServer = ctx.ClientComServer.GetServer(comServerId);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
             return new APICall().ClientComServerApi.GetComServerLogs(comServer.Url, "", decryptedKey);
         }
 
         public List<string> GetLogs()
         {
-            var logPath = env.ContentRootPath + Path.DirectorySeparatorChar + "private" +
+            var logPath = ctx.Environment.ContentRootPath + Path.DirectorySeparatorChar + "private" +
                           Path.DirectorySeparatorChar + "logs" + Path.DirectorySeparatorChar;
 
             var logFiles = Directory.GetFiles(logPath, "*.*");
@@ -468,13 +465,13 @@ namespace Toems_ServiceCore.Infrastructure
 
         public DtoFreeSpace GetSMBFreeSpace()
         {
-            var storageType = ictx.Settings.GetSettingValue(SettingStrings.StorageType);
+            var storageType = ctx.Setting.GetSettingValue(SettingStrings.StorageType);
             if (storageType.Equals("Local")) return null; //no smb share setup
 
             var dpFreeSpace = new DtoFreeSpace();
-            var basePath = ictx.Settings.GetSettingValue(SettingStrings.StoragePath);
+            var basePath = ctx.Setting.GetSettingValue(SettingStrings.StoragePath);
 
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 ulong freespace = 0;
                 ulong total = 0;
@@ -500,7 +497,7 @@ namespace Toems_ServiceCore.Infrastructure
             }
             else
             {
-                ictx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + uncService.LastError);
+                ctx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + ctx.Unc.LastError);
             }
             
             return dpFreeSpace;
@@ -511,11 +508,11 @@ namespace Toems_ServiceCore.Infrastructure
             var dpFreeSpace = new DtoFreeSpace();
             string path = string.Empty;
 
-                var guid = ictx.Config["ComServerUniqueId"];
-                var thisComServer = clientComServerService.GetServerByGuid(guid);
+                var guid = ctx.Config["ComServerUniqueId"];
+                var thisComServer = ctx.ClientComServer.GetServerByGuid(guid);
                 if (thisComServer == null)
                 {
-                    ictx.Log.Error($"Com Server With Guid {guid} Not Found");
+                    ctx.Log.Error($"Com Server With Guid {guid} Not Found");
                     return null;
                 }
 
@@ -602,7 +599,7 @@ namespace Toems_ServiceCore.Infrastructure
             }
             catch (Exception ex)
             {
-                ictx.Log.Error(ex.Message);
+                ctx.Log.Error(ex.Message);
                 return false;
             }
         }
@@ -625,9 +622,9 @@ namespace Toems_ServiceCore.Infrastructure
 
             var filePath = "";
 
-            var basePath = ictx.Settings.GetSettingValue(SettingStrings.StoragePath);
+            var basePath = ctx.Setting.GetSettingValue(SettingStrings.StoragePath);
 
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 var imagePath = basePath + "images" +
                                 Path.DirectorySeparatorChar + imageName + Path.DirectorySeparatorChar + "hd" +
@@ -641,12 +638,12 @@ namespace Toems_ServiceCore.Infrastructure
                 }
                 catch (Exception ex)
                 {
-                    ictx.Log.Error(ex.Message);
+                    ctx.Log.Error(ex.Message);
                 }
             }
             else
             {
-                ictx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + uncService.LastError);
+                ctx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + ctx.Unc.LastError);
                 return "N/A";
             }
             
@@ -660,7 +657,7 @@ namespace Toems_ServiceCore.Infrastructure
             var filePath = "";
 
 
-                if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+                if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
                 {
                     var imagePath = basePath + "images" +
                                 Path.DirectorySeparatorChar + imageName + Path.DirectorySeparatorChar + "hd" +
@@ -674,12 +671,12 @@ namespace Toems_ServiceCore.Infrastructure
                     }
                     catch (Exception ex)
                     {
-                        ictx.Log.Error(ex.Message);
+                        ctx.Log.Error(ex.Message);
                     }
                 }
                 else
                 {
-                    ictx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + uncService.LastError);
+                    ctx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + ctx.Unc.LastError);
                     return "N/A";
                 }
             
@@ -695,10 +692,10 @@ namespace Toems_ServiceCore.Infrastructure
 
             var filePath = "";
 
-            var basePath = ictx.Settings.GetSettingValue(SettingStrings.StoragePath);
+            var basePath = ctx.Setting.GetSettingValue(SettingStrings.StoragePath);
 
 
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 var imagePath = basePath + "images" +
                                 Path.DirectorySeparatorChar + imageName + Path.DirectorySeparatorChar + "hd" +
@@ -713,12 +710,12 @@ namespace Toems_ServiceCore.Infrastructure
                 }
                 catch (Exception ex)
                 {
-                    ictx.Log.Error(ex.Message);
+                    ctx.Log.Error(ex.Message);
                 }
             }
             else
             {
-                ictx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + uncService.LastError);
+                ctx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + ctx.Unc.LastError);
                 return "N/A";
             }
 
@@ -736,7 +733,7 @@ namespace Toems_ServiceCore.Infrastructure
             var filePath = "";
 
 
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 var imagePath = basePath + "images" +
                                 Path.DirectorySeparatorChar + imageName + Path.DirectorySeparatorChar + "hd" +
@@ -751,12 +748,12 @@ namespace Toems_ServiceCore.Infrastructure
                 }
                 catch (Exception ex)
                 {
-                    ictx.Log.Error(ex.Message);
+                    ctx.Log.Error(ex.Message);
                 }
             }
             else
             {
-                ictx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + uncService.LastError);
+                ctx.Log.Error("Failed to connect to " + basePath + "\r\nLastError = " + ctx.Unc.LastError);
                 return "N/A";
             }
             
@@ -798,16 +795,16 @@ namespace Toems_ServiceCore.Infrastructure
         public string GetDefaultBootMenuPath(string type,int comServerId)
         {
             string path = null;
-            var comServer = clientComServerService.GetServer(comServerId);
+            var comServer = ctx.ClientComServer.GetServer(comServerId);
             var tftpPath = comServer.TftpPath;
-            var mode = ictx.Settings.GetSettingValue(SettingStrings.PxeBootloader);
-            var proxyDhcp = ictx.Settings.GetSettingValue(SettingStrings.ProxyDhcpEnabled);
+            var mode = ctx.Setting.GetSettingValue(SettingStrings.PxeBootloader);
+            var proxyDhcp = ctx.Setting.GetSettingValue(SettingStrings.ProxyDhcpEnabled);
 
             if (proxyDhcp == "Yes")
             {
-                var biosFile = ictx.Settings.GetSettingValue(SettingStrings.ProxyBiosBootloader);
-                var efi32File = ictx.Settings.GetSettingValue(SettingStrings.ProxyEfi32Bootloader);
-                var efi64File = ictx.Settings.GetSettingValue(SettingStrings.ProxyEfi64Bootloader);
+                var biosFile = ctx.Setting.GetSettingValue(SettingStrings.ProxyBiosBootloader);
+                var efi32File = ctx.Setting.GetSettingValue(SettingStrings.ProxyEfi32Bootloader);
+                var efi64File = ctx.Setting.GetSettingValue(SettingStrings.ProxyEfi64Bootloader);
 
                 if (type == "bios")
                 {
@@ -873,7 +870,7 @@ namespace Toems_ServiceCore.Infrastructure
             }
             catch (Exception ex)
             {
-                ictx.Log.Error(ex.Message);
+                ctx.Log.Error(ex.Message);
                 fileText = "Could Not Read File";
             }
 
@@ -895,7 +892,7 @@ namespace Toems_ServiceCore.Infrastructure
 
             catch (Exception ex)
             {
-                ictx.Log.Error(ex.Message);
+                ctx.Log.Error(ex.Message);
                 return false;
             }
         }

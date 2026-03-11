@@ -7,27 +7,27 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceVersion(EntityContext ectx)
+    public class ServiceVersion(ServiceContext ctx)
     {
         public bool FirstRunCompleted()
         {
-            return Convert.ToBoolean(ectx.Uow.VersionRepository.GetById(1).FirstRunCompleted);
+            return Convert.ToBoolean(ctx.Uow.VersionRepository.GetById(1).FirstRunCompleted);
         }
 
         public EntityVersion GetVersions()
         {
-            return ectx.Uow.VersionRepository.GetById(1);
+            return ctx.Uow.VersionRepository.GetById(1);
         }
 
         public EntityVersion Get(int versionId)
         {
-            return ectx.Uow.VersionRepository.GetById(versionId);
+            return ctx.Uow.VersionRepository.GetById(versionId);
         }
 
         public DtoActionResult Update(EntityVersion version)
         {
-            ectx.Uow.VersionRepository.Update(version, version.Id);
-            ectx.Uow.Save();
+            ctx.Uow.VersionRepository.Update(version, version.Id);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = version.Id;
@@ -37,7 +37,7 @@ namespace Toems_ServiceCore.EntityServices
         public DtoVersion GetAllVersionInfo()
         {
             var versionDto = new DtoVersion();
-            var dbversions = ectx.Uow.VersionRepository.GetById(1);
+            var dbversions = ctx.Uow.VersionRepository.GetById(1);
             versionDto.DatabaseVersion = dbversions.DatabaseVersion;
             var versionMapping = new VersionMapping().Get();
             versionDto.TargetDbVersion = versionMapping[SettingStrings.GlobalVersion];

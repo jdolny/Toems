@@ -1,32 +1,22 @@
-﻿using log4net;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
+﻿using System.Diagnostics;
+using log4net;
 using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class MulticastArguments(InfrastructureContext ictx, ServiceClientComServer serviceClientComServer, FilesystemServices filesystemServices)
+    public class MulticastArguments(ServiceContext ctx)
     {
         private readonly ILog log = LogManager.GetLogger(typeof(MulticastArguments));
         private EntityClientComServer _thisComServer;
         public int RunOnComServer(DtoMulticastArgs mArgs, EntityClientComServer comServer)
         {
-            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
 
             var pid = new APICall().ClientComServerApi.StartUdpSender(comServer.Url, "", decryptedKey, mArgs);
@@ -36,8 +26,8 @@ namespace Toems_Service.Workflows
         public int GenerateProcessArguments(DtoMulticastArgs mArgs)
         {
 
-            var guid = ictx.Config["ComServerUniqueId"];
-            _thisComServer = serviceClientComServer.GetServerByGuid(guid);
+            var guid = ctx.Config["ComServerUniqueId"];
+            _thisComServer = ctx.ClientComServer.GetServerByGuid(guid);
             if (_thisComServer == null)
             {
                 log.Error($"Com Server With Guid {guid} Not Found");
@@ -60,7 +50,7 @@ namespace Toems_Service.Workflows
                     string imageFile = null;
                     foreach (var ext in new[] { "ntfs", "fat", "extfs", "hfsp", "imager", "winpe", "xfs" })
                     {
-                        imageFile = filesystemServices.GetMulticastFileNameWithFullPath(mArgs.ImageName,
+                        imageFile = ctx.Filessystem.GetMulticastFileNameWithFullPath(mArgs.ImageName,
                             schemaCounter.ToString(), part.Number, ext,_thisComServer.LocalStoragePath);
 
                         if (!string.IsNullOrEmpty(imageFile)) break;
@@ -70,7 +60,7 @@ namespace Toems_Service.Workflows
                         if (part.VolumeGroup.LogicalVolumes == null) continue;
                         foreach (var lv in part.VolumeGroup.LogicalVolumes.Where(lv => lv.Active))
                         {
-                            imageFile = filesystemServices.GetMulticastLVMFileNameWithFullPath(mArgs.ImageName,
+                            imageFile = ctx.Filessystem.GetMulticastLVMFileNameWithFullPath(mArgs.ImageName,
                                 schemaCounter.ToString(), lv.VolumeGroup, lv.Name, ext,_thisComServer.LocalStoragePath);
                         }
                     }
@@ -155,7 +145,7 @@ namespace Toems_Service.Workflows
                     }
                     else
                     {
-                        var appPath = ictx.Environment.ContentRootPath + Path.DirectorySeparatorChar + "private" +
+                        var appPath = ctx.Environment.ContentRootPath + Path.DirectorySeparatorChar + "private" +
                                       Path.DirectorySeparatorChar + "apps" + Path.DirectorySeparatorChar;
 
                         string prefix = null;
@@ -220,7 +210,7 @@ namespace Toems_Service.Workflows
             var senderInfo = new ProcessStartInfo { FileName = shell, Arguments = processArguments };
 
             //Fix
-            var logPath = ictx.Environment.ContentRootPath + Path.DirectorySeparatorChar + "private" +
+            var logPath = ctx.Environment.ContentRootPath + Path.DirectorySeparatorChar + "private" +
                           Path.DirectorySeparatorChar + "logs" + Path.DirectorySeparatorChar + "multicast.log";
 
             var logText = Environment.NewLine + DateTime.Now.ToString("MM-dd-yy hh:mm") +

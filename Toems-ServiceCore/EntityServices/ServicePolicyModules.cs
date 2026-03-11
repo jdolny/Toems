@@ -4,18 +4,18 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServicePolicyModules(EntityContext ectx, ServicePolicy policyService)
+    public class ServicePolicyModules(ServiceContext ctx)
     {
         public DtoActionResult AddPolicyModules(List<EntityPolicyModules> policyModules)
         {
             var actionResult = new DtoActionResult();
             foreach (var policyModule in policyModules)
             {
-                var activePolicy = policyService.GetActivePolicy(policyModule.PolicyId);
+                var activePolicy = ctx.Policy.GetActivePolicy(policyModule.PolicyId);
                 if (activePolicy != null) return new DtoActionResult() { ErrorMessage = "Active Policies Cannot Be Updated.  You Must Deactivate It First." };
-                ectx.Uow.PolicyModulesRepository.Insert(policyModule);
+                ctx.Uow.PolicyModulesRepository.Insert(policyModule);
             }
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             actionResult.Success = true;
 
             return actionResult;
@@ -23,12 +23,12 @@ namespace Toems_ServiceCore.EntityServices
 
         public DtoActionResult AddPolicyModule(EntityPolicyModules policyModule)
         {
-            var activePolicy = policyService.GetActivePolicy(policyModule.PolicyId);
+            var activePolicy = ctx.Policy.GetActivePolicy(policyModule.PolicyId);
             if (activePolicy != null) return new DtoActionResult() { ErrorMessage = "Active Policies Cannot Be Updated.  You Must Deactivate It First." };
             var actionResult = new DtoActionResult();
 
-            ectx.Uow.PolicyModulesRepository.Insert(policyModule);
-            ectx.Uow.Save();
+            ctx.Uow.PolicyModulesRepository.Insert(policyModule);
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = policyModule.Id;
 
@@ -40,10 +40,10 @@ namespace Toems_ServiceCore.EntityServices
         {
             var u = GetPolicyModule(policyModuleId);
             if (u == null) return new DtoActionResult {ErrorMessage = "Policy Module Not Found", Id = 0};
-            var activePolicy = policyService.GetActivePolicy(u.PolicyId);
+            var activePolicy = ctx.Policy.GetActivePolicy(u.PolicyId);
             if (activePolicy != null) return new DtoActionResult() { ErrorMessage = "Active Policies Cannot Be Updated.  You Must Deactivate It First." };
-            ectx.Uow.PolicyModulesRepository.Delete(policyModuleId);
-            ectx.Uow.Save();
+            ctx.Uow.PolicyModulesRepository.Delete(policyModuleId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -52,19 +52,19 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityPolicyModules GetPolicyModule(int policyModuleId)
         {
-            return ectx.Uow.PolicyModulesRepository.GetById(policyModuleId);
+            return ctx.Uow.PolicyModulesRepository.GetById(policyModuleId);
         }
 
         public DtoActionResult UpdatePolicyModule(EntityPolicyModules policy)
         {
             var u = GetPolicyModule(policy.Id);
             if (u == null) return new DtoActionResult {ErrorMessage = "Policy Module Not Found", Id = 0};
-            var activePolicy = policyService.GetActivePolicy(u.PolicyId);
+            var activePolicy = ctx.Policy.GetActivePolicy(u.PolicyId);
             if (activePolicy != null) return new DtoActionResult() { ErrorMessage = "Active Policies Cannot Be Updated.  You Must Deactivate It First." };
             var actionResult = new DtoActionResult();
 
-            ectx.Uow.PolicyModulesRepository.Update(policy, policy.Id);
-            ectx.Uow.Save();
+            ctx.Uow.PolicyModulesRepository.Update(policy, policy.Id);
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = policy.Id;
 

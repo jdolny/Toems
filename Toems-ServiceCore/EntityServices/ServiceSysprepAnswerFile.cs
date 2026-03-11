@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceSysprepAnswerFile(EntityContext ectx)
+    public class ServiceSysprepAnswerFile(ServiceContext ctx)
     {
         public DtoActionResult Add(EntitySysprepAnswerfile answerFile)
         {
@@ -13,8 +13,8 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(answerFile, true);
             if (validationResult.Success)
             {
-                ectx.Uow.SysprepAnswerFileRepository.Insert(answerFile);
-                ectx.Uow.Save();
+                ctx.Uow.SysprepAnswerFileRepository.Insert(answerFile);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = answerFile.Id;
             }
@@ -31,8 +31,8 @@ namespace Toems_ServiceCore.EntityServices
             var u = GetAnswerFile(answerFileId);
             if (u == null) return new DtoActionResult { ErrorMessage = "Answer File Not Found", Id = 0 };
 
-            ectx.Uow.SysprepAnswerFileRepository.Delete(answerFileId);
-            ectx.Uow.Save();
+            ctx.Uow.SysprepAnswerFileRepository.Delete(answerFileId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -41,17 +41,17 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntitySysprepAnswerfile GetAnswerFile(int answerFileId)
         {
-            return ectx.Uow.SysprepAnswerFileRepository.GetById(answerFileId);
+            return ctx.Uow.SysprepAnswerFileRepository.GetById(answerFileId);
         }
 
         public List<EntitySysprepAnswerfile> GetAll()
         {
-            return ectx.Uow.SysprepAnswerFileRepository.Get().OrderBy(x => x.Name).ToList();
+            return ctx.Uow.SysprepAnswerFileRepository.Get().OrderBy(x => x.Name).ToList();
         }
 
         public EntitySysprepAnswerfile Get(int id)
         {
-            return ectx.Uow.SysprepAnswerFileRepository.GetById(id);
+            return ctx.Uow.SysprepAnswerFileRepository.GetById(id);
         }
 
         public DtoActionResult Update(EntitySysprepAnswerfile answerFile)
@@ -64,8 +64,8 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(answerFile, false);
             if (validationResult.Success)
             {
-                ectx.Uow.SysprepAnswerFileRepository.Update(answerFile, u.Id);
-                ectx.Uow.Save();
+                ctx.Uow.SysprepAnswerFileRepository.Update(answerFile, u.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = answerFile.Id;
             }
@@ -89,7 +89,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.SysprepAnswerFileRepository.Exists(h => h.Name == answerFile.Name))
+                if (ctx.Uow.SysprepAnswerFileRepository.Exists(h => h.Name == answerFile.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "An Answer File With This Name Already Exists";
@@ -98,10 +98,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var original = ectx.Uow.SysprepAnswerFileRepository.GetById(answerFile.Id);
+                var original = ctx.Uow.SysprepAnswerFileRepository.GetById(answerFile.Id);
                 if (original.Name != answerFile.Name)
                 {
-                    if (ectx.Uow.SysprepAnswerFileRepository.Exists(h => h.Name == answerFile.Name))
+                    if (ctx.Uow.SysprepAnswerFileRepository.Exists(h => h.Name == answerFile.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "An Answer File With This Name Already Exists";

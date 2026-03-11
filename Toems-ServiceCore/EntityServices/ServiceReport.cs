@@ -4,12 +4,12 @@ using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Enum;
 using Toems_DataModel;
-using Toems_Service;
 using Toems_ServiceCore.Infrastructure;
+using Toems_ServiceCore.Workflows;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceReport(EntityContext ectx, ServiceUser userService)
+    public class ServiceReport(ServiceContext ctx)
     {
         public List<DtoComputerUserLogins> GetUserLogins(string searchString)
         {
@@ -18,7 +18,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public DataSet GetInventory(List<DtoCustomComputerQuery> queries)
         {
-            var sql = new Toems_Service.Workflows.BuildReportSqlQuery().Run(queries);
+            var sql = ctx.BuildReportSqlQuery.Run(queries);
             if(sql == null) return null;
             return new RawSqlRepository().ExecuteReader(sql);
         }
@@ -27,24 +27,7 @@ namespace Toems_ServiceCore.EntityServices
         {
             return new RawSqlRepository().ExecuteCustomSqlReportReader(sql.Value);
         }
-
-        public DataSet GetAssetInventory(List<DtoCustomComputerQuery> queries)
-        {
-            var sql = new Toems_Service.Workflows.BuildAssetSqlQuery().Run(queries);
-            if (sql == null) return null;
-            return new RawSqlRepository().ExecuteReader(sql);
-        }
-
-        public List<DtoProcessWithTime> GetTopProcessTimes(DateTime dateCutoff, int limit)
-        {
-            return new ReportRepository().GetTopProcessTimes(dateCutoff,limit);
-        }
-
-        public List<DtoProcessWithCount> GetTopProcessCounts(DateTime dateCutoff, int limit)
-        {
-            return new ReportRepository().GetTopProcessCounts(dateCutoff, limit);
-        }
-
+        
         public DtoApiStringResponse GetCheckinCounts()
         {
             var uow = new UnitOfWork();
@@ -93,9 +76,9 @@ namespace Toems_ServiceCore.EntityServices
             return response;
         }
 
-        public bool SendSmartReport()
+        public async Task<bool> SendSmartReport()
         {
-            if (ectx.Settings.GetSettingValue(SettingStrings.SmtpEnabled) != "1")
+            if (ctx.Setting.GetSettingValue(SettingStrings.SmtpEnabled) != "1")
                 return true;
 
             var uow = new UnitOfWork();
@@ -132,7 +115,7 @@ namespace Toems_ServiceCore.EntityServices
                 }
                 else
                 {
-                    var rights = userService.GetUserRights(user.Id).Select(right => right.Right).ToList();
+                    var rights = ctx.User.GetUserRights(user.Id).Select(right => right.Right).ToList();
                     if (rights.Any(right => right == AuthorizationStrings.EmailSmart))
                     {
                         if (!string.IsNullOrEmpty(user.Email))
@@ -143,29 +126,23 @@ namespace Toems_ServiceCore.EntityServices
 
             foreach (var email in emailList)
             {
-                var mail = new MailServices
-                {
-                    Subject = "S.M.A.R.T Failure Report",
-                    Body = sb.ToString(),
-                    MailTo = email
-                };
+                await ctx.Mail.SendMailAsync(sb.ToString(), email, "S.M.A.R.T Failure Report");
 
-                mail.Send();
             }
 
             return true;
         }
 
-        public bool SendLowDiskSpaceReport()
+        public async Task<bool> SendLowDiskSpaceReport()
         {
-            if (ectx.Settings.GetSettingValue(SettingStrings.SmtpEnabled) != "1")
+            if (ctx.Setting.GetSettingValue(SettingStrings.SmtpEnabled) != "1")
                 return true;
 
             var uow = new UnitOfWork();
 
             var sb = new StringBuilder();
             var errorsFound = false;
-            var comServers = new Toems_Service.Workflows.ComServerFreeSpace().RunAllServers();
+            var comServers = ctx.ComServerFreeSpace.RunAllServers();
 
             sb.Append("The Following Com Servers Have Low Disk Space:\r\n\r\n");
             foreach (var comServer in comServers)
@@ -190,7 +167,7 @@ namespace Toems_ServiceCore.EntityServices
                 }
                 else
                 {
-                    var rights = userService.GetUserRights(user.Id).Select(right => right.Right).ToList();
+                    var rights = ctx.User.GetUserRights(user.Id).Select(right => right.Right).ToList();
                     if (rights.Any(right => right == AuthorizationStrings.EmailLowDiskSpace))
                     {
                         if (!string.IsNullOrEmpty(user.Email))
@@ -201,14 +178,7 @@ namespace Toems_ServiceCore.EntityServices
 
             foreach (var email in emailList)
             {
-                var mail = new MailServices
-                {
-                    Subject = "Com Server Low Disk Space",
-                    Body = sb.ToString(),
-                    MailTo = email
-                };
-
-                mail.Send();
+                await ctx.Mail.SendMailAsync(sb.ToString(), email, "Com Server Low Disk Space");
             }
 
             return true;

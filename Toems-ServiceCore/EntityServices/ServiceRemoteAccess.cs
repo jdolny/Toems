@@ -1,18 +1,18 @@
 ﻿using System.Net;
 using Newtonsoft.Json;
+using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
-using Toems_Service;
 using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceRemoteAccess(EntityContext ectx, ServiceClientComServer clientComServerService, UncServices uncService)
+    public class ServiceRemoteAccess(ServiceContext ctx)
     {
 
         public string GetRemotelyInstallArgs()
         {
-            var comServer = ectx.Uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
+            var comServer = ctx.Uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
             if (comServer == null)
             {
                 return "Error: Could Not Get Install Args.  No Remote Access Com Servers Were Found";
@@ -22,7 +22,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public int GetRemoteAccessServerCount()
         {
-            var result = ectx.Uow.ClientComServerRepository.Count(x => x.IsRemoteAccessServer);
+            var result = ctx.Uow.ClientComServerRepository.Count(x => x.IsRemoteAccessServer);
             if (string.IsNullOrEmpty(result)) return -1;
             return Convert.ToInt16(result);
         }
@@ -30,26 +30,26 @@ namespace Toems_ServiceCore.EntityServices
 
         public DtoActionResult UpdateComputerRemoteAccessId(DtoRemotelyConnectionInfo conInfo, string clientIdentity)
         {
-            var client = ectx.Uow.ComputerRepository.GetFirstOrDefault(x => x.Guid == clientIdentity);
+            var client = ctx.Uow.ComputerRepository.GetFirstOrDefault(x => x.Guid == clientIdentity);
             if (client == null) return new DtoActionResult() { ErrorMessage = "Client Not Found", Success = false };
             client.RemoteAccessId = conInfo.DeviceID;
-            ectx.Uow.ComputerRepository.Update(client, client.Id);
-            ectx.Uow.Save();
+            ctx.Uow.ComputerRepository.Update(client, client.Id);
+            ctx.Uow.Save();
             return new DtoActionResult() { Success = true, Id = client.Id };
         }
 
         public bool VerifyRemoteAccessInstalled(int comServerId)
         {
-            var comServer = ectx.Uow.ClientComServerRepository.GetById(comServerId);
-            var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+            var comServer = ctx.Uow.ClientComServerRepository.GetById(comServerId);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
             return new APICall().ClientComServerApi.VerifyRemoteAccessInstalled(comServer.Url, "", decryptedKey);
         }
 
         public DtoActionResult InitializeRemotelyServer(int comServerId)
         {
-            var comServer = ectx.Uow.ClientComServerRepository.GetById(comServerId);
+            var comServer = ctx.Uow.ClientComServerRepository.GetById(comServerId);
             if (comServer == null)
             {
                 return new DtoActionResult() { Success = false, ErrorMessage = "Com Server Not Found" };
@@ -89,8 +89,8 @@ namespace Toems_ServiceCore.EntityServices
             {
                 var remotelyInfo = JsonConvert.DeserializeObject<RemotelyInfo>(response);
                 comServer.RaUsername = remotelyUser.Username;
-                comServer.RaPasswordEncrypted = ectx.Encryption.EncryptText(remotelyUser.Password);
-                comServer.RaAuthHeaderEncrypted = ectx.Encryption.EncryptText(remotelyInfo.AuthHeader);
+                comServer.RaPasswordEncrypted = ctx.Encryption.EncryptText(remotelyUser.Password);
+                comServer.RaAuthHeaderEncrypted = ctx.Encryption.EncryptText(remotelyInfo.AuthHeader);
                 comServer.RaOrganizationId = remotelyInfo.OrganizationID;
             }
             catch
@@ -100,7 +100,7 @@ namespace Toems_ServiceCore.EntityServices
 
 
 
-            var result = clientComServerService.Update(comServer);
+            var result = ctx.ClientComServer.Update(comServer);
             if (result != null)
             {
                 if (result.Success)
@@ -120,12 +120,12 @@ namespace Toems_ServiceCore.EntityServices
             {
                 return "Error: This Computer Does Not Have The Remote Control Agent Installed.";
             }
-            var comServer = ectx.Uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
+            var comServer = ctx.Uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
             if (comServer == null)
             {
                 return "Error: No Remote Access Com Servers Were Found";
             }
-            var auth = ectx.Encryption.DecryptText(comServer.RaAuthHeaderEncrypted);
+            var auth = ctx.Encryption.DecryptText(comServer.RaAuthHeaderEncrypted);
             var response = new APICall().RemoteAccessApi.RemotelyUpdateWebRtc(comServer.RemoteAccessUrl, deviceId,rtcMode, auth);
             var result = response.Replace("\"", "");
             result = result.Replace("\\", "");
@@ -138,12 +138,12 @@ namespace Toems_ServiceCore.EntityServices
             {
                 return "Error: This Computer Does Not Have The Remote Control Agent Installed.";
             }
-            var comServer = ectx.Uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
+            var comServer = ctx.Uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
             if (comServer == null)
             {
                 return "Error: No Remote Access Com Servers Were Found";
             }
-            var auth = ectx.Encryption.DecryptText(comServer.RaAuthHeaderEncrypted);
+            var auth = ctx.Encryption.DecryptText(comServer.RaAuthHeaderEncrypted);
             var response = new APICall().RemoteAccessApi.RemotelyIsWebRtcEnabled(comServer.RemoteAccessUrl, deviceId, auth);
             var result = response.Replace("\"", "");
             result = result.Replace("\\", "");
@@ -156,12 +156,12 @@ namespace Toems_ServiceCore.EntityServices
             {
                 return "Error: This Computer Does Not Have The Remote Control Agent Installed.";
             }
-            var comServer = ectx.Uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
+            var comServer = ctx.Uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
             if (comServer == null)
             {
                 return "Error: No Remote Access Com Servers Were Found";
             }
-            var auth = ectx.Encryption.DecryptText(comServer.RaAuthHeaderEncrypted);
+            var auth = ctx.Encryption.DecryptText(comServer.RaAuthHeaderEncrypted);
             var response = new APICall().RemoteAccessApi.RemotelyIsDeviceOnline(comServer.RemoteAccessUrl, deviceId, auth);
             var result = response.Replace("\"", "");
             result = result.Replace("\\", "");
@@ -174,13 +174,13 @@ namespace Toems_ServiceCore.EntityServices
             {
                 return "Error: This Computer Does Not Have The Remote Control Agent Installed.";
             }
-            var comServer = ectx.Uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
+            var comServer = ctx.Uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
             if (comServer == null)
             {
                 return "Error: No Remote Access Com Servers Were Found";
             }
 
-            var auth = ectx.Encryption.DecryptText(comServer.RaAuthHeaderEncrypted);
+            var auth = ctx.Encryption.DecryptText(comServer.RaAuthHeaderEncrypted);
             var response = new APICall().RemoteAccessApi.GetRemoteUrl(comServer.RemoteAccessUrl, deviceId, auth);
             var result = response.Replace("\"", "");
             result = result.Replace("\\", "");
@@ -190,7 +190,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public DtoActionResult CopyAgentInstallerToStorage()
         {
-            var comServer = ectx.Uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
+            var comServer = ctx.Uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
             if (comServer == null)
             {
                 return new DtoActionResult() { Success = false, ErrorMessage = "No Remote Access Com Servers Were Found" };
@@ -205,10 +205,10 @@ namespace Toems_ServiceCore.EntityServices
 
         private void DownloadRemotelyFile(string remotelyUrl, string fileName)
         {
-            var destinationDir = Path.Combine(ectx.Settings.GetSettingValue(SettingStrings.StoragePath), "software_uploads", "99999999-9999-9999-9999-999999999999");
+            var destinationDir = Path.Combine(ctx.Setting.GetSettingValue(SettingStrings.StoragePath), "software_uploads", "99999999-9999-9999-9999-999999999999");
 
            
-                if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+                if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
                 {
                     var directory = new DirectoryInfo(destinationDir);
                     try
@@ -238,7 +238,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public DtoActionResult RunHealthCheck()
         {
-            var comServer = ectx.Uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
+            var comServer = ctx.Uow.ClientComServerRepository.Get(x => x.IsRemoteAccessServer).FirstOrDefault();
             if (comServer == null)
             {
                 return new DtoActionResult() { ErrorMessage = "No Active Remote Access Servers Were Found" };
@@ -256,7 +256,7 @@ namespace Toems_ServiceCore.EntityServices
             }
 
             //check api connection with auth header, should return false with fake device id
-            var auth = ectx.Encryption.DecryptText(comServer.RaAuthHeaderEncrypted);
+            var auth = ctx.Encryption.DecryptText(comServer.RaAuthHeaderEncrypted);
             var online = new APICall().RemoteAccessApi.RemotelyIsDeviceOnline(comServer.RemoteAccessUrl, "abc", auth);
             if(online == null)
                 return new DtoActionResult() { ErrorMessage = "Remote Access API Unauthorized" };
@@ -266,9 +266,9 @@ namespace Toems_ServiceCore.EntityServices
                 return new DtoActionResult() { ErrorMessage = "Remote Access API Unauthorized" };
 
             //verify files exist
-            var basePath = Path.Combine(ectx.Settings.GetSettingValue(SettingStrings.StoragePath), "software_uploads", "99999999-9999-9999-9999-999999999999");
+            var basePath = Path.Combine(ctx.Setting.GetSettingValue(SettingStrings.StoragePath), "software_uploads", "99999999-9999-9999-9999-999999999999");
 
-                if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+                if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
                 {
                     try
                     {

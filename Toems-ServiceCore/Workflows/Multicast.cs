@@ -1,22 +1,13 @@
-﻿
-using log4net;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class Multicast(InfrastructureContext ictx, GroupService serviceGroup, ServiceImageProfile serviceImageProfile,
+    public class Multicast(ServiceContext ictx, GroupService serviceGroup, ServiceImageProfile serviceImageProfile,
         ServiceClientComServer serviceClientComServer, ServicePort servicePort, ServiceActiveMulticastSession serviceActiveMulticastSession, 
         ServiceActiveImagingTask serviceActiveImagingTask, ServiceClientPartition serviceClientPartition, ServiceUser serviceUser, CreateTaskArguments createTaskArguments,
         GetMulticastServer getMulticastServer, MulticastArguments multicastArguments, TaskBootMenu taskBootMenu)

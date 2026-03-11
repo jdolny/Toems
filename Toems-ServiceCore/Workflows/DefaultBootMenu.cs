@@ -1,25 +1,16 @@
-﻿using log4net;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_DataModel;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class DefaultBootMenu(InfrastructureContext ictx, ServiceClientComServer serviceClientComServer, ServiceCustomBootMenu serviceCustomBootMenu, FilesystemServices filesystemServices)
+    public class DefaultBootMenu(ServiceContext ctx)
     {
         private const string NewLineChar = "\n";
         private readonly Regex _alphaNumericNoSpace = new Regex("[^a-zA-Z0-9]");
@@ -40,8 +31,8 @@ namespace Toems_Service.Workflows
             var uow = new UnitOfWork();
             var comServers = uow.ClientComServerRepository.Get(x => x.IsTftpServer);
 
-            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
             var NoErrors = true;
             foreach (var com in comServers)
             {
@@ -56,24 +47,24 @@ namespace Toems_Service.Workflows
         public bool Create(DtoBootMenuGenOptions bootOptions)
         {
             _defaultBoot = bootOptions;
-            var mode = ictx.Settings.GetSettingValue(SettingStrings.PxeBootloader);
+            var mode = ctx.Setting.GetSettingValue(SettingStrings.PxeBootloader);
 
-            var guid = ictx.Config["ComServerUniqueId"];
-            _thisComServer = serviceClientComServer.GetServerByGuid(guid);
+            var guid = ctx.Config["ComServerUniqueId"];
+            _thisComServer = ctx.ClientComServer.GetServerByGuid(guid);
             if (_thisComServer == null)
             {
-                ictx.Log.Error($"Com Server With Guid {guid} Not Found");
+                ctx.Log.Error($"Com Server With Guid {guid} Not Found");
                 return false;
             }
 
             if (string.IsNullOrEmpty(_thisComServer.TftpPath))
             {
-                ictx.Log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
+                ctx.Log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
                 return false;
             }
             
-            _globalComputerArgs = ictx.Settings.GetSettingValue(SettingStrings.GlobalImagingArguments);
-            _globalComputerArgs += $" display_sleep_time={ictx.Settings.GetSettingValue(SettingStrings.LieSleepTime)} ";
+            _globalComputerArgs = ctx.Setting.GetSettingValue(SettingStrings.GlobalImagingArguments);
+            _globalComputerArgs += $" display_sleep_time={ctx.Setting.GetSettingValue(SettingStrings.LieSleepTime)} ";
             var defaultCluster = new UnitOfWork().ComServerClusterRepository.Get(x => x.IsDefault).FirstOrDefault();
             var defaultImagingServers = new UnitOfWork().ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
 
@@ -89,15 +80,15 @@ namespace Toems_Service.Workflows
             {
                 foreach (var imageServer in defaultImagingServers)
                 {
-                    var url = serviceClientComServer.GetServer(imageServer.ComServerId).Url;
+                    var url = ctx.ClientComServer.GetServer(imageServer.ComServerId).Url;
                     _webPath += url + "clientimaging/ "; //adds a space delimiter
                 }
             }
             _webPath = _webPath.Trim(' ');
             _webPath += "\"";
 
-            var consoleRequiresLogin = ictx.Settings.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
-            var globalToken = ictx.Settings.GetSettingValue(SettingStrings.GlobalImagingToken);
+            var consoleRequiresLogin = ctx.Setting.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
+            var globalToken = ctx.Setting.GetSettingValue(SettingStrings.GlobalImagingToken);
             if (consoleRequiresLogin.Equals("False"))
                 _userToken = globalToken;
             else
@@ -145,7 +136,7 @@ namespace Toems_Service.Workflows
         private void CreateGrubMenu()
         {
             var customMenuEntries =
-                serviceCustomBootMenu.GetAll().Where(x => x.Type == "grub" && x.IsActive).OrderBy(x => x.Order).ThenBy(x => x.Name);
+                ctx.CustomBootMenu.GetAll().Where(x => x.Type == "grub" && x.IsActive).OrderBy(x => x.Order).ThenBy(x => x.Name);
             var defaultCustomEntry = customMenuEntries.FirstOrDefault(x => x.IsDefault);
 
             var grubMenu = new StringBuilder();
@@ -260,7 +251,7 @@ namespace Toems_Service.Workflows
                        "grub.cfg";
 
 
-            filesystemServices.WritePath(path, grubMenu.ToString());
+            ctx.Filessystem.WritePath(path, grubMenu.ToString());
           
         }
 
@@ -270,11 +261,11 @@ namespace Toems_Service.Workflows
             var iPxePath = _thisComServer.Url;
             if (iPxePath.Contains("https://")) 
             {
-                if (ictx.Settings.GetSettingValue(SettingStrings.IpxeSSL).Equals("False"))
+                if (ctx.Setting.GetSettingValue(SettingStrings.IpxeSSL).Equals("False"))
                 {
                     iPxePath = iPxePath.ToLower().Replace("https://", "http://");
                     var currentPort = iPxePath.Split(':').Last();
-                    iPxePath = iPxePath.Replace(currentPort, ictx.Settings.GetSettingValue(SettingStrings.IpxeHttpPort)) + "/clientimaging/";
+                    iPxePath = iPxePath.Replace(currentPort, ctx.Setting.GetSettingValue(SettingStrings.IpxeHttpPort)) + "/clientimaging/";
                 }
                 else
                     iPxePath += "clientimaging/";
@@ -284,7 +275,7 @@ namespace Toems_Service.Workflows
 
 
             var customMenuEntries =
-                serviceCustomBootMenu.GetAll()
+                ctx.CustomBootMenu.GetAll()
                     .Where(x => x.Type == "ipxe" && x.IsActive)
                     .OrderBy(x => x.Order)
                     .ThenBy(x => x.Name);
@@ -316,7 +307,7 @@ namespace Toems_Service.Workflows
             }
             ipxeMenu.Append("" + NewLineChar);
 
-            if (ictx.Settings.GetSettingValue(SettingStrings.IpxeRequiresLogin) == "True")
+            if (ctx.Setting.GetSettingValue(SettingStrings.IpxeRequiresLogin) == "True")
             {
                 ipxeMenu.Append(":bootLocal" + NewLineChar);
                 ipxeMenu.Append("exit 1" + NewLineChar);
@@ -410,14 +401,14 @@ namespace Toems_Service.Workflows
                        Path.DirectorySeparatorChar + "pxelinux.cfg" + Path.DirectorySeparatorChar + "default.ipxe";
 
 
-               filesystemServices.WritePath(path, ipxeMenu.ToString());
+               ctx.Filessystem.WritePath(path, ipxeMenu.ToString());
            
         }
 
         private void CreateSyslinuxMenu()
         {
             var customMenuEntries =
-                serviceCustomBootMenu.GetAll()
+                ctx.CustomBootMenu.GetAll()
                     .Where(x => x.Type == "syslinux/pxelinux" && x.IsActive)
                     .OrderBy(x => x.Order)
                     .ThenBy(x => x.Name);
@@ -500,7 +491,7 @@ namespace Toems_Service.Workflows
                        Path.DirectorySeparatorChar + "pxelinux.cfg" + Path.DirectorySeparatorChar + "default";
 
 
-            filesystemServices.WritePath(path, sysLinuxMenu.ToString());
+            ctx.Filessystem.WritePath(path, sysLinuxMenu.ToString());
            
         }
     }

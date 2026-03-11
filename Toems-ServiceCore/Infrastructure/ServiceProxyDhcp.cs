@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Toems_Common.Dto;
+﻿using Toems_Common.Dto;
 using Toems_DataModel;
-using Toems_Service.Entity;
-using Toems_Service.Workflows;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Workflows;
 
-namespace Toems_Service
+namespace Toems_ServiceCore.Infrastructure
 {
-    public class ServiceProxyDhcp(ServiceComputer serviceComputer, GetCompTftpServers getCompTftpServers)
+    public class ServiceProxyDhcp(ServiceContext ctx)
     {
         private UnitOfWork _uow = new();
         
@@ -33,7 +27,7 @@ namespace Toems_Service
             var tftpDto = new DtoTftpServer();
             tftpDto.TftpServers = new List<string>();
             var computer = _uow.ComputerRepository.Get(x => x.ImagingMac.ToUpper().Equals(mac.ToUpper())).FirstOrDefault();
-            var comServers = getCompTftpServers.Run(computer.Id);
+            var comServers = ctx.GetCompTftpServers.Run(computer.Id);
             foreach (var com in comServers)
             {
                 tftpDto.TftpServers.Add(com.TftpInterfaceIp);
@@ -52,7 +46,7 @@ namespace Toems_Service
                 bootClientReservation.BootFile = "NotFound";
                 return bootClientReservation;
             }
-            var computerGroupMemberships = serviceComputer.GetAllGroupMemberships(computer.Id);
+            var computerGroupMemberships = ctx.Computer.GetAllGroupMemberships(computer.Id);
             var computerGroups = _uow.ComputerRepository.GetAllComputerGroups(computer.Id).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
 
             if (computerGroups.Count == 0)
@@ -78,7 +72,7 @@ namespace Toems_Service
                 return bootClientReservation;
             }
 
-            var comServers = getCompTftpServers.Run(computer.Id);
+            var comServers = ctx.GetCompTftpServers.Run(computer.Id);
             foreach (var com in comServers)
             {
                 bootClientReservation.NextServer = com.TftpInterfaceIp;

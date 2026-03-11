@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceToecDeployTargetList(EntityContext ectx, GroupService groupService)
+    public class ServiceToecDeployTargetList(ServiceContext ctx)
     {
         public DtoActionResult Add(EntityToecTargetList toecTargetList)
         {
@@ -13,16 +13,16 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(toecTargetList, true);
             if (validationResult.Success)
             {
-                ectx.Uow.ToecTargetListRepository.Insert(toecTargetList);
-                ectx.Uow.Save();
+                ctx.Uow.ToecTargetListRepository.Insert(toecTargetList);
+                ctx.Uow.Save();
                 if(toecTargetList.Type == Toems_Common.Enum.EnumToecDeployTargetList.ListType.CustomList)
                 {
                     foreach(var comp in toecTargetList.ComputerNames.Distinct())
                     {
-                        if(ectx.Uow.ToecTargetListComputerRepository.Exists(x => x.Name == comp && x.TargetListId == toecTargetList.Id))
+                        if(ctx.Uow.ToecTargetListComputerRepository.Exists(x => x.Name == comp && x.TargetListId == toecTargetList.Id))
                                 continue;
                         var targetComputer = new EntityToecTargetListComputer() { Name = comp, TargetListId = toecTargetList.Id };
-                        ectx.Uow.ToecTargetListComputerRepository.Insert(targetComputer);
+                        ctx.Uow.ToecTargetListComputerRepository.Insert(targetComputer);
                         
                     }
                 }
@@ -31,26 +31,26 @@ namespace Toems_ServiceCore.EntityServices
                     var computerList = new List<string>();
                     foreach(var groupId in toecTargetList.GroupIds.Distinct())
                     {
-                        var computers = new ServiceGroup().GetGroupMembers(groupId);
+                        var computers = ctx.Group.GetGroupMembers(groupId);
                         foreach(var computer in computers)
                             computerList.Add(computer.Name);
-                        if (ectx.Uow.ToecTargetListOuRepository.Exists(x => x.GroupId == groupId && x.TargetListId == toecTargetList.Id))
+                        if (ctx.Uow.ToecTargetListOuRepository.Exists(x => x.GroupId == groupId && x.TargetListId == toecTargetList.Id))
                             continue;
                         var targetGroup = new EntityToecTargetListOu() { GroupId = groupId, TargetListId = toecTargetList.Id };
-                        ectx.Uow.ToecTargetListOuRepository.Insert(targetGroup);
+                        ctx.Uow.ToecTargetListOuRepository.Insert(targetGroup);
                     }
 
                     foreach(var comp in computerList.Distinct())
                     {
-                        if (ectx.Uow.ToecTargetListComputerRepository.Exists(x => x.Name == comp && x.TargetListId == toecTargetList.Id))
+                        if (ctx.Uow.ToecTargetListComputerRepository.Exists(x => x.Name == comp && x.TargetListId == toecTargetList.Id))
                             continue;
                         var targetComputer = new EntityToecTargetListComputer() { Name = comp, TargetListId = toecTargetList.Id };
-                        ectx.Uow.ToecTargetListComputerRepository.Insert(targetComputer);
+                        ctx.Uow.ToecTargetListComputerRepository.Insert(targetComputer);
                     }
                 }
 
 
-                ectx.Uow.Save();
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = toecTargetList.Id;
             }
@@ -67,8 +67,8 @@ namespace Toems_ServiceCore.EntityServices
             var u = GetToecTargetList(toecTargetListId);
             if (u == null) return new DtoActionResult { ErrorMessage = "Target List Not Found", Id = 0 };
 
-            ectx.Uow.ToecTargetListRepository.Delete(toecTargetListId);
-            ectx.Uow.Save();
+            ctx.Uow.ToecTargetListRepository.Delete(toecTargetListId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -77,24 +77,24 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityToecTargetList GetToecTargetList(int toecTargetListId)
         {
-            var tl = ectx.Uow.ToecTargetListRepository.GetById(toecTargetListId);
-            tl.GroupIds = ectx.Uow.ToecTargetListOuRepository.Get(x => x.TargetListId == toecTargetListId).Select(x => x.GroupId).ToList();
+            var tl = ctx.Uow.ToecTargetListRepository.GetById(toecTargetListId);
+            tl.GroupIds = ctx.Uow.ToecTargetListOuRepository.Get(x => x.TargetListId == toecTargetListId).Select(x => x.GroupId).ToList();
             return tl;
         }
 
         public List<EntityToecTargetList> Search(DtoSearchFilter filter)
         {
-            return ectx.Uow.ToecTargetListRepository.Get(x => x.Name.Contains(filter.SearchText));
+            return ctx.Uow.ToecTargetListRepository.Get(x => x.Name.Contains(filter.SearchText));
         }
 
         public List<EntityToecTargetListComputer> GetMembers(int toecTargetListId)
         {
-            return ectx.Uow.ToecTargetListComputerRepository.Get(x => x.TargetListId.Equals(toecTargetListId));
+            return ctx.Uow.ToecTargetListComputerRepository.Get(x => x.TargetListId.Equals(toecTargetListId));
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.ToecTargetListRepository.Count();
+            return ctx.Uow.ToecTargetListRepository.Count();
         }
 
         public DtoActionResult Update(EntityToecTargetList toecTargetList)
@@ -107,63 +107,63 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(toecTargetList, false);
             if (validationResult.Success)
             {
-                ectx.Uow.ToecTargetListRepository.Update(toecTargetList, u.Id);
-                ectx.Uow.Save();
+                ctx.Uow.ToecTargetListRepository.Update(toecTargetList, u.Id);
+                ctx.Uow.Save();
 
                 if (toecTargetList.Type == Toems_Common.Enum.EnumToecDeployTargetList.ListType.CustomList)
                 {
                     foreach (var comp in toecTargetList.ComputerNames.Distinct())
                     {
-                        if (ectx.Uow.ToecTargetListComputerRepository.Exists(x => x.Name == comp && x.TargetListId == toecTargetList.Id))
+                        if (ctx.Uow.ToecTargetListComputerRepository.Exists(x => x.Name == comp && x.TargetListId == toecTargetList.Id))
                             continue;
                         var targetComputer = new EntityToecTargetListComputer() { Name = comp, TargetListId = toecTargetList.Id };
-                        ectx.Uow.ToecTargetListComputerRepository.Insert(targetComputer);
+                        ctx.Uow.ToecTargetListComputerRepository.Insert(targetComputer);
 
                     }
                 }
                 else if (toecTargetList.Type == Toems_Common.Enum.EnumToecDeployTargetList.ListType.AdOU || toecTargetList.Type == Toems_Common.Enum.EnumToecDeployTargetList.ListType.AdGroup)
                 {
-                    var currentGroups = ectx.Uow.ToecTargetListOuRepository.Get(x => x.TargetListId == toecTargetList.Id);
+                    var currentGroups = ctx.Uow.ToecTargetListOuRepository.Get(x => x.TargetListId == toecTargetList.Id);
                     foreach(var group in currentGroups)
                     {
                         if (toecTargetList.GroupIds.Contains(group.GroupId))
                             continue;
-                        ectx.Uow.ToecTargetListOuRepository.Delete(group.Id);
+                        ctx.Uow.ToecTargetListOuRepository.Delete(group.Id);
 
                     }
                     
                     foreach (var groupId in toecTargetList.GroupIds.Distinct())
                     {
-                        var computers = groupService.GetGroupMembers(groupId);
+                        var computers = ctx.Group.GetGroupMembers(groupId);
                         foreach (var computer in computers)
                             toecTargetList.ComputerNames.Add(computer.Name);
-                        if (ectx.Uow.ToecTargetListOuRepository.Exists(x => x.GroupId == groupId && x.TargetListId == toecTargetList.Id))
+                        if (ctx.Uow.ToecTargetListOuRepository.Exists(x => x.GroupId == groupId && x.TargetListId == toecTargetList.Id))
                             continue;
                         var targetGroup = new EntityToecTargetListOu() { GroupId = groupId, TargetListId = toecTargetList.Id };
-                        ectx.Uow.ToecTargetListOuRepository.Insert(targetGroup);
+                        ctx.Uow.ToecTargetListOuRepository.Insert(targetGroup);
                     }
 
                     foreach (var comp in toecTargetList.ComputerNames.Distinct())
                     {
-                        if (ectx.Uow.ToecTargetListComputerRepository.Exists(x => x.Name == comp && x.TargetListId == toecTargetList.Id))
+                        if (ctx.Uow.ToecTargetListComputerRepository.Exists(x => x.Name == comp && x.TargetListId == toecTargetList.Id))
                             continue;
                         var targetComputer = new EntityToecTargetListComputer() { Name = comp, TargetListId = toecTargetList.Id };
-                        ectx.Uow.ToecTargetListComputerRepository.Insert(targetComputer);
+                        ctx.Uow.ToecTargetListComputerRepository.Insert(targetComputer);
                     }
                 }
 
               
-                ectx.Uow.Save();
-                var currentTargetListComputers = ectx.Uow.ToecTargetListComputerRepository.Get(x => x.TargetListId.Equals(toecTargetList.Id));
+                ctx.Uow.Save();
+                var currentTargetListComputers = ctx.Uow.ToecTargetListComputerRepository.Get(x => x.TargetListId.Equals(toecTargetList.Id));
 
                 foreach (var computer in currentTargetListComputers)
                 {
                     if (toecTargetList.ComputerNames.Contains(computer.Name))
                         continue;
-                    ectx.Uow.ToecTargetListComputerRepository.Delete(computer.Id);
+                    ctx.Uow.ToecTargetListComputerRepository.Delete(computer.Id);
                 }
 
-                ectx.Uow.Save();
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = toecTargetList.Id;
             }
@@ -180,7 +180,7 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = new DtoValidationResult();
             if (isNew)
             {
-                if (ectx.Uow.ToecTargetListRepository.Exists(h => h.Name == toecDeployJob.Name))
+                if (ctx.Uow.ToecTargetListRepository.Exists(h => h.Name == toecDeployJob.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Target List With This Name Already Exists.";
@@ -189,10 +189,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var originalDeployJob = ectx.Uow.ToecTargetListRepository.GetById(toecDeployJob.Id);
+                var originalDeployJob = ctx.Uow.ToecTargetListRepository.GetById(toecDeployJob.Id);
                 if (originalDeployJob.Name != toecDeployJob.Name)
                 {
-                    if (ectx.Uow.ToecTargetListRepository.Exists(h => h.Name == toecDeployJob.Name))
+                    if (ctx.Uow.ToecTargetListRepository.Exists(h => h.Name == toecDeployJob.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Target List With This Name Already Exists.";

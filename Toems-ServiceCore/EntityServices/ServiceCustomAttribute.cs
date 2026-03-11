@@ -5,7 +5,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceCustomAttribute(EntityContext ectx)
+    public class ServiceCustomAttribute(ServiceContext ctx)
     {
         public DtoActionResult Add(EntityCustomAttribute customAttribute)
         {
@@ -14,8 +14,8 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(customAttribute,true);
             if (validationResult.Success)
             {
-                ectx.Uow.CustomAttributeRepository.Insert(customAttribute);
-                ectx.Uow.Save();
+                ctx.Uow.CustomAttributeRepository.Insert(customAttribute);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = customAttribute.Id;
             }
@@ -32,8 +32,8 @@ namespace Toems_ServiceCore.EntityServices
             var u = GetCustomAttribute(customAttributeId);
             if (u == null) return new DtoActionResult { ErrorMessage = "Custom Attribute Not Found", Id = 0 };
 
-            ectx.Uow.CustomAttributeRepository.Delete(customAttributeId);
-            ectx.Uow.Save();
+            ctx.Uow.CustomAttributeRepository.Delete(customAttributeId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -42,33 +42,33 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityCustomAttribute GetCustomAttribute(int customAttributeId)
         {
-            return ectx.Uow.CustomAttributeRepository.GetById(customAttributeId);
+            return ctx.Uow.CustomAttributeRepository.GetById(customAttributeId);
         }
 
         public List<EntityCustomAttribute> GetAll()
         {
-            return ectx.Uow.CustomAttributeRepository.Get().OrderBy(x => x.Name).ToList();
+            return ctx.Uow.CustomAttributeRepository.Get().OrderBy(x => x.Name).ToList();
         }
 
         public List<EntityCustomAttribute> GetForBuiltInComputers()
         {
-            return ectx.Uow.CustomAttributeRepository.Get().OrderBy(x => x.Name).Where(x => x.UsageType == -1 || x.UsageType == -3).ToList();
+            return ctx.Uow.CustomAttributeRepository.Get().OrderBy(x => x.Name).Where(x => x.UsageType == -1 || x.UsageType == -3).ToList();
         }
 
         public List<EntityCustomAttribute> GetForAssetType(int assetTypeId )
         {
-            return ectx.Uow.CustomAttributeRepository.Get().OrderBy(x => x.Name).Where(x => x.UsageType == -3 || x.UsageType == assetTypeId).ToList();
+            return ctx.Uow.CustomAttributeRepository.Get().OrderBy(x => x.Name).Where(x => x.UsageType == -3 || x.UsageType == assetTypeId).ToList();
         }
 
         public List<DtoCustomAttributeWithType> Search(DtoSearchFilter filter)
         {
-            var customAttributes = ectx.Uow.CustomAttributeRepository.GetAttributeWithType();
+            var customAttributes = ctx.Uow.CustomAttributeRepository.GetAttributeWithType();
             return customAttributes.Where(x => x.Name.ToLower().Contains(filter.SearchText.ToLower())).OrderBy(x => x.Name).ToList();
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.CustomAttributeRepository.Count();
+            return ctx.Uow.CustomAttributeRepository.Count();
         }
 
         public DtoActionResult Update(EntityCustomAttribute customAttribute)
@@ -81,8 +81,8 @@ namespace Toems_ServiceCore.EntityServices
                var validationResult = Validate(customAttribute,false);
             if (validationResult.Success)
             {
-                ectx.Uow.CustomAttributeRepository.Update(customAttribute, u.Id);
-                ectx.Uow.Save();
+                ctx.Uow.CustomAttributeRepository.Update(customAttribute, u.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = customAttribute.Id;
             }
@@ -106,7 +106,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.CustomAttributeRepository.Exists(h => h.Name == customAttribute.Name))
+                if (ctx.Uow.CustomAttributeRepository.Exists(h => h.Name == customAttribute.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Custom Attribute With This Name Already Exists";
@@ -115,10 +115,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var original = ectx.Uow.CustomAttributeRepository.GetById(customAttribute.Id);
+                var original = ctx.Uow.CustomAttributeRepository.GetById(customAttribute.Id);
                 if (original.Name != customAttribute.Name)
                 {
-                    if (ectx.Uow.CategoryRepository.Exists(h => h.Name == customAttribute.Name))
+                    if (ctx.Uow.CategoryRepository.Exists(h => h.Name == customAttribute.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Custom Attribute With This Name Already Exists";

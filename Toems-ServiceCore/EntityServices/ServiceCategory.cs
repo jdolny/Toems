@@ -5,7 +5,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceCategory(EntityContext ectx)
+    public class ServiceCategory(ServiceContext ctx)
     {
         public DtoActionResult Add(EntityCategory category)
         {
@@ -14,8 +14,8 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(category,true);
             if (validationResult.Success)
             {
-                ectx.Uow.CategoryRepository.Insert(category);
-                ectx.Uow.Save();
+                ctx.Uow.CategoryRepository.Insert(category);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = category.Id;
             }
@@ -34,8 +34,8 @@ namespace Toems_ServiceCore.EntityServices
 
          
 
-            ectx.Uow.CategoryRepository.Delete(categoryId);
-            ectx.Uow.Save();
+            ctx.Uow.CategoryRepository.Delete(categoryId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -44,7 +44,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityCategory GetCategory(int categoryId)
         {
-            return ectx.Uow.CategoryRepository.GetById(categoryId);
+            return ctx.Uow.CategoryRepository.GetById(categoryId);
         }
 
         public List<EntityCategory> Search(DtoSearchFilter filter)
@@ -52,17 +52,17 @@ namespace Toems_ServiceCore.EntityServices
             if(filter.Limit == 0)
                 filter.Limit = Int32.MaxValue;
             
-            return ectx.Uow.CategoryRepository.Get(x => x.Name.Contains(filter.SearchText)).Take(filter.Limit).OrderBy(x => x.Name).ToList();
+            return ctx.Uow.CategoryRepository.Get(x => x.Name.Contains(filter.SearchText)).Take(filter.Limit).OrderBy(x => x.Name).ToList();
         }
 
         public List<EntityCategory> GetAll()
         {
-            return ectx.Uow.CategoryRepository.Get().OrderBy(x => x.Name).ToList(); ;
+            return ctx.Uow.CategoryRepository.Get().OrderBy(x => x.Name).ToList(); ;
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.CategoryRepository.Count();
+            return ctx.Uow.CategoryRepository.Count();
         }
 
         public DtoActionResult Update(EntityCategory category)
@@ -75,8 +75,8 @@ namespace Toems_ServiceCore.EntityServices
                var validationResult = Validate(category,false);
             if (validationResult.Success)
             {
-                ectx.Uow.CategoryRepository.Update(category, u.Id);
-                ectx.Uow.Save();
+                ctx.Uow.CategoryRepository.Update(category, u.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = category.Id;
             }
@@ -100,7 +100,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.CategoryRepository.Exists(h => h.Name == category.Name))
+                if (ctx.Uow.CategoryRepository.Exists(h => h.Name == category.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Category With This Name Already Exists";
@@ -109,10 +109,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var original = ectx.Uow.CategoryRepository.GetById(category.Id);
+                var original = ctx.Uow.CategoryRepository.GetById(category.Id);
                 if (original.Name != category.Name)
                 {
-                    if (ectx.Uow.CategoryRepository.Exists(h => h.Name == category.Name))
+                    if (ctx.Uow.CategoryRepository.Exists(h => h.Name == category.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Category With This Name Already Exists";

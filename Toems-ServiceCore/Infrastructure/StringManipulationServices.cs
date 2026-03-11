@@ -1,9 +1,8 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 using log4net;
 
-namespace Toems_Service
+namespace Toems_ServiceCore.Infrastructure
 {
     public class StringManipulationServices
     {

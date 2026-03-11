@@ -2,13 +2,11 @@
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_DataModel;
-using Toems_Service;
-using Toems_Service.Entity;
 using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceFileCopyModule(EntityContext ectx, ServiceModule serviceModule, FilesystemServices filesystemServices)
+    public class ServiceFileCopyModule(ServiceContext ctx)
     {
         public DtoActionResult AddModule(EntityFileCopyModule module)
         {
@@ -20,10 +18,10 @@ namespace Toems_ServiceCore.EntityServices
                 var moduleType = new EntityModule();
                 moduleType.ModuleType = EnumModule.ModuleType.FileCopy;
                 moduleType.Guid = module.Guid;
-                ectx.Uow.ModuleRepository.Insert(moduleType);
-                ectx.Uow.Save();
-                ectx.Uow.FileCopyModuleRepository.Insert(module);
-                ectx.Uow.Save();
+                ctx.Uow.ModuleRepository.Insert(moduleType);
+                ctx.Uow.Save();
+                ctx.Uow.FileCopyModuleRepository.Insert(module);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = module.Id;
             }
@@ -39,14 +37,14 @@ namespace Toems_ServiceCore.EntityServices
         {
             var u = GetModule(moduleId);
             if (u == null) return new DtoActionResult {ErrorMessage = "Module Not Found", Id = 0};
-            var isActiveModule = serviceModule.IsModuleActive(moduleId, EnumModule.ModuleType.FileCopy);
+            var isActiveModule = ctx.Module.IsModuleActive(moduleId, EnumModule.ModuleType.FileCopy);
             if (!string.IsNullOrEmpty(isActiveModule)) return new DtoActionResult() { ErrorMessage = isActiveModule, Id = 0 };
             if (string.IsNullOrEmpty(u.Guid)) return new DtoActionResult() { ErrorMessage = "Unknown Guid", Id = 0 };
-            ectx.Uow.ModuleRepository.DeleteRange(x => x.Guid == u.Guid);
+            ctx.Uow.ModuleRepository.DeleteRange(x => x.Guid == u.Guid);
             //ectx.Uow.FileCopyModuleRepository.Delete(moduleId);
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
-            var deleteDirectoryResult = filesystemServices.DeleteModuleDirectory(u.Guid);
+            var deleteDirectoryResult = ctx.Filessystem.DeleteModuleDirectory(u.Guid);
             if (deleteDirectoryResult)
             {
                 actionResult.Success = true;
@@ -63,16 +61,16 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityFileCopyModule GetModule(int moduleId)
         {
-            return ectx.Uow.FileCopyModuleRepository.GetById(moduleId);
+            return ctx.Uow.FileCopyModuleRepository.GetById(moduleId);
         }
 
         public List<EntityFileCopyModule> SearchModules(DtoSearchFilterCategories filter)
         {
-            var list = ectx.Uow.FileCopyModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && !s.Archived).OrderBy(x => x.Name).ToList();
+            var list = ctx.Uow.FileCopyModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && !s.Archived).OrderBy(x => x.Name).ToList();
             var categoryFilterIds = new List<int>();
             foreach (var catName in filter.Categories)
             {
-                var category = ectx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
+                var category = ctx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
                 if (category != null)
                     categoryFilterIds.Add(category.Id);
             }
@@ -84,7 +82,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var module in list)
                 {
-                    var moduleCategories = serviceModule.GetModuleCategories(module.Guid);
+                    var moduleCategories = ctx.Module.GetModuleCategories(module.Guid);
                     if (moduleCategories == null) continue;
 
                     if (filter.Categories.Count == 0)
@@ -108,7 +106,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var module in list)
                 {
-                    var mCategories = serviceModule.GetModuleCategories(module.Guid);
+                    var mCategories = ctx.Module.GetModuleCategories(module.Guid);
                     if (mCategories == null) continue;
                     if (filter.Categories.Count == 0)
                     {
@@ -144,31 +142,31 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityFileCopyModule> GetArchived(DtoSearchFilterCategories filter)
         {
-            return ectx.Uow.FileCopyModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && s.Archived).OrderBy(x => x.Name).Take(filter.Limit).ToList();
+            return ctx.Uow.FileCopyModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && s.Archived).OrderBy(x => x.Name).Take(filter.Limit).ToList();
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.FileCopyModuleRepository.Count(x => !x.Archived);
+            return ctx.Uow.FileCopyModuleRepository.Count(x => !x.Archived);
         }
 
         public string ArchivedCount()
         {
-            return ectx.Uow.FileCopyModuleRepository.Count(x => x.Archived);
+            return ctx.Uow.FileCopyModuleRepository.Count(x => x.Archived);
         }
 
         public DtoActionResult UpdateModule(EntityFileCopyModule module)
         {
             var u = GetModule(module.Id);
             if (u == null) return new DtoActionResult {ErrorMessage = "Module Not Found", Id = 0};
-            var isActiveModule = serviceModule.IsModuleActive(module.Id, EnumModule.ModuleType.FileCopy);
+            var isActiveModule = ctx.Module.IsModuleActive(module.Id, EnumModule.ModuleType.FileCopy);
             if (!string.IsNullOrEmpty(isActiveModule)) return new DtoActionResult() { ErrorMessage = isActiveModule, Id = 0 };
             var validationResult = ValidateModule(module, false);
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
-                ectx.Uow.FileCopyModuleRepository.Update(module, module.Id);
-                ectx.Uow.Save();
+                ctx.Uow.FileCopyModuleRepository.Update(module, module.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = module.Id;
             }
@@ -193,7 +191,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.FileCopyModuleRepository.Exists(h => h.Name == module.Name))
+                if (ctx.Uow.FileCopyModuleRepository.Exists(h => h.Name == module.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Module With This Name Already Exists";
@@ -202,10 +200,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var originalModule = ectx.Uow.FileCopyModuleRepository.GetById(module.Id);
+                var originalModule = ctx.Uow.FileCopyModuleRepository.GetById(module.Id);
                 if (originalModule.Name != module.Name)
                 {
-                    if (ectx.Uow.FileCopyModuleRepository.Exists(h => h.Name == module.Name))
+                    if (ctx.Uow.FileCopyModuleRepository.Exists(h => h.Name == module.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Module With This Name Already Exists";

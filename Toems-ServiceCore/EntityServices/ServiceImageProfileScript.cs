@@ -4,12 +4,12 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceImageProfileScript(EntityContext ectx)
+    public class ServiceImageProfileScript(ServiceContext ctx)
     {
         public DtoActionResult AddImageProfileScript(EntityImageProfileScript imageProfileScript)
         {
-            ectx.Uow.ImageProfileScriptRepository.Insert(imageProfileScript);
-            ectx.Uow.Save();
+            ctx.Uow.ImageProfileScriptRepository.Insert(imageProfileScript);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = imageProfileScript.Id;

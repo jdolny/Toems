@@ -9,34 +9,12 @@ using Toems_Common.Dto.clientimaging;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_DataModel;
-using Toems_Service;
-using Toems_Service.Workflows;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Workflows;
 
 namespace Toems_ServiceCore.Infrastructure
 {
-    public class ClientImagingServices(InfrastructureContext ictx, 
-        ServiceComputer computerService,
-        ServiceImage imageService,
-        ServiceUser userService,
-        ServiceActiveImagingTask activeImagingTaskService,
-        ServiceImageProfile imageProfileService,
-        ServiceClientComServer clientComServerService,
-        GroupService groupService,
-        ServiceActiveMulticastSession activeMulticastService,
-        ServiceScriptModule scriptModuleService,
-        ServiceFileCopyModule fileCopyModuleService,
-        ServiceModule moduleService,
-        ServiceSysprepModule sysprepModuleService,
-        AuthorizationServices authService,
-        UncServices uncService,
-        ServiceComputerLog computerLogService,
-        ServiceClientPartition serviceClientPartition,
-        GetBestCompImageServer getBestCompImageServer,
-        ImageSync imageSync,
-        FilesystemServices filesystemServices,
-        GetCompImagingServers getCompImagingServers,
-        CreateTaskArguments createTaskArguments)
+    public class ClientImagingServices(ServiceContext ctx)
         
     {
         public string AddComputer(string name, string mac, string clientIdentifier)
@@ -91,7 +69,7 @@ namespace Toems_ServiceCore.Infrastructure
                  });
             }
 
-            var existingComputer = computerService.GetComputerFromClientIdentifier(clientIdentifier);
+            var existingComputer = ctx.Computer.GetComputerFromClientIdentifier(clientIdentifier);
             if (existingComputer != null)
             {
                 return
@@ -110,7 +88,7 @@ namespace Toems_ServiceCore.Infrastructure
                 ImageProfileId = -1,
                 ProvisionStatus = EnumProvisionStatus.Status.ImageOnly
             };
-            var result = computerService.AddComputer(computer);
+            var result = ctx.Computer.AddComputer(computer);
             return JsonConvert.SerializeObject(result);
         }
 
@@ -125,12 +103,12 @@ namespace Toems_ServiceCore.Infrastructure
                 IsVisible = true,
                 Description = "",
             };
-            var result = imageService.Add(image);
+            var result = ctx.Image.Add(image);
             if (result.Success)
             {
                 result.Id = image.Id;
                 if (userId != null)
-                    userService.UpdateUsersImagesList(new EntityToemsUsersImages() { ImageId = result.Id, UserId = Convert.ToInt32(userId) });
+                    ctx.User.UpdateUsersImagesList(new EntityToemsUsersImages() { ImageId = result.Id, UserId = Convert.ToInt32(userId) });
             }
 
             return JsonConvert.SerializeObject(result);
@@ -148,16 +126,16 @@ namespace Toems_ServiceCore.Infrastructure
                 Description = "",
             };
 
-            var imageType = ictx.Settings.GetSettingValue(SettingStrings.DefaultWieImageType);
+            var imageType = ctx.Setting.GetSettingValue(SettingStrings.DefaultWieImageType);
             if(!string.IsNullOrEmpty(imageType))
                 image.Type = imageType;
 
-            var result = imageService.Add(image);
+            var result = ctx.Image.Add(image);
             if (result.Success)
             {
                 result.Id = image.Id;
                 if (userId != null)
-                    userService.UpdateUsersImagesList(new EntityToemsUsersImages() { ImageId = result.Id, UserId = Convert.ToInt32(userId) });
+                    ctx.User.UpdateUsersImagesList(new EntityToemsUsersImages() { ImageId = result.Id, UserId = Convert.ToInt32(userId) });
             }
 
             return JsonConvert.SerializeObject(result);
@@ -166,18 +144,18 @@ namespace Toems_ServiceCore.Infrastructure
         public string GetRegistrationSettings()
         {
             var regDto = new RegistrationDTO();
-            regDto.registrationEnabled = ictx.Settings.GetSettingValue(SettingStrings.RegistrationEnabled);
-            regDto.keepNamePrompt = ictx.Settings.GetSettingValue(SettingStrings.DisabledRegNamePrompt);
+            regDto.registrationEnabled = ctx.Setting.GetSettingValue(SettingStrings.RegistrationEnabled);
+            regDto.keepNamePrompt = ctx.Setting.GetSettingValue(SettingStrings.DisabledRegNamePrompt);
             return JsonConvert.SerializeObject(regDto);
         }
 
         public string GetWebTaskToken(string clientId)
         {
-            var webTaskRequiresLogin = ictx.Settings.GetSettingValue(SettingStrings.WebTasksRequireLogin);
+            var webTaskRequiresLogin = ctx.Setting.GetSettingValue(SettingStrings.WebTasksRequireLogin);
             if (webTaskRequiresLogin.Equals("True")) return string.Empty;
-            var computer = computerService.GetComputerFromClientIdentifier(clientId);
+            var computer = ctx.Computer.GetComputerFromClientIdentifier(clientId);
             if (computer == null) return string.Empty;
-            var task = activeImagingTaskService.GetForComputer(computer.Id);
+            var task = ctx.ActiveImagingTask.GetForComputer(computer.Id);
             if(task == null) return string.Empty;
             if (task.WebTaskToken == null) return string.Empty;
             return task.WebTaskToken;
@@ -189,7 +167,7 @@ namespace Toems_ServiceCore.Infrastructure
             if (string.IsNullOrEmpty(token)) return response;
             
 
-            var user = userService.GetUserFromToken(token);
+            var user = ctx.User.GetUserFromToken(token);
             if (user != null)
             {
                 response.IsAuthorized = true;
@@ -198,7 +176,7 @@ namespace Toems_ServiceCore.Infrastructure
                 return response;
             }
 
-            var task = activeImagingTaskService.GetFromWebToken(token);
+            var task = ctx.ActiveImagingTask.GetFromWebToken(token);
             if (task != null)
             {
                 response.IsAuthorized = true;
@@ -208,7 +186,7 @@ namespace Toems_ServiceCore.Infrastructure
             }
 
             //check global token
-            var globalToken = ictx.Settings.GetSettingValue(SettingStrings.GlobalImagingToken);
+            var globalToken = ctx.Setting.GetSettingValue(SettingStrings.GlobalImagingToken);
             if (token.Equals(globalToken) && !string.IsNullOrEmpty(globalToken))
             {
                 response.IsAuthorized = true;
@@ -222,14 +200,14 @@ namespace Toems_ServiceCore.Infrastructure
 
         public void ChangeStatusInProgress(int taskId)
         {
-            var task = activeImagingTaskService.GetTask(taskId);
+            var task = ctx.ActiveImagingTask.GetTask(taskId);
             task.Status = EnumTaskStatus.ImagingStatus.Imaging;
-            activeImagingTaskService.UpdateActiveImagingTask(task);
+            ctx.ActiveImagingTask.UpdateActiveImagingTask(task);
         }
 
         public string CheckForCancelledTask(int taskId)
         {
-            var task = activeImagingTaskService.GetTask(taskId);
+            var task = ctx.ActiveImagingTask.GetTask(taskId);
             if (task == null)
                 return "true";
             return "false";
@@ -240,9 +218,9 @@ namespace Toems_ServiceCore.Infrastructure
         {
             var result = new HardDriveSchema();
 
-            var imageProfile = imageProfileService.ReadProfile(profileId);
-            serviceClientPartition.SetImageSchema(imageProfile);
-            var imageSchema = serviceClientPartition.GetImageSchema();
+            var imageProfile = ctx.ImageProfile.ReadProfile(profileId);
+            ctx.ClientPartition.SetImageSchema(imageProfile);
+            var imageSchema = ctx.ClientPartition.GetImageSchema();
 
             if (clientHdNumber > imageSchema.HardDrives.Count())
             {
@@ -256,7 +234,7 @@ namespace Toems_ServiceCore.Infrastructure
             var listSchemaDrives = new List<int>();
             if (!string.IsNullOrEmpty(imageSchemaDrives))
                 listSchemaDrives.AddRange(imageSchemaDrives.Split(' ').Select(hd => Convert.ToInt32(hd)));
-            result.SchemaHdNumber = serviceClientPartition.NextActiveHardDrive(listSchemaDrives, clientHdNumber);
+            result.SchemaHdNumber = ctx.ClientPartition.NextActiveHardDrive(listSchemaDrives, clientHdNumber);
 
             if (result.SchemaHdNumber == -1)
             {
@@ -266,7 +244,7 @@ namespace Toems_ServiceCore.Infrastructure
             }
 
             var newHdBytes = Convert.ToInt64(newHdSize);
-            var minimumSize = serviceClientPartition.HardDrive(result.SchemaHdNumber, newHdBytes);
+            var minimumSize = ctx.ClientPartition.HardDrive(result.SchemaHdNumber, newHdBytes);
 
             if (clientLbs != 0) //if zero should be from the winpe imaging environment
             {
@@ -274,7 +252,7 @@ namespace Toems_ServiceCore.Infrastructure
                 {
                     if (clientLbs != imageSchema.HardDrives[result.SchemaHdNumber].Lbs)
                     {
-                        ictx.Log.Error("Error: The Logical Block Size Of This Hard Drive " + clientLbs +
+                        ctx.Log.Error("Error: The Logical Block Size Of This Hard Drive " + clientLbs +
                                   " Does Not Match The Original Image" +
                                   imageSchema.HardDrives[result.SchemaHdNumber].Lbs);
 
@@ -289,7 +267,7 @@ namespace Toems_ServiceCore.Infrastructure
 
             if (minimumSize > newHdBytes)
             {
-                ictx.Log.Error("Error:  " + newHdBytes / 1024 / 1024 +
+                ctx.Log.Error("Error:  " + newHdBytes / 1024 / 1024 +
                           " MB Is Less Than The Minimum Required HD Size For This Image(" +
                           minimumSize / 1024 / 1024 + " MB)");
 
@@ -302,21 +280,21 @@ namespace Toems_ServiceCore.Infrastructure
             if (minimumSize == newHdBytes)
             {
                 result.IsValid = "original";
-                result.PhysicalPartitions = serviceClientPartition.GetActivePartitions(result.SchemaHdNumber, imageProfile);
-                result.PhysicalPartitionCount = serviceClientPartition.GetActivePartitionCount(result.SchemaHdNumber);
+                result.PhysicalPartitions = ctx.ClientPartition.GetActivePartitions(result.SchemaHdNumber, imageProfile);
+                result.PhysicalPartitionCount = ctx.ClientPartition.GetActivePartitionCount(result.SchemaHdNumber);
                 result.PartitionType = imageSchema.HardDrives[result.SchemaHdNumber].Table;
                 result.BootPartition = imageSchema.HardDrives[result.SchemaHdNumber].Boot;
-                result.UsesLvm = serviceClientPartition.CheckForLvm(result.SchemaHdNumber);
+                result.UsesLvm = ctx.ClientPartition.CheckForLvm(result.SchemaHdNumber);
                 result.Guid = imageSchema.HardDrives[result.SchemaHdNumber].Guid;
                 return JsonConvert.SerializeObject(result);
             }
 
             result.IsValid = "true";
-            result.PhysicalPartitions = serviceClientPartition.GetActivePartitions(result.SchemaHdNumber, imageProfile);
-            result.PhysicalPartitionCount = serviceClientPartition.GetActivePartitionCount(result.SchemaHdNumber);
+            result.PhysicalPartitions = ctx.ClientPartition.GetActivePartitions(result.SchemaHdNumber, imageProfile);
+            result.PhysicalPartitionCount = ctx.ClientPartition.GetActivePartitionCount(result.SchemaHdNumber);
             result.PartitionType = imageSchema.HardDrives[result.SchemaHdNumber].Table;
             result.BootPartition = imageSchema.HardDrives[result.SchemaHdNumber].Boot;
-            result.UsesLvm = serviceClientPartition.CheckForLvm(result.SchemaHdNumber);
+            result.UsesLvm = ctx.ClientPartition.CheckForLvm(result.SchemaHdNumber);
             result.Guid = imageSchema.HardDrives[result.SchemaHdNumber].Guid;
             return JsonConvert.SerializeObject(result);
         }
@@ -325,9 +303,9 @@ namespace Toems_ServiceCore.Infrastructure
         {
             var result = new HardDriveSchema();
 
-            var imageProfile = imageProfileService.ReadProfile(profileId);
-            serviceClientPartition.SetImageSchema(imageProfile);
-            var imageSchema = serviceClientPartition.GetImageSchema();
+            var imageProfile = ctx.ImageProfile.ReadProfile(profileId);
+            ctx.ClientPartition.SetImageSchema(imageProfile);
+            var imageSchema = ctx.ClientPartition.GetImageSchema();
 
             if (clientHdNumber > imageSchema.HardDrives.Count())
             {
@@ -341,7 +319,7 @@ namespace Toems_ServiceCore.Infrastructure
             var listSchemaDrives = new List<int>();
             if (!string.IsNullOrEmpty(imageSchemaDrives))
                 listSchemaDrives.AddRange(imageSchemaDrives.Split(' ').Select(hd => Convert.ToInt32(hd)));
-            result.SchemaHdNumber = serviceClientPartition.NextActiveHardDrive(listSchemaDrives, clientHdNumber);
+            result.SchemaHdNumber = ctx.ClientPartition.NextActiveHardDrive(listSchemaDrives, clientHdNumber);
 
             if (result.SchemaHdNumber == -1)
             {
@@ -355,7 +333,7 @@ namespace Toems_ServiceCore.Infrastructure
       
             if (minimumSize > newHdBytes)
             {
-                ictx.Log.Error("Error:  " + newHdBytes / 1024 / 1024 +
+                ctx.Log.Error("Error:  " + newHdBytes / 1024 / 1024 +
                           " MB Is Less Than The Minimum Required HD Size For This Image(" +
                           minimumSize / 1024 / 1024 + " MB)");
 
@@ -373,12 +351,12 @@ namespace Toems_ServiceCore.Infrastructure
 
         public string GetUploadServerIp()
         {
-            var guid = ictx.Config["ComServerUniqueId"];
-            var thisComServer = clientComServerService.GetServerByGuid(guid);
+            var guid = ctx.Config["ComServerUniqueId"];
+            var thisComServer = ctx.ClientComServer.GetServerByGuid(guid);
 
             if (thisComServer == null)
             {
-                ictx.Log.Error($"Com Server With Guid {guid} Not Found");
+                ctx.Log.Error($"Com Server With Guid {guid} Not Found");
                 return "0";
             }
 
@@ -402,7 +380,7 @@ namespace Toems_ServiceCore.Infrastructure
                     var ipaddresses = Dns.GetHostAddresses(dnsName).Where(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).ToList();
                     if (ipaddresses.Count > 1)
                     {
-                        ictx.Log.Error("More Than 1 Ip Address Has Been Resolved For Com Server.  You Must Add an IP Override.");
+                        ctx.Log.Error("More Than 1 Ip Address Has Been Resolved For Com Server.  You Must Add an IP Override.");
                         return "0";
                     }
                     else
@@ -417,7 +395,7 @@ namespace Toems_ServiceCore.Infrastructure
         {
             var checkIn = new CheckIn();
 
-            var task = activeImagingTaskService.GetTask(Convert.ToInt32(taskId));
+            var task = ctx.ActiveImagingTask.GetTask(Convert.ToInt32(taskId));
 
             if (task == null)
             {
@@ -426,7 +404,7 @@ namespace Toems_ServiceCore.Infrastructure
                 return JsonConvert.SerializeObject(checkIn);
             }
 
-            var computer = computerService.GetComputer(task.ComputerId);
+            var computer = ctx.Computer.GetComputer(task.ComputerId);
             if (computer == null)
             {
                 checkIn.Result = "false";
@@ -434,23 +412,23 @@ namespace Toems_ServiceCore.Infrastructure
                 return JsonConvert.SerializeObject(checkIn);
             }
             
-            var comServerId = getBestCompImageServer.Run(computer, task.Type,comServers);
+            var comServerId = ctx.GetBestCompImageServer.Run(computer, task.Type,comServers);
 
             task.Status = EnumTaskStatus.ImagingStatus.CheckedIn;
             task.ComServerId = comServerId;
 
-            var imageServer = clientComServerService.GetServer(comServerId);
+            var imageServer = ctx.ClientComServer.GetServer(comServerId);
 
             ImageProfileWithImage imageProfile = null;
             if (task.Type == "multicast")
             {
-                var mcTask = activeMulticastService.Get(task.MulticastId);
-                var group = groupService.GetGroupByName(mcTask.Name);
-                imageProfile = imageProfileService.ReadProfile(group.ImageProfileId);
+                var mcTask = ctx.ActiveMulticastSession.Get(task.MulticastId);
+                var group = ctx.Group.GetGroupByName(mcTask.Name);
+                imageProfile = ctx.ImageProfile.ReadProfile(group.ImageProfileId);
             }
             else
             {
-               imageProfile = imageProfileService.ReadProfile(Convert.ToInt32(task.ImageProfileId));
+               imageProfile = ctx.ImageProfile.ReadProfile(Convert.ToInt32(task.ImageProfileId));
             }
             if (imageProfile.Image.Protected && task.Type.Contains("upload"))
             {
@@ -459,7 +437,7 @@ namespace Toems_ServiceCore.Infrastructure
                 return JsonConvert.SerializeObject(checkIn);
             }
 
-            if (activeImagingTaskService.UpdateActiveImagingTask(task))
+            if (ctx.ActiveImagingTask.UpdateActiveImagingTask(task))
             {
                 checkIn.Result = "true";
 
@@ -492,49 +470,49 @@ namespace Toems_ServiceCore.Infrastructure
 
         public void CheckOut(int taskId)
         {
-            var task = activeImagingTaskService.GetTask(taskId);
+            var task = ctx.ActiveImagingTask.GetTask(taskId);
             if (task.Type.Contains("upload"))
             {
                 //protect image by default
-                var imageProfile = imageProfileService.ReadProfile(Convert.ToInt32(task.ImageProfileId));
+                var imageProfile = ctx.ImageProfile.ReadProfile(Convert.ToInt32(task.ImageProfileId));
                 imageProfile.Image.Protected = true;
-                imageService.Update(imageProfile.Image);
-                var replicationTime = ictx.Settings.GetSettingValue(SettingStrings.ImageReplicationTime);
+                ctx.Image.Update(imageProfile.Image);
+                var replicationTime = ctx.Setting.GetSettingValue(SettingStrings.ImageReplicationTime);
                 if(replicationTime.Equals("Immediately"))
-                    imageSync.RunAllServers();
+                    ctx.ImageSync.RunAllServers();
 
             }
 
             if (task.Type.Contains("unreg"))
-                activeImagingTaskService.DeleteUnregisteredOndTask(task.Id);
+                ctx.ActiveImagingTask.DeleteUnregisteredOndTask(task.Id);
             else
-                activeImagingTaskService.DeleteActiveImagingTask(task.Id);
+                ctx.ActiveImagingTask.DeleteActiveImagingTask(task.Id);
 
             if (task.Type != "multicast" && task.Type != "ondmulticast")
-                activeImagingTaskService.SendTaskCompletedEmail(task);
+                ctx.ActiveImagingTask.SendTaskCompletedEmail(task);
         }
 
         public string CheckQueue(int taskId)
         {
             var queueStatus = new QueueStatus();
 
-            var thisComputerTask = activeImagingTaskService.GetTask(taskId);
+            var thisComputerTask = ctx.ActiveImagingTask.GetTask(taskId);
             //var computer = new ServiceComputer().GetComputer(thisComputerTask.ComputerId);
             //Check if already part of the queue
-            activeImagingTaskService.CancelTimedOutTasks();
+            ctx.ActiveImagingTask.CancelTimedOutTasks();
             if (thisComputerTask.Status == EnumTaskStatus.ImagingStatus.InImagingQueue)
             {
                 //Delete Any tasks that have passed the timeout value
 
                 //Check if the queue is open yet
-                var inUse = activeImagingTaskService.GetCurrentQueue(thisComputerTask);
+                var inUse = ctx.ActiveImagingTask.GetCurrentQueue(thisComputerTask);
                 var totalCapacity = 0;
-                var comServer = clientComServerService.GetServer(thisComputerTask.ComServerId);
+                var comServer = ctx.ClientComServer.GetServer(thisComputerTask.ComServerId);
                 totalCapacity = comServer.ImagingMaxClients;
                 if (inUse < totalCapacity)
                 {
                     //queue is open, is this computer next
-                    var firstTaskInQueue = activeImagingTaskService.GetNextComputerInQueue(thisComputerTask);
+                    var firstTaskInQueue = ctx.ActiveImagingTask.GetNextComputerInQueue(thisComputerTask);
                     if (firstTaskInQueue.ComputerId == thisComputerTask.ComputerId)
                     {
                         ChangeStatusInProgress(taskId);
@@ -544,21 +522,21 @@ namespace Toems_ServiceCore.Infrastructure
                     }
                     //not time for this computer yet
                     queueStatus.Result = "false";
-                    queueStatus.Position = activeImagingTaskService.GetQueuePosition(thisComputerTask);
+                    queueStatus.Position = ctx.ActiveImagingTask.GetQueuePosition(thisComputerTask);
                     return JsonConvert.SerializeObject(queueStatus);
                 }
                 //queue not open yet
                 queueStatus.Result = "false";
-                queueStatus.Position = activeImagingTaskService.GetQueuePosition(thisComputerTask);
+                queueStatus.Position = ctx.ActiveImagingTask.GetQueuePosition(thisComputerTask);
                 return JsonConvert.SerializeObject(queueStatus);
             }
             else
             {
                 //New computer checking queue for the first time
 
-                var inUse = activeImagingTaskService.GetCurrentQueue(thisComputerTask);
+                var inUse = ctx.ActiveImagingTask.GetCurrentQueue(thisComputerTask);
                 var totalCapacity = 0;
-                var comServer = clientComServerService.GetServer(thisComputerTask.ComServerId);
+                var comServer = ctx.ClientComServer.GetServer(thisComputerTask.ComServerId);
                 totalCapacity = comServer.ImagingMaxClients;
                 if (inUse < totalCapacity)
                 {
@@ -569,16 +547,16 @@ namespace Toems_ServiceCore.Infrastructure
                     return JsonConvert.SerializeObject(queueStatus);
                 }
                 //place into queue
-                var lastQueuedTask = activeImagingTaskService.GetLastQueuedTask(thisComputerTask);
+                var lastQueuedTask = ctx.ActiveImagingTask.GetLastQueuedTask(thisComputerTask);
                 if (lastQueuedTask == null)
                     thisComputerTask.QueuePosition = 1;
                 else
                     thisComputerTask.QueuePosition = lastQueuedTask.QueuePosition + 1;
                 thisComputerTask.Status = EnumTaskStatus.ImagingStatus.InImagingQueue;
-                activeImagingTaskService.UpdateActiveImagingTask(thisComputerTask);
+                ctx.ActiveImagingTask.UpdateActiveImagingTask(thisComputerTask);
 
                 queueStatus.Result = "false";
-                queueStatus.Position = activeImagingTaskService.GetQueuePosition(thisComputerTask);
+                queueStatus.Position = ctx.ActiveImagingTask.GetQueuePosition(thisComputerTask);
                 return JsonConvert.SerializeObject(queueStatus);
             }
         }
@@ -591,16 +569,16 @@ namespace Toems_ServiceCore.Infrastructure
 
         public void DeleteImage(int profileId)
         {
-            var profile = imageProfileService.ReadProfile(profileId);
+            var profile = ctx.ImageProfile.ReadProfile(profileId);
             if (string.IsNullOrEmpty(profile.Image.Name)) return;
             //Remove existing custom deploy schema, it may not match newly updated image
             profile.CustomSchema = string.Empty;
-            imageProfileService.Update(profile);
+            ctx.ImageProfile.Update(profile);
 
             profile.Image.LastUploadGuid = string.Empty;
-            imageService.Update(profile.Image);
+            ctx.Image.Update(profile.Image);
 
-            var delResult = filesystemServices.DeleteImageFolders(profile.Image.Name);
+            var delResult = ctx.Filessystem.DeleteImageFolders(profile.Image.Name);
 
         }
 
@@ -608,10 +586,10 @@ namespace Toems_ServiceCore.Infrastructure
         {
             var modelTask = new ModelTaskDTO();
             //Check for model match
-            var modelMatchProfile = imageProfileService.GetModelMatch(systemModel, environment);
+            var modelMatchProfile = ctx.ImageProfile.GetModelMatch(systemModel, environment);
             if (modelMatchProfile != null)
             {
-                var image = imageService.GetImage(modelMatchProfile.ImageId);
+                var image = ctx.Image.GetImage(modelMatchProfile.ImageId);
                 if (image != null)
                     modelTask.imageName = image.Name;
                 modelTask.imageProfileId = modelMatchProfile.Id.ToString();
@@ -627,7 +605,7 @@ namespace Toems_ServiceCore.Infrastructure
 
             EntityComputer computer;
 
-            computer = computerService.GetComputerFromClientIdentifier(id);
+            computer = ctx.Computer.GetComputerFromClientIdentifier(id);
 
             if (computer == null)
             {
@@ -651,7 +629,7 @@ namespace Toems_ServiceCore.Infrastructure
             EntityComputer computer;
 
 
-            computer = computerService.GetComputerFromClientIdentifier(id);
+            computer = ctx.Computer.GetComputerFromClientIdentifier(id);
             
 
             if (computer == null)
@@ -661,7 +639,7 @@ namespace Toems_ServiceCore.Infrastructure
                 return JsonConvert.SerializeObject(determineTaskDto);
             }
 
-            var computerTask = computerService.GetTaskForComputerCheckin(computer.Id);
+            var computerTask = ctx.Computer.GetTaskForComputerCheckin(computer.Id);
             if (computerTask == null)
             {
                 determineTaskDto.computerId = computer.Id.ToString();
@@ -685,15 +663,15 @@ namespace Toems_ServiceCore.Infrastructure
 
         public void ErrorEmail(int taskId, string error)
         {
-            var task = activeImagingTaskService.GetTask(taskId);
-            activeImagingTaskService.SendTaskErrorEmail(task, error);
+            var task = ctx.ActiveImagingTask.GetTask(taskId);
+            ctx.ActiveImagingTask.SendTaskErrorEmail(task, error);
         }
 
         public string GetAllClusterComServers(int computerId)
         {
             var rnd = new Random();
             
-            var imagingServers = getCompImagingServers.Run(computerId,true);
+            var imagingServers = ctx.GetCompImagingServers.Run(computerId,true);
             if (imagingServers == null) return "false";
 
             var randomDpList = new List<string>();
@@ -703,8 +681,8 @@ namespace Toems_ServiceCore.Infrastructure
             }
             catch (Exception ex)
             {
-                ictx.Log.Error("Could Not Select Random Com Server");
-                ictx.Log.Error(ex.Message);
+                ctx.Log.Error("Could Not Select Random Com Server");
+                ctx.Log.Error(ex.Message);
                 return "false";
             }
 
@@ -719,12 +697,12 @@ namespace Toems_ServiceCore.Infrastructure
 
         public string GetCustomPartitionScript(int profileId)
         {
-            return imageProfileService.ReadProfile(profileId).CustomPartitionScript;
+            return ctx.ImageProfile.ReadProfile(profileId).CustomPartitionScript;
         }
 
         public string GetCustomScript(int scriptId)
         {
-            var script = scriptModuleService.GetModule(scriptId);
+            var script = ctx.ScriptModule.GetModule(scriptId);
             return script.ScriptContents;
         }
 
@@ -732,12 +710,12 @@ namespace Toems_ServiceCore.Infrastructure
         {
             var fileFolderSchema = new FileFolderCopySchema { FilesAndFolders = new List<FileFolderCopy>() };
             var counter = 0;
-            foreach (var profileFileFolder in imageProfileService.GetImageProfileFileCopy(profileId))
+            foreach (var profileFileFolder in ctx.ImageProfile.GetImageProfileFileCopy(profileId))
             {
                
-                var fileFolder = fileCopyModuleService.GetModule(profileFileFolder.FileCopyModuleId);
+                var fileFolder = ctx.FileCopyModule.GetModule(profileFileFolder.FileCopyModuleId);
 
-                var moduleFiles = moduleService.GetModuleFiles(fileFolder.Guid);
+                var moduleFiles = ctx.Module.GetModuleFiles(fileFolder.Guid);
                 foreach (var file in moduleFiles.OrderBy(x => x.FileName))
                 {
                     var clientFileFolder = new FileFolderCopy();
@@ -769,11 +747,11 @@ namespace Toems_ServiceCore.Infrastructure
         {
             string result = null;
 
-            var imageProfile = imageProfileService.ReadProfile(profileId);
+            var imageProfile = ctx.ImageProfile.ReadProfile(profileId);
             var hdNumberToGet = Convert.ToInt32(hdToGet);
-            serviceClientPartition.SetImageSchema(imageProfile);
+            ctx.ClientPartition.SetImageSchema(imageProfile);
             
-            var imageSchema = serviceClientPartition.GetImageSchema();
+            var imageSchema = ctx.ClientPartition.GetImageSchema();
             foreach (var part in from part in imageSchema.HardDrives[hdNumberToGet].Partitions
                                  where part.Active
                                  where part.VolumeGroup != null
@@ -803,7 +781,7 @@ namespace Toems_ServiceCore.Infrastructure
 
         public string GetSysprepTag(int tagId, string imageEnvironment)
         {
-            var tag = sysprepModuleService.GetModule(tagId);
+            var tag = ctx.SysprepModule.GetModule(tagId);
             tag.OpeningTag = StringManipulationServices.EscapeCharacter(tag.OpeningTag, new[] { ">", "<" });
             tag.ClosingTag = StringManipulationServices.EscapeCharacter(tag.ClosingTag, new[] { ">", "<", "/" });
             tag.Contents = StringManipulationServices.EscapeCharacter(tag.Contents, new[] { ">", "<", "/", "\"" });
@@ -822,7 +800,7 @@ namespace Toems_ServiceCore.Infrastructure
 
         public string ImageList(string environment, string computerId, string task, int userId = 0)
         {
-            var images = imageService.GetOnDemandImageList(task, userId);
+            var images = ctx.Image.GetOnDemandImageList(task, userId);
             
             if (environment == "winpe")
             {
@@ -865,12 +843,12 @@ namespace Toems_ServiceCore.Infrastructure
 
         public string ImageProfileList(int imageId)
         {
-            var selectedImage = imageService.GetImage(imageId);
+            var selectedImage = ctx.Image.GetImage(imageId);
             if (selectedImage.Environment == "winpe")
             {
                 var imageProfileList = new WinPEProfileList { ImageProfiles = new List<WinPEProfile>() };
                 var profileCounter = 0;
-                foreach (var imageProfile in imageService.SearchProfiles(Convert.ToInt32(imageId)).OrderBy(x => x.Name)
+                foreach (var imageProfile in ctx.Image.SearchProfiles(Convert.ToInt32(imageId)).OrderBy(x => x.Name)
                     )
                 {
                     profileCounter++;
@@ -890,7 +868,7 @@ namespace Toems_ServiceCore.Infrastructure
                 var imageProfileList = new ImageProfileList { ImageProfiles = new List<string>() };
 
                 var profileCounter = 0;
-                foreach (var imageProfile in imageService.SearchProfiles(Convert.ToInt32(imageId)))
+                foreach (var imageProfile in ctx.Image.SearchProfiles(Convert.ToInt32(imageId)))
                 {
                     profileCounter++;
                     imageProfileList.ImageProfiles.Add(imageProfile.Id + " " + imageProfile.Name.Replace(" ","_"));
@@ -911,12 +889,12 @@ namespace Toems_ServiceCore.Infrastructure
                 case "register":
                 case "debug":
                 case "ond":
-                    return ictx.Settings.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
+                    return ctx.Setting.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
                 case "deploy":
                 case "upload":
                 case "multicast":
                 case "modelmatchdeploy":
-                    return ictx.Settings.GetSettingValue(SettingStrings.WebTasksRequireLogin);
+                    return ctx.Setting.GetSettingValue(SettingStrings.WebTasksRequireLogin);
 
 
                 default:
@@ -929,7 +907,7 @@ namespace Toems_ServiceCore.Infrastructure
             if (environment == "winpe")
             {
                 var multicastList = new List<WinPEMulticastList>();
-                foreach (var multicast in activeMulticastService.GetOnDemandList())
+                foreach (var multicast in ctx.ActiveMulticastSession.GetOnDemandList())
                 {
                     var multicastSession = new WinPEMulticastList();
                     multicastSession.Port = multicast.Id.ToString();
@@ -946,7 +924,7 @@ namespace Toems_ServiceCore.Infrastructure
             {
                 var multicastList = new MulticastList { Multicasts = new List<string>() };
 
-                foreach (var multicast in activeMulticastService.GetOnDemandList())
+                foreach (var multicast in ctx.ActiveMulticastSession.GetOnDemandList())
                 {
                     multicastList.Multicasts.Add(multicast.Id + " " + multicast.Name.Replace(" ","_"));
                 }
@@ -964,7 +942,7 @@ namespace Toems_ServiceCore.Infrastructure
         {
             string result = null;
             var port = Convert.ToInt32(portBase);
-            var mcTask = activeMulticastService.GetAll().Where(x => x.Port == port && x.ComServerId == comServerId).FirstOrDefault();
+            var mcTask = ctx.ActiveMulticastSession.GetAll().Where(x => x.Port == port && x.ComServerId == comServerId).FirstOrDefault();
 
             if (mcTask != null)
             {
@@ -998,10 +976,10 @@ namespace Toems_ServiceCore.Infrastructure
                 }
                 if (!prsRunning)
                 {
-                    if (activeMulticastService.Delete(mcTask.Id).Success)
+                    if (ctx.ActiveMulticastSession.Delete(mcTask.Id).Success)
                     {
                         result = "Success";
-                        activeMulticastService.SendMulticastCompletedEmail(mcTask);
+                        ctx.ActiveMulticastSession.SendMulticastCompletedEmail(mcTask);
                     }
                 }
                 else
@@ -1022,7 +1000,7 @@ namespace Toems_ServiceCore.Infrastructure
                 //Check permissions
                 if (task.Contains("deploy"))
                 {
-                    if (!authService.IsAuthorized(Convert.ToInt32(userId),AuthorizationStrings.ImageDeployTask))
+                    if (!ctx.Authorization.IsAuthorized(Convert.ToInt32(userId),AuthorizationStrings.ImageDeployTask))
                     {
                         checkIn.Result = "false";
                         checkIn.Message = "This User Is Not Authorized To Deploy Images";
@@ -1032,7 +1010,7 @@ namespace Toems_ServiceCore.Infrastructure
 
                 else if (task.Contains("upload"))
                 {
-                    if (!authService.IsAuthorized(Convert.ToInt32(userId),AuthorizationStrings.ImageUploadTask))
+                    if (!ctx.Authorization.IsAuthorized(Convert.ToInt32(userId),AuthorizationStrings.ImageUploadTask))
                     {
                         checkIn.Result = "false";
                         checkIn.Message = "This User Is Not Authorized To Upload Images";
@@ -1042,7 +1020,7 @@ namespace Toems_ServiceCore.Infrastructure
 
                 else if (task.Contains("multicast"))
                 {
-                    if (!authService.IsAuthorized(Convert.ToInt32(userId),AuthorizationStrings.ImageMulticastTask))
+                    if (!ctx.Authorization.IsAuthorized(Convert.ToInt32(userId),AuthorizationStrings.ImageMulticastTask))
                     {
                         checkIn.Result = "false";
                         checkIn.Message = "This User Is Not Authorized To Multicast Images";
@@ -1053,7 +1031,7 @@ namespace Toems_ServiceCore.Infrastructure
 
             EntityComputer computer = null;
             if (computerId != "false")
-                computer = computerService.GetComputer(Convert.ToInt32(computerId));
+                computer = ctx.Computer.GetComputer(Convert.ToInt32(computerId));
 
             ImageProfileWithImage imageProfile = null;
 
@@ -1061,23 +1039,23 @@ namespace Toems_ServiceCore.Infrastructure
             if (task == "deploy" || task == "upload" || task == "clobber" || task == "ondupload" || task == "onddeploy" ||
                 task == "unregupload" || task == "unregdeploy" || task == "modelmatchdeploy")
             {
-                imageProfile = imageProfileService.ReadProfile(objectId);
-                createTaskArguments.InitUnicast(computer, imageProfile, task);
-                arguments = createTaskArguments.Execute();
+                imageProfile = ctx.ImageProfile.ReadProfile(objectId);
+                ctx.CreateTaskArguments.InitUnicast(computer, imageProfile, task);
+                arguments = ctx.CreateTaskArguments.Execute();
 
             }
             else //Multicast
             {
-                var multicast = activeMulticastService.Get(objectId);
-                imageProfile = imageProfileService.ReadProfile(multicast.ImageProfileId);
-                createTaskArguments.InitMulticast(computer, imageProfile, task,multicast.ComServerId);
-                arguments = createTaskArguments.Execute(multicast.Port.ToString());
+                var multicast = ctx.ActiveMulticastSession.Get(objectId);
+                imageProfile = ctx.ImageProfile.ReadProfile(multicast.ImageProfileId);
+                ctx.CreateTaskArguments.InitMulticast(computer, imageProfile, task,multicast.ComServerId);
+                arguments = ctx.CreateTaskArguments.Execute(multicast.Port.ToString());
             }
 
             int imageDistributionPoint = -1;
             try
             {
-                imageDistributionPoint = getBestCompImageServer.Run(computer, task,comServers);
+                imageDistributionPoint = ctx.GetBestCompImageServer.Run(computer, task,comServers);
             }
             catch
             {
@@ -1100,7 +1078,7 @@ namespace Toems_ServiceCore.Infrastructure
                 return JsonConvert.SerializeObject(checkIn);
             }
 
-            var imageServer = clientComServerService.GetServer(imageDistributionPoint);
+            var imageServer = ctx.ClientComServer.GetServer(imageDistributionPoint);
 
             if (imageProfile.Image.Environment == "")
                 imageProfile.Image.Environment = "linux";
@@ -1189,7 +1167,7 @@ namespace Toems_ServiceCore.Infrastructure
                 activeTask.ComputerId = computer.Id;
                 activeTask.Arguments = arguments;
             }
-            activeImagingTaskService.AddActiveImagingTask(activeTask);
+            ctx.ActiveImagingTask.AddActiveImagingTask(activeTask);
 
             var auditLog = new EntityAuditLog();
             switch (task)
@@ -1207,19 +1185,19 @@ namespace Toems_ServiceCore.Infrastructure
             try
             {
                 auditLog.ObjectId = activeTask.ComputerId;
-                var user = userService.GetUser(activeTask.UserId);
+                var user = ctx.User.GetUser(activeTask.UserId);
                 if (user != null)
                     auditLog.UserName = user.Name;
                 auditLog.ObjectName = computer != null ? computer.Name : mac;
                 auditLog.UserId = activeTask.UserId;
                 auditLog.ObjectType = "Computer";
                 auditLog.ObjectJson = JsonConvert.SerializeObject(activeTask);
-                ictx.AuditLog.AddAuditLog(auditLog);
+                ctx.AuditLog.AddAuditLog(auditLog);
 
                 auditLog.ObjectId = imageProfile.ImageId;
                 auditLog.ObjectName = imageProfile.Image.Name;
                 auditLog.ObjectType = "Image";
-                ictx.AuditLog.AddAuditLog(auditLog);
+                ctx.AuditLog.AddAuditLog(auditLog);
 
             }
             catch
@@ -1237,30 +1215,30 @@ namespace Toems_ServiceCore.Infrastructure
 
         public string UpdateGuid(int profileId)
         {
-            var comGuid = ictx.Config["ComServerUniqueId"];
-            var thisComServer = clientComServerService.GetServerByGuid(comGuid);
+            var comGuid = ctx.Config["ComServerUniqueId"];
+            var thisComServer = ctx.ClientComServer.GetServerByGuid(comGuid);
 
             if (thisComServer == null)
             {
-                ictx.Log.Error($"Com Server With Guid {comGuid} Not Found");
+                ctx.Log.Error($"Com Server With Guid {comGuid} Not Found");
                 return "false";
             }
 
-            var imageProfile = imageProfileService.ReadProfile(profileId);
-            var image = imageService.GetImage(imageProfile.ImageId);
+            var imageProfile = ctx.ImageProfile.ReadProfile(profileId);
+            var image = ctx.Image.GetImage(imageProfile.ImageId);
             var guid = Guid.NewGuid().ToString();
             image.LastUploadGuid = guid;
-            imageService.Update(image);
+            ctx.Image.Update(image);
 
             var basePath = thisComServer.LocalStoragePath;
-            if (ictx.Settings.GetSettingValue(SettingStrings.ImageDirectSmb).Equals("True"))
+            if (ctx.Setting.GetSettingValue(SettingStrings.ImageDirectSmb).Equals("True"))
             {
-                basePath = ictx.Settings.GetSettingValue(SettingStrings.StoragePath); //if image direct smb, save guid to smb share not local com server
+                basePath = ctx.Setting.GetSettingValue(SettingStrings.StoragePath); //if image direct smb, save guid to smb share not local com server
             }
             var path = Path.Combine(basePath, "images", image.Name);
 
            
-                if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+                if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
                 {
                     try
                     {
@@ -1273,8 +1251,8 @@ namespace Toems_ServiceCore.Infrastructure
                     }
                     catch (Exception ex)
                     {
-                        ictx.Log.Error("Could Not Create Image Guid");
-                        ictx.Log.Error(ex.Message);
+                        ctx.Log.Error("Could Not Create Image Guid");
+                        ctx.Log.Error(ex.Message);
                         return "false";
                     }
                 }
@@ -1287,7 +1265,7 @@ namespace Toems_ServiceCore.Infrastructure
         public void UpdateProgress(int taskId, string progress, string progressType)
         {
             if (string.IsNullOrEmpty(progress)) return;
-            var task = activeImagingTaskService.GetTask(taskId);
+            var task = ctx.ActiveImagingTask.GetTask(taskId);
             if (progressType == "wim")
             {
                 task.Elapsed = progress;
@@ -1304,18 +1282,18 @@ namespace Toems_ServiceCore.Infrastructure
                 task.Rate = values[4];
             }
 
-            activeImagingTaskService.UpdateActiveImagingTask(task);
+            ctx.ActiveImagingTask.UpdateActiveImagingTask(task);
         }
 
         public void UpdateProgressPartition(int taskId, string partition)
         {
-            var task = activeImagingTaskService.GetTask(taskId);
+            var task = ctx.ActiveImagingTask.GetTask(taskId);
             task.Partition = partition;
             task.Elapsed = "Please Wait...";
             task.Remaining = "";
             task.Completed = "";
             task.Rate = "";
-            activeImagingTaskService.UpdateActiveImagingTask(task);
+            ctx.ActiveImagingTask.UpdateActiveImagingTask(task);
         }
 
         public void UploadLog(string computerId, string logContents, string subType, string computerMac)
@@ -1330,18 +1308,18 @@ namespace Toems_ServiceCore.Infrastructure
                 SubType = subType,
                 Mac = computerMac
             };
-            computerLogService.AddComputerLog(computerLog);
+            ctx.ComputerLog.AddComputerLog(computerLog);
         }
 
 
         public string SaveImageSchema(int profileId, string schema)
         {
-            var comGuid = ictx.Config["ComServerUniqueId"];
-            var thisComServer = clientComServerService.GetServerByGuid(comGuid);
+            var comGuid = ctx.Config["ComServerUniqueId"];
+            var thisComServer = ctx.ClientComServer.GetServerByGuid(comGuid);
 
             if (thisComServer == null)
             {
-                ictx.Log.Error($"Com Server With Guid {comGuid} Not Found");
+                ctx.Log.Error($"Com Server With Guid {comGuid} Not Found");
                 return "false";
             }
 
@@ -1362,8 +1340,8 @@ namespace Toems_ServiceCore.Infrastructure
             }
             catch (Exception ex)
             {
-                ictx.Log.Error("Could Not Create Image Schema");
-                ictx.Log.Error(ex.Message);
+                ctx.Log.Error("Could Not Create Image Schema");
+                ctx.Log.Error(ex.Message);
                 return "false";
             }
 
@@ -1371,12 +1349,12 @@ namespace Toems_ServiceCore.Infrastructure
 
         public string SaveMbr(IFormFileCollection files, int profileId, string hdNumber)
         {
-            var comGuid = ictx.Config["ComServerUniqueId"];
-            var thisComServer = clientComServerService.GetServerByGuid(comGuid);
+            var comGuid = ctx.Config["ComServerUniqueId"];
+            var thisComServer = ctx.ClientComServer.GetServerByGuid(comGuid);
 
             if (thisComServer == null)
             {
-                ictx.Log.Error($"Com Server With Guid {comGuid} Not Found");
+                ctx.Log.Error($"Com Server With Guid {comGuid} Not Found");
                 return "false";
             }
             var profile = new UnitOfWork().ImageProfileRepository.GetImageProfileWithImage(profileId);
@@ -1399,8 +1377,8 @@ namespace Toems_ServiceCore.Infrastructure
             }
             catch (Exception ex)
             {
-                ictx.Log.Error("Could Not Save Mbr");
-                ictx.Log.Error(ex.Message);
+                ctx.Log.Error("Could Not Save Mbr");
+                ctx.Log.Error(ex.Message);
                 return "false";
             }
         }
@@ -1408,21 +1386,21 @@ namespace Toems_ServiceCore.Infrastructure
         public string GetSmbShare()
         {
             var smb = new SMB();
-            smb.Username = ictx.Settings.GetSettingValue(SettingStrings.StorageUsername);
-            smb.Domain = ictx.Settings.GetSettingValue(SettingStrings.StorageDomain);
-            smb.SharePath = ictx.Settings.GetSettingValue(SettingStrings.StoragePath);
-            smb.Password = ictx.Encryption.DecryptText(ictx.Settings.GetSettingValue(SettingStrings.StoragePassword));
+            smb.Username = ctx.Setting.GetSettingValue(SettingStrings.StorageUsername);
+            smb.Domain = ctx.Setting.GetSettingValue(SettingStrings.StorageDomain);
+            smb.SharePath = ctx.Setting.GetSettingValue(SettingStrings.StoragePath);
+            smb.Password = ctx.Encryption.DecryptText(ctx.Setting.GetSettingValue(SettingStrings.StoragePassword));
 
             smb.SharePath = smb.SharePath.Replace(@"\", "/").TrimEnd('/');
             return JsonConvert.SerializeObject(smb);
         }
         public void CloseUpload(int taskId, int port)
         {
-            var activeUploadSession = activeMulticastService.GetAll().Where(x => x.UploadTaskId == taskId && x.Port == port).FirstOrDefault();
+            var activeUploadSession = ctx.ActiveMulticastSession.GetAll().Where(x => x.UploadTaskId == taskId && x.Port == port).FirstOrDefault();
             if (activeUploadSession == null)
                 return;
             var pid = activeUploadSession.Pid;
-            activeMulticastService.DeleteUpload(activeUploadSession.Id);
+            ctx.ActiveMulticastSession.DeleteUpload(activeUploadSession.Id);
 
             //shouldn't be needed, by try to end task just in case it didn't close
             try

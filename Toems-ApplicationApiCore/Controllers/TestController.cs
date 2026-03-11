@@ -5,20 +5,24 @@ using System.Security.Claims;
 using System.Text;
 using Toems_ApplicationApiCore;
 using Toems_Common;
-using Toems_Service;
-using Toems_Service.Entity;
+using Toems_ServiceCore.Data;
+using Toems_ServiceCore.Infrastructure;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TestController : ControllerBase
+public class TestController(ServiceContext ictx, IToemsDbFactory toemsDbFactory) : ControllerBase
 {
-    private readonly AuthenticationServices _auth;
+    private readonly AuthenticationService _auth;
     private readonly IConfiguration _config;
     
 
     [HttpGet("VerifyDb")]
-    public string VerifyDb()
+    public async Task<string> VerifyDb()
     {
+        await using var sparcDb = await toemsDbFactory.CreateDbContextAsync();
+        var comp = sparcDb.Computers.ToList();
+        return comp.FirstOrDefault()?.Name;
+
         return "60";
     }
     

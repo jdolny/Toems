@@ -5,11 +5,11 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceImageProfileTemplate(EntityContext ectx)
+    public class ServiceImageProfileTemplate(ServiceContext ctx)
     {
         public EntityImageProfileTemplate GetTemplate(EnumProfileTemplate.TemplateType templateType)
         {
-            return ectx.Uow.ImageProfileTemplateRepository.GetFirstOrDefault(x => x.TemplateType == templateType);
+            return ctx.Uow.ImageProfileTemplateRepository.GetFirstOrDefault(x => x.TemplateType == templateType);
         }
 
         public DtoActionResult UpdateTemplate(EntityImageProfileTemplate template)
@@ -20,8 +20,8 @@ namespace Toems_ServiceCore.EntityServices
                 return new DtoActionResult { ErrorMessage = "Template Not Found", Id = 0 };
 
             template.Id = existingTemplate.Id;
-            ectx.Uow.ImageProfileTemplateRepository.Update(template, existingTemplate.Id);
-            ectx.Uow.Save();
+            ctx.Uow.ImageProfileTemplateRepository.Update(template, existingTemplate.Id);
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = existingTemplate.Id;
             return actionResult;

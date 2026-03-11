@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceOsInventory(EntityContext ectx)
+    public class ServiceOsInventory(ServiceContext ctx)
     {
         public DtoActionResult AddOrUpdate(EntityOsInventory inventory, int computerId)
         {
@@ -23,18 +23,18 @@ namespace Toems_ServiceCore.EntityServices
             if(string.IsNullOrEmpty(inventory.UpdateServer))
             inventory.UpdateServer = "Not Defined";
             var actionResult = new DtoActionResult();
-            var existing = ectx.Uow.OsInventoryRepository.GetFirstOrDefault(x => x.ComputerId == inventory.ComputerId);
+            var existing = ctx.Uow.OsInventoryRepository.GetFirstOrDefault(x => x.ComputerId == inventory.ComputerId);
             if (existing == null)
             {
-                ectx.Uow.OsInventoryRepository.Insert(inventory);
+                ctx.Uow.OsInventoryRepository.Insert(inventory);
             }
             else
             {
                 inventory.Id = existing.Id;
-                ectx.Uow.OsInventoryRepository.Update(inventory, inventory.Id);
+                ctx.Uow.OsInventoryRepository.Update(inventory, inventory.Id);
             }
                  
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = inventory.Id;
 

@@ -1,27 +1,24 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Toems_Common.Dto;
+﻿using Toems_Common.Dto;
 using Toems_Common.Entity;
-using Toems_DataModel;
 using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Entity
+namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceUserGroupComputerGroupMembership(EntityContext ectx)
+    public class ServiceUserGroupComputerGroupMembership(ServiceContext ctx)
     {
         public DtoActionResult AddOrUpdate(List<EntityUserGroupComputerGroups> groups, int userGroupId)
         {
             var actionResult = new DtoActionResult();
          
-            var pToRemove = ectx.Uow.UserGroupComputerGroupsRepository.Get(x => x.UserGroupId == userGroupId);
+            var pToRemove = ctx.Uow.UserGroupComputerGroupsRepository.Get(x => x.UserGroupId == userGroupId);
             foreach (var group in groups)
             {
-                var existing = ectx.Uow.UserGroupComputerGroupsRepository.GetFirstOrDefault(x => x.UserGroupId == userGroupId && x.GroupId == group.GroupId);
+                var existing = ctx.Uow.UserGroupComputerGroupsRepository.GetFirstOrDefault(x => x.UserGroupId == userGroupId && x.GroupId == group.GroupId);
                     
 
                 if (existing == null)
                 {
-                    ectx.Uow.UserGroupComputerGroupsRepository.Insert(group);
+                    ctx.Uow.UserGroupComputerGroupsRepository.Insert(group);
                 }
                 else
                 {
@@ -33,10 +30,10 @@ namespace Toems_Service.Entity
             //anything left in pToRemove is no longer part of the image management
             foreach (var p in pToRemove)
             {
-                ectx.Uow.UserGroupComputerGroupsRepository.Delete(p.Id);
+                ctx.Uow.UserGroupComputerGroupsRepository.Delete(p.Id);
             }
 
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = 1;
             return actionResult;

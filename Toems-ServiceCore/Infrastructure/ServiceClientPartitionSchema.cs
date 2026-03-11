@@ -14,7 +14,7 @@ namespace Toems_ServiceCore.Infrastructure
         }
     }
 
-    public class ServiceClientPartitionSchema(ServiceClientPartition clientPartitionService)
+    public class ServiceClientPartitionSchema(ServiceContext ctx)
     {
         private int _hdToGet;
         private ImageProfileWithImage _imageProfile;
@@ -32,8 +32,8 @@ namespace Toems_ServiceCore.Infrastructure
             LogicalPartitions = new List<ClientPartition>();
             LogicalVolumes = new List<ClientLogicalVolume>();
             VolumeGroupHelpers = new List<ClientVolumeGroupHelper>();
-            clientPartitionService.SetImageSchema(imageProfile);
-            _imageSchema = clientPartitionService.GetImageSchema();
+            ctx.ClientPartition.SetImageSchema(imageProfile);
+            _imageSchema = ctx.ClientPartition.GetImageSchema();
         }
 
         private string BootPart { get; set; }
@@ -130,8 +130,8 @@ namespace Toems_ServiceCore.Infrastructure
                         FsType = part.FsType
                     };
 
-                    clientPartitionService.SetImageSchema(_imageProfile);
-                    var logicalPartitionHelper = clientPartitionService.Partition(HdNumberToGet,
+                    ctx.ClientPartition.SetImageSchema(_imageProfile);
+                    var logicalPartitionHelper = ctx.ClientPartition.Partition(HdNumberToGet,
                         partCounter, _newHdSize);
 
                     var percentOfExtendedForThisPartition = (double)logicalPartitionHelper.MinSizeBlk /
@@ -279,8 +279,8 @@ namespace Toems_ServiceCore.Infrastructure
                                 FsType = lv.FsType
                             };
 
-                            clientPartitionService.SetImageSchema(_imageProfile);
-                            var logicalVolumeHelper = clientPartitionService.LogicalVolume(lv, LbsByte,
+                            ctx.ClientPartition.SetImageSchema(_imageProfile);
+                            var logicalVolumeHelper = ctx.ClientPartition.LogicalVolume(lv, LbsByte,
                                 _newHdSize, HdNumberToGet);
                             var percentOfPvForThisLv = (double)logicalVolumeHelper.MinSizeBlk /
                                                        volumeGroup.AgreedPvSizeBlk;
@@ -388,8 +388,8 @@ namespace Toems_ServiceCore.Infrastructure
             //Try to determine a layout for each primary or extended partition that will be able to fit logical partitions
             //or logical volumes in.  Also if the partition is logical and is the physical volume for a volume group determine 
             // a size that will work for all logical volumes
-            clientPartitionService.SetImageSchema(_imageProfile);
-            ExtendedPartitionHelper = clientPartitionService.ExtendedPartition(HdNumberToGet,
+            ctx.ClientPartition.SetImageSchema(_imageProfile);
+            ExtendedPartitionHelper = ctx.ClientPartition.ExtendedPartition(HdNumberToGet,
                 _newHdSize);
             var upSizeLock = new Dictionary<string, long>();
 
@@ -433,8 +433,8 @@ namespace Toems_ServiceCore.Infrastructure
                         FsType = schemaPartition.FsType
                     };
 
-                    clientPartitionService.SetImageSchema(_imageProfile);
-                    var partitionHelper = clientPartitionService.Partition(HdNumberToGet, partCounter,
+                    ctx.ClientPartition.SetImageSchema(_imageProfile);
+                    var partitionHelper = ctx.ClientPartition.Partition(HdNumberToGet, partCounter,
                         _newHdSize);
 
                     var percentOfHdForThisPartition = (double)partitionHelper.MinSizeBlk / NewHdBlk;

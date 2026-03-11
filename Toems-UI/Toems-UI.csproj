@@ -10,15 +10,18 @@
 
 
   <ItemGroup>
-    <PackageReference Include="log4net" Version="3.0.4" />
+    <PackageReference Include="log4net" Version="3.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.14" />
     <PackageReference Include="MudBlazor" Version="8.*" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
     <PackageReference Include="RestSharp" Version="112.1.0" />
   </ItemGroup>
 
 
   <ItemGroup>
     <ProjectReference Include="..\Toems-Common\Toems-Common.csproj" />
+    <ProjectReference Include="..\Toems-ServiceCore\Toems-ServiceCore.csproj" />
   </ItemGroup>
 
 

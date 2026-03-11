@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Toems_DataModel;
-namespace Toems_Service
+﻿using Toems_DataModel;
+
+namespace Toems_ServiceCore.Infrastructure
 {
     public class ServiceRawSql
     {

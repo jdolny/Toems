@@ -4,15 +4,15 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceManifestDownload(EntityContext ectx)
+    public class ServiceManifestDownload(ServiceContext ctx)
     {
         public DtoActionResult Add(EntityWingetManifestDownload download)
         {
             var actionResult = new DtoActionResult();
 
 
-            ectx.Uow.WingetManifestDownloadRepository.Insert(download);
-            ectx.Uow.Save();
+            ctx.Uow.WingetManifestDownloadRepository.Insert(download);
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = download.Id;
 
@@ -23,7 +23,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityWingetManifestDownload GetDownload(int downloadId)
         {
-            return ectx.Uow.WingetManifestDownloadRepository.GetById(downloadId);
+            return ctx.Uow.WingetManifestDownloadRepository.GetById(downloadId);
         }
 
 
@@ -37,8 +37,8 @@ namespace Toems_ServiceCore.EntityServices
             var actionResult = new DtoActionResult();
 
 
-            ectx.Uow.WingetManifestDownloadRepository.Update(download, u.Id);
-            ectx.Uow.Save();
+            ctx.Uow.WingetManifestDownloadRepository.Update(download, u.Id);
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = download.Id;
 

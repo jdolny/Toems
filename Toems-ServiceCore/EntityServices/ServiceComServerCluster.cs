@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceComServerCluster(EntityContext ectx)
+    public class ServiceComServerCluster(ServiceContext ctx)
     {
         public DtoActionResult Add(EntityComServerCluster cluster)
         {
@@ -14,16 +14,16 @@ namespace Toems_ServiceCore.EntityServices
             {
                 if (cluster.IsDefault)
                 {
-                    var clusters = ectx.Uow.ComServerClusterRepository.Get(x => x.IsDefault);
+                    var clusters = ctx.Uow.ComServerClusterRepository.Get(x => x.IsDefault);
                     foreach (var clust in clusters)
                     {
                         clust.IsDefault = false;
-                        ectx.Uow.ComServerClusterRepository.Update(clust, clust.Id);
+                        ctx.Uow.ComServerClusterRepository.Update(clust, clust.Id);
                     }
                 }
 
-                ectx.Uow.ComServerClusterRepository.Insert(cluster);
-                ectx.Uow.Save();
+                ctx.Uow.ComServerClusterRepository.Insert(cluster);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = cluster.Id;
             }
@@ -40,16 +40,16 @@ namespace Toems_ServiceCore.EntityServices
             var u = GetCluster(clusterId);
             if (u == null) return new DtoActionResult { ErrorMessage = "Cluster Not Found", Id = 0 };
 
-            var groupsWithCluster = ectx.Uow.GroupRepository.Get(x => x.ClusterId == clusterId);
+            var groupsWithCluster = ctx.Uow.GroupRepository.Get(x => x.ClusterId == clusterId);
 
             foreach (var group in groupsWithCluster)
             {
                  group.ClusterId = -1;
-                ectx.Uow.GroupRepository.Update(group, group.Id);
+                ctx.Uow.GroupRepository.Update(group, group.Id);
             }
 
-            ectx.Uow.ComServerClusterRepository.Delete(clusterId);
-            ectx.Uow.Save();
+            ctx.Uow.ComServerClusterRepository.Delete(clusterId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -58,27 +58,27 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityComServerCluster GetCluster(int clusterId)
         {
-            return ectx.Uow.ComServerClusterRepository.GetById(clusterId);
+            return ctx.Uow.ComServerClusterRepository.GetById(clusterId);
         }
 
         public List<EntityComServerCluster> GetAll()
         {
-            return ectx.Uow.ComServerClusterRepository.Get();
+            return ctx.Uow.ComServerClusterRepository.Get();
         }
 
         public List<EntityComServerCluster> Search(DtoSearchFilter filter)
         {
-            return ectx.Uow.ComServerClusterRepository.Get(x => x.Name.Contains(filter.SearchText));
+            return ctx.Uow.ComServerClusterRepository.Get(x => x.Name.Contains(filter.SearchText));
         }
 
         public List<EntityComServerClusterServer> GetClusterServers(int clusterId)
         {
-            return ectx.Uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == clusterId);
+            return ctx.Uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == clusterId);
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.ComServerClusterRepository.Count();
+            return ctx.Uow.ComServerClusterRepository.Count();
         }
 
         public DtoActionResult Update(EntityComServerCluster cluster)
@@ -92,16 +92,16 @@ namespace Toems_ServiceCore.EntityServices
             {
                 if (cluster.IsDefault)
                 {
-                    var clusters = ectx.Uow.ComServerClusterRepository.Get(x => x.IsDefault);
+                    var clusters = ctx.Uow.ComServerClusterRepository.Get(x => x.IsDefault);
                     foreach (var clust in clusters)
                     {
                         clust.IsDefault = false;
-                        ectx.Uow.ComServerClusterRepository.Update(clust, clust.Id);
+                        ctx.Uow.ComServerClusterRepository.Update(clust, clust.Id);
                     }
                 }
 
-                ectx.Uow.ComServerClusterRepository.Update(cluster, u.Id);
-                ectx.Uow.Save();
+                ctx.Uow.ComServerClusterRepository.Update(cluster, u.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = cluster.Id;
             }
@@ -125,7 +125,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.ComServerClusterRepository.Exists(h => h.Name == comServerCluster.Name))
+                if (ctx.Uow.ComServerClusterRepository.Exists(h => h.Name == comServerCluster.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Com Server Cluster With This Name Already Exists";
@@ -134,10 +134,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var original = ectx.Uow.ComServerClusterRepository.GetById(comServerCluster.Id);
+                var original = ctx.Uow.ComServerClusterRepository.GetById(comServerCluster.Id);
                 if (original.Name != comServerCluster.Name)
                 {
-                    if (ectx.Uow.ComServerClusterRepository.Exists(h => h.Name == comServerCluster.Name))
+                    if (ctx.Uow.ComServerClusterRepository.Exists(h => h.Name == comServerCluster.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Com Server Cluster With This Name Already Exists";

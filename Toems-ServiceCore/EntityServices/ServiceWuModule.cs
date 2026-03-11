@@ -1,12 +1,11 @@
 ﻿using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
-using Toems_Service;
 using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceWuModule(EntityContext ectx, ServiceModule moduleService)
+    public class ServiceWuModule(ServiceContext ctx)
     {
         public DtoActionResult AddModule(EntityWuModule module)
         {
@@ -15,12 +14,12 @@ namespace Toems_ServiceCore.EntityServices
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
-                ectx.Uow.WindowsUpdateModuleRepository.Insert(module);
+                ctx.Uow.WindowsUpdateModuleRepository.Insert(module);
                 var moduleType = new EntityModule();
                 moduleType.ModuleType = EnumModule.ModuleType.Wupdate;
                 moduleType.Guid = module.Guid;
-                ectx.Uow.ModuleRepository.Insert(moduleType);
-                ectx.Uow.Save();
+                ctx.Uow.ModuleRepository.Insert(moduleType);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = module.Id;
             }
@@ -36,13 +35,13 @@ namespace Toems_ServiceCore.EntityServices
         {
             var u = GetModule(moduleId);
             if (u == null) return new DtoActionResult {ErrorMessage = "Module Not Found", Id = 0};
-            var isActiveModule = moduleService.IsModuleActive(moduleId, EnumModule.ModuleType.Wupdate);
+            var isActiveModule = ctx.Module.IsModuleActive(moduleId, EnumModule.ModuleType.Wupdate);
             if (!string.IsNullOrEmpty(isActiveModule)) return new DtoActionResult() {ErrorMessage = isActiveModule, Id = 0};
             if (string.IsNullOrEmpty(u.Guid)) return new DtoActionResult() { ErrorMessage = "Unknown Guid", Id = 0 };
-            ectx.Uow.ModuleRepository.DeleteRange(x => x.Guid == u.Guid);
-            ectx.Uow.Save();
+            ctx.Uow.ModuleRepository.DeleteRange(x => x.Guid == u.Guid);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
-            var deleteDirectoryResult = new FilesystemServices().DeleteModuleDirectory(u.Guid);
+            var deleteDirectoryResult = ctx.Filessystem.DeleteModuleDirectory(u.Guid);
             if (deleteDirectoryResult)
             {
                 actionResult.Success = true;
@@ -61,16 +60,16 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityWuModule GetModule(int moduleId)
         {
-            return ectx.Uow.WindowsUpdateModuleRepository.GetById(moduleId);
+            return ctx.Uow.WindowsUpdateModuleRepository.GetById(moduleId);
         }
 
         public List<EntityWuModule> SearchModules(DtoSearchFilterCategories filter)
         {
-            var list = ectx.Uow.WindowsUpdateModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && !s.Archived).OrderBy(x => x.Name).ToList();
+            var list = ctx.Uow.WindowsUpdateModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && !s.Archived).OrderBy(x => x.Name).ToList();
             var categoryFilterIds = new List<int>();
             foreach (var catName in filter.Categories)
             {
-                var category = ectx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
+                var category = ctx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
                 if (category != null)
                     categoryFilterIds.Add(category.Id);
             }
@@ -82,7 +81,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var module in list)
                 {
-                    var moduleCategories = moduleService.GetModuleCategories(module.Guid);
+                    var moduleCategories = ctx.Module.GetModuleCategories(module.Guid);
                     if (moduleCategories == null) continue;
 
                     if (filter.Categories.Count == 0)
@@ -106,7 +105,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var module in list)
                 {
-                    var mCategories = moduleService.GetModuleCategories(module.Guid);
+                    var mCategories = ctx.Module.GetModuleCategories(module.Guid);
                     if (mCategories == null) continue;
                     if (filter.Categories.Count == 0)
                     {
@@ -142,31 +141,31 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityWuModule> GetArchived(DtoSearchFilterCategories filter)
         {
-            return ectx.Uow.WindowsUpdateModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && s.Archived).OrderBy(x => x.Name).Take(filter.Limit).ToList();
+            return ctx.Uow.WindowsUpdateModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && s.Archived).OrderBy(x => x.Name).Take(filter.Limit).ToList();
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.WindowsUpdateModuleRepository.Count(x => !x.Archived);
+            return ctx.Uow.WindowsUpdateModuleRepository.Count(x => !x.Archived);
         }
 
         public string ArchivedCount()
         {
-            return ectx.Uow.WindowsUpdateModuleRepository.Count(x => x.Archived);
+            return ctx.Uow.WindowsUpdateModuleRepository.Count(x => x.Archived);
         }
 
         public DtoActionResult UpdateModule(EntityWuModule module)
         {
             var u = GetModule(module.Id);
             if (u == null) return new DtoActionResult {ErrorMessage = "Module Not Found", Id = 0};
-            var isActiveModule = moduleService.IsModuleActive(module.Id, EnumModule.ModuleType.Wupdate);
+            var isActiveModule = ctx.Module.IsModuleActive(module.Id, EnumModule.ModuleType.Wupdate);
             if (!string.IsNullOrEmpty(isActiveModule)) return new DtoActionResult() { ErrorMessage = isActiveModule, Id = 0 };
             var validationResult = ValidateModule(module, false);
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
-                ectx.Uow.WindowsUpdateModuleRepository.Update(module, module.Id);
-                ectx.Uow.Save();
+                ctx.Uow.WindowsUpdateModuleRepository.Update(module, module.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = module.Id;
             }
@@ -219,7 +218,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.WindowsUpdateModuleRepository.Exists(h => h.Name == module.Name))
+                if (ctx.Uow.WindowsUpdateModuleRepository.Exists(h => h.Name == module.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Module With This Name Already Exists";
@@ -228,10 +227,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var originalModule = ectx.Uow.WindowsUpdateModuleRepository.GetById(module.Id);
+                var originalModule = ctx.Uow.WindowsUpdateModuleRepository.GetById(module.Id);
                 if (originalModule.Name != module.Name)
                 {
-                    if (ectx.Uow.WindowsUpdateModuleRepository.Exists(h => h.Name == module.Name))
+                    if (ctx.Uow.WindowsUpdateModuleRepository.Exists(h => h.Name == module.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Module With This Name Already Exists";

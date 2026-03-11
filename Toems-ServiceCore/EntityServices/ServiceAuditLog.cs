@@ -3,12 +3,12 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceAuditLog(EntityContext ectx)
+    public class ServiceAuditLog(ServiceContext ctx)
     {
         public void AddAuditLog(EntityAuditLog auditLog)
         {
-            ectx.Uow.AuditLogRepository.Insert(auditLog);
-            ectx.Uow.Save();
+            ctx.Uow.AuditLogRepository.Insert(auditLog);
+            ctx.Uow.Save();
         }
     }
 }

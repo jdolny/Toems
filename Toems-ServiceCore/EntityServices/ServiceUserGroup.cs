@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceUserGroup(EntityContext ectx)
+    public class ServiceUserGroup(ServiceContext ctx)
     {
 
         public DtoActionResult AddUserGroup(EntityToemsUserGroup userGroup)
@@ -13,8 +13,8 @@ namespace Toems_ServiceCore.EntityServices
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
-                ectx.Uow.UserGroupRepository.Insert(userGroup);
-                ectx.Uow.Save();
+                ctx.Uow.UserGroupRepository.Insert(userGroup);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = userGroup.Id;
             }
@@ -31,16 +31,16 @@ namespace Toems_ServiceCore.EntityServices
             var ug = GetUserGroup(userGroupId);
             if (ug == null) return new DtoActionResult {ErrorMessage = "User Group Not Found", Id = 0};
 
-            var legacyGroupMembers = ectx.Uow.UserRepository.Get(x => x.UserGroupId == userGroupId);
+            var legacyGroupMembers = ctx.Uow.UserRepository.Get(x => x.UserGroupId == userGroupId);
 
             foreach (var groupMember in legacyGroupMembers)
             {
                 groupMember.UserGroupId = -1;
-                ectx.Uow.UserRepository.Update(groupMember,groupMember.Id);
+                ctx.Uow.UserRepository.Update(groupMember,groupMember.Id);
             }
 
-            ectx.Uow.UserGroupRepository.Delete(userGroupId);
-            ectx.Uow.Save();
+            ctx.Uow.UserGroupRepository.Delete(userGroupId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = ug.Id;
@@ -50,52 +50,52 @@ namespace Toems_ServiceCore.EntityServices
      
         public List<int> GetManagedImageIds(int userGroupId)
         {
-            return ectx.Uow.UserGroupImagesRepository.Get(x => x.UserGroupId == userGroupId).Select(x => x.ImageId).ToList();
+            return ctx.Uow.UserGroupImagesRepository.Get(x => x.UserGroupId == userGroupId).Select(x => x.ImageId).ToList();
         }
 
         public List<int> GetManagedGroupIds(int userGroupId)
         {
-            return ectx.Uow.UserGroupComputerGroupsRepository.Get(x => x.UserGroupId == userGroupId).Select(x => x.GroupId).ToList();
+            return ctx.Uow.UserGroupComputerGroupsRepository.Get(x => x.UserGroupId == userGroupId).Select(x => x.GroupId).ToList();
         }
 
 
         public bool DeleteUserGroupRights(int userGroupId)
         {
-            ectx.Uow.UserGroupRightRepository.DeleteRange(x => x.UserGroupId == userGroupId);
-            ectx.Uow.Save();
+            ctx.Uow.UserGroupRightRepository.DeleteRange(x => x.UserGroupId == userGroupId);
+            ctx.Uow.Save();
             return true;
         }
 
         public List<EntityToemsUser> GetGroupMembers(int userGroupId, DtoSearchFilter filter)
         {
-            return ectx.Uow.UserRepository.GetGroupMembers(userGroupId);
+            return ctx.Uow.UserRepository.GetGroupMembers(userGroupId);
         }
 
         public List<EntityToemsUserGroup> GetLdapGroups()
         {
-            return ectx.Uow.UserGroupRepository.Get(x => x.IsLdapGroup == 1);
+            return ctx.Uow.UserGroupRepository.Get(x => x.IsLdapGroup == 1);
         }
 
         public EntityToemsUserGroup GetUserGroup(int userGroupId)
         {
-            return ectx.Uow.UserGroupRepository.GetById(userGroupId);
+            return ctx.Uow.UserGroupRepository.GetById(userGroupId);
         }
 
      
 
         public List<EntityUserGroupRight> GetUserGroupRights(int userGroupId)
         {
-            return ectx.Uow.UserGroupRightRepository.Get(x => x.UserGroupId == userGroupId);
+            return ctx.Uow.UserGroupRightRepository.Get(x => x.UserGroupId == userGroupId);
         }
 
         public string MemberCount(int userGroupId)
         {
-            return ectx.Uow.UserGroupMembershipRepository.Count(g => g.UserGroupId == userGroupId);
+            return ctx.Uow.UserGroupMembershipRepository.Count(g => g.UserGroupId == userGroupId);
         }
 
         public List<EntityToemsUserGroup> SearchUserGroups(DtoSearchFilter filter)
         {
-            return ectx.Uow.UserGroupRepository.Get(u => u.Name.Contains(filter.SearchText));
+            return ctx.Uow.UserGroupRepository.Get(u => u.Name.Contains(filter.SearchText));
         }
 
         public bool ToggleGroupManagement(int userGroupId, int value)
@@ -106,9 +106,9 @@ namespace Toems_ServiceCore.EntityServices
             foreach (var user in GetGroupMembers(userGroupId, new DtoSearchFilter()))
             {
                 
-                ectx.Uow.UserRepository.Update(user, user.Id);
+                ctx.Uow.UserRepository.Update(user, user.Id);
             }
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             return result.Success;
         }
 
@@ -121,15 +121,15 @@ namespace Toems_ServiceCore.EntityServices
             foreach (var user in GetGroupMembers(userGroupId,new DtoSearchFilter()))
             {
                
-                ectx.Uow.UserRepository.Update(user, user.Id);
+                ctx.Uow.UserRepository.Update(user, user.Id);
             }
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             return result.Success;
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.UserGroupRepository.Count();
+            return ctx.Uow.UserGroupRepository.Count();
         }
 
         public DtoActionResult UpdateUserGroup(EntityToemsUserGroup userGroup)
@@ -140,8 +140,8 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = ValidateUserGroup(userGroup, false);
             if (validationResult.Success)
             {
-                ectx.Uow.UserGroupRepository.Update(userGroup, userGroup.Id);
-                ectx.Uow.Save();
+                ctx.Uow.UserGroupRepository.Update(userGroup, userGroup.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = userGroup.Id;
             }
@@ -154,9 +154,9 @@ namespace Toems_ServiceCore.EntityServices
         }
         public bool RemoveMembership(int userId, int groupId)
         {
-            ectx.Uow.UserGroupMembershipRepository.DeleteRange(
+            ctx.Uow.UserGroupMembershipRepository.DeleteRange(
                 g => g.ToemsUserId == userId && g.UserGroupId == groupId);
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             return true;
         }
 
@@ -166,7 +166,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNewUserGroup)
             {
-                if (ectx.Uow.UserGroupRepository.Exists(h => h.Name == userGroup.Name))
+                if (ctx.Uow.UserGroupRepository.Exists(h => h.Name == userGroup.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "This User Group Already Exists";
@@ -175,10 +175,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var originalUserGroup = ectx.Uow.UserGroupRepository.GetById(userGroup.Id);
+                var originalUserGroup = ctx.Uow.UserGroupRepository.GetById(userGroup.Id);
                 if (originalUserGroup.Name != userGroup.Name)
                 {
-                    if (ectx.Uow.UserGroupRepository.Exists(h => h.Name == userGroup.Name))
+                    if (ctx.Uow.UserGroupRepository.Exists(h => h.Name == userGroup.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "This User Group Already Exists";

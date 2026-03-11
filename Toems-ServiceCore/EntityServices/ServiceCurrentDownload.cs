@@ -5,13 +5,13 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceCurrentDownload(EntityContext ectx)
+    public class ServiceCurrentDownload(ServiceContext ctx)
     {
         public DtoActionResult Add(EntityCurrentDownload currentDownload)
         {
             var actionResult = new DtoActionResult();
-            ectx.Uow.CurrentDownloadsRepository.Insert(currentDownload);
-            ectx.Uow.Save();
+            ctx.Uow.CurrentDownloadsRepository.Insert(currentDownload);
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = currentDownload.Id;
             return actionResult;
@@ -20,7 +20,7 @@ namespace Toems_ServiceCore.EntityServices
         public List<DtoComServerConnection> GetUsageCounts()
         {
             var listConnections = new List<DtoComServerConnection>();
-            var comServers = ectx.Uow.ClientComServerRepository.Get();
+            var comServers = ctx.Uow.ClientComServerRepository.Get();
             foreach (var comServer in comServers)
             {
                 var comConnection = new DtoComServerConnection();
@@ -34,26 +34,26 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool DeleteByClientId(int clientId,string comServer)
         {
-            ectx.Uow.CurrentDownloadsRepository.DeleteRange(x => x.ComputerId == clientId);
-            ectx.Uow.Save();
+            ctx.Uow.CurrentDownloadsRepository.DeleteRange(x => x.ComputerId == clientId);
+            ctx.Uow.Save();
             return true;
         }
 
         public int TotalCount(string comServer)
         {
-            return Convert.ToInt32(ectx.Uow.CurrentDownloadsRepository.Count(x => x.ComServer.Equals(comServer)));
+            return Convert.ToInt32(ctx.Uow.CurrentDownloadsRepository.Count(x => x.ComServer.Equals(comServer)));
         }
 
         public EntityCurrentDownload GetByClientId(int clientId,string comServer)
         {
-            return ectx.Uow.CurrentDownloadsRepository.GetFirstOrDefault(x => x.ComputerId == clientId);
+            return ctx.Uow.CurrentDownloadsRepository.GetFirstOrDefault(x => x.ComputerId == clientId);
         }
 
         public DtoActionResult Update(EntityCurrentDownload currentDownload)
         {
             var actionResult = new DtoActionResult();
-            ectx.Uow.CurrentDownloadsRepository.Update(currentDownload, currentDownload.Id);
-            ectx.Uow.Save();
+            ctx.Uow.CurrentDownloadsRepository.Update(currentDownload, currentDownload.Id);
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = currentDownload.Id;
             return actionResult;
@@ -62,9 +62,9 @@ namespace Toems_ServiceCore.EntityServices
         public int ExpireOldConnections()
         {
             var limit = DateTime.Now - TimeSpan.FromMinutes(60);
-            ectx.Uow.CurrentDownloadsRepository.DeleteRange(x => x.LastRequestTimeLocal < limit);
-            ectx.Uow.Save();
-            return Convert.ToInt32(ectx.Uow.CurrentDownloadsRepository.Count());
+            ctx.Uow.CurrentDownloadsRepository.DeleteRange(x => x.LastRequestTimeLocal < limit);
+            ctx.Uow.Save();
+            return Convert.ToInt32(ctx.Uow.CurrentDownloadsRepository.Count());
         }
     }
 }

@@ -1,20 +1,13 @@
-﻿using System;
-using System.Linq;
-using Toems_Common;
-using Toems_Common.Dto;
+﻿using Toems_Common.Dto;
 using Toems_Common.Dto.client;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class ClientPolicyJson(ServicePolicy policyService, ServiceScriptModule scriptModuleService, 
-        ServiceImpersonationAccount impersonationAccountService, ServiceModule moduleService, 
-        ServiceCommandModule commandModuleService, ServiceFileCopyModule fileCopyModuleService, 
-        ServicePrinterModule printerModuleService, ServiceSoftwareModule softwareModuleService, 
-        ServiceWuModule wuModuleService, ServiceMessageModule messageModuleService, ServiceWinPeModule winPeModuleService, ServiceWingetModule wingetModuleService)
+    public class ClientPolicyJson(ServiceContext ctx)
     {
         private EntityPolicy _policy;
         private readonly DtoClientPolicy _clientPolicy = new();
@@ -94,7 +87,7 @@ namespace Toems_Service.Workflows
         }
         public DtoClientPolicy Create(int policyId)
         {
-            _policy = policyService.GetPolicy(policyId);
+            _policy = ctx.Policy.GetPolicy(policyId);
             Policy();
             DtoModuleSearchFilter filter = new DtoModuleSearchFilter();
             filter.IncludeCommand = true;
@@ -107,7 +100,7 @@ namespace Toems_Service.Workflows
             filter.IncludeWinPe = true;
             filter.IncludeWinget = true;
             filter.Limit = Int32.MaxValue;
-            var policyModules = policyService.SearchAssignedPolicyModules(policyId,filter);
+            var policyModules = ctx.Policy.SearchAssignedPolicyModules(policyId,filter);
             foreach (var policyModule in policyModules.OrderBy(x => x.Name))
             {
                 if (policyModule.ModuleType == EnumModule.ModuleType.Command)
@@ -182,7 +175,7 @@ namespace Toems_Service.Workflows
             _clientPolicy.ConditionFailedAction = _policy.ConditionFailedAction;
             if (_policy.ConditionId != -1)
             {
-                var conditionScript = scriptModuleService.GetModule(_policy.ConditionId);
+                var conditionScript = ctx.ScriptModule.GetModule(_policy.ConditionId);
                 if (conditionScript != null)
                 {
                     _clientPolicy.Condition.Arguments = conditionScript.Arguments;
@@ -192,7 +185,7 @@ namespace Toems_Service.Workflows
                     _clientPolicy.Condition.RedirectOutput = conditionScript.RedirectStdOut;
                     if (conditionScript.ImpersonationId != -1)
                     {
-                        var scriptImpersonationGuid = impersonationAccountService.GetGuid(conditionScript.ImpersonationId);
+                        var scriptImpersonationGuid = ctx.ImpersonationAccount.GetGuid(conditionScript.ImpersonationId);
                         if (!string.IsNullOrEmpty(scriptImpersonationGuid))
                             _clientPolicy.Condition.RunAs = scriptImpersonationGuid;
                     }
@@ -213,7 +206,7 @@ namespace Toems_Service.Workflows
         private void CommandModule(EntityPolicyModules policyModule)
         {
             var clientCommandModule = new DtoClientCommandModule();
-            var commandModule = commandModuleService.GetModule(policyModule.ModuleId);
+            var commandModule = ctx.CommandModule.GetModule(policyModule.ModuleId);
             clientCommandModule.Order = policyModule.Order;
             clientCommandModule.Guid = commandModule.Guid;
             clientCommandModule.Command = commandModule.Command;
@@ -228,14 +221,14 @@ namespace Toems_Service.Workflows
 
             if (commandModule.ImpersonationId != -1)
             {
-                var impersonationGuid = impersonationAccountService.GetGuid(commandModule.ImpersonationId);
+                var impersonationGuid = ctx.ImpersonationAccount.GetGuid(commandModule.ImpersonationId);
                 if (!string.IsNullOrEmpty(impersonationGuid))
                     clientCommandModule.RunAs = impersonationGuid;
             }
 
             if (policyModule.ConditionId != -1)
             {
-                var conditionScript = scriptModuleService.GetModule(policyModule.ConditionId);
+                var conditionScript = ctx.ScriptModule.GetModule(policyModule.ConditionId);
                 if(conditionScript != null)
                 {
                     clientCommandModule.ConditionFailedAction = policyModule.ConditionFailedAction;
@@ -248,7 +241,7 @@ namespace Toems_Service.Workflows
                     clientCommandModule.Condition.RedirectOutput = conditionScript.RedirectStdOut;
                     if (conditionScript.ImpersonationId != -1)
                     {
-                        var scriptImpersonationGuid = impersonationAccountService.GetGuid(conditionScript.ImpersonationId);
+                        var scriptImpersonationGuid = ctx.ImpersonationAccount.GetGuid(conditionScript.ImpersonationId);
                         if (!string.IsNullOrEmpty(scriptImpersonationGuid))
                             clientCommandModule.Condition.RunAs = scriptImpersonationGuid;
                     }
@@ -261,7 +254,7 @@ namespace Toems_Service.Workflows
 
             }
 
-            var moduleFiles = moduleService.GetModuleFiles(commandModule.Guid);
+            var moduleFiles = ctx.Module.GetModuleFiles(commandModule.Guid);
             foreach (var file in moduleFiles.OrderBy(x => x.FileName))
             {
                 var clientFile = new DtoClientFileHash();
@@ -278,7 +271,7 @@ namespace Toems_Service.Workflows
         private void SoftwareModule(EntityPolicyModules policyModule)
         {
             var clientSoftwareModule = new DtoClientSoftwareModule();
-            var softwareModule = softwareModuleService.GetModule(policyModule.ModuleId);
+            var softwareModule = ctx.SoftwareModule.GetModule(policyModule.ModuleId);
             clientSoftwareModule.Guid = softwareModule.Guid;
             clientSoftwareModule.DisplayName = softwareModule.Name;
             clientSoftwareModule.Command = softwareModule.Command;
@@ -291,7 +284,7 @@ namespace Toems_Service.Workflows
             foreach (var successCode in softwareModule.SuccessCodes.Split(','))
                 clientSoftwareModule.SuccessCodes.Add(successCode);
 
-            var moduleFiles = moduleService.GetModuleFiles(softwareModule.Guid);
+            var moduleFiles = ctx.Module.GetModuleFiles(softwareModule.Guid);
             foreach (var file in moduleFiles.OrderBy(x => x.FileName))
             {
                 var clientFile = new DtoClientFileHash();
@@ -302,14 +295,14 @@ namespace Toems_Service.Workflows
 
             if (softwareModule.ImpersonationId != -1)
             {
-                var impersonationGuid = impersonationAccountService.GetGuid(softwareModule.ImpersonationId);
+                var impersonationGuid = ctx.ImpersonationAccount.GetGuid(softwareModule.ImpersonationId);
                 if (!string.IsNullOrEmpty(impersonationGuid))
                     clientSoftwareModule.RunAs = impersonationGuid;
             }
 
             if (policyModule.ConditionId != -1)
             {
-                var conditionScript = scriptModuleService.GetModule(policyModule.ConditionId);
+                var conditionScript = ctx.ScriptModule.GetModule(policyModule.ConditionId);
                 if (conditionScript != null)
                 {
                     clientSoftwareModule.ConditionFailedAction = policyModule.ConditionFailedAction;
@@ -322,7 +315,7 @@ namespace Toems_Service.Workflows
                     clientSoftwareModule.Condition.RedirectOutput = conditionScript.RedirectStdOut;
                     if (conditionScript.ImpersonationId != -1)
                     {
-                        var scriptImpersonationGuid = impersonationAccountService.GetGuid(conditionScript.ImpersonationId);
+                        var scriptImpersonationGuid = ctx.ImpersonationAccount.GetGuid(conditionScript.ImpersonationId);
                         if (!string.IsNullOrEmpty(scriptImpersonationGuid))
                             clientSoftwareModule.Condition.RunAs = scriptImpersonationGuid;
                     }
@@ -341,14 +334,14 @@ namespace Toems_Service.Workflows
         private void FileCopyModule(EntityPolicyModules policyModule)
         {
             var clientFileCopyModule = new DtoClientFileCopyModule();
-            var fileCopyModule = fileCopyModuleService.GetModule(policyModule.ModuleId);
+            var fileCopyModule = ctx.FileCopyModule.GetModule(policyModule.ModuleId);
             clientFileCopyModule.Guid = fileCopyModule.Guid;
             clientFileCopyModule.DisplayName = fileCopyModule.Name;
             clientFileCopyModule.Destination = fileCopyModule.Destination;
             clientFileCopyModule.Order = policyModule.Order;
             clientFileCopyModule.Unzip = fileCopyModule.DecompressAfterCopy;
             clientFileCopyModule.Overwrite = fileCopyModule.OverwriteExisting;
-            var moduleFiles = moduleService.GetModuleFiles(fileCopyModule.Guid);
+            var moduleFiles = ctx.Module.GetModuleFiles(fileCopyModule.Guid);
             foreach (var file in moduleFiles.OrderBy(x => x.FileName))
             {
                 var clientFile = new DtoClientFileHash();
@@ -359,7 +352,7 @@ namespace Toems_Service.Workflows
 
             if (policyModule.ConditionId != -1)
             {
-                var conditionScript = scriptModuleService.GetModule(policyModule.ConditionId);
+                var conditionScript = ctx.ScriptModule.GetModule(policyModule.ConditionId);
                 if (conditionScript != null)
                 {
                     clientFileCopyModule.ConditionFailedAction = policyModule.ConditionFailedAction;
@@ -372,7 +365,7 @@ namespace Toems_Service.Workflows
                     clientFileCopyModule.Condition.RedirectOutput = conditionScript.RedirectStdOut;
                     if (conditionScript.ImpersonationId != -1)
                     {
-                        var scriptImpersonationGuid = impersonationAccountService.GetGuid(conditionScript.ImpersonationId);
+                        var scriptImpersonationGuid = ctx.ImpersonationAccount.GetGuid(conditionScript.ImpersonationId);
                         if (!string.IsNullOrEmpty(scriptImpersonationGuid))
                             clientFileCopyModule.Condition.RunAs = scriptImpersonationGuid;
                     }
@@ -390,11 +383,11 @@ namespace Toems_Service.Workflows
         private void WinPeModule(EntityPolicyModules policyModule)
         {
             var clientWinPeModule = new DtoClientWinPeModule();
-            var winPeModule = winPeModuleService.GetModule(policyModule.ModuleId);
+            var winPeModule = ctx.WinPeModule.GetModule(policyModule.ModuleId);
             clientWinPeModule.Guid = winPeModule.Guid;
             clientWinPeModule.DisplayName = winPeModule.Name;
             clientWinPeModule.Order = policyModule.Order;
-            var moduleFiles = moduleService.GetModuleFiles(winPeModule.Guid);
+            var moduleFiles = ctx.Module.GetModuleFiles(winPeModule.Guid);
             foreach (var file in moduleFiles.OrderBy(x => x.FileName))
             {
                 var clientFile = new DtoClientFileHash();
@@ -405,7 +398,7 @@ namespace Toems_Service.Workflows
 
             if (policyModule.ConditionId != -1)
             {
-                var conditionScript = scriptModuleService.GetModule(policyModule.ConditionId);
+                var conditionScript = ctx.ScriptModule.GetModule(policyModule.ConditionId);
                 if (conditionScript != null)
                 {
                     clientWinPeModule.ConditionFailedAction = policyModule.ConditionFailedAction;
@@ -418,7 +411,7 @@ namespace Toems_Service.Workflows
                     clientWinPeModule.Condition.RedirectOutput = conditionScript.RedirectStdOut;
                     if (conditionScript.ImpersonationId != -1)
                     {
-                        var scriptImpersonationGuid = impersonationAccountService.GetGuid(conditionScript.ImpersonationId);
+                        var scriptImpersonationGuid = ctx.ImpersonationAccount.GetGuid(conditionScript.ImpersonationId);
                         if (!string.IsNullOrEmpty(scriptImpersonationGuid))
                             clientWinPeModule.Condition.RunAs = scriptImpersonationGuid;
                     }
@@ -436,7 +429,7 @@ namespace Toems_Service.Workflows
         private void MessageModule(EntityPolicyModules policyModule)
         {
             var clientMessageModule = new DtoClientMessageModule();
-            var messageModule = messageModuleService.GetModule(policyModule.ModuleId);
+            var messageModule = ctx.MessageModule.GetModule(policyModule.ModuleId);
             clientMessageModule.Guid = messageModule.Guid;
             clientMessageModule.DisplayName = messageModule.Name;    
             clientMessageModule.Order = policyModule.Order;
@@ -445,7 +438,7 @@ namespace Toems_Service.Workflows
             clientMessageModule.Timeout = messageModule.Timeout;
             if (policyModule.ConditionId != -1)
             {
-                var conditionScript = scriptModuleService.GetModule(policyModule.ConditionId);
+                var conditionScript = ctx.ScriptModule.GetModule(policyModule.ConditionId);
                 if (conditionScript != null)
                 {
                     clientMessageModule.ConditionFailedAction = policyModule.ConditionFailedAction;
@@ -458,7 +451,7 @@ namespace Toems_Service.Workflows
                     clientMessageModule.Condition.RedirectOutput = conditionScript.RedirectStdOut;
                     if (conditionScript.ImpersonationId != -1)
                     {
-                        var scriptImpersonationGuid = impersonationAccountService.GetGuid(conditionScript.ImpersonationId);
+                        var scriptImpersonationGuid = ctx.ImpersonationAccount.GetGuid(conditionScript.ImpersonationId);
                         if (!string.IsNullOrEmpty(scriptImpersonationGuid))
                             clientMessageModule.Condition.RunAs = scriptImpersonationGuid;
                     }
@@ -476,7 +469,7 @@ namespace Toems_Service.Workflows
         private void ScriptModule(EntityPolicyModules policyModule)
         {
             var clientScriptModule = new DtoClientScriptModule();
-            var scriptModule = scriptModuleService.GetModule(policyModule.ModuleId);
+            var scriptModule = ctx.ScriptModule.GetModule(policyModule.ModuleId);
             clientScriptModule.Guid = scriptModule.Guid;
             clientScriptModule.DisplayName = scriptModule.Name;
             clientScriptModule.Arguments = scriptModule.Arguments;
@@ -493,14 +486,14 @@ namespace Toems_Service.Workflows
 
             if (scriptModule.ImpersonationId != -1)
             {
-                var impersonationGuid = impersonationAccountService.GetGuid(scriptModule.ImpersonationId);
+                var impersonationGuid = ctx.ImpersonationAccount.GetGuid(scriptModule.ImpersonationId);
                 if (!string.IsNullOrEmpty(impersonationGuid))
                     clientScriptModule.RunAs = impersonationGuid;
             }
 
             if (policyModule.ConditionId != -1)
             {
-                var conditionScript = scriptModuleService.GetModule(policyModule.ConditionId);
+                var conditionScript = ctx.ScriptModule.GetModule(policyModule.ConditionId);
                 if (conditionScript != null)
                 {
                     clientScriptModule.ConditionFailedAction = policyModule.ConditionFailedAction;
@@ -513,7 +506,7 @@ namespace Toems_Service.Workflows
                     clientScriptModule.Condition.RedirectOutput = conditionScript.RedirectStdOut;
                     if (conditionScript.ImpersonationId != -1)
                     {
-                        var scriptImpersonationGuid = impersonationAccountService.GetGuid(conditionScript.ImpersonationId);
+                        var scriptImpersonationGuid = ctx.ImpersonationAccount.GetGuid(conditionScript.ImpersonationId);
                         if (!string.IsNullOrEmpty(scriptImpersonationGuid))
                             clientScriptModule.Condition.RunAs = scriptImpersonationGuid;
                     }
@@ -531,7 +524,7 @@ namespace Toems_Service.Workflows
         private void PrinterModule(EntityPolicyModules policyModule)
         {
             var clientPrinterModule = new DtoClientPrinterModule();
-            var printerModule = printerModuleService.GetModule(policyModule.ModuleId);
+            var printerModule = ctx.PrinterModule.GetModule(policyModule.ModuleId);
             clientPrinterModule.Guid = printerModule.Guid;
             clientPrinterModule.DisplayName = printerModule.Name;
             clientPrinterModule.PrinterPath = printerModule.NetworkPath;
@@ -543,7 +536,7 @@ namespace Toems_Service.Workflows
 
             if (policyModule.ConditionId != -1)
             {
-                var conditionScript = scriptModuleService.GetModule(policyModule.ConditionId);
+                var conditionScript = ctx.ScriptModule.GetModule(policyModule.ConditionId);
                 if (conditionScript != null)
                 {
                     clientPrinterModule.ConditionFailedAction = policyModule.ConditionFailedAction;
@@ -556,7 +549,7 @@ namespace Toems_Service.Workflows
                     clientPrinterModule.Condition.RedirectOutput = conditionScript.RedirectStdOut;
                     if (conditionScript.ImpersonationId != -1)
                     {
-                        var scriptImpersonationGuid = impersonationAccountService.GetGuid(conditionScript.ImpersonationId);
+                        var scriptImpersonationGuid = ctx.ImpersonationAccount.GetGuid(conditionScript.ImpersonationId);
                         if (!string.IsNullOrEmpty(scriptImpersonationGuid))
                             clientPrinterModule.Condition.RunAs = scriptImpersonationGuid;
                     }
@@ -575,7 +568,7 @@ namespace Toems_Service.Workflows
         private void WuModule(EntityPolicyModules policyModule)
         {
             var clientWuModule = new DtoClientWuModule();
-            var wuModule = wuModuleService.GetModule(policyModule.ModuleId);
+            var wuModule = ctx.WuModule.GetModule(policyModule.ModuleId);
             clientWuModule.Guid = wuModule.Guid;
             clientWuModule.DisplayName = wuModule.Name;
             clientWuModule.Arguments = wuModule.AdditionalArguments;
@@ -588,7 +581,7 @@ namespace Toems_Service.Workflows
 
             if (policyModule.ConditionId != -1)
             {
-                var conditionScript = scriptModuleService.GetModule(policyModule.ConditionId);
+                var conditionScript = ctx.ScriptModule.GetModule(policyModule.ConditionId);
                 if (conditionScript != null)
                 {
                     clientWuModule.ConditionFailedAction = policyModule.ConditionFailedAction;
@@ -601,7 +594,7 @@ namespace Toems_Service.Workflows
                     clientWuModule.Condition.RedirectOutput = conditionScript.RedirectStdOut;
                     if (conditionScript.ImpersonationId != -1)
                     {
-                        var scriptImpersonationGuid = impersonationAccountService.GetGuid(conditionScript.ImpersonationId);
+                        var scriptImpersonationGuid = ctx.ImpersonationAccount.GetGuid(conditionScript.ImpersonationId);
                         if (!string.IsNullOrEmpty(scriptImpersonationGuid))
                             clientWuModule.Condition.RunAs = scriptImpersonationGuid;
                     }
@@ -614,7 +607,7 @@ namespace Toems_Service.Workflows
 
             }
 
-            var moduleFiles = moduleService.GetModuleFiles(wuModule.Guid);
+            var moduleFiles = ctx.Module.GetModuleFiles(wuModule.Guid);
             foreach (var file in moduleFiles.OrderBy(x => x.FileName))
             {
                 var clientFile = new DtoClientFileHash();
@@ -629,7 +622,7 @@ namespace Toems_Service.Workflows
         private void WingetModule(EntityPolicyModules policyModule)
         {
             var clientWingetModule = new DtoClientWingetModule();
-            var wingetModule = wingetModuleService.GetModule(policyModule.ModuleId);
+            var wingetModule = ctx.WingetModule.GetModule(policyModule.ModuleId);
             clientWingetModule.Order = policyModule.Order;
             clientWingetModule.Guid = wingetModule.Guid;
             clientWingetModule.PackageId = wingetModule.PackageId;
@@ -646,14 +639,14 @@ namespace Toems_Service.Workflows
 
             if (wingetModule.ImpersonationId != -1)
             {
-                var impersonationGuid = impersonationAccountService.GetGuid(wingetModule.ImpersonationId);
+                var impersonationGuid = ctx.ImpersonationAccount.GetGuid(wingetModule.ImpersonationId);
                 if (!string.IsNullOrEmpty(impersonationGuid))
                     clientWingetModule.RunAs = impersonationGuid;
             }
 
             if (policyModule.ConditionId != -1)
             {
-                var conditionScript = scriptModuleService.GetModule(policyModule.ConditionId);
+                var conditionScript = ctx.ScriptModule.GetModule(policyModule.ConditionId);
                 if (conditionScript != null)
                 {
                     clientWingetModule.ConditionFailedAction = policyModule.ConditionFailedAction;
@@ -666,7 +659,7 @@ namespace Toems_Service.Workflows
                     clientWingetModule.Condition.RedirectOutput = conditionScript.RedirectStdOut;
                     if (conditionScript.ImpersonationId != -1)
                     {
-                        var scriptImpersonationGuid = impersonationAccountService.GetGuid(conditionScript.ImpersonationId);
+                        var scriptImpersonationGuid = ctx.ImpersonationAccount.GetGuid(conditionScript.ImpersonationId);
                         if (!string.IsNullOrEmpty(scriptImpersonationGuid))
                             clientWingetModule.Condition.RunAs = scriptImpersonationGuid;
                     }

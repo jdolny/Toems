@@ -2,23 +2,20 @@
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_DataModel;
-using Toems_Service;
-using Toems_Service.Entity;
-using Toems_Service.Workflows;
 using Toems_ServiceCore.Infrastructure;
+using Toems_ServiceCore.Workflows;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceExternalDownload(EntityContext ectx, ServiceModule serviceModule, FilesystemServices filesystemServices,
-        ServiceSoftwareModule serviceSoftwareModule, ServiceFileDownloader serviceFileDownloader, FolderSync folderSync)
+    public class ServiceExternalDownload(ServiceContext ctx)
     {
         public DtoActionResult Add(EntityExternalDownload download)
         {
             var actionResult = new DtoActionResult();
 
 
-            ectx.Uow.ExternalDownloadRepository.Insert(download);
-            ectx.Uow.Save();
+            ctx.Uow.ExternalDownloadRepository.Insert(download);
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = download.Id;
 
@@ -31,21 +28,21 @@ namespace Toems_ServiceCore.EntityServices
             var u = GetDownload(downloadId);
             if (u == null) return new DtoActionResult { ErrorMessage = "External Download Not Found", Id = 0 };
 
-            var f = serviceModule.GetModuleIdFromGuid(u.ModuleGuid);
+            var f = ctx.Module.GetModuleIdFromGuid(u.ModuleGuid);
             if (f != null)
             {
-                var isActive = serviceModule.IsModuleActive(f.moduleId, f.moduleType);
+                var isActive = ctx.Module.IsModuleActive(f.moduleId, f.moduleType);
                 if (!string.IsNullOrEmpty(isActive)) return new DtoActionResult() { ErrorMessage = isActive, Id = 0 };
             }
 
-            ectx.Uow.ExternalDownloadRepository.Delete(downloadId);
-            ectx.Uow.Save();
-            filesystemServices.DeleteExternalFile(u);
+            ctx.Uow.ExternalDownloadRepository.Delete(downloadId);
+            ctx.Uow.Save();
+            ctx.Filessystem.DeleteExternalFile(u);
 
-            var module = ectx.Uow.SoftwareModuleRepository.Get(x => x.Guid == u.ModuleGuid).FirstOrDefault();
+            var module = ctx.Uow.SoftwareModuleRepository.Get(x => x.Guid == u.ModuleGuid).FirstOrDefault();
             //arguments may need changed now that file is deleted, update arguments.
             if (module != null)
-                serviceSoftwareModule.GenerateArguments(module.Id);
+                ctx.SoftwareModule.GenerateArguments(module.Id);
 
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
@@ -56,13 +53,13 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityExternalDownload GetDownload(int downloadId)
         {
-            return ectx.Uow.ExternalDownloadRepository.GetById(downloadId);
+            return ctx.Uow.ExternalDownloadRepository.GetById(downloadId);
         }
 
         public List<EntityExternalDownload> GetForModule(string moduleGuid)
         {
 
-            return ectx.Uow.ExternalDownloadRepository.Get(x => x.ModuleGuid.Equals(moduleGuid));
+            return ctx.Uow.ExternalDownloadRepository.Get(x => x.ModuleGuid.Equals(moduleGuid));
         }
 
         public async Task BatchDownload(List<DtoFileDownload> fileDownloads)
@@ -79,12 +76,12 @@ namespace Toems_ServiceCore.EntityServices
                 entityExternalDownload.Status = EnumFileDownloader.DownloadStatus.Queued;
                 entityList.Add(entityExternalDownload);
             }
-            ectx.Uow.ExternalDownloadRepository.InsertRange(entityList);
-            ectx.Uow.Save();
+            ctx.Uow.ExternalDownloadRepository.InsertRange(entityList);
+            ctx.Uow.Save();
 
             foreach (var ed in entityList)
             {
-                await serviceFileDownloader.DownloadFile(ed);
+                await ctx.FileDownloader.DownloadFile(ed);
             }
 
             var first = fileDownloads.FirstOrDefault();
@@ -92,7 +89,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 if (first.SyncWhenDone)
                 {
-                    folderSync.RunAllServers();
+                    ctx.FolderSync.RunAllServers();
                 }
             }
         }
@@ -107,14 +104,14 @@ namespace Toems_ServiceCore.EntityServices
             entityExternalDownload.Id = fileDownload.ExternalDownloadId;
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            serviceFileDownloader.DownloadFile(entityExternalDownload);
+            ctx.FileDownloader.DownloadFile(entityExternalDownload);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
         }
         
         public string TotalCount()
         {
-            return ectx.Uow.ExternalDownloadRepository.Count();
+            return ctx.Uow.ExternalDownloadRepository.Count();
         }
 
         public DtoActionResult Update(EntityExternalDownload download)
@@ -125,8 +122,8 @@ namespace Toems_ServiceCore.EntityServices
             var actionResult = new DtoActionResult();
 
 
-            ectx.Uow.ExternalDownloadRepository.Update(download, u.Id);
-            ectx.Uow.Save();
+            ctx.Uow.ExternalDownloadRepository.Update(download, u.Id);
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = download.Id;
 

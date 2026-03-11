@@ -6,11 +6,7 @@ using Toems_ServiceCore.EntityServices;
 
 namespace Toems_ServiceCore.Infrastructure
 {
-    public class FileUploadServices(InfrastructureContext ictx, 
-        UncServices uncService, 
-        ServiceUploadedFile uploadedFileService, 
-        ServiceAttachment attachmentService,
-        ServiceComputerAttachment computerAttachmentService)
+    public class FileUploadServices(ServiceContext ctx)
     {
         private DtoFileUpload _upload;
         
@@ -42,7 +38,7 @@ namespace Toems_ServiceCore.Infrastructure
         {
             var filePath = Path.Combine(_upload.DestinationDirectory, _upload.Filename);
             
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 try
                 {
@@ -61,7 +57,7 @@ namespace Toems_ServiceCore.Infrastructure
                     uploadedFile.Guid = _upload.ModuleGuid;
                     uploadedFile.Hash = Utility.GetFileHash(filePath);
 
-                    var result = uploadedFileService.AddFile(uploadedFile);
+                    var result = ctx.UploadedFile.AddFile(uploadedFile);
                     if (!result.Success)
                     {
                         try
@@ -83,7 +79,7 @@ namespace Toems_ServiceCore.Infrastructure
                     attachment.DirectoryGuid = _upload.AttachmentGuid;
                     attachment.Name = _upload.Filename;
                     attachment.UserName = _upload.Username;
-                    var result = attachmentService.Add(attachment);
+                    var result = ctx.Attachment.Add(attachment);
                     if (!result.Success) throw new Exception();
                     
                     if (_upload.ComputerId != null)
@@ -91,7 +87,7 @@ namespace Toems_ServiceCore.Infrastructure
                         var computer = new EntityComputerAttachment();
                         computer.ComputerId = Convert.ToInt32(_upload.ComputerId);
                         computer.AttachmentId = attachment.Id;
-                        result = computerAttachmentService.Add(computer);
+                        result = ctx.ComputerAttachment.Add(computer);
                         if (!result.Success) throw new Exception();
                     }
                 }
@@ -109,7 +105,7 @@ namespace Toems_ServiceCore.Infrastructure
 
         private string SaveBlob()
         {
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 var filePath = Path.Combine(_upload.DestinationDirectory, _upload.OriginalFilename);
                 if (_upload.PartIndex == 0)
@@ -152,7 +148,7 @@ namespace Toems_ServiceCore.Infrastructure
             SaveAs(path);
 
 
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 if (_upload.PartIndex == (_upload.TotalParts - 1))
                 {
@@ -214,7 +210,7 @@ namespace Toems_ServiceCore.Infrastructure
         private string CreateDirectory()
         {
 
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 var directory = new DirectoryInfo(_upload.DestinationDirectory);
                 try
@@ -235,36 +231,5 @@ namespace Toems_ServiceCore.Infrastructure
         }
     }
 
-    public class FineUploaderResult
-    {
-        private readonly bool _success;
-        private readonly string _error;
-        private readonly bool? _preventRetry;
-        private readonly JObject _otherData;
-
-        public FineUploaderResult(bool success, object otherData = null, string error = null, bool? preventRetry = null)
-        {
-            _success = success;
-            _error = error;
-            _preventRetry = preventRetry;
-
-            if (otherData != null)
-                _otherData = JObject.FromObject(otherData);
-        }
-
-
-        public string BuildResponse()
-        {
-            var response = _otherData ?? new JObject();
-            response["success"] = _success;
-
-            if (!string.IsNullOrWhiteSpace(_error))
-                response["error"] = _error;
-
-            if (_preventRetry.HasValue)
-                response["preventRetry"] = _preventRetry.Value;
-
-            return response.ToString();
-        }
-    }
+   
 }

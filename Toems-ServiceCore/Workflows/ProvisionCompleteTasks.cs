@@ -1,16 +1,12 @@
-﻿using log4net;
-using System;
-using System.Collections.Generic;
-using System.DirectoryServices;
+﻿using System.DirectoryServices;
 using Toems_Common;
 using Toems_Common.Entity;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class ProvisionCompleteTasks(InfrastructureContext ictx, ServiceComputer serviceComputer, GroupService groupService, ServiceGroupMembership serviceGroupMembership)
+    public class ProvisionCompleteTasks(ServiceContext ctx)
     {
         private List<EntityGroupMembership> _groupMemberships = new();
         
@@ -22,13 +18,13 @@ namespace Toems_Service.Workflows
 
         private void AddComputerToToemsGroup(EntityComputer computer)
         {
-            if (string.IsNullOrEmpty(ictx.Settings.GetSettingValue(SettingStrings.NewProvisionDefaultGroup)))
+            if (string.IsNullOrEmpty(ctx.Setting.GetSettingValue(SettingStrings.NewProvisionDefaultGroup)))
             {
-                ictx.Log.Debug("New Provision default group is not enabled.  Skipping");
+                ctx.Log.Debug("New Provision default group is not enabled.  Skipping");
                 return;
             }
 
-            var group = groupService.GetGroupByName(ictx.Settings.GetSettingValue(SettingStrings.NewProvisionDefaultGroup));
+            var group = ctx.Group.GetGroupByName(ctx.Setting.GetSettingValue(SettingStrings.NewProvisionDefaultGroup));
             if (group == null) return;
 
             if (group.Type.Equals("Dynamic")) return;
@@ -37,7 +33,7 @@ namespace Toems_Service.Workflows
             groupMembership.ComputerId = computer.Id;
             groupMembership.GroupId = group.Id;
             _groupMemberships.Add(groupMembership);
-            serviceGroupMembership.AddMembership(_groupMemberships);
+            ctx.GroupMembership.AddMembership(_groupMemberships);
 
         }
 
@@ -45,31 +41,31 @@ namespace Toems_Service.Workflows
         {
             try
             {
-                if (ictx.Settings.GetSettingValue(SettingStrings.NewProvisionAdCheck) != "1")
+                if (ctx.Setting.GetSettingValue(SettingStrings.NewProvisionAdCheck) != "1")
                 {
-                    ictx.Log.Debug("New Provision Active Directory check is not enabled.  Skipping");
+                    ctx.Log.Debug("New Provision Active Directory check is not enabled.  Skipping");
                     return;
                 }
-                if (ictx.Settings.GetSettingValue(SettingStrings.LdapEnabled) != "1")
+                if (ctx.Setting.GetSettingValue(SettingStrings.LdapEnabled) != "1")
                 {
-                    ictx.Log.Debug("LDAP integration is not enabled.  Skipping");
+                    ctx.Log.Debug("LDAP integration is not enabled.  Skipping");
                     return;
                 }
-                if (string.IsNullOrEmpty(ictx.Settings.GetSettingValue(SettingStrings.LdapServer)))
+                if (string.IsNullOrEmpty(ctx.Setting.GetSettingValue(SettingStrings.LdapServer)))
                 {
-                    ictx.Log.Debug("LDAP values not populated.  Skipping");
+                    ctx.Log.Debug("LDAP values not populated.  Skipping");
                     return;
                 }
 
-                var basePath = "LDAP://" + ictx.Settings.GetSettingValue(SettingStrings.LdapServer) + ":" +
-                      ictx.Settings.GetSettingValue(SettingStrings.LdapPort) + "/";
-                var username = ictx.Settings.GetSettingValue(SettingStrings.LdapBindUsername);
+                var basePath = "LDAP://" + ctx.Setting.GetSettingValue(SettingStrings.LdapServer) + ":" +
+                      ctx.Setting.GetSettingValue(SettingStrings.LdapPort) + "/";
+                var username = ctx.Setting.GetSettingValue(SettingStrings.LdapBindUsername);
                 var password =
-                    ictx.Encryption.DecryptText(ictx.Settings.GetSettingValue(SettingStrings.LdapBindPassword));
-                var baseDn = ictx.Settings.GetSettingValue(SettingStrings.LdapBaseDN);
+                    ctx.Encryption.DecryptText(ctx.Setting.GetSettingValue(SettingStrings.LdapBindPassword));
+                var baseDn = ctx.Setting.GetSettingValue(SettingStrings.LdapBaseDN);
 
                 var entry = new DirectoryEntry(basePath + baseDn, username, password);
-                var ldapAuth = ictx.Settings.GetSettingValue(SettingStrings.LdapAuthType);
+                var ldapAuth = ctx.Setting.GetSettingValue(SettingStrings.LdapAuthType);
                 if (ldapAuth == "Basic")
                     entry.AuthenticationType = AuthenticationTypes.None;
                 else if (ldapAuth == "Secure")
@@ -86,14 +82,14 @@ namespace Toems_Service.Workflows
                 var computerDn = (string)result.Properties["distinguishedName"][0];
 
                 CreateMembershipList(computer, computerDn, baseDn);
-                serviceGroupMembership.AddMembership(_groupMemberships);
+                ctx.GroupMembership.AddMembership(_groupMemberships);
 
                 return;
             }
             catch (Exception ex)
             {
-                ictx.Log.Debug("Active Directory Bind Failed.");
-                ictx.Log.Error(ex.Message);
+                ctx.Log.Debug("Active Directory Bind Failed.");
+                ctx.Log.Error(ex.Message);
                 return;
             }
         }
@@ -103,7 +99,7 @@ namespace Toems_Service.Workflows
             if (dn == baseDn)
                 return;
             var parentOu = dn.Substring(dn.IndexOf(",", StringComparison.Ordinal) + 1);
-            var parentOuGroup = groupService.GetGroupByDn(parentOu);
+            var parentOuGroup = ctx.Group.GetGroupByDn(parentOu);
             if (parentOuGroup == null) return;
             if (parentOuGroup.Id < 1) return;
             var groupMembership = new EntityGroupMembership();

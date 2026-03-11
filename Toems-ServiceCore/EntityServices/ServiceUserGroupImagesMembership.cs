@@ -4,21 +4,21 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceUserGroupImagesMembership(EntityContext ectx)
+    public class ServiceUserGroupImagesMembership(ServiceContext ctx)
     {
         public DtoActionResult AddOrUpdate(List<EntityUserGroupImages> groupImages, int userGroupId)
         {
             var actionResult = new DtoActionResult();
          
-            var pToRemove = ectx.Uow.UserGroupImagesRepository.Get(x => x.UserGroupId == userGroupId);
+            var pToRemove = ctx.Uow.UserGroupImagesRepository.Get(x => x.UserGroupId == userGroupId);
             foreach (var image in groupImages)
             {
-                var existing = ectx.Uow.UserGroupImagesRepository.GetFirstOrDefault(x => x.UserGroupId == userGroupId && x.ImageId == image.ImageId);
+                var existing = ctx.Uow.UserGroupImagesRepository.GetFirstOrDefault(x => x.UserGroupId == userGroupId && x.ImageId == image.ImageId);
                     
 
                 if (existing == null)
                 {
-                    ectx.Uow.UserGroupImagesRepository.Insert(image);
+                    ctx.Uow.UserGroupImagesRepository.Insert(image);
                 }
                 else
                 {
@@ -30,10 +30,10 @@ namespace Toems_ServiceCore.EntityServices
             //anything left in pToRemove is no longer part of the image management
             foreach (var p in pToRemove)
             {
-                ectx.Uow.UserGroupImagesRepository.Delete(p.Id);
+                ctx.Uow.UserGroupImagesRepository.Delete(p.Id);
             }
 
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = 1;
             return actionResult;

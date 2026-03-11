@@ -1,28 +1,20 @@
-﻿using System;
-using System.IO;
+﻿using System.IO.Compression;
 using System.Text;
-using System.Web;
-using Toems_Common.Dto;
-using Toems_Service.Entity;
-using System.Linq;
-using Toems_Common.Entity;
-using Newtonsoft.Json;
-using log4net;
-using Toems_DataModel;
-using Toems_ApiCalls;
-using log4net.Repository.Hierarchy;
-using Toems_Common;
-using System.Collections.Generic;
-using Toems_Common.Dto.client;
-using System.IO.Compression;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using Toems_ApiCalls;
+using Toems_Common;
+using Toems_Common.Dto;
+using Toems_Common.Dto.client;
+using Toems_Common.Entity;
+using Toems_DataModel;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
 
-    public class GenerateWie(InfrastructureContext ictx, ServiceWieBuild serviceWieBuild, ServiceFileCopyModule serviceFileCopyModule, ServiceModule serviceModule, FilesystemServices serviceFilesystem)
+    public class GenerateWie(ServiceContext ctx)
     {
         private const string _fileName = "ToemsPE-Build.cmd";
         private string _fullPath;
@@ -37,9 +29,9 @@ namespace Toems_Service.Workflows
         {
             _config = config;
             _result.Success = false;
-            ictx.Log.Info("Starting Wie Build");
+            ctx.Log.Info("Starting Wie Build");
             _wieBuild.Status = "Started";
-            _basePath = Path.Combine(ictx.Environment.ContentRootPath, "private", "wie_builder");
+            _basePath = Path.Combine(ctx.Environment.ContentRootPath, "private", "wie_builder");
             _fullPath = Path.Combine(_basePath, _fileName);
             _wieBuild.StartTime = DateTime.Now;
             _wieBuild.BuildOptions = JsonConvert.SerializeObject(_config);
@@ -81,7 +73,7 @@ namespace Toems_Service.Workflows
                 }
             }
 
-            if (serviceWieBuild.GetWieProcess().Any())
+            if (ctx.WieBuild.GetWieProcess().Any())
                 return "An Active Build Process Is Currently Running";
 
             return "Success";
@@ -89,8 +81,8 @@ namespace Toems_Service.Workflows
 
         private bool StartProcess()
         {
-            var sha = serviceFilesystem.GetFileSha256(_fullPath);
-            return serviceFilesystem.WritePath(Path.Combine(_basePath,"Queue",_wieBuild.WieGuid+".queue"), sha);
+            var sha = ctx.Filessystem.GetFileSha256(_fullPath);
+            return ctx.Filessystem.WritePath(Path.Combine(_basePath,"Queue",_wieBuild.WieGuid+".queue"), sha);
         }
         
         private static readonly Regex SafeValueRegex = new Regex(@"^[A-Za-z0-9\-_\.:\/@ ]{0,200}$", RegexOptions.Compiled);
@@ -139,7 +131,7 @@ namespace Toems_Service.Workflows
             configContents.AppendLine($"call .\\Scripts\\MakePE.cmd > .\\Status\\{_wieBuild.WieGuid}.log");
             configContents.AppendLine($"echo complete > .\\Status\\{_wieBuild.WieGuid}.complete");
 
-            return serviceFilesystem.WritePath(_fullPath, configContents.ToString());
+            return ctx.Filessystem.WritePath(_fullPath, configContents.ToString());
           
         }
 
@@ -148,10 +140,10 @@ namespace Toems_Service.Workflows
             var filesToDownload = new List<DtoClientFileRequest>();
             foreach (var driverId in _config.Drivers)
             {
-                var module = serviceFileCopyModule.GetModule(driverId);
+                var module = ctx.FileCopyModule.GetModule(driverId);
                
 
-                var moduleFiles = serviceModule.GetModuleFiles(module.Guid);
+                var moduleFiles = ctx.Module.GetModuleFiles(module.Guid);
                 foreach (var file in moduleFiles.OrderBy(x => x.FileName))
                 {
                     var fr = new DtoClientFileRequest();
@@ -163,8 +155,8 @@ namespace Toems_Service.Workflows
 
             var comServer = _uow.ClientComServerRepository.Get().FirstOrDefault();
 
-            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
             foreach (var file in filesToDownload)
             {
@@ -194,8 +186,8 @@ namespace Toems_Service.Workflows
                     }
                     catch(Exception ex)
                     {
-                        ictx.Log.Error("Could not unzip file");
-                        ictx.Log.Error(ex.Message);
+                        ctx.Log.Error("Could not unzip file");
+                        ctx.Log.Error(ex.Message);
                     }
                 }
             }

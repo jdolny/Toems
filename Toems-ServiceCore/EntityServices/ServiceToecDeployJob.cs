@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceToecDeployJob(EntityContext ectx)
+    public class ServiceToecDeployJob(ServiceContext ctx)
     {
         public DtoActionResult Add(EntityToecDeployJob toecDeployJob)
         {
@@ -13,9 +13,9 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(toecDeployJob,true);
             if (validationResult.Success)
             {
-                toecDeployJob.PasswordEncrypted = ectx.Encryption.EncryptText(toecDeployJob.PasswordEncrypted);
-                ectx.Uow.ToecDeployJobRepository.Insert(toecDeployJob);
-                ectx.Uow.Save();
+                toecDeployJob.PasswordEncrypted = ctx.Encryption.EncryptText(toecDeployJob.PasswordEncrypted);
+                ctx.Uow.ToecDeployJobRepository.Insert(toecDeployJob);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = toecDeployJob.Id;
             }
@@ -32,8 +32,8 @@ namespace Toems_ServiceCore.EntityServices
             var u = GetToecDeployJob(toecDeployJobId);
             if (u == null) return new DtoActionResult { ErrorMessage = "Deploy Job Not Found", Id = 0 };
 
-            ectx.Uow.ToecDeployJobRepository.Delete(toecDeployJobId);
-            ectx.Uow.Save();
+            ctx.Uow.ToecDeployJobRepository.Delete(toecDeployJobId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -42,45 +42,45 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityToecDeployJob GetToecDeployJob(int toecDeployJobId)
         {
-            return ectx.Uow.ToecDeployJobRepository.GetById(toecDeployJobId);
+            return ctx.Uow.ToecDeployJobRepository.GetById(toecDeployJobId);
         }
 
         public List<EntityToecDeployJob> Search(DtoSearchFilter filter)
         {
-            return ectx.Uow.ToecDeployJobRepository.Get(x => x.Name.Contains(filter.SearchText));
+            return ctx.Uow.ToecDeployJobRepository.Get(x => x.Name.Contains(filter.SearchText));
         }
         public List<EntityToecTargetListComputer> GetTargetComputers(int toecDeployJobId)
         {
             var u = GetToecDeployJob(toecDeployJobId);
             if(u != null)
             {
-                return ectx.Uow.ToecTargetListComputerRepository.Get(x => x.TargetListId == u.TargetListId);
+                return ctx.Uow.ToecTargetListComputerRepository.Get(x => x.TargetListId == u.TargetListId);
             }
             return null;
         }
 
         public bool RestartDeployJobService()
         {
-            ectx.Uow.ToecDeployThreadRepository.DeleteRange(x => x.Id > 0);
-            ectx.Uow.Save();
+            ctx.Uow.ToecDeployThreadRepository.DeleteRange(x => x.Id > 0);
+            ctx.Uow.Save();
             return true;
         }
 
         public bool ResetComputerStatus(int computerId)
         {
-            var computer = ectx.Uow.ToecTargetListComputerRepository.GetById(computerId);
+            var computer = ctx.Uow.ToecTargetListComputerRepository.GetById(computerId);
             if (computer == null) return false;
             computer.Status = Toems_Common.Enum.EnumToecDeployTargetComputer.TargetStatus.AwaitingAction;
             computer.LastStatusDate = null;
             computer.LastUpdateDetails = null;
-            ectx.Uow.ToecTargetListComputerRepository.Update(computer, computer.Id);
+            ctx.Uow.ToecTargetListComputerRepository.Update(computer, computer.Id);
 
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             return true;
         }
         public string TotalCount()
         {
-            return ectx.Uow.ToecDeployJobRepository.Count();
+            return ctx.Uow.ToecDeployJobRepository.Count();
         }
 
         public DtoActionResult Update(EntityToecDeployJob toecDeployJob)
@@ -90,15 +90,15 @@ namespace Toems_ServiceCore.EntityServices
             if (string.IsNullOrEmpty(toecDeployJob.PasswordEncrypted))
                 toecDeployJob.PasswordEncrypted = u.PasswordEncrypted;
             else
-                toecDeployJob.PasswordEncrypted = ectx.Encryption.EncryptText(toecDeployJob.PasswordEncrypted);
+                toecDeployJob.PasswordEncrypted = ctx.Encryption.EncryptText(toecDeployJob.PasswordEncrypted);
 
             var actionResult = new DtoActionResult();
 
                var validationResult = Validate(toecDeployJob,false);
             if (validationResult.Success)
             {
-                ectx.Uow.ToecDeployJobRepository.Update(toecDeployJob, u.Id);
-                ectx.Uow.Save();
+                ctx.Uow.ToecDeployJobRepository.Update(toecDeployJob, u.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = toecDeployJob.Id;
             }
@@ -115,7 +115,7 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = new DtoValidationResult();
             if (isNew)
             {
-                if (ectx.Uow.ToecDeployJobRepository.Exists(h => h.Name == toecDeployJob.Name))
+                if (ctx.Uow.ToecDeployJobRepository.Exists(h => h.Name == toecDeployJob.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Toec Deploy Job With This Name Already Exists.";
@@ -124,10 +124,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var originalDeployJob = ectx.Uow.ToecDeployJobRepository.GetById(toecDeployJob.Id);
+                var originalDeployJob = ctx.Uow.ToecDeployJobRepository.GetById(toecDeployJob.Id);
                 if (originalDeployJob.Name != toecDeployJob.Name)
                 {
-                    if (ectx.Uow.ToecDeployJobRepository.Exists(h => h.Name == toecDeployJob.Name))
+                    if (ctx.Uow.ToecDeployJobRepository.Exists(h => h.Name == toecDeployJob.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Toec Deploy Job With This Name Already Exists.";

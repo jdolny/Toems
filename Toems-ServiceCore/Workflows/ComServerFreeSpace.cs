@@ -1,26 +1,22 @@
-﻿using System.Collections.Generic;
-using System.Configuration;
-using log4net;
-using Toems_ApiCalls;
+﻿using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_DataModel;
-using Toems_Service.Entity;
 using Toems_ServiceCore.Infrastructure;
 
 //https://code.msdn.microsoft.com/windowsdesktop/File-Sync-with-Simple-c497bf87/sourcecode?fileId=19013&pathId=1314099233
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class ComServerFreeSpace(InfrastructureContext ictx, FilesystemServices filesystemServices)
+    public class ComServerFreeSpace(ServiceContext ctx)
     {
         public List<DtoFreeSpace> RunAllServers()
         {
             var uow = new UnitOfWork();
             var comServers = uow.ClientComServerRepository.Get();
            
-            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
             var list = new List<DtoFreeSpace>();
             foreach (var com in comServers)
@@ -29,7 +25,7 @@ namespace Toems_Service.Workflows
                 free = new APICall().ClientComServerApi.GetFreeSpace(com.Url, "", decryptedKey);
 
                 if (free == null) {
-                    ictx.Log.Error("Com server returned null for status. Check your com server URL!");
+                    ctx.Log.Error("Com server returned null for status. Check your com server URL!");
                 }
                 else
                 {
@@ -43,7 +39,7 @@ namespace Toems_Service.Workflows
 
         public DtoFreeSpace GetFreeSpace()
         {
-            return filesystemServices.GetComServerFreeSpace();
+            return ctx.Filessystem.GetComServerFreeSpace();
         }
 
       

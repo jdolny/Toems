@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class CreateTaskArguments(InfrastructureContext ictx, ServiceImageProfile serviceImageProfile, ServiceComputer serviceComputer, 
-        ServiceCustomAttribute serviceCustomAttribute, ServiceImageSchemaFE serviceImageSchemaFE, ServiceClientComServer serviceClientComServer)
+    public class CreateTaskArguments(ServiceContext ctx)
     {
         private StringBuilder _activeTaskArguments;
         private EntityComputer _computer;
@@ -51,7 +45,7 @@ namespace Toems_Service.Workflows
             var preScripts = "\"";
             var beforeFileScripts = "\"";
             var afterFileScripts = "\"";
-            foreach (var script in serviceImageProfile.GetImageProfileScripts(_imageProfile.Id))
+            foreach (var script in ctx.ImageProfile.GetImageProfileScripts(_imageProfile.Id))
             {
                 if (script.RunWhen == EnumProfileScript.RunWhen.BeforeImaging)
                     preScripts += script.ScriptModuleId + " ";
@@ -65,13 +59,13 @@ namespace Toems_Service.Workflows
             preScripts += "\"";
 
             var sysprepTags = "\"";
-            foreach (var sysprepTag in serviceImageProfile.GetImageProfileSysprep(_imageProfile.Id))
+            foreach (var sysprepTag in ctx.ImageProfile.GetImageProfileSysprep(_imageProfile.Id))
                 sysprepTags += sysprepTag.SysprepModuleId + " ";
 
             sysprepTags = sysprepTags.Trim();
             sysprepTags += "\"";
 
-            var areFilesToCopy = serviceImageProfile.GetImageProfileFileCopy(_imageProfile.Id).Any();
+            var areFilesToCopy = ctx.ImageProfile.GetImageProfileFileCopy(_imageProfile.Id).Any();
 
             //On demand computer may be null if not registered
             if (_computer != null)
@@ -89,12 +83,12 @@ namespace Toems_Service.Workflows
             AppendString("sysprep_tags=" + sysprepTags);
             AppendString("image_type=" + _imageProfile.Image.Type);
             AppendString("set_bootmgr=" + _imageProfile.SetBootmgrFirst);
-            AppendString("display_sleep_time=" + ictx.Settings.GetSettingValue(SettingStrings.LieSleepTime));
+            AppendString("display_sleep_time=" + ctx.Setting.GetSettingValue(SettingStrings.LieSleepTime));
             if (Convert.ToBoolean(_imageProfile.WebCancel))
                 AppendString("web_cancel=true");
             AppendString("task_completed_action=" + "\"" + _imageProfile.TaskCompletedAction + "\"");
 
-            if (ictx.Settings.GetSettingValue(SettingStrings.ImageDirectSmb).Equals("True"))
+            if (ctx.Setting.GetSettingValue(SettingStrings.ImageDirectSmb).Equals("True"))
                 AppendString("direct_smb=true");
 
             if (_direction.Contains("upload"))
@@ -120,11 +114,11 @@ namespace Toems_Service.Workflows
                 //check for null in case of on demand
                 if (_computer != null)
                 {
-                    var computerAttributes = serviceComputer.GetCustomAttributes(_computer.Id);
+                    var computerAttributes = ctx.Computer.GetCustomAttributes(_computer.Id);
 
                     foreach(var attribute in computerAttributes)
                     {
-                        var compAttrib = serviceCustomAttribute.GetCustomAttribute(attribute.CustomAttributeId);
+                        var compAttrib = ctx.CustomAttribute.GetCustomAttribute(attribute.CustomAttributeId);
                         if(!string.IsNullOrEmpty(attribute.Value))
                         {
                             if(compAttrib.ClientImagingAvailable)
@@ -153,7 +147,7 @@ namespace Toems_Service.Workflows
                 }
                 if (_direction.Contains("multicast"))
                 {
-                    var comServer = serviceClientComServer.GetServer(_comServerId);
+                    var comServer = ctx.ClientComServer.GetServer(_comServerId);
                     if (comServer.DecompressImageOn == "client")
                         AppendString("decompress_multicast_on_client=true");
                     if (string.IsNullOrEmpty(_imageProfile.ReceiverArguments))
@@ -176,8 +170,8 @@ namespace Toems_Service.Workflows
             var imageSchemaRequest = new DtoImageSchemaRequest();
             imageSchemaRequest.imageProfile = _imageProfile;
             imageSchemaRequest.schemaType = "deploy";
-            serviceImageSchemaFE.Init(imageSchemaRequest);
-            var customSchema = serviceImageSchemaFE.GetImageSchema();
+            ctx.ImageSchemaFE.Init(imageSchemaRequest);
+            var customSchema = ctx.ImageSchemaFE.GetImageSchema();
             var customHardDrives = new StringBuilder();
             customHardDrives.Append("custom_hard_drives=\"");
 
@@ -193,8 +187,8 @@ namespace Toems_Service.Workflows
             var imageSchemaRequest = new DtoImageSchemaRequest();
             imageSchemaRequest.imageProfile = _imageProfile;
             imageSchemaRequest.schemaType = "upload";
-            serviceImageSchemaFE.Init(imageSchemaRequest);
-            var customSchema = serviceImageSchemaFE.GetImageSchema();
+            ctx.ImageSchemaFE.Init(imageSchemaRequest);
+            var customSchema = ctx.ImageSchemaFE.GetImageSchema();
             var customHardDrives = new StringBuilder();
             customHardDrives.Append("custom_hard_drives=\"");
             var customPartitions = new StringBuilder();

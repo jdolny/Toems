@@ -1,20 +1,20 @@
 ﻿using System.Text;
+using QRCoder;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
-using Toems_Service;
 using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceResetRequest(EntityContext ectx, ServiceUser userService, ServiceComputer computerService, ServiceCertificate certificateService)
+    public class ServiceResetRequest(ServiceContext ctx)
     {
 
         public DtoActionResult CreateRequest(EntityResetRequest request)
         {
             var existing =
-                ectx.Uow.ResetRequestRepository.GetFirstOrDefault(
+                ctx.Uow.ResetRequestRepository.GetFirstOrDefault(
                     x => x.ComputerName == request.ComputerName && x.InstallationId == request.InstallationId);
 
             if (existing != null)
@@ -22,8 +22,8 @@ namespace Toems_ServiceCore.EntityServices
 
             var actionResult = new DtoActionResult();
 
-            ectx.Uow.ResetRequestRepository.Insert(request);
-            ectx.Uow.Save();
+            ctx.Uow.ResetRequestRepository.Insert(request);
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = request.Id;
 
@@ -32,15 +32,15 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityResetRequest> Search(DtoSearchFilter filter)
         {
-            return ectx.Uow.ResetRequestRepository.Get(x => x.ComputerName.Contains(filter.SearchText));
+            return ctx.Uow.ResetRequestRepository.Get(x => x.ComputerName.Contains(filter.SearchText));
         }
 
-        public bool SendResetRequestReport()
+        public async Task<bool> SendResetRequestReport()
         {
-            if (ectx.Settings.GetSettingValue(SettingStrings.SmtpEnabled) != "1")
+            if (ctx.Setting.GetSettingValue(SettingStrings.SmtpEnabled) != "1")
                 return true;
 
-            var resetRequests = ectx.Uow.ResetRequestRepository.Get();
+            var resetRequests = ctx.Uow.ResetRequestRepository.Get();
             if (resetRequests.Count == 0) return true;
             var sb = new StringBuilder();
             sb.Append("The Following Computers Are Pending Reset Approval:\r\n\r\n");
@@ -51,7 +51,7 @@ namespace Toems_ServiceCore.EntityServices
             }
 
             var emailList = new List<string>();
-            var users = ectx.Uow.UserRepository.Get();
+            var users = ctx.Uow.UserRepository.Get();
             foreach (var user in users)
             {
                 if (user.Membership.Equals("Administrator"))
@@ -61,7 +61,7 @@ namespace Toems_ServiceCore.EntityServices
                 }
                 else
                 {
-                    var rights = userService.GetUserRights(user.Id).Select(right => right.Right).ToList();
+                    var rights = ctx.User.GetUserRights(user.Id).Select(right => right.Right).ToList();
                     if (rights.Any(right => right == AuthorizationStrings.EmailReset))
                     {
                         if (!string.IsNullOrEmpty(user.Email))
@@ -72,14 +72,7 @@ namespace Toems_ServiceCore.EntityServices
 
             foreach (var email in emailList)
             {
-                var mail = new MailServices
-                {
-                    Subject = "Reset Request Report",
-                    Body = sb.ToString(),
-                    MailTo = email
-                };
-
-                mail.Send();
+                await ctx.Mail.SendMailAsync(sb.ToString(),email,"Reset Request Report");
             }
 
             return true;
@@ -87,27 +80,27 @@ namespace Toems_ServiceCore.EntityServices
 
         public string TotalCount()
         {
-            return ectx.Uow.ResetRequestRepository.Count();
+            return ctx.Uow.ResetRequestRepository.Count();
         }
 
         public DtoActionResult ApproveRequest(int requestId)
         {
-            var request = ectx.Uow.ResetRequestRepository.GetById(requestId);
+            var request = ctx.Uow.ResetRequestRepository.GetById(requestId);
             if (request == null) return new DtoActionResult() { ErrorMessage = "Reset Request Id Not Found" };
-            var computer = computerService.GetByNameForReset(request.ComputerName);
+            var computer = ctx.Computer.GetByNameForReset(request.ComputerName);
             computer.ProvisionStatus = EnumProvisionStatus.Status.Reset;
-            computerService.UpdateComputer(computer);
-            certificateService.DeleteCertificate(computer.CertificateId);
+            ctx.Computer.UpdateComputer(computer);
+            ctx.Certificate.DeleteCertificate(computer.CertificateId);
             Delete(requestId);
             return new DtoActionResult() {Success = true, Id = requestId};
         }
 
         public DtoActionResult Delete(int requestId)
         {
-            var u = ectx.Uow.ResetRequestRepository.GetById(requestId);
+            var u = ctx.Uow.ResetRequestRepository.GetById(requestId);
             if (u == null) return new DtoActionResult { ErrorMessage = "Reset Request Id Not Found", Id = 0 };
-            ectx.Uow.ResetRequestRepository.Delete(u.Id);
-            ectx.Uow.Save();
+            ctx.Uow.ResetRequestRepository.Delete(u.Id);
+            ctx.Uow.Save();
             return new DtoActionResult() { Success = true, Id = requestId };
         }
 

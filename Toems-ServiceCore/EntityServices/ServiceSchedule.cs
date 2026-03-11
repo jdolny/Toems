@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceSchedule(EntityContext ectx, GroupService groupService)
+    public class ServiceSchedule(ServiceContext ctx)
     {
 
         public DtoActionResult Add(EntitySchedule schedule)
@@ -14,8 +14,8 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(schedule,true);
             if (validationResult.Success)
             {
-                ectx.Uow.ScheduleRepository.Insert(schedule);
-                ectx.Uow.Save();
+                ctx.Uow.ScheduleRepository.Insert(schedule);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = schedule.Id;
             }
@@ -32,38 +32,38 @@ namespace Toems_ServiceCore.EntityServices
             var u = GetSchedule(scheduleId);
             if (u == null) return new DtoActionResult { ErrorMessage = "Schedule Not Found", Id = 0 };
 
-            var wakeUpGroups = ectx.Uow.GroupRepository.Get(x => x.WakeupScheduleId == scheduleId);
-            var shutdownGroups = ectx.Uow.GroupRepository.Get(x => x.ShutdownScheduleId == scheduleId);
+            var wakeUpGroups = ctx.Uow.GroupRepository.Get(x => x.WakeupScheduleId == scheduleId);
+            var shutdownGroups = ctx.Uow.GroupRepository.Get(x => x.ShutdownScheduleId == scheduleId);
 
             foreach (var wuGroup in wakeUpGroups)
             {
                 wuGroup.WakeupScheduleId = -1;
-                ectx.Uow.GroupRepository.Update(wuGroup,wuGroup.Id);
+                ctx.Uow.GroupRepository.Update(wuGroup,wuGroup.Id);
             }
 
             foreach (var sdGroup in shutdownGroups)
             {
                 sdGroup.ShutdownScheduleId = -1;
-                ectx.Uow.GroupRepository.Update(sdGroup, sdGroup.Id);
+                ctx.Uow.GroupRepository.Update(sdGroup, sdGroup.Id);
             }
 
-            var policyStartWindows = ectx.Uow.PolicyRepository.Get(x => x.WindowStartScheduleId == scheduleId);
-            var policyEndWindows = ectx.Uow.PolicyRepository.Get(x => x.WindowEndScheduleId == scheduleId);
+            var policyStartWindows = ctx.Uow.PolicyRepository.Get(x => x.WindowStartScheduleId == scheduleId);
+            var policyEndWindows = ctx.Uow.PolicyRepository.Get(x => x.WindowEndScheduleId == scheduleId);
 
             foreach (var policy in policyStartWindows)
             {
                 policy.WindowStartScheduleId = -1;
-                ectx.Uow.PolicyRepository.Update(policy,policy.Id);
+                ctx.Uow.PolicyRepository.Update(policy,policy.Id);
             }
 
             foreach (var policy in policyEndWindows)
             {
                 policy.WindowEndScheduleId = -1;
-                ectx.Uow.PolicyRepository.Update(policy, policy.Id);
+                ctx.Uow.PolicyRepository.Update(policy, policy.Id);
             }
 
-            ectx.Uow.ScheduleRepository.Delete(scheduleId);
-            ectx.Uow.Save();
+            ctx.Uow.ScheduleRepository.Delete(scheduleId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -72,22 +72,22 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntitySchedule GetSchedule(int scheduleId)
         {
-            return ectx.Uow.ScheduleRepository.GetById(scheduleId);
+            return ctx.Uow.ScheduleRepository.GetById(scheduleId);
         }
 
         public List<EntitySchedule> GetAll()
         {
-            return ectx.Uow.ScheduleRepository.Get();
+            return ctx.Uow.ScheduleRepository.Get();
         }
 
         public List<EntitySchedule> Search(DtoSearchFilter filter)
         {
-            return ectx.Uow.ScheduleRepository.Get(x => x.Name.Contains(filter.SearchText));
+            return ctx.Uow.ScheduleRepository.Get(x => x.Name.Contains(filter.SearchText));
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.ScheduleRepository.Count();
+            return ctx.Uow.ScheduleRepository.Count();
         }
 
         public DtoActionResult Update(EntitySchedule schedule)
@@ -100,8 +100,8 @@ namespace Toems_ServiceCore.EntityServices
                var validationResult = Validate(schedule,false);
             if (validationResult.Success)
             {
-                ectx.Uow.ScheduleRepository.Update(schedule, u.Id);
-                ectx.Uow.Save();
+                ctx.Uow.ScheduleRepository.Update(schedule, u.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = schedule.Id;
             }
@@ -130,7 +130,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.ScheduleRepository.Exists(h => h.Name == schedule.Name))
+                if (ctx.Uow.ScheduleRepository.Exists(h => h.Name == schedule.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Schedule With This Name Already Exists";
@@ -139,10 +139,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var original = ectx.Uow.ScheduleRepository.GetById(schedule.Id);
+                var original = ctx.Uow.ScheduleRepository.GetById(schedule.Id);
                 if (original.Name != schedule.Name)
                 {
-                    if (ectx.Uow.ScheduleRepository.Exists(h => h.Name == schedule.Name))
+                    if (ctx.Uow.ScheduleRepository.Exists(h => h.Name == schedule.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Schedule With This Name Already Exists";
@@ -158,11 +158,11 @@ namespace Toems_ServiceCore.EntityServices
         {
             if (type.Equals("window start"))
             {
-                return ectx.Uow.PolicyRepository.Get(x => x.WindowStartScheduleId == scheduleId);
+                return ctx.Uow.PolicyRepository.Get(x => x.WindowStartScheduleId == scheduleId);
             }
             else if(type.Equals("window end"))
             {
-                return ectx.Uow.PolicyRepository.Get(x => x.WindowEndScheduleId == scheduleId);
+                return ctx.Uow.PolicyRepository.Get(x => x.WindowEndScheduleId == scheduleId);
             }
             else
             {
@@ -174,11 +174,11 @@ namespace Toems_ServiceCore.EntityServices
         {
             if (type.Equals("wakeup"))
             {
-                return ectx.Uow.GroupRepository.Get(x => x.WakeupScheduleId == scheduleId);
+                return ctx.Uow.GroupRepository.Get(x => x.WakeupScheduleId == scheduleId);
             }
             else if (type.Equals("shutdown"))
             {
-                 return ectx.Uow.GroupRepository.Get(x => x.ShutdownScheduleId == scheduleId);
+                 return ctx.Uow.GroupRepository.Get(x => x.ShutdownScheduleId == scheduleId);
             }
             else
             {
@@ -191,11 +191,11 @@ namespace Toems_ServiceCore.EntityServices
             var groups = new List<EntityGroup>();
             if (type.Equals("wakeup"))
             {
-                groups = ectx.Uow.GroupRepository.Get(x => x.WakeupScheduleId == scheduleId);
+                groups = ctx.Uow.GroupRepository.Get(x => x.WakeupScheduleId == scheduleId);
             }
             else if (type.Equals("shutdown"))
             {
-                groups = ectx.Uow.GroupRepository.Get(x => x.ShutdownScheduleId == scheduleId);
+                groups = ctx.Uow.GroupRepository.Get(x => x.ShutdownScheduleId == scheduleId);
             }
             else
             {
@@ -205,7 +205,7 @@ namespace Toems_ServiceCore.EntityServices
             var computers = new List<EntityComputer>();
             foreach (var group in groups)
             {
-                computers.AddRange(groupService.GetGroupMembers(group.Id));
+                computers.AddRange(ctx.Group.GetGroupMembers(group.Id));
             }
 
             return computers.GroupBy(x => x.Id).Select(y => y.First()).ToList();

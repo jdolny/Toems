@@ -1,22 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Toems_Common.Dto;
-using Toems_Common.Dto.client;
+﻿using Toems_Common.Dto;
 using Toems_Common.Dto.exports;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class ExportPolicy(ServicePolicy servicePolicy, ServiceCommandModule serviceCommandModule, ServiceFileCopyModule serviceFileCopyModule, 
-        ServiceScriptModule serviceScriptModule, ServicePrinterModule servicePrinterModule, ServiceSoftwareModule serviceSoftwareModule, 
-        ServiceWuModule serviceWuModule, ServiceMessageModule serviceMessageModule, ServiceWingetModule serviceWingetModule, ServiceUploadedFile serviceUploadedFile, 
-        ServiceExternalDownload serviceExternalDownload, ValidatePolicy validatePolicy)
+    public class ExportPolicy(ServiceContext ctx)
     {
         private DtoPolicyExport _policyExport;
         private EntityPolicy _policy;
@@ -36,10 +27,10 @@ namespace Toems_Service.Workflows
             _filter.IncludeWinget = true;
             _filter.Limit = Int32.MaxValue;
             
-            _policy = servicePolicy.GetPolicy(exportInfo.PolicyId);
+            _policy = ctx.Policy.GetPolicy(exportInfo.PolicyId);
             if (_policy == null) return null;
 
-            var validationResult = validatePolicy.Validate(exportInfo.PolicyId);
+            var validationResult = ctx.ValidatePolicy.Validate(exportInfo.PolicyId);
             if (!validationResult.Success)
             {
                 return null;
@@ -47,7 +38,7 @@ namespace Toems_Service.Workflows
 
             CopyPolicy(exportInfo);
 
-            var policyModules = servicePolicy.SearchAssignedPolicyModules(exportInfo.PolicyId, _filter);
+            var policyModules = ctx.Policy.SearchAssignedPolicyModules(exportInfo.PolicyId, _filter);
             foreach (var policyModule in policyModules.OrderBy(x => x.Name))
             {
                 if (policyModule.ModuleType == EnumModule.ModuleType.Command)
@@ -121,7 +112,7 @@ namespace Toems_Service.Workflows
         private void CopyCommandModule(EntityPolicyModules policyModule)
         {
             var commandModuleExport = new DtoCommandModuleExport();
-            var commandModule = serviceCommandModule.GetModule(policyModule.ModuleId);
+            var commandModule = ctx.CommandModule.GetModule(policyModule.ModuleId);
             commandModuleExport.Description = commandModule.Description;
             commandModuleExport.Order = policyModule.Order;
             commandModuleExport.Command = commandModule.Command;
@@ -136,7 +127,7 @@ namespace Toems_Service.Workflows
             commandModuleExport.ConditionFailedAction = policyModule.ConditionFailedAction;
             commandModuleExport.ConditionNextOrder = policyModule.ConditionNextModule;
 
-            var uploadedFiles = serviceUploadedFile.GetFilesForModule(commandModule.Guid);
+            var uploadedFiles = ctx.UploadedFile.GetFilesForModule(commandModule.Guid);
             foreach (var file in uploadedFiles.OrderBy(x => x.Name))
             {
                 var uploadedFile = new DtoUploadedFileExport();
@@ -146,7 +137,7 @@ namespace Toems_Service.Workflows
                 commandModuleExport.UploadedFiles.Add(uploadedFile);
             }
 
-            var externalFiles = serviceExternalDownload.GetForModule(commandModule.Guid);
+            var externalFiles = ctx.ExternalDownload.GetForModule(commandModule.Guid);
             foreach (var file in externalFiles.OrderBy(x => x.FileName))
             {
                 var externalFile = new DtoExternalFileExport();
@@ -169,7 +160,7 @@ namespace Toems_Service.Workflows
         private void CopySoftwareModule(EntityPolicyModules policyModule)
         {
             var softwareModuleExport = new DtoSoftwareModuleExport();
-            var softwareModule = serviceSoftwareModule.GetModule(policyModule.ModuleId);
+            var softwareModule = ctx.SoftwareModule.GetModule(policyModule.ModuleId);
             softwareModuleExport.DisplayName = softwareModule.Name;
             softwareModuleExport.Command = softwareModule.Command;
             softwareModuleExport.Description = softwareModule.Description;
@@ -186,7 +177,7 @@ namespace Toems_Service.Workflows
             softwareModuleExport.ConditionNextOrder = policyModule.ConditionNextModule;
 
 
-            var uploadedFiles = serviceUploadedFile.GetFilesForModule(softwareModule.Guid);
+            var uploadedFiles = ctx.UploadedFile.GetFilesForModule(softwareModule.Guid);
             foreach (var file in uploadedFiles.OrderBy(x => x.Name))
             {
                 var uploadedFile = new DtoUploadedFileExport();
@@ -196,7 +187,7 @@ namespace Toems_Service.Workflows
                 softwareModuleExport.UploadedFiles.Add(uploadedFile);
             }
 
-            var externalFiles = serviceExternalDownload.GetForModule(softwareModule.Guid);
+            var externalFiles = ctx.ExternalDownload.GetForModule(softwareModule.Guid);
             foreach (var file in externalFiles.OrderBy(x => x.FileName))
             {
                 var externalFile = new DtoExternalFileExport();
@@ -218,7 +209,7 @@ namespace Toems_Service.Workflows
         private void CopyFileCopyModule(EntityPolicyModules policyModule)
         {
             var fileCopyModuleExport = new DtoFileCopyModuleExport();
-            var fileCopyModule = serviceFileCopyModule.GetModule(policyModule.ModuleId);
+            var fileCopyModule = ctx.FileCopyModule.GetModule(policyModule.ModuleId);
             fileCopyModuleExport.DisplayName = fileCopyModule.Name;
             fileCopyModuleExport.Description = fileCopyModule.Description;
             fileCopyModuleExport.Destination = fileCopyModule.Destination;
@@ -230,7 +221,7 @@ namespace Toems_Service.Workflows
             fileCopyModuleExport.ConditionFailedAction = policyModule.ConditionFailedAction;
             fileCopyModuleExport.ConditionNextOrder = policyModule.ConditionNextModule;
 
-            var uploadedFiles = serviceUploadedFile.GetFilesForModule(fileCopyModule.Guid);
+            var uploadedFiles = ctx.UploadedFile.GetFilesForModule(fileCopyModule.Guid);
             foreach (var file in uploadedFiles.OrderBy(x => x.Name))
             {
                 var uploadedFile = new DtoUploadedFileExport();
@@ -240,7 +231,7 @@ namespace Toems_Service.Workflows
                 fileCopyModuleExport.UploadedFiles.Add(uploadedFile);
             }
 
-            var externalFiles = serviceExternalDownload.GetForModule(fileCopyModule.Guid);
+            var externalFiles = ctx.ExternalDownload.GetForModule(fileCopyModule.Guid);
             foreach (var file in externalFiles.OrderBy(x => x.FileName))
             {
                 var externalFile = new DtoExternalFileExport();
@@ -262,7 +253,7 @@ namespace Toems_Service.Workflows
         private void CopyScriptModule(EntityPolicyModules policyModule)
         {
             var scriptModuleExport = new DtoScriptModuleExport();
-            var scriptModule = serviceScriptModule.GetModule(policyModule.ModuleId);
+            var scriptModule = ctx.ScriptModule.GetModule(policyModule.ModuleId);
 
             scriptModuleExport.ScriptContents = scriptModule.ScriptContents;
             scriptModuleExport.Description = scriptModule.Description;
@@ -292,7 +283,7 @@ namespace Toems_Service.Workflows
         private void CopyMessageModule(EntityPolicyModules policyModule)
         {
             var messageModuleExport = new DtoMessageModuleExport();
-            var messageModule = serviceMessageModule.GetModule(policyModule.ModuleId);
+            var messageModule = ctx.MessageModule.GetModule(policyModule.ModuleId);
 
          
             messageModuleExport.Description = messageModule.Description;
@@ -316,7 +307,7 @@ namespace Toems_Service.Workflows
         private void CopyPrinterModule(EntityPolicyModules policyModule)
         {
             var printerModuleExport = new DtoPrinterModuleExport();
-            var printerModule = servicePrinterModule.GetModule(policyModule.ModuleId);
+            var printerModule = ctx.PrinterModule.GetModule(policyModule.ModuleId);
             printerModuleExport.DisplayName = printerModule.Name;
             printerModuleExport.PrinterPath = printerModule.NetworkPath;
             printerModuleExport.Description = printerModule.Description;
@@ -339,7 +330,7 @@ namespace Toems_Service.Workflows
         private void CopyWuModule(EntityPolicyModules policyModule)
         {
             var wuModuleExport = new DtoWuModuleExport();
-            var wuModule = serviceWuModule.GetModule(policyModule.ModuleId);
+            var wuModule = ctx.WuModule.GetModule(policyModule.ModuleId);
             wuModuleExport.DisplayName = wuModule.Name;
             wuModuleExport.Description = wuModule.Description;
             wuModuleExport.Arguments = wuModule.AdditionalArguments;
@@ -352,7 +343,7 @@ namespace Toems_Service.Workflows
             wuModuleExport.ConditionFailedAction = policyModule.ConditionFailedAction;
             wuModuleExport.ConditionNextOrder = policyModule.ConditionNextModule;
 
-            var uploadedFiles = serviceUploadedFile.GetFilesForModule(wuModule.Guid);
+            var uploadedFiles = ctx.UploadedFile.GetFilesForModule(wuModule.Guid);
             foreach (var file in uploadedFiles.OrderBy(x => x.Name))
             {
                 var uploadedFile = new DtoUploadedFileExport();
@@ -362,7 +353,7 @@ namespace Toems_Service.Workflows
                 wuModuleExport.UploadedFiles.Add(uploadedFile);
             }
 
-            var externalFiles = serviceExternalDownload.GetForModule(wuModule.Guid);
+            var externalFiles = ctx.ExternalDownload.GetForModule(wuModule.Guid);
             foreach (var file in externalFiles.OrderBy(x => x.FileName))
             {
                 var externalFile = new DtoExternalFileExport();
@@ -383,7 +374,7 @@ namespace Toems_Service.Workflows
 
         private DtoScriptModuleExport GetCondition(int conditionScriptId)
         {
-            var condition = serviceScriptModule.GetModule(conditionScriptId);
+            var condition = ctx.ScriptModule.GetModule(conditionScriptId);
             if (condition == null) return null;
 
             var scriptModuleExport = new DtoScriptModuleExport();
@@ -408,7 +399,7 @@ namespace Toems_Service.Workflows
         private void CopyWingetModule(EntityPolicyModules policyModule)
         {
             var wingetModuleExport = new DtoWingetModuleExport();
-            var wingetModule = serviceWingetModule.GetModule(policyModule.ModuleId);
+            var wingetModule = ctx.WingetModule.GetModule(policyModule.ModuleId);
             wingetModuleExport.Description = wingetModule.Description;
             wingetModuleExport.Order = policyModule.Order;
             wingetModuleExport.PackageIdentifier = wingetModule.PackageId;

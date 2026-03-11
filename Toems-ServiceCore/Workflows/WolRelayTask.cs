@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 using log4net;
 using Toems_Common.Dto;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
     public class WolRelayTask
     {

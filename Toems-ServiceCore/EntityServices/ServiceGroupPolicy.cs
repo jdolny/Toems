@@ -1,10 +1,11 @@
 ﻿using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_ServiceCore.Infrastructure;
+using Toems_ServiceCore.Workflows;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceGroupPolicy(EntityContext ectx)
+    public class ServiceGroupPolicy(ServiceContext ctx)
     {
         public DtoActionResult AddGroupPolicies(List<EntityGroupPolicy> groupPolicies)
         {
@@ -15,19 +16,19 @@ namespace Toems_ServiceCore.EntityServices
             
             foreach (var groupPolicy in groupPolicies)
             {
-                ectx.Uow.GroupPolicyRepository.Insert(groupPolicy);
+                ctx.Uow.GroupPolicyRepository.Insert(groupPolicy);
             }
-            ectx.Uow.Save();
+            ctx.Uow.Save();
 
-            return new Toems_Service.Workflows.GenerateClientGroupPolicy().Execute(firstGroup.GroupId);
+            return ctx.GenerateClientGroupPolicy.Execute(firstGroup.GroupId);
         }
 
         public DtoActionResult AddGroupPolicy(EntityGroupPolicy groupPolicy)
         {
             var actionResult = new DtoActionResult();
 
-            ectx.Uow.GroupPolicyRepository.Insert(groupPolicy);
-            ectx.Uow.Save();
+            ctx.Uow.GroupPolicyRepository.Insert(groupPolicy);
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = groupPolicy.Id;
 
@@ -39,10 +40,10 @@ namespace Toems_ServiceCore.EntityServices
         {
             var u = GetGroupPolicy(groupPolicyId);
             if (u == null) return new DtoActionResult { ErrorMessage = "Group Policy Not Found", Id = 0 };
-            ectx.Uow.GroupPolicyRepository.Delete(groupPolicyId);
-            ectx.Uow.Save();
+            ctx.Uow.GroupPolicyRepository.Delete(groupPolicyId);
+            ctx.Uow.Save();
             //recalculate Active group policies
-            new Toems_Service.Workflows.GenerateClientGroupPolicy().Execute(u.GroupId);
+            ctx.GenerateClientGroupPolicy.Execute(u.GroupId);
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -51,7 +52,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityGroupPolicy GetGroupPolicy(int groupPolicyId)
         {
-            return ectx.Uow.GroupPolicyRepository.GetById(groupPolicyId);
+            return ctx.Uow.GroupPolicyRepository.GetById(groupPolicyId);
         }
 
         public DtoActionResult UpdateGroupPolicy(EntityGroupPolicy groupPolicy)
@@ -60,10 +61,10 @@ namespace Toems_ServiceCore.EntityServices
             if (u == null) return new DtoActionResult { ErrorMessage = "Group Policy Not Found", Id = 0 };
             var actionResult = new DtoActionResult();
 
-            ectx.Uow.GroupPolicyRepository.Update(groupPolicy, groupPolicy.Id);
-            ectx.Uow.Save();
+            ctx.Uow.GroupPolicyRepository.Update(groupPolicy, groupPolicy.Id);
+            ctx.Uow.Save();
             //recalculate Active group policies
-            new Toems_Service.Workflows.GenerateClientGroupPolicy().Execute(u.GroupId);
+            ctx.GenerateClientGroupPolicy.Execute(u.GroupId);
             actionResult.Success = true;
             actionResult.Id = groupPolicy.Id;
 

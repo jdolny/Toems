@@ -2,14 +2,14 @@
 using System.Net;
 using System.Security.Cryptography;
 using Toems_Common;
+using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
-using Toems_Service;
 using Toems_ServiceCore.EntityServices;
 
 namespace Toems_ServiceCore.Infrastructure
 {
-    public class ServiceFileDownloader(InfrastructureContext ictx, ServiceExternalDownload externalDownloadService, UncServices uncService, ServiceFileHash fileHashService)
+    public class ServiceFileDownloader(ServiceContext ctx)
     {
         private EntityExternalDownload EntityDownload;
         private WebClient _webClient;
@@ -24,22 +24,22 @@ namespace Toems_ServiceCore.Infrastructure
             EntityDownload.Status = EnumFileDownloader.DownloadStatus.Downloading;
 
             if (EntityDownload.Id == 0)
-                externalDownloadService.Add(EntityDownload);
+                ctx.ExternalDownload.Add(EntityDownload);
             else
-                externalDownloadService.Update(EntityDownload);
+                ctx.ExternalDownload.Update(EntityDownload);
 
-            _destinationDir = Path.Combine(ictx.Settings.GetSettingValue(SettingStrings.StoragePath), "software_uploads", EntityDownload.ModuleGuid);
+            _destinationDir = Path.Combine(ctx.Setting.GetSettingValue(SettingStrings.StoragePath), "software_uploads", EntityDownload.ModuleGuid);
             var dirResult = CreateDirectory();
             if (dirResult != null)
             {
                 EntityDownload.Status = EnumFileDownloader.DownloadStatus.Error;
                 EntityDownload.ErrorMessage = dirResult;
-                externalDownloadService.Update(EntityDownload);
+                ctx.ExternalDownload.Update(EntityDownload);
                 return;
             }
 
 
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 using (_webClient = new WebClient())
                 {
@@ -55,7 +55,7 @@ namespace Toems_ServiceCore.Infrastructure
             if (_progress == e.ProgressPercentage) return;
             EntityDownload.Progress = e.ProgressPercentage.ToString();
             _progress = e.ProgressPercentage;
-            var result = externalDownloadService.Update(EntityDownload);
+            var result = ctx.ExternalDownload.Update(EntityDownload);
             if (result == null)
             {
                 //task deleted
@@ -81,7 +81,7 @@ namespace Toems_ServiceCore.Infrastructure
             if (e.Error == null)
             {
                 EntityDownload.DateDownloaded = DateTime.Now;
-                externalDownloadService.Update(EntityDownload);
+                ctx.ExternalDownload.Update(EntityDownload);
                 _progress = 0;
                 CalculateMd5();
                 if (!string.IsNullOrEmpty(EntityDownload.Sha256Hash))
@@ -93,7 +93,7 @@ namespace Toems_ServiceCore.Infrastructure
                     {
                         EntityDownload.Status = EnumFileDownloader.DownloadStatus.Error;
                         EntityDownload.ErrorMessage = "File Hash Mismatch";
-                        externalDownloadService.Update(EntityDownload);
+                        ctx.ExternalDownload.Update(EntityDownload);
                     }
                 }
                 
@@ -102,7 +102,7 @@ namespace Toems_ServiceCore.Infrastructure
             {
                 EntityDownload.Status = EnumFileDownloader.DownloadStatus.Error;
                 EntityDownload.ErrorMessage = e.Error.Message;
-                externalDownloadService.Update(EntityDownload);
+                ctx.ExternalDownload.Update(EntityDownload);
             }
 
         }
@@ -110,16 +110,16 @@ namespace Toems_ServiceCore.Infrastructure
         private void CalculateSha256()
         {
             EntityDownload.Status = EnumFileDownloader.DownloadStatus.CalculatingSha256;
-            externalDownloadService.Update(EntityDownload);
+            ctx.ExternalDownload.Update(EntityDownload);
             
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 try
                 {
-                    fileHashService.FileHashingProgress += OnFileHashingProgress;
+                    ctx.FileHash.FileHashingProgress += OnFileHashingProgress;
                     using (var stream = new BufferedStream(File.OpenRead(Path.Combine(_destinationDir, EntityDownload.FileName)), 1200000))
-                        fileHashService.ComputeHash(stream,SHA256.Create());
-                    EntityDownload.Sha256Hash = fileHashService.ToString();
+                        ctx.FileHash.ComputeHash(stream,SHA256.Create());
+                    EntityDownload.Sha256Hash = ctx.FileHash.ToString();
                     EntityDownload.Status = EnumFileDownloader.DownloadStatus.Complete;
                 }
                 catch (Exception ex)
@@ -129,22 +129,22 @@ namespace Toems_ServiceCore.Infrastructure
                 }
             }
             
-            externalDownloadService.Update(EntityDownload);
+            ctx.ExternalDownload.Update(EntityDownload);
         }
 
         private void CalculateMd5()
         {
             EntityDownload.Status = EnumFileDownloader.DownloadStatus.CalculatingMd5;
-            externalDownloadService.Update(EntityDownload);
+            ctx.ExternalDownload.Update(EntityDownload);
             
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 try
                 {
-                    fileHashService.FileHashingProgress += OnFileHashingProgress;
+                    ctx.FileHash.FileHashingProgress += OnFileHashingProgress;
                     using (var stream = new BufferedStream(File.OpenRead(Path.Combine(_destinationDir, EntityDownload.FileName)), 1200000))
-                        fileHashService.ComputeHash(stream, MD5.Create());
-                    EntityDownload.Md5Hash = fileHashService.ToString();
+                        ctx.FileHash.ComputeHash(stream, MD5.Create());
+                    EntityDownload.Md5Hash = ctx.FileHash.ToString();
                     EntityDownload.Status = EnumFileDownloader.DownloadStatus.Complete;
                 }
                 catch (Exception ex)
@@ -154,7 +154,7 @@ namespace Toems_ServiceCore.Infrastructure
                 }
             }
             
-            externalDownloadService.Update(EntityDownload);
+            ctx.ExternalDownload.Update(EntityDownload);
         }
 
         public void OnFileHashingProgress(object sender, FileHashingProgressArgs e)
@@ -162,18 +162,18 @@ namespace Toems_ServiceCore.Infrastructure
             if (_progress == e.Percent) return;
             EntityDownload.Progress = e.Percent.ToString();
             _progress = e.Percent;
-            var result = externalDownloadService.Update(EntityDownload);
+            var result = ctx.ExternalDownload.Update(EntityDownload);
             if (result == null)
             {
                 //task deleted
-                fileHashService.Cancel();
+                ctx.FileHash.Cancel();
                 return;
             }
 
             if (!result.Success)
             {
                 //task deleted
-                fileHashService.Cancel();
+                ctx.FileHash.Cancel();
                 return;
             }
         }
@@ -181,7 +181,7 @@ namespace Toems_ServiceCore.Infrastructure
         private string CreateDirectory()
         {
 
-            if (uncService.NetUseWithCredentials() || uncService.LastError == 1219)
+            if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
             {
                 var directory = new DirectoryInfo(_destinationDir);
                 try

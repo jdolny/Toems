@@ -2,13 +2,12 @@
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_DataModel;
-using Toems_Service.Workflows;
 using Toems_ServiceCore.Infrastructure;
+using Toems_ServiceCore.Workflows;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class GroupService(EntityContext ectx, ServiceComputer computerService, ServiceUser userService, UpdateDynamicMemberships updateDynamicMemberships,
-        BuildSqlQuery buildSqlQuery, PowerManagement powerManagement, Unicast unicast)
+    public class GroupService(ServiceContext ctx)
     {
         public DtoActionResult AddGroup(EntityGroup group)
         {
@@ -16,8 +15,8 @@ namespace Toems_ServiceCore.EntityServices
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
-                ectx.Uow.GroupRepository.Insert(group);
-                ectx.Uow.Save();
+                ctx.Uow.GroupRepository.Insert(group);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = group.Id;
             }
@@ -35,9 +34,9 @@ namespace Toems_ServiceCore.EntityServices
             {
                 computer.ImagingClientId = string.Empty;
                 computer.ImagingMac = string.Empty;
-                ectx.Uow.ComputerRepository.Update(computer, computer.Id);
+                ctx.Uow.ComputerRepository.Update(computer, computer.Id);
             }
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = groupId;
@@ -51,8 +50,8 @@ namespace Toems_ServiceCore.EntityServices
             if (u.IsOu) return new DtoActionResult() {ErrorMessage = "Active Directory OU's Cannot Be Deleted."};
             if (u.Id == -1) return new DtoActionResult() { ErrorMessage = "The Built-In All Computers Group Cannot Be Deleted." };
             if (u.Id == -2) return new DtoActionResult() { ErrorMessage = "The Built-In Image First Run Group Cannot Be Deleted." };
-            ectx.Uow.GroupRepository.Delete(groupId);
-            ectx.Uow.Save();
+            ctx.Uow.GroupRepository.Delete(groupId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -63,9 +62,9 @@ namespace Toems_ServiceCore.EntityServices
         {
             foreach (var group in groups)
             {
-                ectx.Uow.GroupRepository.Update(group, group.Id);
+                ctx.Uow.GroupRepository.Update(group, group.Id);
             }
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             return true;
         }
 
@@ -73,13 +72,13 @@ namespace Toems_ServiceCore.EntityServices
         {
             foreach (var group in groups)
             {
-                if (ectx.Uow.GroupRepository.Exists(h => h.Dn == group.Dn))
+                if (ctx.Uow.GroupRepository.Exists(h => h.Dn == group.Dn))
                 {
                     continue;
                 }
-                ectx.Uow.GroupRepository.Insert(group);
+                ctx.Uow.GroupRepository.Insert(group);
             }
-            ectx.Uow.Save();
+            ctx.Uow.Save();
 
             var allAdGroups = GetAllAdGroups();
             var toDelete = (from adGroup in allAdGroups
@@ -95,20 +94,20 @@ namespace Toems_ServiceCore.EntityServices
         {
             foreach (var id in groupIds)
             {
-                ectx.Uow.GroupRepository.Delete(id);
+                ctx.Uow.GroupRepository.Delete(id);
             }
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             return true;
         }
 
         public EntityGroup GetGroupParentId(EntityGroup group)
         {
-            return ectx.Uow.GroupRepository.GetFirstOrDefault(x => x.Dn == group.ParentOu);
+            return ctx.Uow.GroupRepository.GetFirstOrDefault(x => x.Dn == group.ParentOu);
             
         }
         public EntityGroup GetGroup(int groupId)
         {
-            return ectx.Uow.GroupRepository.GetById(groupId);
+            return ctx.Uow.GroupRepository.GetById(groupId);
         }
 
         public bool UpdateDynamicQuery(List<EntitySmartGroupQuery> queries)
@@ -117,29 +116,29 @@ namespace Toems_ServiceCore.EntityServices
             var first = queries.FirstOrDefault();
             if (first == null) return false;
             var groupId = first.GroupId;
-            ectx.Uow.SmartGroupQueryRepository.DeleteRange(x => x.GroupId == groupId);
-            ectx.Uow.Save();
-            var existing =ectx.Uow.SmartGroupQueryRepository.GetFirstOrDefault(x => x.GroupId == groupId);
+            ctx.Uow.SmartGroupQueryRepository.DeleteRange(x => x.GroupId == groupId);
+            ctx.Uow.Save();
+            var existing =ctx.Uow.SmartGroupQueryRepository.GetFirstOrDefault(x => x.GroupId == groupId);
             if (existing != null) return false;
             //Assume all entries were deleted, and nothing is being added
-            if (first.Table == null) return updateDynamicMemberships.Single(groupId);
+            if (first.Table == null) return UpdateGroupMemberships(groupId);
             foreach (var query in queries)
             {
-                ectx.Uow.SmartGroupQueryRepository.Insert(query);
+                ctx.Uow.SmartGroupQueryRepository.Insert(query);
             }
-            ectx.Uow.Save();
+            ctx.Uow.Save();
 
-            return updateDynamicMemberships.Single(groupId);
+            return UpdateGroupMemberships(groupId);
         }
 
         public List<EntitySmartGroupQuery> GetDynamicQuery(int groupId)
         {
-            return ectx.Uow.SmartGroupQueryRepository.Get(x => x.GroupId == groupId).OrderBy(x => x.Order).ToList();
+            return ctx.Uow.SmartGroupQueryRepository.Get(x => x.GroupId == groupId).OrderBy(x => x.Order).ToList();
         }
 
         public DataSet GetDynamicMembers(List<EntitySmartGroupQuery> queries)
         {
-            var sql = buildSqlQuery.Run(queries);
+            var sql = ctx.BuildSqlQuery.Run(queries);
             if(sql == null) return null;
             return new RawSqlRepository().ExecuteReader(sql);
         }
@@ -148,7 +147,7 @@ namespace Toems_ServiceCore.EntityServices
         public bool SendMessage(int id, DtoMessage message)
         {
             foreach (var computer in GetGroupMembers(id))
-                computerService.SendMessage(computer.Id, message);
+                ctx.Computer.SendMessage(computer.Id, message);
 
             return true;
         }
@@ -156,7 +155,7 @@ namespace Toems_ServiceCore.EntityServices
         public bool ForceCheckin(int id)
         {
             foreach (var computer in GetGroupMembers(id))
-                computerService.ForceCheckin(computer.Id);
+                ctx.Computer.ForceCheckin(computer.Id);
 
             return true;
         }
@@ -164,7 +163,7 @@ namespace Toems_ServiceCore.EntityServices
         public bool CollectInventory(int id)
         {
             foreach (var computer in GetGroupMembers(id))
-                computerService.CollectInventory(computer.Id);
+                ctx.Computer.CollectInventory(computer.Id);
 
             return true;
         }
@@ -174,7 +173,7 @@ namespace Toems_ServiceCore.EntityServices
             var group = GetGroup(id);
             var list = new List<EntityGroup>();
             list.Add(group);
-            return powerManagement.RebootGroups(list);
+            return ctx.PowerManagement.RebootGroups(list);
         }
 
         public bool Shutdown(int id)
@@ -182,7 +181,7 @@ namespace Toems_ServiceCore.EntityServices
             var group = GetGroup(id);
             var list = new List<EntityGroup>();
             list.Add(group);
-            return powerManagement.ShutdownGroups(list);
+            return ctx.PowerManagement.ShutdownGroups(list);
         }
 
         public bool Wakeup(int id)
@@ -190,37 +189,37 @@ namespace Toems_ServiceCore.EntityServices
             var group = GetGroup(id);
             var list = new List<EntityGroup>();
             list.Add(group);
-            return powerManagement.WakeupGroups(list);
+            return ctx.PowerManagement.WakeupGroups(list);
         }
 
         public EntityGroup GetGroupByName(string name)
         {
-            return ectx.Uow.GroupRepository.GetFirstOrDefault(x => x.Name == name);
+            return ctx.Uow.GroupRepository.GetFirstOrDefault(x => x.Name == name);
         }
 
         public EntityGroup GetGroupByDn(string dn)
         {
-            return ectx.Uow.GroupRepository.GetFirstOrDefault(x => x.Dn == dn);
+            return ctx.Uow.GroupRepository.GetFirstOrDefault(x => x.Dn == dn);
         }
 
         public List<EntityGroup> GetAllAdGroups()
         {
-            return ectx.Uow.GroupRepository.Get(x => x.IsOu).OrderBy(x => x.Name).ToList();
+            return ctx.Uow.GroupRepository.Get(x => x.IsOu).OrderBy(x => x.Name).ToList();
         }
 
         public List<EntityGroup> GetAllOuGroups()
         {
-            return ectx.Uow.GroupRepository.Get(x => x.IsOu).Where(x=> !x.Dn.ToLower().Contains("cn=system")).OrderBy(x => x.ParentOu).ThenBy(x=> x.Dn).ToList();
+            return ctx.Uow.GroupRepository.Get(x => x.IsOu).Where(x=> !x.Dn.ToLower().Contains("cn=system")).OrderBy(x => x.ParentOu).ThenBy(x=> x.Dn).ToList();
         }
 
         public List<EntityGroup> GetAllAdSecurityGroups()
         {
-            return ectx.Uow.GroupRepository.Get(x => x.IsSecurityGroup).OrderBy(x => x.Name).ToList();
+            return ctx.Uow.GroupRepository.Get(x => x.IsSecurityGroup).OrderBy(x => x.Name).ToList();
 
         }
         public List<EntityGroup> GetAllDynamicGroups()
         {
-            return ectx.Uow.GroupRepository.Get(x => x.Type == "Dynamic").OrderBy(x => x.Name).ToList();
+            return ctx.Uow.GroupRepository.Get(x => x.Type == "Dynamic").OrderBy(x => x.Name).ToList();
         }
 
         public List<DtoGroupWithCount> SearchGroups(DtoSearchFilterCategories filter, int userId)
@@ -228,15 +227,15 @@ namespace Toems_ServiceCore.EntityServices
             var returnList = new List<DtoGroupWithCount>();
             var list = new List<EntityGroup>();
             if(filter.IncludeOus)
-                list = ectx.Uow.GroupRepository.Get(s => s.Name.Contains(filter.SearchText)).OrderBy(x => x.Name).ToList();
+                list = ctx.Uow.GroupRepository.Get(s => s.Name.Contains(filter.SearchText)).OrderBy(x => x.Name).ToList();
             else
-                list = ectx.Uow.GroupRepository.Get(s => s.Name.Contains(filter.SearchText) && !s.IsOu && !s.IsHidden).OrderBy(x => x.Name).ToList();
+                list = ctx.Uow.GroupRepository.Get(s => s.Name.Contains(filter.SearchText) && !s.IsOu && !s.IsHidden).OrderBy(x => x.Name).ToList();
             if (list.Count == 0) return returnList;
 
             var categoryFilterIds = new List<int>();
             foreach (var catName in filter.Categories)
             {
-                var category = ectx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
+                var category = ctx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
                 if (category != null)
                     categoryFilterIds.Add(category.Id);
             }
@@ -316,14 +315,14 @@ namespace Toems_ServiceCore.EntityServices
                 groupWithcount.Type = group.Type;
                 groupWithcount.Description = group.Description;
                 if (group.Id == -1)
-                    groupWithcount.MemberCount = computerService.TotalActiveCount();
+                    groupWithcount.MemberCount = ctx.Computer.TotalActiveCount();
                 else
-                    groupWithcount.MemberCount = ectx.Uow.GroupMembershipRepository.Count(x => x.GroupId == group.Id);
+                    groupWithcount.MemberCount = ctx.Uow.GroupMembershipRepository.Count(x => x.GroupId == group.Id);
                 if (groupWithcount.MemberCount == "0" && group.IsOu) continue;
                 returnList.Add(groupWithcount);
             }
 
-            var groupAcl = userService.GetAllowedGroups(userId);
+            var groupAcl = ctx.User.GetAllowedGroups(userId);
             if (!groupAcl.GroupManagementEnforced)
                 return returnList.Take(filter.Limit).OrderBy(x => x.Name).ToList();
             else
@@ -342,7 +341,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public string TotalCount()
         {
-            return ectx.Uow.GroupRepository.Count(x => !x.IsOu);
+            return ctx.Uow.GroupRepository.Count(x => !x.IsOu);
         }
 
         public DtoActionResult UpdateGroup(EntityGroup group)
@@ -353,8 +352,8 @@ namespace Toems_ServiceCore.EntityServices
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
-                ectx.Uow.GroupRepository.Update(group, group.Id);
-                ectx.Uow.Save();
+                ctx.Uow.GroupRepository.Update(group, group.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = group.Id;
                
@@ -380,7 +379,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.GroupRepository.Exists(h => h.Name == group.Name && h.IsOu == false))
+                if (ctx.Uow.GroupRepository.Exists(h => h.Name == group.Name && h.IsOu == false))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Group With This Name Already Exists";
@@ -389,10 +388,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var originalGroup = ectx.Uow.GroupRepository.GetById(group.Id);
+                var originalGroup = ctx.Uow.GroupRepository.GetById(group.Id);
                 if (originalGroup.Name != group.Name)
                 {
-                    if (ectx.Uow.GroupRepository.Exists(h => h.Name == group.Name && h.IsOu == false))
+                    if (ctx.Uow.GroupRepository.Exists(h => h.Name == group.Name && h.IsOu == false))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Group With This Name Already Exists";
@@ -406,8 +405,8 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<GroupPolicyDetailed> GetAssignedPolicies(int groupId, DtoSearchFilter filter)
         {
-            var assignedPolices = ectx.Uow.GroupPolicyRepository.Get(x => x.GroupId == groupId);
-            var list = assignedPolices.Select(groupPolicy => ectx.Uow.GroupPolicyRepository.GetDetailed(groupPolicy.PolicyId,groupPolicy.Id)).ToList();
+            var assignedPolices = ctx.Uow.GroupPolicyRepository.Get(x => x.GroupId == groupId);
+            var list = assignedPolices.Select(groupPolicy => ctx.Uow.GroupPolicyRepository.GetDetailed(groupPolicy.PolicyId,groupPolicy.Id)).ToList();
 
             if (string.IsNullOrEmpty(filter.SearchText))
                 return list.OrderBy(x => x.PolicyOrder).Take(filter.Limit).ToList();
@@ -417,42 +416,42 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool DeleteAllMembershipsForGroup(int groupId)
         {
-            ectx.Uow.GroupMembershipRepository.DeleteRange(x => x.GroupId == groupId);
-            ectx.Uow.Save();
+            ctx.Uow.GroupMembershipRepository.DeleteRange(x => x.GroupId == groupId);
+            ctx.Uow.Save();
             return true;
         }
 
         public bool DeleteMembership(int computerId, int groupId)
         {
-            ectx.Uow.GroupMembershipRepository.DeleteRange(
+            ctx.Uow.GroupMembershipRepository.DeleteRange(
                 g => g.ComputerId == computerId && g.GroupId == groupId);
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             return true;
         }
 
         public string GetGroupMemberCount(int groupId)
         {
-            return ectx.Uow.GroupMembershipRepository.Count(g => g.GroupId == groupId);
+            return ctx.Uow.GroupMembershipRepository.Count(g => g.GroupId == groupId);
         }
 
         public List<EntityComputer> SearchGroupMembers(int groupId, DtoSearchFilter filter)
         {
-            return ectx.Uow.GroupRepository.GetGroupMembers(groupId, filter.SearchText);
+            return ctx.Uow.GroupRepository.GetGroupMembers(groupId, filter.SearchText);
         }
 
         public List<EntityComputer> GetGroupMembers(int groupId)
         {
-            return ectx.Uow.GroupRepository.GetGroupMembers(groupId);
+            return ctx.Uow.GroupRepository.GetGroupMembers(groupId);
         }
 
         public EntityActiveGroupPolicy GetActiveGroupPolicy(int groupId)
         {
-            return ectx.Uow.ActiveGroupPoliciesRepository.GetFirstOrDefault(x => x.GroupId == groupId);
+            return ctx.Uow.ActiveGroupPoliciesRepository.GetFirstOrDefault(x => x.GroupId == groupId);
         }
 
         public List<EntityGroupCategory> GetGroupCategories(int groupId)
         {
-            return ectx.Uow.GroupCategoryRepository.Get(x => x.GroupId == groupId);
+            return ctx.Uow.GroupCategoryRepository.Get(x => x.GroupId == groupId);
         }
 
         public List<DtoProcessWithTime> GetGroupProcessTimes(DateTime dateCutoff, int limit, int groupId)
@@ -468,11 +467,11 @@ namespace Toems_ServiceCore.EntityServices
         public int StartGroupUnicast(int groupId, int userId)
         {
             var count = 0;
-            var members = ectx.Uow.GroupRepository.GetGroupMembersWithImages(groupId, "");
+            var members = ctx.Uow.GroupRepository.GetGroupMembersWithImages(groupId, "");
             foreach (var computer in members)
             {
-                unicast.InitGroup(computer.Id, "deploy", userId,groupId);
-                if (unicast.Start().Contains("Successfully"))
+                ctx.Unicast.InitGroup(computer.Id, "deploy", userId,groupId);
+                if (ctx.Unicast.Start().Contains("Successfully"))
                     count++;
             }
             return count;
@@ -487,11 +486,78 @@ namespace Toems_ServiceCore.EntityServices
         public async Task StartGroupWinPe(int groupId, int userId)
         {
             await Task.Delay(100);
-            var members = ectx.Uow.GroupRepository.GetGroupMembers(groupId, "");
+            var members = ctx.Uow.GroupRepository.GetGroupMembers(groupId, "");
             foreach (var computer in members)
             {
-                computerService.DeployImageViaWindows(computer.Id, userId);
+                ctx.Computer.DeployImageViaWindows(computer.Id, userId);
             }
+        }
+        
+         public bool UpdateAllGroupMemberships()
+        {
+            var groups = GetAllDynamicGroups();
+            if (groups == null) return false;
+            foreach (var group in groups)
+            {
+                UpdateDynamicMemberships(group.Id);
+            }
+
+            return true;
+        }
+
+        public bool UpdateGroupMemberships(int groupId)
+        {
+            return UpdateDynamicMemberships(groupId);
+        }
+
+        private bool UpdateDynamicMemberships(int groupId)
+        {
+            var queries = GetDynamicQuery(groupId);
+            var members = GetDynamicMembers(queries);
+            if (members == null)
+            {
+                ctx.Uow.GroupMembershipRepository.DeleteRange(x => x.GroupId == groupId);
+                ctx.Uow.Save();
+                return true;
+            }
+
+            var membershipList = new List<EntityGroupMembership>();
+            foreach (DataTable table in members.Tables)
+            {
+                if (table.Rows.Count == 0)
+                {
+                    ctx.Uow.GroupMembershipRepository.DeleteRange(x => x.GroupId == groupId);
+                    ctx.Uow.Save();
+                    return true;
+                }
+                foreach (DataRow row in table.Rows)
+                {
+                    var membership = new EntityGroupMembership();
+                    var computerId = row["computer_id"];
+                    membership.ComputerId = Convert.ToInt32(computerId);
+                    membership.GroupId = groupId;
+                    membershipList.Add(membership);
+                }
+            }
+
+            //Delete members that no longer belong
+            var existingMembers = GetGroupMembers(groupId);
+            foreach (var existingMember in existingMembers)
+            {
+                if(membershipList.All(x => x.ComputerId != existingMember.Id))
+                {
+                    ctx.Uow.GroupMembershipRepository.DeleteRange(x => x.ComputerId == existingMember.Id && x.GroupId == groupId);
+                }
+                ctx.Uow.Save();
+            }
+
+            //add the new members
+            var result = ctx.GroupMembership.AddMembership(membershipList);
+            if(result != null)
+                if (result.Success)
+                    return true;
+
+            return false;
         }
     }
 }

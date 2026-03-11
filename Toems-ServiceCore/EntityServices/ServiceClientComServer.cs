@@ -9,7 +9,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceClientComServer(EntityContext ectx, ServiceCertificate certificateService, ServiceGenerateCertificate genCertService)
+    public class ServiceClientComServer(ServiceContext ctx)
     {
         public DtoActionResult Add(EntityClientComServer clientServer)
         {
@@ -54,8 +54,8 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(clientServer, true);
             if (validationResult.Success)
             {
-                ectx.Uow.ClientComServerRepository.Insert(clientServer);
-                ectx.Uow.Save();
+                ctx.Uow.ClientComServerRepository.Insert(clientServer);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = clientServer.Id;
             }
@@ -71,8 +71,8 @@ namespace Toems_ServiceCore.EntityServices
         {
             var u = GetServer(clientServerId);
             if (u == null) return new DtoActionResult { ErrorMessage = "Com Server Not Found", Id = 0 };
-            ectx.Uow.ClientComServerRepository.Delete(clientServerId);
-            ectx.Uow.Save();
+            ctx.Uow.ClientComServerRepository.Delete(clientServerId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -81,27 +81,27 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityClientComServer GetServer(int clientServerId)
         {
-            return ectx.Uow.ClientComServerRepository.GetById(clientServerId);
+            return ctx.Uow.ClientComServerRepository.GetById(clientServerId);
         }
 
         public EntityClientComServer GetServerByGuid(string Guid)
         {
-            return ectx.Uow.ClientComServerRepository.Get(x => x.UniqueId.Equals(Guid)).FirstOrDefault();
+            return ctx.Uow.ClientComServerRepository.Get(x => x.UniqueId.Equals(Guid)).FirstOrDefault();
         }
 
         public List<EntityClientComServer> GetAll()
         {
-            return ectx.Uow.ClientComServerRepository.Get();
+            return ctx.Uow.ClientComServerRepository.Get();
         }
 
         public List<EntityClientComServer> Search(DtoSearchFilter filter)
         {
-            return ectx.Uow.ClientComServerRepository.Get(x => x.DisplayName.Contains(filter.SearchText));
+            return ctx.Uow.ClientComServerRepository.Get(x => x.DisplayName.Contains(filter.SearchText));
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.ClientComServerRepository.Count();
+            return ctx.Uow.ClientComServerRepository.Count();
         }
 
         public DtoActionResult Update(EntityClientComServer clientServer)
@@ -131,8 +131,8 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(clientServer, false);
             if (validationResult.Success)
             {
-                ectx.Uow.ClientComServerRepository.Update(clientServer, u.Id);
-                ectx.Uow.Save();
+                ctx.Uow.ClientComServerRepository.Update(clientServer, u.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = clientServer.Id;
             }
@@ -157,7 +157,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.ClientComServerRepository.Exists(h => h.DisplayName == comServer.DisplayName))
+                if (ctx.Uow.ClientComServerRepository.Exists(h => h.DisplayName == comServer.DisplayName))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Com Server With This Name Already Exists";
@@ -166,10 +166,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var original = ectx.Uow.ClientComServerRepository.GetById(comServer.Id);
+                var original = ctx.Uow.ClientComServerRepository.GetById(comServer.Id);
                 if (original.DisplayName != comServer.DisplayName)
                 {
-                    if (ectx.Uow.ClientComServerRepository.Exists(h => h.DisplayName == comServer.DisplayName))
+                    if (ctx.Uow.ClientComServerRepository.Exists(h => h.DisplayName == comServer.DisplayName))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Com Server With This Name Already Exists";
@@ -231,19 +231,19 @@ namespace Toems_ServiceCore.EntityServices
             var comServer = GetServer(comServerId);
             if (comServer == null) return null;
 
-            var iCert = certificateService.GetIntermediate();
+            var iCert = ctx.Certificate.GetIntermediate();
             var site = new Uri(comServer.Url);
-            var intermediateEntity = certificateService.GetIntermediateEntity();
-            var pass = ectx.Encryption.DecryptText(intermediateEntity.Password);
+            var intermediateEntity = ctx.Certificate.GetIntermediateEntity();
+            var pass = ctx.Encryption.DecryptText(intermediateEntity.Password);
             var intermediateCert = new X509Certificate2(intermediateEntity.PfxBlob, pass, X509KeyStorageFlags.Exportable);
             var certRequest = new DtoCertificateRequest();
-            var organization = ectx.Settings.GetSettingValue(SettingStrings.CertificateOrganization);
+            var organization = ctx.Setting.GetSettingValue(SettingStrings.CertificateOrganization);
             certRequest.SubjectName = string.Format($"CN={site.Host}");
             certRequest.NotBefore = DateTime.UtcNow;
             certRequest.NotAfter = certRequest.NotBefore.AddYears(10);
    
-            genCertService.SetRequest(certRequest);
-            var certificate = genCertService.IssueCertificate(intermediateCert, false, true);
+            ctx.GenerateCertificate.SetRequest(certRequest);
+            var certificate = ctx.GenerateCertificate.IssueCertificate(intermediateCert, false, true);
 
             var bytes = certificate.Export(X509ContentType.Pfx);
 
@@ -255,18 +255,18 @@ namespace Toems_ServiceCore.EntityServices
             var comServer = GetServer(comServerId);
             if (comServer == null) return null;
 
-            var iCert = certificateService.GetIntermediate();
+            var iCert = ctx.Certificate.GetIntermediate();
             var site = new Uri(comServer.RemoteAccessUrl);
-            var intermediateEntity = certificateService.GetIntermediateEntity();
-            var pass = ectx.Encryption.DecryptText(intermediateEntity.Password);
+            var intermediateEntity = ctx.Certificate.GetIntermediateEntity();
+            var pass = ctx.Encryption.DecryptText(intermediateEntity.Password);
             var intermediateCert = new X509Certificate2(intermediateEntity.PfxBlob, pass, X509KeyStorageFlags.Exportable);
             var certRequest = new DtoCertificateRequest();
-            var organization = ectx.Settings.GetSettingValue(SettingStrings.CertificateOrganization);
+            var organization = ctx.Setting.GetSettingValue(SettingStrings.CertificateOrganization);
             certRequest.SubjectName = string.Format($"CN={site.Host}");
             certRequest.NotBefore = DateTime.UtcNow;
             certRequest.NotAfter = certRequest.NotBefore.AddYears(10);
-            genCertService.SetRequest(certRequest);
-            var certificate = genCertService.IssueCertificate(intermediateCert, false, true);
+            ctx.GenerateCertificate.SetRequest(certRequest);
+            var certificate = ctx.GenerateCertificate.IssueCertificate(intermediateCert, false, true);
 
             var bytes = certificate.Export(X509ContentType.Pfx);
 
@@ -275,18 +275,18 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<DtoReplicationProcess> GetReplicationProcesses(int comServerId)
         {
-            var comServer = ectx.Uow.ClientComServerRepository.GetById(comServerId);
-            var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+            var comServer = ctx.Uow.ClientComServerRepository.GetById(comServerId);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
             return new APICall().ClientComServerApi.GetReplicationProcesses(comServer.Url, "", decryptedKey);
         }
 
         public bool KillProcess(int comServerId, int pid)
         {
-            var comServer = ectx.Uow.ClientComServerRepository.GetById(comServerId);
-            var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+            var comServer = ctx.Uow.ClientComServerRepository.GetById(comServerId);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
             return new APICall().ClientComServerApi.KillProcess(comServer.Url, "", decryptedKey,pid);
 
@@ -294,16 +294,16 @@ namespace Toems_ServiceCore.EntityServices
 
         public string GetBootFileText(string path, int comServerId)
         {
-            var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
             var comServer = GetServer(comServerId);
             return new APICall().ClientComServerApi.ReadBootFileText(comServer.Url, "", decryptedKey,path);
         }
 
         public bool EditBootFileText(DtoCoreScript script)
         {
-            var intercomKey = ectx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = ectx.Encryption.DecryptText(intercomKey);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
             var comServer = GetServer(script.ComServerId);
             return new APICall().ClientComServerApi.EditBootFileText(comServer.Url, "", decryptedKey,script);
         }

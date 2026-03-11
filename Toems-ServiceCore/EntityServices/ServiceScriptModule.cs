@@ -5,7 +5,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceScriptModule(EntityContext ectx, ServiceModule moduleService)
+    public class ServiceScriptModule(ServiceContext ctx)
     {
         public DtoActionResult AddModule(EntityScriptModule module)
         {
@@ -19,12 +19,12 @@ namespace Toems_ServiceCore.EntityServices
                     var fixedLineEnding = module.ScriptContents.Replace("\r\n", "\n");
                     module.ScriptContents = fixedLineEnding;
                 }
-                ectx.Uow.ScriptModuleRepository.Insert(module);
+                ctx.Uow.ScriptModuleRepository.Insert(module);
                 var moduleType = new EntityModule();
                 moduleType.ModuleType = EnumModule.ModuleType.Script;
                 moduleType.Guid = module.Guid;
-                ectx.Uow.ModuleRepository.Insert(moduleType);
-                ectx.Uow.Save();
+                ctx.Uow.ModuleRepository.Insert(moduleType);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = module.Id;
             }
@@ -40,27 +40,27 @@ namespace Toems_ServiceCore.EntityServices
         {
             var u = GetModule(moduleId);
             if (u == null) return new DtoActionResult {ErrorMessage = "Module Not Found", Id = 0};
-            var isActiveModule = moduleService.IsModuleActive(moduleId, EnumModule.ModuleType.Script);
+            var isActiveModule = ctx.Module.IsModuleActive(moduleId, EnumModule.ModuleType.Script);
             if (!string.IsNullOrEmpty(isActiveModule)) return new DtoActionResult() { ErrorMessage = isActiveModule, Id = 0 };
             if (string.IsNullOrEmpty(u.Guid)) return new DtoActionResult() { ErrorMessage = "Unknown Guid", Id = 0 };
-            ectx.Uow.ModuleRepository.DeleteRange(x => x.Guid == u.Guid);
+            ctx.Uow.ModuleRepository.DeleteRange(x => x.Guid == u.Guid);
             //ectx.Uow.ScriptModuleRepository.Delete(moduleId);
 
-            var modulesWithCondition = ectx.Uow.PolicyModulesRepository.Get(x => x.ConditionId == u.Id);
+            var modulesWithCondition = ctx.Uow.PolicyModulesRepository.Get(x => x.ConditionId == u.Id);
             foreach(var module in modulesWithCondition)
             {
                 module.ConditionId = -1;
-                ectx.Uow.PolicyModulesRepository.Update(module, module.Id);
+                ctx.Uow.PolicyModulesRepository.Update(module, module.Id);
             }
 
-            var policiesWithCondition = ectx.Uow.PolicyRepository.Get(x => x.ConditionId == u.Id);
+            var policiesWithCondition = ctx.Uow.PolicyRepository.Get(x => x.ConditionId == u.Id);
             foreach(var policy in policiesWithCondition)
             {
                 policy.ConditionId = -1;
-                ectx.Uow.PolicyRepository.Update(policy, policy.Id);
+                ctx.Uow.PolicyRepository.Update(policy, policy.Id);
             }
 
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -69,31 +69,31 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityScriptModule GetModule(int moduleId)
         {
-            return ectx.Uow.ScriptModuleRepository.GetById(moduleId);
+            return ctx.Uow.ScriptModuleRepository.GetById(moduleId);
         }
 
         public EntityScriptModule GetModuleByGuid(string guid)
         {
-            return ectx.Uow.ScriptModuleRepository.GetFirstOrDefault(x => x.Guid == guid);
+            return ctx.Uow.ScriptModuleRepository.GetFirstOrDefault(x => x.Guid == guid);
         }
 
         public List<EntityScriptModule> GetAllWithInventory()
         {
-            return ectx.Uow.ScriptModuleRepository.Get(x => x.AddInventoryCollection);
+            return ctx.Uow.ScriptModuleRepository.Get(x => x.AddInventoryCollection);
         }
 
         public List<EntityScriptModule> GetImagingScripts()
         {
-            return ectx.Uow.ScriptModuleRepository.Get(x => x.ScriptType == (EnumScriptModule.ScriptType.ImagingClient_Bash) || x.ScriptType == (EnumScriptModule.ScriptType.ImagingClient_Powershell));
+            return ctx.Uow.ScriptModuleRepository.Get(x => x.ScriptType == (EnumScriptModule.ScriptType.ImagingClient_Bash) || x.ScriptType == (EnumScriptModule.ScriptType.ImagingClient_Powershell));
         }
 
         public List<EntityScriptModule> SearchModules(DtoSearchFilterCategories filter)
         {
-            var list = ectx.Uow.ScriptModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && !s.Archived).OrderBy(x => x.Name).ToList();
+            var list = ctx.Uow.ScriptModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && !s.Archived).OrderBy(x => x.Name).ToList();
             var categoryFilterIds = new List<int>();
             foreach (var catName in filter.Categories)
             {
-                var category = ectx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
+                var category = ctx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
                 if (category != null)
                     categoryFilterIds.Add(category.Id);
             }
@@ -105,7 +105,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var module in list)
                 {
-                    var moduleCategories = moduleService.GetModuleCategories(module.Guid);
+                    var moduleCategories = ctx.Module.GetModuleCategories(module.Guid);
                     if (moduleCategories == null) continue;
 
                     if (filter.Categories.Count == 0)
@@ -129,7 +129,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var module in list)
                 {
-                    var mCategories = moduleService.GetModuleCategories(module.Guid);
+                    var mCategories = ctx.Module.GetModuleCategories(module.Guid);
                     if (mCategories == null) continue;
                     if (filter.Categories.Count == 0)
                     {
@@ -165,46 +165,46 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityScriptModule> GetArchived(DtoSearchFilterCategories filter)
         {
-            return ectx.Uow.ScriptModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && s.Archived).OrderBy(x => x.Name).Take(filter.Limit).ToList();
+            return ctx.Uow.ScriptModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && s.Archived).OrderBy(x => x.Name).Take(filter.Limit).ToList();
         }
 
         public List<EntityScriptModule> GetConditions()
         {
-            return ectx.Uow.ScriptModuleRepository.Get(s => s.IsCondition).ToList();
+            return ctx.Uow.ScriptModuleRepository.Get(s => s.IsCondition).ToList();
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.ScriptModuleRepository.Count(x => !x.Archived);
+            return ctx.Uow.ScriptModuleRepository.Count(x => !x.Archived);
         }
 
         public string ArchivedCount()
         {
-            return ectx.Uow.ScriptModuleRepository.Count(x => x.Archived);
+            return ctx.Uow.ScriptModuleRepository.Count(x => x.Archived);
         }
 
         public DtoActionResult UpdateModule(EntityScriptModule module)
         {
             var u = GetModule(module.Id);
             if (u == null) return new DtoActionResult {ErrorMessage = "Module Not Found", Id = 0};
-            var isActiveModule = moduleService.IsModuleActive(module.Id, EnumModule.ModuleType.Script);
+            var isActiveModule = ctx.Module.IsModuleActive(module.Id, EnumModule.ModuleType.Script);
             if (!string.IsNullOrEmpty(isActiveModule)) return new DtoActionResult() { ErrorMessage = isActiveModule, Id = 0 };
             if(!module.IsCondition && u.IsCondition)
             {
                 //condition has been removed, check for policies with this condition
-                var modulesWithCondition = ectx.Uow.PolicyModulesRepository.Get(x => x.ConditionId == u.Id);
+                var modulesWithCondition = ctx.Uow.PolicyModulesRepository.Get(x => x.ConditionId == u.Id);
                 foreach (var m in modulesWithCondition)
                 {
                     m.ConditionId = -1;
-                    ectx.Uow.PolicyModulesRepository.Update(m, m.Id);
+                    ctx.Uow.PolicyModulesRepository.Update(m, m.Id);
                 }
 
 
-                var policiesWithCondition = ectx.Uow.PolicyRepository.Get(x => x.ConditionId == u.Id);
+                var policiesWithCondition = ctx.Uow.PolicyRepository.Get(x => x.ConditionId == u.Id);
                 foreach (var policy in policiesWithCondition)
                 {
                     policy.ConditionId = -1;
-                    ectx.Uow.PolicyRepository.Update(policy, policy.Id);
+                    ctx.Uow.PolicyRepository.Update(policy, policy.Id);
                 }
             }
             var validationResult = ValidateModule(module, false);
@@ -216,8 +216,8 @@ namespace Toems_ServiceCore.EntityServices
                     var fixedLineEnding = module.ScriptContents.Replace("\r\n", "\n");
                     module.ScriptContents = fixedLineEnding;
                 }
-                ectx.Uow.ScriptModuleRepository.Update(module, module.Id);
-                ectx.Uow.Save();
+                ctx.Uow.ScriptModuleRepository.Update(module, module.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = module.Id;
             }
@@ -270,7 +270,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.ScriptModuleRepository.Exists(h => h.Name == module.Name))
+                if (ctx.Uow.ScriptModuleRepository.Exists(h => h.Name == module.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Module With This Name Already Exists";
@@ -279,10 +279,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var originalModule = ectx.Uow.ScriptModuleRepository.GetById(module.Id);
+                var originalModule = ctx.Uow.ScriptModuleRepository.GetById(module.Id);
                 if (originalModule.Name != module.Name)
                 {
-                    if (ectx.Uow.ScriptModuleRepository.Exists(h => h.Name == module.Name))
+                    if (ctx.Uow.ScriptModuleRepository.Exists(h => h.Name == module.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Module With This Name Already Exists";

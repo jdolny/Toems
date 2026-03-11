@@ -5,9 +5,14 @@ using Hangfire.MySql;
 using log4net;
 using log4net.Config;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Toems_ApplicationApiCore;
 using Microsoft.Extensions.DependencyInjection;
+using Toems_DataModel;
+using Toems_ServiceCore.Data;
+using Toems_ServiceCore.Infrastructure;
+using ToemsDbContext = Toems_ServiceCore.Data.ToemsDbContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,12 +33,21 @@ XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 builder.Services.AddSingleton<ILog>(LogManager.GetLogger(typeof(Program)));
 
 builder.Services.Scan(scan => scan
-    .FromAssemblyOf<AuthenticationServices>()  // pick any type from your services assembly
-    .AddClasses(classes => classes.InNamespaces("Toems_Service.Entity"))
+    .FromAssemblyOf<AuthenticationService>()  // pick any type from your services assembly
+    .AddClasses(classes => classes.InNamespaces("Toems_ServiceCore.EntityServices"))
+    .AddClasses(classes => classes.InNamespaces("Toems_ServiceCore.Infrastructure"))
+    .AddClasses(classes => classes.InNamespaces("Toems_ServiceCore.Workflows"))
     .AsSelf()
     .WithScopedLifetime());
 builder.Services.AddControllers();
 
+builder.Services.AddDbContextFactory<ToemsDbContext>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("ToemsConnection"),
+        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("ToemsConnection"))));
+
+builder.Services.AddScoped<UnitOfWork>();   
+builder.Services.AddScoped<IToemsDbFactory, ToemsDbFactory>();
 builder.Services.AddHttpContextAccessor();
 
 // Configure JWT authentication

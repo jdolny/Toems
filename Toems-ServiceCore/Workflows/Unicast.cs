@@ -1,19 +1,13 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_DataModel;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class Unicast(InfrastructureContext ictx, ServiceComputer serviceComputer, GroupService groupService, ServiceImageProfile serviceImageProfile,
+    public class Unicast(ServiceContext ictx, ServiceComputer serviceComputer, GroupService groupService, ServiceImageProfile serviceImageProfile,
         ServiceUser serviceUser, TaskBootMenu taskBootMenu, CreateTaskArguments createTaskArguments, ServiceActiveImagingTask serviceActiveImagingTask)
     {
         private EntityComputer _computer;

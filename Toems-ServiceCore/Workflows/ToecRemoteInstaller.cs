@@ -1,25 +1,16 @@
-﻿using log4net;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Toems_DataModel;
-using Toems_Common.Enum;
-using Toems_Common.Entity;
-using Toems_Service.Entity;
-using Newtonsoft.Json;
-using Toems_Common.Dto;
-using System.IO;
+﻿using Newtonsoft.Json;
 using Toems_Common;
-using System.Threading;
-using System.Web;
-using Toems_ServiceCore;
+using Toems_Common.Dto;
+using Toems_Common.Entity;
+using Toems_Common.Enum;
+using Toems_DataModel;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
+using Toems_ServiceCore.NoInjectTemp;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class ToecRemoteInstaller(InfrastructureContext ictx, ServiceVersion serviceVersion, UncServices uncServices, ServiceImpersonation impersonation)
+    public class ToecRemoteInstaller(ServiceContext ictx, ServiceVersion serviceVersion, UncServices uncServices, ServiceImpersonation impersonation)
     {
 
         private string ExpectedClientVersion = "";

@@ -3,23 +3,16 @@ using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
 using TwoFactorAuthNet;
 
 namespace Toems_ServiceCore.Infrastructure
 {
-    public class AuthenticationService(InfrastructureContext ictx, 
-        ServiceUserGroup userGroupService,
-        ServiceUserGroupMembership userGroupMembershipService,
-        ServiceUserLockout userLockoutService, 
-        ServiceUser userService,
-        ServiceClientComServer clientComServerService,
-        LdapServices ldapServices)
+    public class AuthenticationService(ServiceContext ctx)
     {
         public string ConsoleLogin(string username, string password, string task, string ip)
         {
-            ictx.Log.Info("Console Login Request Received: " + username + " "  + task + " " + ip);
+            ctx.Log.Info("Console Login Request Received: " + username + " "  + task + " " + ip);
 
             var result = new Dictionary<string, string>();
 
@@ -27,15 +20,15 @@ namespace Toems_ServiceCore.Infrastructure
 
             if (!validationResult.Success)
             {
-                ictx.Log.Info("Console Login Request Failed");
+                ctx.Log.Info("Console Login Request Failed");
                 result.Add("valid", "false");
                 result.Add("user_id", "");
                 result.Add("user_token", "");
             }
             else
             {
-                ictx.Log.Info("Console Login Request Succeeded");
-                var ToemsUser = userService.GetUserForLogin(username);
+                ctx.Log.Info("Console Login Request Succeeded");
+                var ToemsUser = ctx.User.GetUserForLogin(username);
                 result.Add("valid", "true");
                 result.Add("user_id", ToemsUser.Id.ToString());
                 result.Add("user_token", ToemsUser.ImagingToken);
@@ -61,16 +54,16 @@ namespace Toems_ServiceCore.Infrastructure
             auditLog.AuditType = EnumAuditEntry.AuditType.FailedLogin;
 
             //Check if user exists in database
-            var user = userService.GetUserForLogin(userName);
+            var user = ctx.User.GetUserForLogin(userName);
             if (user == null)
             {
                 //Check For a first time LDAP User Group Login
-                if (ictx.Settings.GetSettingValue(SettingStrings.LdapEnabled) == "1")
+                if (ctx.Setting.GetSettingValue(SettingStrings.LdapEnabled) == "1")
                 {
                     var userCreated = false;
-                    foreach (var ldapGroup in userGroupService.GetLdapGroups())
+                    foreach (var ldapGroup in ctx.UserGroup.GetLdapGroups())
                     {
-                        if (ldapServices.Authenticate(userName, password, ldapGroup.GroupLdapName))
+                        if (ctx.Ldap.Authenticate(userName, password, ldapGroup.GroupLdapName))
                         {
                             if (!userCreated)
                             {
@@ -90,12 +83,12 @@ namespace Toems_ServiceCore.Infrastructure
                                 };
                                 //Create a local random db pass, should never actually be possible to use.
                                 cdUser.Password = Utility.CreatePasswordHash(Utility.GenerateKey(), cdUser.Salt);
-                                if (userService.AddUser(cdUser).Success)
+                                if (ctx.User.AddUser(cdUser).Success)
                                 {
                                     userCreated = true;
                                     //add user to group
-                                    user = userService.GetUserForLogin(userName);
-                                    userGroupMembershipService.AddMembership(new EntityUserGroupMembership() { ToemsUserId = user.Id, UserGroupId = ldapGroup.Id });
+                                    user = ctx.User.GetUserForLogin(userName);
+                                    ctx.UserGroupMembership.AddMembership(new EntityUserGroupMembership() { ToemsUserId = user.Id, UserGroupId = ldapGroup.Id });
 
                                     auditLog.UserId = user.Id;
                                     auditLog.ObjectId = user.Id;
@@ -105,30 +98,30 @@ namespace Toems_ServiceCore.Infrastructure
                             }
                             else
                             {
-                                 userGroupMembershipService.AddMembership(new EntityUserGroupMembership() { ToemsUserId = user.Id, UserGroupId = ldapGroup.Id });
+                                 ctx.UserGroupMembership.AddMembership(new EntityUserGroupMembership() { ToemsUserId = user.Id, UserGroupId = ldapGroup.Id });
                             }
                         }
                     }
                 }
-                ictx.AuditLog.AddAuditLog(auditLog);
+                ctx.AuditLog.AddAuditLog(auditLog);
                 return validationResult;
             }
 
-            if (userLockoutService.AccountIsLocked(user.Id))
+            if (ctx.UserLockout.AccountIsLocked(user.Id))
             {
-                userLockoutService.ProcessBadLogin(user.Id);
+                ctx.UserLockout.ProcessBadLogin(user.Id);
                 validationResult.ErrorMessage = "Account Is Locked";
                 auditLog.UserId = user.Id;
                 auditLog.ObjectId = user.Id;
-                ictx.AuditLog.AddAuditLog(auditLog);
+                ctx.AuditLog.AddAuditLog(auditLog);
                 return validationResult;
             }
 
 
             //MFA
-            if (ictx.Settings.GetSettingValue(SettingStrings.EnableMfa) == "1" && string.IsNullOrEmpty(user.MfaSecret)
-                && (user.EnableWebMfa || ictx.Settings.GetSettingValue(SettingStrings.ForceMfa) == "1"
-                || user.EnableImagingMfa || ictx.Settings.GetSettingValue(SettingStrings.ForceImagingMfa) == "1"))
+            if (ctx.Setting.GetSettingValue(SettingStrings.EnableMfa) == "1" && string.IsNullOrEmpty(user.MfaSecret)
+                && (user.EnableWebMfa || ctx.Setting.GetSettingValue(SettingStrings.ForceMfa) == "1"
+                || user.EnableImagingMfa || ctx.Setting.GetSettingValue(SettingStrings.ForceImagingMfa) == "1"))
             {
                 validationResult.ErrorMessage = "Mfa setup is required";
                 if (loginType.Equals("Console"))
@@ -141,31 +134,31 @@ namespace Toems_ServiceCore.Infrastructure
             }
             else
             {
-                if (ictx.Settings.GetSettingValue(SettingStrings.EnableMfa) == "1" && !string.IsNullOrEmpty(user.MfaSecret)
-                   && loginType.Equals("Console") && (user.EnableImagingMfa || ictx.Settings.GetSettingValue(SettingStrings.ForceImagingMfa) == "1"))
+                if (ctx.Setting.GetSettingValue(SettingStrings.EnableMfa) == "1" && !string.IsNullOrEmpty(user.MfaSecret)
+                   && loginType.Equals("Console") && (user.EnableImagingMfa || ctx.Setting.GetSettingValue(SettingStrings.ForceImagingMfa) == "1"))
                 {
                     var code = password.Substring(password.Length - 6);
                     password = password.Replace(code, "");
 
-                    var mfaResult = new TwoFactorAuth().VerifyCode(ictx.Encryption.DecryptText(user.MfaSecret), code);
+                    var mfaResult = new TwoFactorAuth().VerifyCode(ctx.Encryption.DecryptText(user.MfaSecret), code);
                     if (!mfaResult)
                     {
                         auditLog.UserId = user.Id;
                         auditLog.ObjectId = user.Id;
-                        ictx.AuditLog.AddAuditLog(auditLog);
+                        ctx.AuditLog.AddAuditLog(auditLog);
                         return validationResult;
                     }
                 }
-                if (ictx.Settings.GetSettingValue(SettingStrings.EnableMfa) == "1" && !string.IsNullOrEmpty(user.MfaSecret)
-                   && loginType.Equals("Web") && (user.EnableWebMfa || ictx.Settings.GetSettingValue(SettingStrings.ForceMfa) == "1"))
+                if (ctx.Setting.GetSettingValue(SettingStrings.EnableMfa) == "1" && !string.IsNullOrEmpty(user.MfaSecret)
+                   && loginType.Equals("Web") && (user.EnableWebMfa || ctx.Setting.GetSettingValue(SettingStrings.ForceMfa) == "1"))
 
                 {
-                    var mfaResult = new TwoFactorAuth().VerifyCode(ictx.Encryption.DecryptText(user.MfaSecret), verificationCode);
+                    var mfaResult = new TwoFactorAuth().VerifyCode(ctx.Encryption.DecryptText(user.MfaSecret), verificationCode);
                     if (!mfaResult)
                     {
                         auditLog.UserId = user.Id;
                         auditLog.ObjectId = user.Id;
-                        ictx.AuditLog.AddAuditLog(auditLog);
+                        ctx.AuditLog.AddAuditLog(auditLog);
                         return validationResult;
                     }
                 }
@@ -174,31 +167,31 @@ namespace Toems_ServiceCore.Infrastructure
 
 
             //Check against AD
-            if (user.IsLdapUser == 1 && ictx.Settings.GetSettingValue(SettingStrings.LdapEnabled) == "1")
+            if (user.IsLdapUser == 1 && ctx.Setting.GetSettingValue(SettingStrings.LdapEnabled) == "1")
             {
-                var ldapGroups = userGroupService.GetLdapGroups();
+                var ldapGroups = ctx.UserGroup.GetLdapGroups();
                 if (ldapGroups.Any())
                 {
                     validationResult.Success = false;
                     foreach (var ldapGroup in ldapGroups)
                     {
                        
-                        if (ldapServices.Authenticate(userName, password, ldapGroup.GroupLdapName))
+                        if (ctx.Ldap.Authenticate(userName, password, ldapGroup.GroupLdapName))
                         {
                             //put user back in group if removed at some point
 
-                            userGroupMembershipService.AddMembership(new EntityUserGroupMembership() { ToemsUserId = user.Id, UserGroupId = ldapGroup.Id });
+                            ctx.UserGroupMembership.AddMembership(new EntityUserGroupMembership() { ToemsUserId = user.Id, UserGroupId = ldapGroup.Id });
                             validationResult.Success = true;
 
                         }
                         else
                         {
                             //user is either not in that group anymore, or bad password
-                            if (ldapServices.Authenticate(userName, password))
+                            if (ctx.Ldap.Authenticate(userName, password))
                             {
                                 //password was good but user is no longer in the group
                                 //remove user from group
-                                userGroupMembershipService.DeleteByIds(user.Id, ldapGroup.Id);
+                                ctx.UserGroupMembership.DeleteByIds(user.Id, ldapGroup.Id);
                             }
                         }
                     }
@@ -206,10 +199,10 @@ namespace Toems_ServiceCore.Infrastructure
                 else
                 {
                     //user is not part of an ldap group, check creds against directory
-                    if (ldapServices.Authenticate(userName, password)) validationResult.Success = true;
+                    if (ctx.Ldap.Authenticate(userName, password)) validationResult.Success = true;
                 }
             }
-            else if (user.IsLdapUser == 1 && ictx.Settings.GetSettingValue(SettingStrings.LdapEnabled) != "1")
+            else if (user.IsLdapUser == 1 && ctx.Setting.GetSettingValue(SettingStrings.LdapEnabled) != "1")
             {
                 //prevent ldap user from logging in with local pass if ldap auth gets turned off
                 validationResult.Success = false;
@@ -222,7 +215,7 @@ namespace Toems_ServiceCore.Infrastructure
             }
 
             //update user role based on group membership at each login
-            var usersGroups = userService.GetUsersGroups(user.Id);
+            var usersGroups = ctx.User.GetUsersGroups(user.Id);
             if (usersGroups.Any())
             {
                 var userNeedsAdminRole = false;
@@ -237,7 +230,7 @@ namespace Toems_ServiceCore.Infrastructure
 
                 user.Membership = userNeedsAdminRole ? "Administrator" : "User";
 
-                userService.UpdateUser(user);
+                ctx.User.UpdateUser(user);
             }
 
             if (validationResult.Success)
@@ -245,49 +238,49 @@ namespace Toems_ServiceCore.Infrastructure
                 auditLog.AuditType = EnumAuditEntry.AuditType.SuccessfulLogin;
                 auditLog.UserId = user.Id;
                 auditLog.ObjectId = user.Id;
-                ictx.AuditLog.AddAuditLog(auditLog);
-                userLockoutService.DeleteUserLockouts(user.Id);
+                ctx.AuditLog.AddAuditLog(auditLog);
+                ctx.UserLockout.DeleteUserLockouts(user.Id);
                 return validationResult;
             }
             validationResult.ErrorMessage = "Incorrect Username Or Password";
             auditLog.AuditType = EnumAuditEntry.AuditType.FailedLogin;
             auditLog.UserId = user.Id;
             auditLog.ObjectId = user.Id;
-            ictx.AuditLog.AddAuditLog(auditLog);
-            userLockoutService.ProcessBadLogin(user.Id);
+            ctx.AuditLog.AddAuditLog(auditLog);
+            ctx.UserLockout.ProcessBadLogin(user.Id);
             return validationResult;
         }
 
         public string IpxeLogin(string username, string password, string kernel, string bootImage, string task)
         {
             //no reason to look at other com  servers, just continue to use the currently connected one.
-            var guid = ictx.Config["ComServerUniqueId"];
-            var thisComServer = clientComServerService.GetServerByGuid(guid);
+            var guid = ctx.Config["ComServerUniqueId"];
+            var thisComServer = ctx.ClientComServer.GetServerByGuid(guid);
             if (thisComServer == null)
             {
                 return null;
             }
 
             string userToken;
-            var consoleRequiresLogin = ictx.Settings.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
-            var globalToken = ictx.Settings.GetSettingValue(SettingStrings.GlobalImagingToken);
+            var consoleRequiresLogin = ctx.Setting.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
+            var globalToken = ctx.Setting.GetSettingValue(SettingStrings.GlobalImagingToken);
             if (consoleRequiresLogin.Equals("False"))
                 userToken = globalToken;
             else
                 userToken = "";
 
             var webPath = thisComServer.Url + "clientimaging/,";
-            var globalComputerArgs = ictx.Settings.GetSettingValue(SettingStrings.GlobalImagingArguments);
+            var globalComputerArgs = ctx.Setting.GetSettingValue(SettingStrings.GlobalImagingArguments);
 
 
             var iPxePath = webPath;
             if (iPxePath.Contains("https://")) 
             {
-                if (ictx.Settings.GetSettingValue(SettingStrings.IpxeSSL).Equals("False"))
+                if (ctx.Setting.GetSettingValue(SettingStrings.IpxeSSL).Equals("False"))
                 {
                     iPxePath = iPxePath.ToLower().Replace("https://", "http://");
                     var currentPort = iPxePath.Split(':').Last();
-                    iPxePath = iPxePath.Replace(currentPort, ictx.Settings.GetSettingValue(SettingStrings.IpxeHttpPort)) + "/clientimaging/";
+                    iPxePath = iPxePath.Replace(currentPort, ctx.Setting.GetSettingValue(SettingStrings.IpxeHttpPort)) + "/clientimaging/";
                 }
                 else
                     iPxePath += "clientimaging/";

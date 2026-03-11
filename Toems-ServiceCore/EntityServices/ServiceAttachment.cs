@@ -6,15 +6,15 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceAttachment(EntityContext ectx, UncServices serviceUnc)
+    public class ServiceAttachment(ServiceContext ctx)
     {
         public DtoActionResult Add(EntityAttachment attachment)
         {
             var actionResult = new DtoActionResult();
 
 
-            ectx.Uow.AttachmentRepository.Insert(attachment);
-            ectx.Uow.Save();
+            ctx.Uow.AttachmentRepository.Insert(attachment);
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = attachment.Id;
 
@@ -24,7 +24,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityAttachment Get(int id)
         {
-            return ectx.Uow.AttachmentRepository.GetById(id);
+            return ctx.Uow.AttachmentRepository.GetById(id);
         }
 
         public DtoActionResult Delete(int id)
@@ -32,11 +32,11 @@ namespace Toems_ServiceCore.EntityServices
             var u = Get(id);
             if (u == null) return new DtoActionResult { ErrorMessage = "Attachment Not Found", Id = 0 };
 
-            ectx.Uow.AttachmentRepository.Delete(id);
-            ectx.Uow.Save();
+            ctx.Uow.AttachmentRepository.Delete(id);
+            ctx.Uow.Save();
 
 
-                if (serviceUnc.NetUseWithCredentials() || serviceUnc.LastError == 1219)
+                if (ctx.Unc.NetUseWithCredentials() || ctx.Unc.LastError == 1219)
                 {
                     try
                     {
@@ -46,7 +46,7 @@ namespace Toems_ServiceCore.EntityServices
                         }
                         else
                         {
-                            var storagePath = ectx.Settings.GetSettingValue(SettingStrings.StoragePath);
+                            var storagePath = ctx.Setting.GetSettingValue(SettingStrings.StoragePath);
                             File.Delete(Path.Combine(storagePath, "attachments", u.DirectoryGuid, u.Name));
                             var dirFiles = Directory.GetFiles(Path.Combine(storagePath, "attachments", u.DirectoryGuid));
                             if (dirFiles.Length == 0)

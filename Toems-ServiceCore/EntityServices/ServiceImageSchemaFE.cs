@@ -1,12 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Toems_Common.Dto;
 using Toems_Common.Dto.imageschemafe;
-using Toems_Service;
 using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceImageSchemaFE
+    public class ServiceImageSchemaFE(ServiceContext ctx)
     {
         private DtoImageSchemaGridView _imageSchema;
 
@@ -17,7 +16,7 @@ namespace Toems_ServiceCore.EntityServices
             //Only To display the main image specs file when not using a profile.
             if (schemaRequest.image != null)
             {
-                schema = new FilesystemServices().ReadSchemaFile(schemaRequest.image.Name);
+                schema = ctx.Filessystem.ReadSchemaFile(schemaRequest.image.Name);
             }
 
             if (schemaRequest.imageProfile != null)
@@ -34,7 +33,7 @@ namespace Toems_ServiceCore.EntityServices
                 }
                 else
                 {
-                    schema = new FilesystemServices().ReadSchemaFile(schemaRequest.imageProfile.Image.Name);
+                    schema = ctx.Filessystem.ReadSchemaFile(schemaRequest.imageProfile.Image.Name);
                 }
             }
 

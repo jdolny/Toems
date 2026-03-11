@@ -1,11 +1,9 @@
-﻿using Gma.QrCodeNet.Encoding.Windows.Render;
-using Gma.QrCodeNet.Encoding;
-using QRCoder;
+﻿using QRCoder;
 using TwoFactorAuthNet.Providers.Qr;
 
-namespace Toems_Service
+namespace Toems_ServiceCore.Infrastructure
 {
-    internal class ToemsQrProvider : IQrCodeProvider
+    public class ToemsQrProvider : IQrCodeProvider
     {
         public string GetMimeType()
         {

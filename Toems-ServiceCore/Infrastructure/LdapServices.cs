@@ -7,30 +7,30 @@ namespace Toems_ServiceCore.Infrastructure
     /// <summary>
     ///     Summary description for Ldap
     /// </summary>
-    public class LdapServices(InfrastructureContext ictx)
+    public class LdapServices(ServiceContext ctx)
     {
         public bool Authenticate(string username, string pwd, string ldapGroup = null)
         {
-            if (ictx.Settings.GetSettingValue(SettingStrings.LdapEnabled) != "1") return false;
+            if (ctx.Setting.GetSettingValue(SettingStrings.LdapEnabled) != "1") return false;
 
-            var path = "LDAP://" + ictx.Settings.GetSettingValue(SettingStrings.LdapServer) + ":" +
-                       ictx.Settings.GetSettingValue(SettingStrings.LdapPort) + "/" +
-                       ictx.Settings.GetSettingValue(SettingStrings.LdapBaseDN);
+            var path = "LDAP://" + ctx.Setting.GetSettingValue(SettingStrings.LdapServer) + ":" +
+                       ctx.Setting.GetSettingValue(SettingStrings.LdapPort) + "/" +
+                       ctx.Setting.GetSettingValue(SettingStrings.LdapBaseDN);
 
             var entry = new DirectoryEntry(path, username, pwd);
 
-            if (ictx.Settings.GetSettingValue(SettingStrings.LdapAuthType) == "Basic")
+            if (ctx.Setting.GetSettingValue(SettingStrings.LdapAuthType) == "Basic")
                 entry.AuthenticationType = AuthenticationTypes.None;
-            else if (ictx.Settings.GetSettingValue(SettingStrings.LdapAuthType) == "Secure")
+            else if (ctx.Setting.GetSettingValue(SettingStrings.LdapAuthType) == "Secure")
                 entry.AuthenticationType = AuthenticationTypes.Secure;
-            else if (ictx.Settings.GetSettingValue(SettingStrings.LdapAuthType) == "SSL")
+            else if (ctx.Setting.GetSettingValue(SettingStrings.LdapAuthType) == "SSL")
                 entry.AuthenticationType = AuthenticationTypes.SecureSocketsLayer;
             try
             {
                 // Bind to the native AdsObject to force authentication.
                 var obj = entry.NativeObject;
                 var search = new DirectorySearcher(entry);
-                search.Filter = "(" + ictx.Settings.GetSettingValue(SettingStrings.LdapAuthAttribute) + "=" + username +
+                search.Filter = "(" + ctx.Setting.GetSettingValue(SettingStrings.LdapAuthAttribute) + "=" + username +
                                 ")";
                 search.PropertiesToLoad.Add("cn");
                 search.PropertiesToLoad.Add("memberOf");
@@ -68,7 +68,7 @@ namespace Toems_ServiceCore.Infrastructure
             }
             catch (Exception ex)
             {
-                ictx.Log.Error("Could Not Authenticate User: " + username + " " + ex.Message);
+                ctx.Log.Error("Could Not Authenticate User: " + username + " " + ex.Message);
                 return false;
             }
 
@@ -93,15 +93,15 @@ namespace Toems_ServiceCore.Infrastructure
                 if (null != DirectorySearchResult)
                 {
                     DirectoryEntry deComp = DirectorySearchResult.GetDirectoryEntry();
-                    ictx.Log.Info("Computer Guid: " + deComp.Guid);
+                    ctx.Log.Info("Computer Guid: " + deComp.Guid);
                     return deComp.Guid.ToString();
 
                 }
             }
             catch (Exception ex)
             {
-                ictx.Log.Error(String.Format("Active Directory Search Failed: {0}", domain));
-                ictx.Log.Error(ex.Message);
+                ctx.Log.Error(String.Format("Active Directory Search Failed: {0}", domain));
+                ctx.Log.Error(ex.Message);
                 throw;
             }
             return null;

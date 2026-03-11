@@ -11,10 +11,10 @@ namespace Toems_ApplicationApi.Controllers
     public class BrowserTokenController : ApiController
     {
         private readonly int _userId;
-        private readonly ServiceBrowserToken _browserToken;
+       // private readonly ServiceBrowserToken _browserToken;
         public BrowserTokenController()
         {
-            _browserToken = new ServiceBrowserToken();
+          //  _browserToken = new ServiceBrowserToken();
             _userId = Convert.ToInt32(((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == "user_id")
                 .Select(c => c.Value).SingleOrDefault());
         }
@@ -22,7 +22,8 @@ namespace Toems_ApplicationApi.Controllers
         [Authorize]
         public EntityBrowserToken GetToken()
         {
-            return _browserToken.Create(_userId);
+           // return _browserToken.Create(_userId);
+           return null;
         }
     }
 }

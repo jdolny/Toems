@@ -4,12 +4,12 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceComputerGpuInventory(EntityContext ectx)
+    public class ServiceComputerGpuInventory(ServiceContext ctx)
     {
         public DtoActionResult AddOrUpdate(List<EntityComputerGpuInventory> inventory, int computerId)
         {
             var actionResult = new DtoActionResult();
-            var pToRemove = ectx.Uow.ComputerGpuRepository.Get(x => x.ComputerId == computerId);
+            var pToRemove = ctx.Uow.ComputerGpuRepository.Get(x => x.ComputerId == computerId);
             foreach (var gpu in inventory)
             {
                 try
@@ -24,16 +24,16 @@ namespace Toems_ServiceCore.EntityServices
 
 
                 gpu.ComputerId = computerId;
-                var existing = ectx.Uow.ComputerGpuRepository.GetFirstOrDefault(x => x.ComputerId == gpu.ComputerId && x.Name == gpu.Name);
+                var existing = ctx.Uow.ComputerGpuRepository.GetFirstOrDefault(x => x.ComputerId == gpu.ComputerId && x.Name == gpu.Name);
                 if (existing == null)
                 {
-                    ectx.Uow.ComputerGpuRepository.Insert(gpu);
+                    ctx.Uow.ComputerGpuRepository.Insert(gpu);
                 }
                 else
                 {
                     pToRemove.Remove(existing);
                     gpu.Id = existing.Id;
-                    ectx.Uow.ComputerGpuRepository.Update(gpu, gpu.Id);
+                    ctx.Uow.ComputerGpuRepository.Update(gpu, gpu.Id);
                 }
                 actionResult.Id = gpu.Id;
             }
@@ -41,10 +41,10 @@ namespace Toems_ServiceCore.EntityServices
             //anything left in pToRemove does not exist on that computer anymore
             foreach (var p in pToRemove)
             {
-                ectx.Uow.ComputerGpuRepository.Delete(p.Id);
+                ctx.Uow.ComputerGpuRepository.Delete(p.Id);
             }
 
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             actionResult.Success = true;
             return actionResult;
         }

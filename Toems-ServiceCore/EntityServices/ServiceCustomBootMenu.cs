@@ -5,7 +5,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceCustomBootMenu(EntityContext ectx)
+    public class ServiceCustomBootMenu(ServiceContext ctx)
     {
         public DtoActionResult Add(EntityCustomBootMenu customBootMenu)
         {
@@ -14,8 +14,8 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(customBootMenu,true);
             if (validationResult.Success)
             {
-                ectx.Uow.CustomBootMenuRepository.Insert(customBootMenu);
-                ectx.Uow.Save();
+                ctx.Uow.CustomBootMenuRepository.Insert(customBootMenu);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = customBootMenu.Id;
             }
@@ -34,8 +34,8 @@ namespace Toems_ServiceCore.EntityServices
 
          
 
-            ectx.Uow.CustomBootMenuRepository.Delete(customBootMenuId);
-            ectx.Uow.Save();
+            ctx.Uow.CustomBootMenuRepository.Delete(customBootMenuId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -44,7 +44,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityCustomBootMenu GetCustomBootMenu(int customBootMenuId)
         {
-            return ectx.Uow.CustomBootMenuRepository.GetById(customBootMenuId);
+            return ctx.Uow.CustomBootMenuRepository.GetById(customBootMenuId);
         }
 
         public List<EntityCustomBootMenu> Search(DtoSearchFilter filter)
@@ -52,17 +52,17 @@ namespace Toems_ServiceCore.EntityServices
             if(filter.Limit == 0)
                 filter.Limit = Int32.MaxValue;
             
-            return ectx.Uow.CustomBootMenuRepository.Get(x => x.Name.Contains(filter.SearchText)).Take(filter.Limit).ToList();
+            return ctx.Uow.CustomBootMenuRepository.Get(x => x.Name.Contains(filter.SearchText)).Take(filter.Limit).ToList();
         }
 
         public List<EntityCustomBootMenu> GetAll()
         {
-            return ectx.Uow.CustomBootMenuRepository.Get();
+            return ctx.Uow.CustomBootMenuRepository.Get();
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.CustomBootMenuRepository.Count();
+            return ctx.Uow.CustomBootMenuRepository.Count();
         }
 
         public DtoActionResult Update(EntityCustomBootMenu customBootMenu)
@@ -75,8 +75,8 @@ namespace Toems_ServiceCore.EntityServices
                var validationResult = Validate(customBootMenu,false);
             if (validationResult.Success)
             {
-                ectx.Uow.CustomBootMenuRepository.Update(customBootMenu, u.Id);
-                ectx.Uow.Save();
+                ctx.Uow.CustomBootMenuRepository.Update(customBootMenu, u.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = customBootMenu.Id;
             }
@@ -100,7 +100,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.CustomBootMenuRepository.Exists(h => h.Name == customBootMenu.Name))
+                if (ctx.Uow.CustomBootMenuRepository.Exists(h => h.Name == customBootMenu.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Custom Boot Menu Entry With This Name Already Exists";
@@ -109,10 +109,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var original = ectx.Uow.CustomBootMenuRepository.GetById(customBootMenu.Id);
+                var original = ctx.Uow.CustomBootMenuRepository.GetById(customBootMenu.Id);
                 if (original.Name != customBootMenu.Name)
                 {
-                    if (ectx.Uow.CustomBootMenuRepository.Exists(h => h.Name == customBootMenu.Name))
+                    if (ctx.Uow.CustomBootMenuRepository.Exists(h => h.Name == customBootMenu.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Custom Boot Menu Entry With This Name Already Exists";

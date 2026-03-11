@@ -1,35 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class GenerateClientGroupPolicy(GroupService serviceGroup, ServiceActiveGroupPolicy serviceActiveGroupPolicy, ServicePolicy servicePolicy)
+    public class GenerateClientGroupPolicy(ServiceContext ctx)
     {
         public DtoActionResult Execute(int groupId)
         {
             var list = new List<DtoClientPolicy>();
             var inactivePolicyIds = new List<int>();
-            var groupPolicies = serviceGroup.GetAssignedPolicies(groupId,new DtoSearchFilter());
+            var groupPolicies = ctx.Group.GetAssignedPolicies(groupId,new DtoSearchFilter());
             string warningMessage = null;
 
             if (groupPolicies.Count == 0)
             {
                 //All Policies have been removed from the group.  Remove the active entry if it exists.
-                var currentActiveGroupPolicy = serviceGroup.GetActiveGroupPolicy(groupId);
+                var currentActiveGroupPolicy = ctx.Group.GetActiveGroupPolicy(groupId);
                 if(currentActiveGroupPolicy != null)
-                serviceActiveGroupPolicy.Delete(currentActiveGroupPolicy.Id);
+                ctx.ActiveGroupPolicy.Delete(currentActiveGroupPolicy.Id);
                 return new DtoActionResult() {Success = true };
             }
 
             foreach (var groupPolicy in groupPolicies)
             {
-                var policyJson = servicePolicy.GetActivePolicy(groupPolicy.PolicyId);
+                var policyJson = ctx.Policy.GetActivePolicy(groupPolicy.PolicyId);
                 if (policyJson == null) //Policy hasn't been activated yet
                 {
                     inactivePolicyIds.Add(groupPolicy.PolicyId);
@@ -42,16 +39,16 @@ namespace Toems_Service.Workflows
             }
             if (inactivePolicyIds.Count > 0) //some of the polices are inactive
             {
-                var listInactivePolicies = inactivePolicyIds.Select(policyId => servicePolicy.GetPolicy(policyId)).ToList();
+                var listInactivePolicies = inactivePolicyIds.Select(policyId => ctx.Policy.GetPolicy(policyId)).ToList();
                 warningMessage =
                     "Warning: Inactive Policies Are Applied.  The Following Assigned Policies Will Not Function Until They Are Activated: " +
                     String.Join(", ", listInactivePolicies.Select(x => x.Name));
                 
                 if (list.Count == 0) //All Of this groups policies are inactive.  Remove the active group entry and stop processing
                 {
-                    var currentActiveGroupPolicy = serviceGroup.GetActiveGroupPolicy(groupId);
+                    var currentActiveGroupPolicy = ctx.Group.GetActiveGroupPolicy(groupId);
                     if (currentActiveGroupPolicy != null)
-                        serviceActiveGroupPolicy.Delete(currentActiveGroupPolicy.Id);
+                        ctx.ActiveGroupPolicy.Delete(currentActiveGroupPolicy.Id);
                     return new DtoActionResult() {ErrorMessage = warningMessage};
                 }
 
@@ -63,10 +60,10 @@ namespace Toems_Service.Workflows
             clientGroupPolicy.GroupId = groupId;
             clientGroupPolicy.PolicyJson = json;
 
-            serviceActiveGroupPolicy.InsertOrUpdate(clientGroupPolicy);
+            ctx.ActiveGroupPolicy.InsertOrUpdate(clientGroupPolicy);
 
             //verify info was saved correctly and can be deserialized back to each invdividual policy
-            var activeGroupPolicies = serviceActiveGroupPolicy.Get(clientGroupPolicy.Id);
+            var activeGroupPolicies = ctx.ActiveGroupPolicy.Get(clientGroupPolicy.Id);
             try
             {
                 JsonConvert.DeserializeObject<List<DtoClientPolicy>>(activeGroupPolicies.PolicyJson);
@@ -78,7 +75,7 @@ namespace Toems_Service.Workflows
             catch (Exception)
             {
                 //back out any changes
-                serviceActiveGroupPolicy.Delete(clientGroupPolicy.Id);
+                ctx.ActiveGroupPolicy.Delete(clientGroupPolicy.Id);
                 return new DtoActionResult { ErrorMessage = "Could Not Verify Group Policy Deserialization", Id = 0 };
                 //todo: add logging
                 

@@ -1,23 +1,11 @@
-﻿using log4net;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
-using Toems_Common;
+﻿using System.Diagnostics;
 using Toems_Common.Entity;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class UploadImage(InfrastructureContext ictx, ServiceClientComServer serviceClientComServer, ServiceActiveImagingTask serviceActiveImagingTask, 
+    public class UploadImage(ServiceContext ictx, ServiceClientComServer serviceClientComServer, ServiceActiveImagingTask serviceActiveImagingTask, 
         ServiceImageProfile serviceImageProfile, ServicePort servicePort, ServiceActiveMulticastSession serviceActiveMulticastSession)
     {
         private EntityClientComServer _thisComServer;

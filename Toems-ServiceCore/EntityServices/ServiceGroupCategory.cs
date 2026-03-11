@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceGroupCategory(EntityContext ectx)
+    public class ServiceGroupCategory(ServiceContext ctx)
     {
         public DtoActionResult AddOrUpdate(List<EntityGroupCategory> groupCategories)
         {
@@ -13,13 +13,13 @@ namespace Toems_ServiceCore.EntityServices
             var allSame = groupCategories.All(x => x.GroupId == first.GroupId);
             if (!allSame) return new DtoActionResult { ErrorMessage = "The List Must Be For A Single Group.", Id = 0 };
             var actionResult = new DtoActionResult();
-            var pToRemove = ectx.Uow.GroupCategoryRepository.Get(x => x.GroupId == first.GroupId);
+            var pToRemove = ctx.Uow.GroupCategoryRepository.Get(x => x.GroupId == first.GroupId);
             foreach (var groupCategory in groupCategories)
             {
-                var existing = ectx.Uow.GroupCategoryRepository.GetFirstOrDefault(x => x.GroupId == groupCategory.GroupId && x.CategoryId == groupCategory.CategoryId);
+                var existing = ctx.Uow.GroupCategoryRepository.GetFirstOrDefault(x => x.GroupId == groupCategory.GroupId && x.CategoryId == groupCategory.CategoryId);
                 if (existing == null)
                 {
-                    ectx.Uow.GroupCategoryRepository.Insert(groupCategory);
+                    ctx.Uow.GroupCategoryRepository.Insert(groupCategory);
                 }
                 else
                 {
@@ -30,16 +30,16 @@ namespace Toems_ServiceCore.EntityServices
             }
 
             //anything left in pToRemove does not exist anymore
-            ectx.Uow.GroupCategoryRepository.DeleteRange(pToRemove);
-            ectx.Uow.Save();
+            ctx.Uow.GroupCategoryRepository.DeleteRange(pToRemove);
+            ctx.Uow.Save();
 
             //assign categories to all group members
-            ectx.Uow.ComputerCategoryRepository.DeleteRange(x => x.GroupId == first.GroupId);
-            ectx.Uow.Save();
+            ctx.Uow.ComputerCategoryRepository.DeleteRange(x => x.GroupId == first.GroupId);
+            ctx.Uow.Save();
 
 
             var catList = new List<EntityComputerCategory>();
-            var groupMembers = ectx.Uow.GroupRepository.GetGroupMembers(first.GroupId);
+            var groupMembers = ctx.Uow.GroupRepository.GetGroupMembers(first.GroupId);
             foreach (var groupCategory in groupCategories)
             {
                 foreach (var computer in groupMembers)
@@ -53,8 +53,8 @@ namespace Toems_ServiceCore.EntityServices
                 }
             }
 
-            ectx.Uow.ComputerCategoryRepository.InsertRange(catList);
-            ectx.Uow.Save();
+            ctx.Uow.ComputerCategoryRepository.InsertRange(catList);
+            ctx.Uow.Save();
             actionResult.Id = 1;
             actionResult.Success = true;
             return actionResult;
@@ -62,8 +62,8 @@ namespace Toems_ServiceCore.EntityServices
 
         public DtoActionResult DeleteAllForGroup(int groupId)
         {
-            ectx.Uow.GroupCategoryRepository.DeleteRange(x => x.GroupId == groupId);
-            ectx.Uow.Save();
+            ctx.Uow.GroupCategoryRepository.DeleteRange(x => x.GroupId == groupId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = 1;

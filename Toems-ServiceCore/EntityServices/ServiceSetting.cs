@@ -9,7 +9,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceSetting(ILog log, IConfigurationManager config, EncryptionServices encryption, UncServices unc, ServiceMsiUpdater msiUpdater, UnitOfWork uow)
+    public class ServiceSetting(ILog log, IConfiguration config, EncryptionServices encryption, UnitOfWork uow)
     {
         public EntitySetting GetSetting(string settingName)
         {
@@ -134,7 +134,7 @@ namespace Toems_ServiceCore.EntityServices
 
      
 
-        public bool CopyMsiToClientUpdate()
+        /*public bool CopyMsiToClientUpdate()
         {
             foreach (var type in new List<bool> { true, false })
             {
@@ -167,6 +167,6 @@ namespace Toems_ServiceCore.EntityServices
 
             }
             return true;
-        }
+        }*/
     }
 }

@@ -6,7 +6,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceAppMonitor(EntityContext ectx)
+    public class ServiceAppMonitor(ServiceContext ctx)
     {
         public DtoActionResult AddOrUpdate(List<DtoAppMonitor> appMonitors, int computerId)
         {
@@ -14,23 +14,23 @@ namespace Toems_ServiceCore.EntityServices
             foreach (var app in appMonitors)
             {
                 var localApp = app;
-                var existing = ectx.Uow.ProcessInventoryRepository.GetFirstOrDefault(x => x.Name == localApp.Name && x.Path == localApp.Path);
+                var existing = ctx.Uow.ProcessInventoryRepository.GetFirstOrDefault(x => x.Name == localApp.Name && x.Path == localApp.Path);
                 if (existing == null)
                 {
                     var process = new EntityProcessInventory();
                     process.Name = localApp.Name;
                     process.Path = localApp.Path;
-                    ectx.Uow.ProcessInventoryRepository.Insert(process);
+                    ctx.Uow.ProcessInventoryRepository.Insert(process);
                 } 
                 //must save after each one or will end up with duplicates
-                ectx.Uow.Save();
+                ctx.Uow.Save();
             }
           
             //Add Computer Process
             foreach (var app in appMonitors)
             {
                 var localApp = app;
-                var s = ectx.Uow.ProcessInventoryRepository.GetFirstOrDefault(x => x.Name == localApp.Name && x.Path == localApp.Path);
+                var s = ctx.Uow.ProcessInventoryRepository.GetFirstOrDefault(x => x.Name == localApp.Name && x.Path == localApp.Path);
                 //check if process exists before adding computer relationship
                 if (s == null)
                     continue;
@@ -41,9 +41,9 @@ namespace Toems_ServiceCore.EntityServices
                 computerProcess.StartTimeUtc = Convert.ToDateTime(localApp.StartDateTime, CultureInfo.InvariantCulture);
                 computerProcess.CloseTimeUtc = Convert.ToDateTime(localApp.EndDateTime, CultureInfo.InvariantCulture);
                 computerProcess.Username = localApp.UserName;
-                ectx.Uow.ComputerProcessRepository.Insert(computerProcess);
+                ctx.Uow.ComputerProcessRepository.Insert(computerProcess);
             }
-            ectx.Uow.Save();
+            ctx.Uow.Save();
 
             return new DtoActionResult() {Success = true};
 

@@ -5,7 +5,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceWolRelay(EntityContext ectx)
+    public class ServiceWolRelay(ServiceContext ctx)
     {
         public DtoActionResult Add(EntityWolRelay relay)
         {
@@ -14,8 +14,8 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(relay,true);
             if (validationResult.Success)
             {
-                ectx.Uow.WolRelayRepository.Insert(relay);
-                ectx.Uow.Save();
+                ctx.Uow.WolRelayRepository.Insert(relay);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = relay.Id;
             }
@@ -32,8 +32,8 @@ namespace Toems_ServiceCore.EntityServices
             var u = GetWolRelay(relayId);
             if (u == null) return new DtoActionResult { ErrorMessage = "Wol Relay Not Found", Id = 0 };
 
-            ectx.Uow.WolRelayRepository.Delete(relayId);
-            ectx.Uow.Save();
+            ctx.Uow.WolRelayRepository.Delete(relayId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -42,17 +42,17 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityWolRelay GetWolRelay(int relayId)
         {
-            return ectx.Uow.WolRelayRepository.GetById(relayId);
+            return ctx.Uow.WolRelayRepository.GetById(relayId);
         }
 
         public List<EntityWolRelay> Search(DtoSearchFilter filter)
         {
-            return ectx.Uow.WolRelayRepository.Get(x => x.Gateway.Contains(filter.SearchText));
+            return ctx.Uow.WolRelayRepository.Get(x => x.Gateway.Contains(filter.SearchText));
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.WolRelayRepository.Count();
+            return ctx.Uow.WolRelayRepository.Count();
         }
 
         public DtoActionResult Update(EntityWolRelay relay)
@@ -65,8 +65,8 @@ namespace Toems_ServiceCore.EntityServices
                var validationResult = Validate(relay,false);
             if (validationResult.Success)
             {
-                ectx.Uow.WolRelayRepository.Update(relay, u.Id);
-                ectx.Uow.Save();
+                ctx.Uow.WolRelayRepository.Update(relay, u.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = relay.Id;
             }
@@ -87,7 +87,7 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = new DtoValidationResult();
             if (isNew)
             {
-                if (ectx.Uow.WolRelayRepository.Exists(h => h.Gateway == relay.Gateway))
+                if (ctx.Uow.WolRelayRepository.Exists(h => h.Gateway == relay.Gateway))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Relay With This Gateway Already Exists";
@@ -96,10 +96,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var originalRelay = ectx.Uow.WolRelayRepository.GetById(relay.Id);
+                var originalRelay = ctx.Uow.WolRelayRepository.GetById(relay.Id);
                 if (originalRelay.Gateway != relay.Gateway)
                 {
-                    if (ectx.Uow.WolRelayRepository.Exists(h => h.Gateway == relay.Gateway))
+                    if (ctx.Uow.WolRelayRepository.Exists(h => h.Gateway == relay.Gateway))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Relay With This Gateway Already Exists";

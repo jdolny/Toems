@@ -5,7 +5,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceComClusterServer(EntityContext ectx)
+    public class ServiceComClusterServer(ServiceContext ctx)
     {
         public DtoActionResult AddList(List<EntityComServerClusterServer> listOfServers)
         {
@@ -21,9 +21,9 @@ namespace Toems_ServiceCore.EntityServices
             {
                 if (server.IsMulticastServer)
                     server.IsImagingServer = true; //a multicast server must be an imaging server
-                ectx.Uow.ComServerClusterServerRepository.Insert(server);
+                ctx.Uow.ComServerClusterServerRepository.Insert(server);
             }
-            ectx.Uow.Save();
+            ctx.Uow.Save();
 
             actionResult.Success = true;
             return actionResult;
@@ -31,8 +31,8 @@ namespace Toems_ServiceCore.EntityServices
 
         private bool DeleteClusterServers(int clusterId)
         {
-            ectx.Uow.ComServerClusterServerRepository.DeleteRange(x => x.ComServerClusterId == clusterId);
-            ectx.Uow.Save();
+            ctx.Uow.ComServerClusterServerRepository.DeleteRange(x => x.ComServerClusterId == clusterId);
+            ctx.Uow.Save();
             return true;
         }
 

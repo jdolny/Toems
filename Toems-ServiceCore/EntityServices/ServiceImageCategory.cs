@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceImageCategory(EntityContext ectx)
+    public class ServiceImageCategory(ServiceContext ctx)
     {
         public DtoActionResult AddOrUpdate(List<EntityImageCategory> imageCategories)
         {
@@ -13,13 +13,13 @@ namespace Toems_ServiceCore.EntityServices
             var allSame = imageCategories.All(x => x.ImageId == first.ImageId);
             if (!allSame) return new DtoActionResult { ErrorMessage = "The List Must Be For A Single Image.", Id = 0 };
             var actionResult = new DtoActionResult();
-            var pToRemove = ectx.Uow.ImageCategoryRepository.Get(x => x.ImageId == first.ImageId);
+            var pToRemove = ctx.Uow.ImageCategoryRepository.Get(x => x.ImageId == first.ImageId);
             foreach (var imageCategory in imageCategories)
             {
-                var existing = ectx.Uow.ImageCategoryRepository.GetFirstOrDefault(x => x.ImageId == imageCategory.ImageId && x.CategoryId == imageCategory.CategoryId);
+                var existing = ctx.Uow.ImageCategoryRepository.GetFirstOrDefault(x => x.ImageId == imageCategory.ImageId && x.CategoryId == imageCategory.CategoryId);
                 if (existing == null)
                 {
-                    ectx.Uow.ImageCategoryRepository.Insert(imageCategory);
+                    ctx.Uow.ImageCategoryRepository.Insert(imageCategory);
                 }
                 else
                 {
@@ -30,16 +30,16 @@ namespace Toems_ServiceCore.EntityServices
             }
 
             //anything left in pToRemove does not exist anymore
-            ectx.Uow.ImageCategoryRepository.DeleteRange(pToRemove);
-            ectx.Uow.Save();
+            ctx.Uow.ImageCategoryRepository.DeleteRange(pToRemove);
+            ctx.Uow.Save();
             actionResult.Success = true;
             return actionResult;
         }
 
         public DtoActionResult DeleteAllForImage(int imageId)
         {
-            ectx.Uow.ImageCategoryRepository.DeleteRange(x => x.ImageId == imageId);
-            ectx.Uow.Save();
+            ctx.Uow.ImageCategoryRepository.DeleteRange(x => x.ImageId == imageId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = 1;

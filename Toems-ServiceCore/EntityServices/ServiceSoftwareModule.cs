@@ -2,12 +2,11 @@
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
-using Toems_Service;
 using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceSoftwareModule(EntityContext ectx, ServiceModule moduleService)
+    public class ServiceSoftwareModule(ServiceContext ctx)
     {
 
         public DtoActionResult AddModule(EntitySoftwareModule module)
@@ -17,12 +16,12 @@ namespace Toems_ServiceCore.EntityServices
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
-                ectx.Uow.SoftwareModuleRepository.Insert(module);
+                ctx.Uow.SoftwareModuleRepository.Insert(module);
                 var moduleType = new EntityModule();
                 moduleType.ModuleType = EnumModule.ModuleType.Software;
                 moduleType.Guid = module.Guid;
-                ectx.Uow.ModuleRepository.Insert(moduleType);
-                ectx.Uow.Save();
+                ctx.Uow.ModuleRepository.Insert(moduleType);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = module.Id;
             }
@@ -38,14 +37,14 @@ namespace Toems_ServiceCore.EntityServices
         {
             var u = GetModule(moduleId);
             if (u == null) return new DtoActionResult {ErrorMessage = "Module Not Found", Id = 0};
-            var isActiveModule = moduleService.IsModuleActive(moduleId, EnumModule.ModuleType.Software);
+            var isActiveModule = ctx.Module.IsModuleActive(moduleId, EnumModule.ModuleType.Software);
             if (!string.IsNullOrEmpty(isActiveModule)) return new DtoActionResult() {ErrorMessage = isActiveModule, Id = 0};
             if (string.IsNullOrEmpty(u.Guid)) return new DtoActionResult() { ErrorMessage = "Unknown Guid", Id = 0 };
-            ectx.Uow.ModuleRepository.DeleteRange(x => x.Guid == u.Guid);
+            ctx.Uow.ModuleRepository.DeleteRange(x => x.Guid == u.Guid);
             //ectx.Uow.SoftwareModuleRepository.Delete(moduleId);
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
-            var deleteDirectoryResult = new FilesystemServices().DeleteModuleDirectory(u.Guid);
+            var deleteDirectoryResult = ctx.Filessystem.DeleteModuleDirectory(u.Guid);
             if (deleteDirectoryResult)
             {
                 actionResult.Success = true;
@@ -64,16 +63,16 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntitySoftwareModule GetModule(int moduleId)
         {
-            return ectx.Uow.SoftwareModuleRepository.GetById(moduleId);
+            return ctx.Uow.SoftwareModuleRepository.GetById(moduleId);
         }
 
         public List<EntitySoftwareModule> SearchModules(DtoSearchFilterCategories filter)
         {
-            var list = ectx.Uow.SoftwareModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && !s.Archived).OrderBy(x => x.Name).ToList();
+            var list = ctx.Uow.SoftwareModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && !s.Archived).OrderBy(x => x.Name).ToList();
             var categoryFilterIds = new List<int>();
             foreach (var catName in filter.Categories)
             {
-                var category = ectx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
+                var category = ctx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
                 if (category != null)
                     categoryFilterIds.Add(category.Id);
             }
@@ -85,7 +84,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var module in list)
                 {
-                    var moduleCategories = moduleService.GetModuleCategories(module.Guid);
+                    var moduleCategories = ctx.Module.GetModuleCategories(module.Guid);
                     if (moduleCategories == null) continue;
 
                     if (filter.Categories.Count == 0)
@@ -109,7 +108,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var module in list)
                 {
-                    var mCategories = moduleService.GetModuleCategories(module.Guid);
+                    var mCategories = ctx.Module.GetModuleCategories(module.Guid);
                     if (mCategories == null) continue;
                     if (filter.Categories.Count == 0)
                     {
@@ -145,31 +144,31 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntitySoftwareModule> GetArchived(DtoSearchFilterCategories filter)
         {
-            return ectx.Uow.SoftwareModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && s.Archived).OrderBy(x => x.Name).Take(filter.Limit).ToList();
+            return ctx.Uow.SoftwareModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && s.Archived).OrderBy(x => x.Name).Take(filter.Limit).ToList();
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.SoftwareModuleRepository.Count(x => !x.Archived);
+            return ctx.Uow.SoftwareModuleRepository.Count(x => !x.Archived);
         }
 
         public string ArchivedCount()
         {
-            return ectx.Uow.SoftwareModuleRepository.Count(x => x.Archived);
+            return ctx.Uow.SoftwareModuleRepository.Count(x => x.Archived);
         }
 
         public DtoActionResult UpdateModule(EntitySoftwareModule module)
         {
             var u = GetModule(module.Id);
             if (u == null) return new DtoActionResult {ErrorMessage = "Module Not Found", Id = 0};
-            var isActiveModule = moduleService.IsModuleActive(module.Id, EnumModule.ModuleType.Software);
+            var isActiveModule = ctx.Module.IsModuleActive(module.Id, EnumModule.ModuleType.Software);
             if (!string.IsNullOrEmpty(isActiveModule)) return new DtoActionResult() { ErrorMessage = isActiveModule, Id = 0 };
             var validationResult = ValidateModule(module, false);
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
-                ectx.Uow.SoftwareModuleRepository.Update(module, module.Id);
-                ectx.Uow.Save();
+                ctx.Uow.SoftwareModuleRepository.Update(module, module.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = module.Id;
             }
@@ -222,7 +221,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.SoftwareModuleRepository.Exists(h => h.Name == module.Name))
+                if (ctx.Uow.SoftwareModuleRepository.Exists(h => h.Name == module.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Module With This Name Already Exists";
@@ -231,10 +230,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var originalModule = ectx.Uow.SoftwareModuleRepository.GetById(module.Id);
+                var originalModule = ctx.Uow.SoftwareModuleRepository.GetById(module.Id);
                 if (originalModule.Name != module.Name)
                 {
-                    if (ectx.Uow.SoftwareModuleRepository.Exists(h => h.Name == module.Name))
+                    if (ctx.Uow.SoftwareModuleRepository.Exists(h => h.Name == module.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Module With This Name Already Exists";
@@ -250,7 +249,7 @@ namespace Toems_ServiceCore.EntityServices
         {
             var result = new DtoActionResult();
             var module = GetModule(moduleId);
-            var files = moduleService.GetModuleFiles(module.Guid);
+            var files = ctx.Module.GetModuleFiles(module.Guid);
             var msiList = new List<string>();
             var mspList = new List<string>();
             var mstList = new List<string>();

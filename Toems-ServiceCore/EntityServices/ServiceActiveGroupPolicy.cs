@@ -5,17 +5,17 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceActiveGroupPolicy(EntityContext ectx, GroupService groupService)
+    public class ServiceActiveGroupPolicy(ServiceContext ctx)
     {
         public DtoActionResult InsertOrUpdate(EntityActiveGroupPolicy activeGroupPolicy)
         {
             var actionResult = new DtoActionResult();
-            var p = groupService.GetActiveGroupPolicy(activeGroupPolicy.GroupId);
+            var p = ctx.Group.GetActiveGroupPolicy(activeGroupPolicy.GroupId);
             if (p == null)
             {
                 //insert
-                ectx.Uow.ActiveGroupPoliciesRepository.Insert(activeGroupPolicy);
-                ectx.Uow.Save();
+                ctx.Uow.ActiveGroupPoliciesRepository.Insert(activeGroupPolicy);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = activeGroupPolicy.Id;
 
@@ -24,8 +24,8 @@ namespace Toems_ServiceCore.EntityServices
             {
                 //update
                 activeGroupPolicy.Id = p.Id;
-                ectx.Uow.ActiveGroupPoliciesRepository.Update(activeGroupPolicy, activeGroupPolicy.Id);
-                ectx.Uow.Save();
+                ctx.Uow.ActiveGroupPoliciesRepository.Update(activeGroupPolicy, activeGroupPolicy.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = activeGroupPolicy.Id;
             }
@@ -35,7 +35,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityActiveGroupPolicy Get(int activeGroupPolicyId)
         {
-            return ectx.Uow.ActiveGroupPoliciesRepository.GetById(activeGroupPolicyId);
+            return ctx.Uow.ActiveGroupPoliciesRepository.GetById(activeGroupPolicyId);
         }
 
         public DtoActionResult Delete(int activeGroupPolicyId)
@@ -43,8 +43,8 @@ namespace Toems_ServiceCore.EntityServices
             var u = Get(activeGroupPolicyId);
             if (u == null) return new DtoActionResult { ErrorMessage = "Group Policy Not Found", Id = 0 };
          
-            ectx.Uow.ActiveGroupPoliciesRepository.Delete(activeGroupPolicyId);
-            ectx.Uow.Save();
+            ctx.Uow.ActiveGroupPoliciesRepository.Delete(activeGroupPolicyId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
 
                 actionResult.Success = true;

@@ -4,13 +4,13 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceHardDriveInventory(EntityContext ectx)
+    public class ServiceHardDriveInventory(ServiceContext ctx)
     {
         public DtoActionResult AddOrUpdate(List<EntityHardDriveInventory> inventory, int computerId)
         {
 
             var actionResult = new DtoActionResult();
-            var pToRemove = ectx.Uow.HardDriveInventoryRepository.Get(x => x.ComputerId == computerId);
+            var pToRemove = ctx.Uow.HardDriveInventoryRepository.Get(x => x.ComputerId == computerId);
             foreach (var hd in inventory)
             {
                 try
@@ -25,16 +25,16 @@ namespace Toems_ServiceCore.EntityServices
 
 
                 hd.ComputerId = computerId;
-                var existing = ectx.Uow.HardDriveInventoryRepository.GetFirstOrDefault(x => x.ComputerId == hd.ComputerId && x.Model == hd.Model && x.SerialNumber == hd.SerialNumber);
+                var existing = ctx.Uow.HardDriveInventoryRepository.GetFirstOrDefault(x => x.ComputerId == hd.ComputerId && x.Model == hd.Model && x.SerialNumber == hd.SerialNumber);
                 if (existing == null)
                 {
-                    ectx.Uow.HardDriveInventoryRepository.Insert(hd);
+                    ctx.Uow.HardDriveInventoryRepository.Insert(hd);
                 }
                 else
                 {
                     pToRemove.Remove(existing);
                     hd.Id = existing.Id;
-                    ectx.Uow.HardDriveInventoryRepository.Update(hd, hd.Id);
+                    ctx.Uow.HardDriveInventoryRepository.Update(hd, hd.Id);
                 }
 
                 actionResult.Id = hd.Id;
@@ -43,10 +43,10 @@ namespace Toems_ServiceCore.EntityServices
             //anything left in pToRemove does not exist on that computer anymore
             foreach (var p in pToRemove)
             {
-                ectx.Uow.HardDriveInventoryRepository.Delete(p.Id);
+                ctx.Uow.HardDriveInventoryRepository.Delete(p.Id);
             }
 
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             actionResult.Success = true;
             return actionResult;
         }

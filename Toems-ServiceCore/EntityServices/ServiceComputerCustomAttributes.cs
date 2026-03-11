@@ -5,7 +5,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceComputerCustomAttributes(EntityContext ectx)
+    public class ServiceComputerCustomAttributes(ServiceContext ctx)
     {
         public DtoActionResult AddOrUpdate(List<EntityCustomComputerAttribute> attributes)
         {
@@ -17,32 +17,32 @@ namespace Toems_ServiceCore.EntityServices
 
             foreach (var ca in attributes)
             {
-                if(ectx.Uow.CustomAttributeRepository.GetById(ca.CustomAttributeId) == null)
+                if(ctx.Uow.CustomAttributeRepository.GetById(ca.CustomAttributeId) == null)
                     continue;
 
                 var existingRelationship =
-                    ectx.Uow.CustomComputerAttributeRepository.GetFirstOrDefault(x => x.ComputerId == first.ComputerId && x.CustomAttributeId == ca.CustomAttributeId);
+                    ctx.Uow.CustomComputerAttributeRepository.GetFirstOrDefault(x => x.ComputerId == first.ComputerId && x.CustomAttributeId == ca.CustomAttributeId);
 
                 if (existingRelationship == null && !string.IsNullOrEmpty(ca.Value))
                 {
                     //add it
-                    ectx.Uow.CustomComputerAttributeRepository.Insert(ca);
-                    ectx.Uow.Save();
+                    ctx.Uow.CustomComputerAttributeRepository.Insert(ca);
+                    ctx.Uow.Save();
                 }
 
                 else if(existingRelationship != null && string.IsNullOrEmpty(ca.Value))
                 {
                     //delete it
-                    ectx.Uow.CustomComputerAttributeRepository.Delete(existingRelationship.Id);
-                    ectx.Uow.Save();
+                    ctx.Uow.CustomComputerAttributeRepository.Delete(existingRelationship.Id);
+                    ctx.Uow.Save();
                 }
 
                 else if (existingRelationship != null && !string.IsNullOrEmpty(ca.Value))
                 {
                     //update it
                     existingRelationship.Value = ca.Value;
-                    ectx.Uow.CustomComputerAttributeRepository.Update(ca,ca.Id);
-                    ectx.Uow.Save();
+                    ctx.Uow.CustomComputerAttributeRepository.Update(ca,ca.Id);
+                    ctx.Uow.Save();
                 }
             }
 

@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceSetupCompleteFile(EntityContext ectx)
+    public class ServiceSetupCompleteFile(ServiceContext ctx)
     {
 
         public DtoActionResult Add(EntitySetupCompleteFile setupCompleteFile)
@@ -14,8 +14,8 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(setupCompleteFile, true);
             if (validationResult.Success)
             {
-                ectx.Uow.SetupCompleteFileRepository.Insert(setupCompleteFile);
-                ectx.Uow.Save();
+                ctx.Uow.SetupCompleteFileRepository.Insert(setupCompleteFile);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = setupCompleteFile.Id;
             }
@@ -32,8 +32,8 @@ namespace Toems_ServiceCore.EntityServices
             var u = GetSetupCompleteFile(setupCompleteFileId);
             if (u == null) return new DtoActionResult { ErrorMessage = "Setup Complete File Not Found", Id = 0 };
 
-            ectx.Uow.SetupCompleteFileRepository.Delete(setupCompleteFileId);
-            ectx.Uow.Save();
+            ctx.Uow.SetupCompleteFileRepository.Delete(setupCompleteFileId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -42,17 +42,17 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntitySetupCompleteFile GetSetupCompleteFile(int setupCompleteFileId)
         {
-            return ectx.Uow.SetupCompleteFileRepository.GetById(setupCompleteFileId);
+            return ctx.Uow.SetupCompleteFileRepository.GetById(setupCompleteFileId);
         }
 
         public List<EntitySetupCompleteFile> GetAll()
         {
-            return ectx.Uow.SetupCompleteFileRepository.Get().OrderBy(x => x.Name).ToList();
+            return ctx.Uow.SetupCompleteFileRepository.Get().OrderBy(x => x.Name).ToList();
         }
 
         public EntitySetupCompleteFile Get(int id)
         {
-            return ectx.Uow.SetupCompleteFileRepository.GetById(id);
+            return ctx.Uow.SetupCompleteFileRepository.GetById(id);
         }
 
         public DtoActionResult Update(EntitySetupCompleteFile setupCompleteFile)
@@ -65,8 +65,8 @@ namespace Toems_ServiceCore.EntityServices
             var validationResult = Validate(setupCompleteFile, false);
             if (validationResult.Success)
             {
-                ectx.Uow.SetupCompleteFileRepository.Update(setupCompleteFile, u.Id);
-                ectx.Uow.Save();
+                ctx.Uow.SetupCompleteFileRepository.Update(setupCompleteFile, u.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = setupCompleteFile.Id;
             }
@@ -90,7 +90,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.SetupCompleteFileRepository.Exists(h => h.Name == setupCompleteFile.Name))
+                if (ctx.Uow.SetupCompleteFileRepository.Exists(h => h.Name == setupCompleteFile.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A File With This Name Already Exists";
@@ -99,10 +99,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var original = ectx.Uow.SetupCompleteFileRepository.GetById(setupCompleteFile.Id);
+                var original = ctx.Uow.SetupCompleteFileRepository.GetById(setupCompleteFile.Id);
                 if (original.Name != setupCompleteFile.Name)
                 {
-                    if (ectx.Uow.SetupCompleteFileRepository.Exists(h => h.Name == setupCompleteFile.Name))
+                    if (ctx.Uow.SetupCompleteFileRepository.Exists(h => h.Name == setupCompleteFile.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A File With This Name Already Exists";

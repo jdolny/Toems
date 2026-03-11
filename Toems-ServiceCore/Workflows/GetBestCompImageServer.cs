@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Toems_Common.Entity;
+﻿using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_DataModel;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
 
-    public class GetBestCompImageServer(ServiceActiveImagingTask serviceActiveImagingTask, GetCompImagingServers getCompImagingServers)
+    public class GetBestCompImageServer(ServiceContext ctx)
     {
         private EntityComputer _computer;
         private string _task;
@@ -76,7 +71,7 @@ namespace Toems_Service.Workflows
                 }
                 else
                 {
-                    listOfImagingServers = getCompImagingServers.Run(_computer.Id);
+                    listOfImagingServers = ctx.GetCompImagingServers.Run(_computer.Id);
                 }
             }
 
@@ -98,7 +93,7 @@ namespace Toems_Service.Workflows
             foreach (var comServer in listOfImagingServers)
             {
                 var counter = 0;
-                foreach (var activeTask in serviceActiveImagingTask.GetAll().Where(x => x.Status != EnumTaskStatus.ImagingStatus.TaskCreated && x.Status != EnumTaskStatus.ImagingStatus.WaitingForLogin))
+                foreach (var activeTask in ctx.ActiveImagingTask.GetAll().Where(x => x.Status != EnumTaskStatus.ImagingStatus.TaskCreated && x.Status != EnumTaskStatus.ImagingStatus.WaitingForLogin))
                 {
                     if (activeTask.ComServerId == comServer.Id)
                     {

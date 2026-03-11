@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Compression;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO.Compression;
 
-namespace Toems_Service
+namespace Toems_ServiceCore.Infrastructure
 {
     public static class ZipArchiveExtensions
     {

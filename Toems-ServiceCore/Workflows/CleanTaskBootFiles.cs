@@ -1,24 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
-using System.Linq;
-using log4net;
+﻿using log4net;
 using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Entity;
 using Toems_DataModel;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class CleanTaskBootFiles(ILog log, 
-        IConfiguration config, 
-        EncryptionServices encryptionServices, 
-        ServiceSetting serviceSetting,
-        ServiceClientComServer serviceClientComServer)
+    public class CleanTaskBootFiles(ServiceContext ctx)
     {
         private const string ConfigFolder = "pxelinux.cfg";
         private EntityComputer _computer;
@@ -32,8 +22,8 @@ namespace Toems_Service.Workflows
             var uow = new UnitOfWork();
             var comServers = uow.ClientComServerRepository.Get(x => x.IsTftpServer);
 
-            var intercomKey = serviceSetting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = encryptionServices.DecryptText(intercomKey);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
             var NoErrors = true;
             foreach (var com in comServers)
             {
@@ -60,21 +50,21 @@ namespace Toems_Service.Workflows
             }
 
 
-            var guid = config["ComServerUniqueId"];
-            _thisComServer = serviceClientComServer.GetServerByGuid(guid);
+            var guid = ctx.Config["ComServerUniqueId"];
+            _thisComServer = ctx.ClientComServer.GetServerByGuid(guid);
             if (_thisComServer == null)
             {
-                log.Error($"Com Server With Guid {guid} Not Found");
+                ctx.Log.Error($"Com Server With Guid {guid} Not Found");
                 return false;
             }
 
             if (string.IsNullOrEmpty(_thisComServer.TftpPath))
             {
-                log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
+                ctx.Log.Error($"Com Server With Guid {guid} Does Not Have A Valid Tftp Path");
                 return false;
             }
 
-            if (serviceSetting.GetSettingValue(SettingStrings.ProxyDhcpEnabled) == "Yes")
+            if (ctx.Setting.GetSettingValue(SettingStrings.ProxyDhcpEnabled) == "Yes")
             {
                 DeleteProxyFile("bios");
                 DeleteProxyFile("bios", ".ipxe");
@@ -86,7 +76,7 @@ namespace Toems_Service.Workflows
             }
             else
             {
-                var mode = serviceSetting.GetSettingValue(SettingStrings.PxeBootloader);
+                var mode = ctx.Setting.GetSettingValue(SettingStrings.PxeBootloader);
                 if (mode.Contains("ipxe"))
                     DeleteStandardFile(".ipxe");
                 else if (mode.Contains("grub"))
@@ -111,7 +101,7 @@ namespace Toems_Service.Workflows
                 }
                 catch (Exception ex)
                 {
-                    log.Error(ex.Message);
+                    ctx.Log.Error(ex.Message);
                 }
             }
         }
@@ -128,7 +118,7 @@ namespace Toems_Service.Workflows
                 }
                 catch (Exception ex)
                 {
-                    log.Error(ex.Message);
+                    ctx.Log.Error(ex.Message);
                 }
             }
 

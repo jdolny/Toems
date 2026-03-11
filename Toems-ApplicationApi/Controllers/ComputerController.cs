@@ -119,7 +119,7 @@ namespace Toems_ApplicationApi.Controllers
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         public IEnumerable<EntityComputer> Get()
         {
-            return _computerServices.Search(new DtoSearchFilterCategories(),_userId);
+            return _computerServices.SearchComputers(new DtoSearchFilterCategories(),_userId);
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
@@ -202,18 +202,18 @@ namespace Toems_ApplicationApi.Controllers
             return _computerServices.GetCustomAttributes(id);
         }
 
-        [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
+        /*[CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         [HttpPost]
         public IEnumerable<EntityComputer> SearchComputers(DtoComputerFilter filter)
         {
-            return _computerServices.SearchComputers(filter,_userId);
-        }
+           // return _computerServices.SearchAllComputers(filter,_userId);
+        }*/
         
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]
         [HttpPost]
         public IEnumerable<EntityComputer> Search(DtoSearchFilterCategories filter)
         {
-            return _computerServices.Search(filter,_userId);
+            return _computerServices.SearchComputers(filter,_userId);
         }
 
         [CustomAuth(Permission = AuthorizationStrings.ComputerRead)]

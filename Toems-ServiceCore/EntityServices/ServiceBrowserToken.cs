@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceBrowserToken(EntityContext ectx)
+    public class ServiceBrowserToken(ServiceContext ctx)
     {
         public EntityBrowserToken Create(int userId)
         {
@@ -14,19 +14,19 @@ namespace Toems_ServiceCore.EntityServices
                 ExpiresAtUtc = DateTime.UtcNow.AddMinutes(1),
                 UserId = userId
             };
-            ectx.Uow.BrowserTokenRepository.Insert(token);
-            ectx.Uow.Save();
+            ctx.Uow.BrowserTokenRepository.Insert(token);
+            ctx.Uow.Save();
 
             return token;
         }
 
         public bool Use(string token)
         {
-            var tokenEntity = ectx.Uow.BrowserTokenRepository.Get(t => t.Token == token).FirstOrDefault();
+            var tokenEntity = ctx.Uow.BrowserTokenRepository.Get(t => t.Token == token).FirstOrDefault();
             if (tokenEntity == null) return false;
             if (tokenEntity.ExpiresAtUtc < DateTime.UtcNow) return false;
-            ectx.Uow.BrowserTokenRepository.Delete(tokenEntity.Id);
-            ectx.Uow.Save();
+            ctx.Uow.BrowserTokenRepository.Delete(tokenEntity.Id);
+            ctx.Uow.Save();
             return true;
         }
     }

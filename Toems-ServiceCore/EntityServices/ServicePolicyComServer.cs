@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServicePolicyComServer(EntityContext ectx)
+    public class ServicePolicyComServer(ServiceContext ctx)
     {
         public DtoActionResult AddOrUpdate(List<EntityPolicyComServer> policyComServers)
         {
@@ -13,13 +13,13 @@ namespace Toems_ServiceCore.EntityServices
             var allSame = policyComServers.All(x => x.PolicyId == first.PolicyId);
             if (!allSame) return new DtoActionResult { ErrorMessage = "The List Must Be For A Single Policy.", Id = 0 };
             var actionResult = new DtoActionResult();
-            var pToRemove = ectx.Uow.PolicyComServerRepository.Get(x => x.PolicyId == first.PolicyId);
+            var pToRemove = ctx.Uow.PolicyComServerRepository.Get(x => x.PolicyId == first.PolicyId);
             foreach (var policyComServer in policyComServers)
             {
-                var existing = ectx.Uow.PolicyComServerRepository.GetFirstOrDefault(x => x.PolicyId == policyComServer.PolicyId && x.ComServerId == policyComServer.ComServerId);
+                var existing = ctx.Uow.PolicyComServerRepository.GetFirstOrDefault(x => x.PolicyId == policyComServer.PolicyId && x.ComServerId == policyComServer.ComServerId);
                 if (existing == null)
                 {
-                    ectx.Uow.PolicyComServerRepository.Insert(policyComServer);
+                    ctx.Uow.PolicyComServerRepository.Insert(policyComServer);
                 }
                 else
                 {
@@ -32,18 +32,18 @@ namespace Toems_ServiceCore.EntityServices
             //anything left in pToRemove does not exist anymore
             foreach (var p in pToRemove)
             {
-                ectx.Uow.PolicyComServerRepository.Delete(p.Id);
+                ctx.Uow.PolicyComServerRepository.Delete(p.Id);
             }
 
-            ectx.Uow.Save();
+            ctx.Uow.Save();
             actionResult.Success = true;
             return actionResult;
         }
 
         public DtoActionResult DeleteAllForPolicy(int policyId)
         {
-            ectx.Uow.PolicyComServerRepository.DeleteRange(x => x.PolicyId == policyId);
-            ectx.Uow.Save();
+            ctx.Uow.PolicyComServerRepository.DeleteRange(x => x.PolicyId == policyId);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = 1;

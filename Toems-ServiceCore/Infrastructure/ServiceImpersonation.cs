@@ -4,7 +4,7 @@ using System.Security.Principal;
 
 namespace Toems_ServiceCore.Infrastructure
 {
-    public class ServiceImpersonation(InfrastructureContext ictx) : IDisposable
+    public class ServiceImpersonation(ServiceContext ctx) : IDisposable
     {
         private IntPtr _handle = IntPtr.Zero;
         private bool _disposed;
@@ -29,7 +29,7 @@ namespace Toems_ServiceCore.Infrastructure
             if (!loggedOn)
             {
                 LastError = Marshal.GetLastWin32Error();
-                ictx.Log.Debug("Could not impersonate user, error code: " + LastError);
+                ctx.Log.Debug("Could not impersonate user, error code: " + LastError);
                 throw new InvalidOperationException($"Impersonation failed. Win32: {LastError}");
             }
 

@@ -9,26 +9,26 @@ namespace Toems_ServiceCore.Infrastructure
     /// <summary>
     ///     Summary description for Mail
     /// </summary>
-    public class MailServices(InfrastructureContext ictx)
+    public class MailServices(ServiceContext ctx)
     {
         public async Task SendMailAsync(string body, string mailTo, string subject)
         {
             try
             {
-                var message = new MailMessage(ictx.Settings.GetSettingValue(SettingStrings.SmtpMailFrom), mailTo)
+                var message = new MailMessage(ctx.Setting.GetSettingValue(SettingStrings.SmtpMailFrom), mailTo)
                 {
                     Subject = "Toems " + "(" + subject + ")",
                     Body = body
                 };
 
                 using var client = new SmtpClient(
-                    ictx.Settings.GetSettingValue(SettingStrings.SmtpServer),
-                    Convert.ToInt32(ictx.Settings.GetSettingValue(SettingStrings.SmtpPort)))
+                    ctx.Setting.GetSettingValue(SettingStrings.SmtpServer),
+                    Convert.ToInt32(ctx.Setting.GetSettingValue(SettingStrings.SmtpPort)))
                 {
                     Credentials = new NetworkCredential(
-                        ictx.Settings.GetSettingValue(SettingStrings.SmtpUsername),
-                        ictx.Encryption.DecryptText(ictx.Settings.GetSettingValue(SettingStrings.SmtpPassword))),
-                    EnableSsl = ictx.Settings.GetSettingValue(SettingStrings.SmtpSsl) == "Yes"
+                        ctx.Setting.GetSettingValue(SettingStrings.SmtpUsername),
+                        ctx.Encryption.DecryptText(ctx.Setting.GetSettingValue(SettingStrings.SmtpPassword))),
+                    EnableSsl = ctx.Setting.GetSettingValue(SettingStrings.SmtpSsl) == "Yes"
                 };
 
                 await client.SendMailAsync(message);
@@ -36,7 +36,7 @@ namespace Toems_ServiceCore.Infrastructure
             catch (Exception ex)
             {
                 
-                ictx.Log.Error(ex.Message);
+                ctx.Log.Error(ex.Message);
             }
         }
     }

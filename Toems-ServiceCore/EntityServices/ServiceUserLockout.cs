@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceUserLockout(EntityContext ectx, ServiceUser userService)
+    public class ServiceUserLockout(ServiceContext ctx)
     {
         public bool AccountIsLocked(int userId)
         {
@@ -25,14 +25,14 @@ namespace Toems_ServiceCore.EntityServices
 
         public bool DeleteUserLockouts(int userId)
         {
-            ectx.Uow.UserLockoutRepository.DeleteRange(x => x.UserId == userId);
-            ectx.Uow.Save();
+            ctx.Uow.UserLockoutRepository.DeleteRange(x => x.UserId == userId);
+            ctx.Uow.Save();
             return true;
         }
 
         public EntityUserLockout Get(int userId)
         {
-            return ectx.Uow.UserLockoutRepository.GetFirstOrDefault(x => x.UserId == userId);
+            return ctx.Uow.UserLockoutRepository.GetFirstOrDefault(x => x.UserId == userId);
         }
 
         public void ProcessBadLogin(int userId)
@@ -40,7 +40,7 @@ namespace Toems_ServiceCore.EntityServices
             var userLockout = Get(userId);
             if (userLockout == null)
             {
-                ectx.Uow.UserLockoutRepository.Insert(new EntityUserLockout {UserId = userId, BadLoginCount = 1});
+                ctx.Uow.UserLockoutRepository.Insert(new EntityUserLockout {UserId = userId, BadLoginCount = 1});
             }
             else
             {
@@ -48,12 +48,12 @@ namespace Toems_ServiceCore.EntityServices
                 if (userLockout.BadLoginCount == 15)
                 {
                     userLockout.LockedUntil = DateTime.UtcNow.AddMinutes(15);
-                    userService.SendLockOutEmail(userId);
+                    ctx.User.SendLockOutEmail(userId);
                 }
 
-                ectx.Uow.UserLockoutRepository.Update(userLockout, userLockout.Id);
+                ctx.Uow.UserLockoutRepository.Update(userLockout, userLockout.Id);
             }
-            ectx.Uow.Save();
+            ctx.Uow.Save();
         }
     }
 }

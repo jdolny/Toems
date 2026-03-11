@@ -1,28 +1,17 @@
-﻿using log4net;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
+﻿using System.Diagnostics;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Web;
 using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Dto.client;
 using Toems_Common.Entity;
 using Toems_DataModel;
-using Toems_Service.Entity;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.Infrastructure;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
-    public class IsoGenerator(InfrastructureContext ictx, ServiceClientComServer serviceClientComServer, FilesystemServices filesystemServices)
+    public class IsoGenerator(ServiceContext ctx)
     {
         private const string NewLineChar = "\n";
         private string _basePath;
@@ -44,7 +33,7 @@ namespace Toems_Service.Workflows
             EntityClientComServer tftpInfoServer;
             if (tftpComServers.Count == 0)
             {
-                ictx.Log.Error("No Tftp Servers Are Currently Enabled To Generate ISO");
+                ctx.Log.Error("No Tftp Servers Are Currently Enabled To Generate ISO");
                 return null;
             }
             if (tftpComServers.Count > 1)
@@ -52,7 +41,7 @@ namespace Toems_Service.Workflows
                 tftpInfoServer = tftpComServers.Where(x => x.IsTftpInfoServer).FirstOrDefault();
                 if (tftpInfoServer == null)
                 {
-                    ictx.Log.Error("No Tftp Servers Are Currently Set As The Information Server.  Unable To Generate ISO");
+                    ctx.Log.Error("No Tftp Servers Are Currently Set As The Information Server.  Unable To Generate ISO");
                     return null;
                 }
             }
@@ -61,8 +50,8 @@ namespace Toems_Service.Workflows
 
             //Connect To Client Com Server
 
-            var intercomKey = ictx.Settings.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
-            var decryptedKey = ictx.Encryption.DecryptText(intercomKey);
+            var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
+            var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
             var result = new APICall().ClientComServerApi.GenerateISO(tftpInfoServer.Url, "", decryptedKey,isoOptions);
 
@@ -74,9 +63,9 @@ namespace Toems_Service.Workflows
         {
             var uow = new UnitOfWork();
             _isoOptions = isoOptions;
-            _isoOptions.arguments += $" display_sleep_time={ictx.Settings.GetSettingValue(SettingStrings.LieSleepTime)} ";
-            _isoOptions.arguments += $" {ictx.Settings.GetSettingValue(SettingStrings.GlobalImagingArguments)} ";
-            var mode = ictx.Settings.GetSettingValue(SettingStrings.PxeBootloader);
+            _isoOptions.arguments += $" display_sleep_time={ctx.Setting.GetSettingValue(SettingStrings.LieSleepTime)} ";
+            _isoOptions.arguments += $" {ctx.Setting.GetSettingValue(SettingStrings.GlobalImagingArguments)} ";
+            var mode = ctx.Setting.GetSettingValue(SettingStrings.PxeBootloader);
             var imageServers = new List<DtoClientComServers>();
             var defaultCluster = uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
             if(isoOptions.clusterId == -1)
@@ -90,26 +79,26 @@ namespace Toems_Service.Workflows
 
             if(imageServers == null)
             {
-                ictx.Log.Error($"No Image Servers Found For This Cluster");
+                ctx.Log.Error($"No Image Servers Found For This Cluster");
                 return null;
             }
 
             if (imageServers.Count == 0)
             {
-                ictx.Log.Error($"No Image Servers Found For This Cluster");
+                ctx.Log.Error($"No Image Servers Found For This Cluster");
                 return null;
             }
 
-            var guid = ictx.Config["ComServerUniqueId"];
-            _thisComServer = serviceClientComServer.GetServerByGuid(guid);
+            var guid = ctx.Config["ComServerUniqueId"];
+            _thisComServer = ctx.ClientComServer.GetServerByGuid(guid);
             if (_thisComServer == null)
             {
-                ictx.Log.Error($"Com Server With Guid {guid} Not Found");
+                ctx.Log.Error($"Com Server With Guid {guid} Not Found");
                 return null;
             }
 
-            var consoleRequiresLogin = ictx.Settings.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
-            var globalToken = ictx.Settings.GetSettingValue(SettingStrings.GlobalImagingToken);
+            var consoleRequiresLogin = ctx.Setting.GetSettingValue(SettingStrings.ConsoleTasksRequireLogin);
+            var globalToken = ctx.Setting.GetSettingValue(SettingStrings.GlobalImagingToken);
             if (consoleRequiresLogin.Equals("False"))
                 _userToken = globalToken;
             else
@@ -119,13 +108,13 @@ namespace Toems_Service.Workflows
             _webPath = "\"";
             foreach (var imageServer in imageServers)
             {
-                var url = serviceClientComServer.GetServer(imageServer.ComServerId).Url;
+                var url = ctx.ClientComServer.GetServer(imageServer.ComServerId).Url;
                 _webPath += url + "clientimaging/ "; //adds a space delimiter
             }
             _webPath = _webPath.Trim(' ');
             _webPath += "\"";
 
-            _basePath = ictx.Environment.ContentRootPath + "private" +
+            _basePath = ctx.Environment.ContentRootPath + "private" +
                       Path.DirectorySeparatorChar;
             _rootfsPath = _basePath + "client_iso" + Path.DirectorySeparatorChar + "rootfs" +
                           Path.DirectorySeparatorChar;
@@ -205,7 +194,7 @@ namespace Toems_Service.Workflows
             var outFile = _configOutPath + "EFI" + Path.DirectorySeparatorChar + "boot" + Path.DirectorySeparatorChar +
                           "grub.cfg";
 
-            filesystemServices.WritePath(outFile, grubMenu.ToString());
+            ctx.Filessystem.WritePath(outFile, grubMenu.ToString());
         }
 
         private void CreateSyslinuxMenu()
@@ -262,7 +251,7 @@ namespace Toems_Service.Workflows
                 outFile = _configOutPath + "syslinux" + Path.DirectorySeparatorChar + "isolinux.cfg";
 
 
-            filesystemServices.WritePath(outFile, sysLinuxMenu.ToString());
+            ctx.Filessystem.WritePath(outFile, sysLinuxMenu.ToString());
         }
 
       
@@ -289,7 +278,7 @@ namespace Toems_Service.Workflows
             }
             catch (Exception ex)
             {
-                ictx.Log.Error(ex.Message);
+                ctx.Log.Error(ex.Message);
                 return false;
             }
 
@@ -340,14 +329,14 @@ namespace Toems_Service.Workflows
             }
             catch (Exception ex)
             {
-                ictx.Log.Debug(ex.Message);
+                ctx.Log.Debug(ex.Message);
             }
             //copy base root path to temporary location
-            filesystemServices.Copy(_rootfsPath, _buildPath);
+            ctx.Filessystem.Copy(_rootfsPath, _buildPath);
             //copy correct grub binaries to build path
-            filesystemServices.Copy(_grubPath, _buildPath + Path.DirectorySeparatorChar + "EFI" + Path.DirectorySeparatorChar + "boot");
+            ctx.Filessystem.Copy(_grubPath, _buildPath + Path.DirectorySeparatorChar + "EFI" + Path.DirectorySeparatorChar + "boot");
             //copy newly generated config files on top of temporary location
-            filesystemServices.Copy(_configOutPath, _buildPath);
+            ctx.Filessystem.Copy(_configOutPath, _buildPath);
 
             var shell = "";
             if (Environment.OSVersion.ToString().Contains("Unix"))
@@ -384,7 +373,7 @@ namespace Toems_Service.Workflows
             }
             catch (Exception ex)
             {
-                ictx.Log.Error(ex.ToString());
+                ctx.Log.Error(ex.ToString());
                 return false;
             }
 

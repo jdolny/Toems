@@ -4,18 +4,16 @@ using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_DataModel;
-using Toems_Service;
-using Toems_Service.Entity;
 using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceApprovalRequest(EntityContext ectx, ServiceUser userService, ServiceCertificate certificateService, ServiceComputer computerService, MailServices mailServices)
+    public class ServiceApprovalRequest(ServiceContext ctx)
     {
         public DtoActionResult CreateRequest(EntityApprovalRequest request)
         {
             var existing =
-                ectx.Uow.ApprovalRequestRepository.GetFirstOrDefault(
+                ctx.Uow.ApprovalRequestRepository.GetFirstOrDefault(
                     x => x.ComputerName == request.ComputerName && x.InstallationId == request.InstallationId);
 
             if (existing != null)
@@ -23,8 +21,8 @@ namespace Toems_ServiceCore.EntityServices
 
             var actionResult = new DtoActionResult();
 
-            ectx.Uow.ApprovalRequestRepository.Insert(request);
-            ectx.Uow.Save();
+            ctx.Uow.ApprovalRequestRepository.Insert(request);
+            ctx.Uow.Save();
             actionResult.Success = true;
             actionResult.Id = request.Id;
 
@@ -33,32 +31,32 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityApprovalRequest> Search(DtoSearchFilter filter)
         {
-            return ectx.Uow.ApprovalRequestRepository.Get(x => x.ComputerName.Contains(filter.SearchText));
+            return ctx.Uow.ApprovalRequestRepository.Get(x => x.ComputerName.Contains(filter.SearchText));
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.ApprovalRequestRepository.Count();
+            return ctx.Uow.ApprovalRequestRepository.Count();
         }
 
         public DtoActionResult ApproveRequest(int requestId)
         {
-            var request = ectx.Uow.ApprovalRequestRepository.GetById(requestId);
+            var request = ctx.Uow.ApprovalRequestRepository.GetById(requestId);
             if (request == null) return new DtoActionResult() { ErrorMessage = "Request Id Not Found" };
-            var computer = computerService.GetByName(request.ComputerName);
+            var computer = ctx.Computer.GetByName(request.ComputerName);
             if (computer == null) //should always be the case, approvals are only for new computers
             {
                 computer = new EntityComputer();
                 computer.Name = request.ComputerName;
                 computer.ProvisionStatus = EnumProvisionStatus.Status.ProvisionApproved;
                 computer.LastIp = request.IpAddress;
-                computerService.AddComputer(computer);
+                ctx.Computer.AddComputer(computer);
             }
             else
             {
                 computer.ProvisionStatus = EnumProvisionStatus.Status.ProvisionApproved;
-                computerService.UpdateComputer(computer);
-                certificateService.DeleteCertificate(computer.CertificateId);
+                ctx.Computer.UpdateComputer(computer);
+                ctx.Certificate.DeleteCertificate(computer.CertificateId);
             }
                  
             Delete(requestId);
@@ -67,19 +65,19 @@ namespace Toems_ServiceCore.EntityServices
 
         public DtoActionResult Delete(int requestId)
         {
-            var u = ectx.Uow.ApprovalRequestRepository.GetById(requestId);
+            var u = ctx.Uow.ApprovalRequestRepository.GetById(requestId);
             if (u == null) return new DtoActionResult { ErrorMessage = "Request Id Not Found", Id = 0 };
-            ectx.Uow.ApprovalRequestRepository.Delete(u.Id);
-            ectx.Uow.Save();
+            ctx.Uow.ApprovalRequestRepository.Delete(u.Id);
+            ctx.Uow.Save();
             return new DtoActionResult() { Success = true, Id = requestId };
         }
 
         public async Task<bool> SendApprovalRequestReport()
         {
-            if (ectx.Settings.GetSettingValue(SettingStrings.SmtpEnabled) != "1")
+            if (ctx.Setting.GetSettingValue(SettingStrings.SmtpEnabled) != "1")
                 return true;
 
-            var approvalRequests = ectx.Uow.ApprovalRequestRepository.Get();
+            var approvalRequests = ctx.Uow.ApprovalRequestRepository.Get();
             if (approvalRequests.Count == 0) return true;
             var sb = new StringBuilder();
             sb.Append("The Following Computers Are Pending Approval:\r\n\r\n");
@@ -90,7 +88,7 @@ namespace Toems_ServiceCore.EntityServices
             }
 
             var emailList = new List<string>();
-            var users = ectx.Uow.UserRepository.Get();
+            var users = ctx.Uow.UserRepository.Get();
             foreach (var user in users)
             {
                 if (user.Membership.Equals("Administrator"))
@@ -100,7 +98,7 @@ namespace Toems_ServiceCore.EntityServices
                 }
                 else
                 {
-                    var rights = userService.GetUserRights(user.Id).Select(right => right.Right).ToList();
+                    var rights = ctx.User.GetUserRights(user.Id).Select(right => right.Right).ToList();
                     if (rights.Any(right => right == AuthorizationStrings.EmailReset))
                     {
                         if (!string.IsNullOrEmpty(user.Email))
@@ -111,7 +109,7 @@ namespace Toems_ServiceCore.EntityServices
 
             foreach (var email in emailList)
             {
-                await mailServices.SendMailAsync(sb.ToString(),email,"Approval Request Report");
+                await ctx.Mail.SendMailAsync(sb.ToString(),email,"Approval Request Report");
             }
 
             return true;

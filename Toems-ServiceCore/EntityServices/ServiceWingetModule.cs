@@ -5,7 +5,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceWingetModule(EntityContext ectx, ServiceModule moduleService)
+    public class ServiceWingetModule(ServiceContext ctx)
     {
         public DtoActionResult AddModule(EntityWingetModule module)
         {
@@ -18,10 +18,10 @@ namespace Toems_ServiceCore.EntityServices
                 var moduleType = new EntityModule();
                 moduleType.ModuleType = EnumModule.ModuleType.Winget;
                 moduleType.Guid = module.Guid;
-                ectx.Uow.ModuleRepository.Insert(moduleType);
-                ectx.Uow.Save();
-                ectx.Uow.WingetModuleRepository.Insert(module);
-                ectx.Uow.Save();
+                ctx.Uow.ModuleRepository.Insert(moduleType);
+                ctx.Uow.Save();
+                ctx.Uow.WingetModuleRepository.Insert(module);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = module.Id;
             }
@@ -37,11 +37,11 @@ namespace Toems_ServiceCore.EntityServices
         {
             var u = GetModule(moduleId);
             if (u == null) return new DtoActionResult {ErrorMessage = "Module Not Found", Id = 0};
-            var isActiveModule = moduleService.IsModuleActive(moduleId, EnumModule.ModuleType.Winget);
+            var isActiveModule = ctx.Module.IsModuleActive(moduleId, EnumModule.ModuleType.Winget);
             if (!string.IsNullOrEmpty(isActiveModule)) return new DtoActionResult() { ErrorMessage = isActiveModule, Id = 0 };
             if (string.IsNullOrEmpty(u.Guid)) return new DtoActionResult() { ErrorMessage = "Unknown Guid", Id = 0 };
-            ectx.Uow.ModuleRepository.DeleteRange(x => x.Guid == u.Guid);
-            ectx.Uow.Save();
+            ctx.Uow.ModuleRepository.DeleteRange(x => x.Guid == u.Guid);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = u.Id;
@@ -50,18 +50,18 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityWingetModule GetModule(int moduleId)
         {
-            return ectx.Uow.WingetModuleRepository.GetById(moduleId);
+            return ctx.Uow.WingetModuleRepository.GetById(moduleId);
         }
 
         public List<EntityWingetModule> SearchModules(DtoSearchFilterCategories filter)
         {
-            var list = ectx.Uow.WingetModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && !s.Archived).OrderBy(x => x.Name).ToList();
+            var list = ctx.Uow.WingetModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && !s.Archived).OrderBy(x => x.Name).ToList();
             if (list.Count == 0) return list;
 
             var categoryFilterIds = new List<int>();
             foreach (var catName in filter.Categories)
             {
-                var category = ectx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
+                var category = ctx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName));
                 if (category != null)
                     categoryFilterIds.Add(category.Id);
             }
@@ -73,7 +73,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var module in list)
                 {
-                    var moduleCategories = moduleService.GetModuleCategories(module.Guid);
+                    var moduleCategories = ctx.Module.GetModuleCategories(module.Guid);
                     if (moduleCategories == null) continue;
 
                     if (filter.Categories.Count == 0)
@@ -97,7 +97,7 @@ namespace Toems_ServiceCore.EntityServices
             {
                 foreach (var module in list)
                 {
-                    var mCategories = moduleService.GetModuleCategories(module.Guid);
+                    var mCategories = ctx.Module.GetModuleCategories(module.Guid);
                     if (mCategories == null) continue;
                     if (filter.Categories.Count == 0)
                     {
@@ -133,31 +133,31 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityWingetModule> GetArchived(DtoSearchFilterCategories filter)
         {
-            return ectx.Uow.WingetModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && s.Archived).OrderBy(x => x.Name).Take(filter.Limit).ToList();
+            return ctx.Uow.WingetModuleRepository.Get(s => (s.Name.Contains(filter.SearchText) || s.Guid.Contains(filter.SearchText)) && s.Archived).OrderBy(x => x.Name).Take(filter.Limit).ToList();
         }
 
         public string TotalCount()
         {
-            return ectx.Uow.WingetModuleRepository.Count(x => !x.Archived);
+            return ctx.Uow.WingetModuleRepository.Count(x => !x.Archived);
         }
 
         public string ArchivedCount()
         {
-            return ectx.Uow.WingetModuleRepository.Count(x => x.Archived);
+            return ctx.Uow.WingetModuleRepository.Count(x => x.Archived);
         }
 
         public DtoActionResult UpdateModule(EntityWingetModule module)
         {
             var u = GetModule(module.Id);
             if (u == null) return new DtoActionResult {ErrorMessage = "Module Not Found", Id = 0};
-            var isActiveModule = moduleService.IsModuleActive(module.Id, EnumModule.ModuleType.Winget);
+            var isActiveModule = ctx.Module.IsModuleActive(module.Id, EnumModule.ModuleType.Winget);
             if (!string.IsNullOrEmpty(isActiveModule)) return new DtoActionResult() { ErrorMessage = isActiveModule, Id = 0 };
             var validationResult = ValidateModule(module, false);
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
-                ectx.Uow.WingetModuleRepository.Update(module, module.Id);
-                ectx.Uow.Save();
+                ctx.Uow.WingetModuleRepository.Update(module, module.Id);
+                ctx.Uow.Save();
                 actionResult.Success = true;
                 actionResult.Id = module.Id;
             }
@@ -190,7 +190,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNew)
             {
-                if (ectx.Uow.WingetModuleRepository.Exists(h => h.Name == module.Name))
+                if (ctx.Uow.WingetModuleRepository.Exists(h => h.Name == module.Name))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A Module With This Name Already Exists";
@@ -199,10 +199,10 @@ namespace Toems_ServiceCore.EntityServices
             }
             else
             {
-                var originalModule = ectx.Uow.WingetModuleRepository.GetById(module.Id);
+                var originalModule = ctx.Uow.WingetModuleRepository.GetById(module.Id);
                 if (originalModule.Name != module.Name)
                 {
-                    if (ectx.Uow.WingetModuleRepository.Exists(h => h.Name == module.Name))
+                    if (ctx.Uow.WingetModuleRepository.Exists(h => h.Name == module.Name))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A Module With This Name Already Exists";
@@ -238,7 +238,7 @@ namespace Toems_ServiceCore.EntityServices
             var list = new List<EntityWingetLocaleManifest>();
             if (string.IsNullOrEmpty(filter.Searchstring))
             {
-                list = ectx.Uow.WingetLocaleManifestRepository.Get().OrderBy(x => Guid.NewGuid()).Take(25).ToList();
+                list = ctx.Uow.WingetLocaleManifestRepository.Get().OrderBy(x => Guid.NewGuid()).Take(25).ToList();
                 list = list.OrderBy(x => x.PackageName).ThenByDescending(x => x.Major).ThenByDescending(x => x.Minor).ThenByDescending(x => x.Build).ThenByDescending(x => x.Revision).ToList();
             }
 
@@ -247,14 +247,14 @@ namespace Toems_ServiceCore.EntityServices
 
             else if (filter.ExactMatch)
             {
-                list = ectx.Uow.WingetLocaleManifestRepository.Get(x => x.PackageIdentifier.ToLower().Equals(packageIdSearch) || x.PackageName.ToLower().Equals(packageNameSearch)
+                list = ctx.Uow.WingetLocaleManifestRepository.Get(x => x.PackageIdentifier.ToLower().Equals(packageIdSearch) || x.PackageName.ToLower().Equals(packageNameSearch)
                 || x.Publisher.ToLower().Equals(packagePublisherSearch) || x.Tags.ToLower().Equals(packageTagSearch) || x.Moniker.ToLower().Equals(packageMonikerSearch));
 
                 list = list.OrderBy(x => x.PackageName).ThenByDescending(x => x.Major).ThenByDescending(x => x.Minor).ThenByDescending(x => x.Build).ThenByDescending(x => x.Revision).ToList();
             }
             else if (!filter.ExactMatch)
             {
-                var list1 = ectx.Uow.WingetLocaleManifestRepository.Get(x => x.PackageIdentifier.ToLower().Contains(packageIdSearch) || x.PackageName.ToLower().Contains(packageNameSearch)
+                var list1 = ctx.Uow.WingetLocaleManifestRepository.Get(x => x.PackageIdentifier.ToLower().Contains(packageIdSearch) || x.PackageName.ToLower().Contains(packageNameSearch)
                   || x.Publisher.ToLower().Contains(packagePublisherSearch) || x.Tags.ToLower().Contains(packageTagSearch) || x.Moniker.ToLower().Contains(packageMonikerSearch));
                 list1 = list1.OrderBy(x => x.PackageName).ThenByDescending(x => x.Major).ThenByDescending(x => x.Minor).ThenByDescending(x => x.Build).ThenByDescending(x => x.Revision).ToList();
                 
@@ -306,7 +306,7 @@ namespace Toems_ServiceCore.EntityServices
 
             foreach (var l in list)
             {
-                var iManifest = ectx.Uow.WingetInstallerManifestRepository.Get(x => x.PackageIdentifier.Equals(l.PackageIdentifier) && x.PackageVersion.Equals(l.PackageVersion)).FirstOrDefault();
+                var iManifest = ctx.Uow.WingetInstallerManifestRepository.Get(x => x.PackageIdentifier.Equals(l.PackageIdentifier) && x.PackageVersion.Equals(l.PackageVersion)).FirstOrDefault();
                 if (iManifest != null)
                     l.Scope = iManifest.Scope;
             }
@@ -317,12 +317,12 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityWingetLocaleManifest GetLocaleManifest(int id)
         {
-            return ectx.Uow.WingetLocaleManifestRepository.GetById(id);
+            return ctx.Uow.WingetLocaleManifestRepository.GetById(id);
         }
 
         public string GetLastImportTime()
         {
-            var result =ectx.Uow.WingetManifestDownloadRepository.Get(x => x.Status == EnumManifestImport.ImportStatus.Complete).OrderByDescending(x => x.Id).FirstOrDefault();
+            var result =ctx.Uow.WingetManifestDownloadRepository.Get(x => x.Status == EnumManifestImport.ImportStatus.Complete).OrderByDescending(x => x.Id).FirstOrDefault();
             if (result != null) return result.DateDownloaded.ToString();
             return string.Empty;
         }

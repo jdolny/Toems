@@ -2,18 +2,15 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Toems_Common;
-using Toems_Service;
-using Toems_Service.Entity;
+using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ApplicationApiCore.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(AuthenticationServices auth, IConfiguration config) : ControllerBase
+public class AuthController(ServiceContext ictx, AuthenticationService auth, IConfiguration config) : ControllerBase
 {
-    //private readonly AuthenticationServices _auth = service.AuthenticationServices;
-
-
+    
     [HttpPost("token")]
     public IActionResult Token([FromForm] string username, [FromForm] string password, [FromForm] string verification_code)
     {
@@ -35,7 +32,7 @@ public class AuthController(AuthenticationServices auth, IConfiguration config) 
         //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
         //var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var webTimeout = ServiceSetting.GetSettingValue(SettingStrings.WebUiTimeout);
+        var webTimeout = ictx.Setting.GetSettingValue(SettingStrings.WebUiTimeout);
         var expireMinutes = 60; // default to 60 minutes
         if(!string.IsNullOrEmpty(webTimeout))
         {

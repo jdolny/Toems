@@ -4,12 +4,11 @@ using Toems_Common;
 using Toems_Common.Enum;
 using Toems_DataModel;
 using Toems_ServiceCore.EntityServices;
-using Toems_ServiceCore.Infrastructure;
 using WixToolset.Dtf.WindowsInstaller;
 
-namespace Toems_ServiceCore
+namespace Toems_ServiceCore.Infrastructure
 {
-    public class ServiceMsiUpdater(ILog log, IWebHostEnvironment env, EncryptionServices encryption, ServiceSetting settings, ServiceVersion version, ServiceCertificate certificate)
+    public class ServiceMsiUpdater(ServiceContext ctx)
     {
         private readonly UnitOfWork _uow = new();
         private string _comServers;
@@ -18,7 +17,7 @@ namespace Toems_ServiceCore
         
         public string GetNameForExport(bool is64bit)
         {
-            var expectedClient = version.Get(1).LatestClientVersion;
+            var expectedClient = ctx.Version.Get(1).LatestClientVersion;
         
             var newVersion = expectedClient.Split('.');
             var v = string.Join(".", newVersion.Take(newVersion.Length - 1));
@@ -28,28 +27,28 @@ namespace Toems_ServiceCore
         }
         public byte[] UpdateMsis(bool is64bit)
         {
-            var expectedClient = version.Get(1).LatestClientVersion;
+            var expectedClient = ctx.Version.Get(1).LatestClientVersion;
 
             if (string.IsNullOrEmpty(expectedClient))
             {
-                log.Error("Cannot Create MSI.  Unknown Expected Toec Version");
+                ctx.Log.Error("Cannot Create MSI.  Unknown Expected Toec Version");
                 return null;
             }
             
 
             var type = is64bit ? "-x64.msi" : "-x86.msi";
-            var basePath = Path.Combine(env.ContentRootPath, "private", "agent");
+            var basePath = Path.Combine(ctx.Environment.ContentRootPath, "private", "agent");
             var stockFileFullPath = Path.Combine(basePath, $"Toec-{expectedClient}{type}");
             if (!File.Exists(stockFileFullPath))
             {
-                log.Debug("Cannot Create MSI.  Could Not Locate Stock MSI");
+                ctx.Log.Debug("Cannot Create MSI.  Could Not Locate Stock MSI");
                 return null;
             }
 
-            var ca = certificate.GetCAPublic();
+            var ca = ctx.Certificate.GetCAPublic();
             if(ca == null)
             {
-                log.Debug("Cannot Create MSI.  Certificate Chain Must First Be Created. ");
+                ctx.Log.Debug("Cannot Create MSI.  Certificate Chain Must First Be Created. ");
                 return null;
             }
 
@@ -71,8 +70,8 @@ namespace Toems_ServiceCore
             }
             catch(Exception ex)
             {
-                log.Error("Could Not Create MSI.");
-                log.Error(ex.Message);
+                ctx.Log.Error("Could Not Create MSI.");
+                ctx.Log.Error(ex.Message);
                 return null;
             }
 
@@ -112,8 +111,8 @@ namespace Toems_ServiceCore
                 }
                 catch(Exception ex)
                 {
-                    log.Error("Could Not Create Msi.");
-                    log.Error(ex.Message);
+                    ctx.Log.Error("Could Not Create Msi.");
+                    ctx.Log.Error(ex.Message);
                     return null;
                 }
                 finally
@@ -136,11 +135,11 @@ namespace Toems_ServiceCore
         {
             var certEntity = _uow.CertificateRepository.GetFirstOrDefault(x => x.Type == EnumCertificate.CertificateType.Authority);
             if (certEntity == null) return false;
-            var pfx = new X509Certificate2(certEntity.PfxBlob, encryption.DecryptText(certEntity.Password), X509KeyStorageFlags.Exportable);
+            var pfx = new X509Certificate2(certEntity.PfxBlob, ctx.Encryption.DecryptText(certEntity.Password), X509KeyStorageFlags.Exportable);
             _thumbprint = pfx.Thumbprint;
 
-            var provisionKeyEncrypted = settings.GetSettingValue(SettingStrings.ProvisionKeyEncrypted);
-            _serverKey = encryption.DecryptText(provisionKeyEncrypted);
+            var provisionKeyEncrypted = ctx.Setting.GetSettingValue(SettingStrings.ProvisionKeyEncrypted);
+            _serverKey = ctx.Encryption.DecryptText(provisionKeyEncrypted);
 
             var defaultCluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
             var clusterServers = _uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == defaultCluster.Id);

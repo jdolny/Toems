@@ -4,7 +4,7 @@ using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceModuleCategory(EntityContext ectx)
+    public class ServiceModuleCategory(ServiceContext ctx)
     {
         public DtoActionResult AddOrUpdate(List<EntityModuleCategory> moduleCategories)
         {
@@ -13,13 +13,13 @@ namespace Toems_ServiceCore.EntityServices
             var allSame = moduleCategories.All(x => x.ModuleGuid == first.ModuleGuid);
             if (!allSame) return new DtoActionResult { ErrorMessage = "The List Must Be For A Single Module.", Id = 0 };
             var actionResult = new DtoActionResult();
-            var pToRemove = ectx.Uow.ModuleCategoryRepository.Get(x => x.ModuleGuid == first.ModuleGuid);
+            var pToRemove = ctx.Uow.ModuleCategoryRepository.Get(x => x.ModuleGuid == first.ModuleGuid);
             foreach (var moduleCategory in moduleCategories)
             {
-                var existing = ectx.Uow.ModuleCategoryRepository.GetFirstOrDefault(x => x.ModuleGuid == moduleCategory.ModuleGuid && x.CategoryId == moduleCategory.CategoryId);
+                var existing = ctx.Uow.ModuleCategoryRepository.GetFirstOrDefault(x => x.ModuleGuid == moduleCategory.ModuleGuid && x.CategoryId == moduleCategory.CategoryId);
                 if (existing == null)
                 {
-                    ectx.Uow.ModuleCategoryRepository.Insert(moduleCategory);
+                    ctx.Uow.ModuleCategoryRepository.Insert(moduleCategory);
                 }
                 else
                 {
@@ -30,16 +30,16 @@ namespace Toems_ServiceCore.EntityServices
             }
 
             //anything left in pToRemove does not exist anymore
-            ectx.Uow.ModuleCategoryRepository.DeleteRange(pToRemove);
-            ectx.Uow.Save();
+            ctx.Uow.ModuleCategoryRepository.DeleteRange(pToRemove);
+            ctx.Uow.Save();
             actionResult.Success = true;
             return actionResult;
         }
 
         public DtoActionResult DeleteAllForModule(string moduleGuid)
         {
-            ectx.Uow.ModuleCategoryRepository.DeleteRange(x => x.ModuleGuid == moduleGuid);
-            ectx.Uow.Save();
+            ctx.Uow.ModuleCategoryRepository.DeleteRange(x => x.ModuleGuid == moduleGuid);
+            ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
             actionResult.Id = 1;

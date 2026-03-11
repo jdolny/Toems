@@ -12,6 +12,7 @@ using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_Service;
 using Toems_Service.Entity;
+using FineUploaderResult = Toems_Common.Dto.FineUploaderResult;
 
 namespace Toems_ApplicationApi.Controllers
 {

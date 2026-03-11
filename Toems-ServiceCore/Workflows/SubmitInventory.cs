@@ -1,9 +1,7 @@
-﻿using System;
-using Toems_Common.Dto;
-using Toems_Service.Entity;
+﻿using Toems_Common.Dto;
 using Toems_ServiceCore.EntityServices;
 
-namespace Toems_Service.Workflows
+namespace Toems_ServiceCore.Workflows
 {
     public class SubmitInventory(ServiceComputer serviceComputer, ServiceBiosInventory serviceBiosInventory, ServiceComputerSystemInventory serviceComputerSystemInventory, 
         ServiceComputerGpuInventory serviceComputerGpuInventory, ServiceOsInventory serviceOsInventory, ServiceProcessorInventory serviceProcessorInventory, 

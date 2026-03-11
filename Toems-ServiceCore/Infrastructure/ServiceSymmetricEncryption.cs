@@ -1,11 +1,8 @@
 ﻿//https://cymbeline.ch/2014/02/28/dynamic-aes-key-exchange-through-rsa-encryption/
 
-using System;
-using System.IO;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 
-namespace Toems_Service
+namespace Toems_ServiceCore.Infrastructure
 {
     public class ServiceSymmetricEncryption
     {
