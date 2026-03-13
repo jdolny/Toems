@@ -8,7 +8,6 @@ namespace Toems_ServiceCore.Workflows
 {
     public class DataCleanup(ServiceContext ctx)
     {
-        private UnitOfWork _uow = new ();
         private DateTime _localCutoff = DateTime.Now - TimeSpan.FromDays(10950); //30 years, to avoid dates of 01/01/0001
         private DateTime _utcCutoff = DateTime.UtcNow - TimeSpan.FromDays(10950); //30 years, to avoid dates of 01/01/0001
 
@@ -41,7 +40,7 @@ namespace Toems_ServiceCore.Workflows
             ctx.Log.Debug($"Archiving Computers Older Than {intArchiveDays} Days");
 
             var activeComputers =
-                _uow.ComputerRepository.Get(x => x.ProvisionStatus == EnumProvisionStatus.Status.Provisioned);
+                ctx.Uow.ComputerRepository.Get(x => x.ProvisionStatus == EnumProvisionStatus.Status.Provisioned);
             if (activeComputers.Count == 0) return;
 
             var dateCutOff = DateTime.Now - TimeSpan.FromDays(intArchiveDays);
@@ -65,7 +64,7 @@ namespace Toems_ServiceCore.Workflows
 
             ctx.Log.Debug($"Deleting Archived Computers Older Than {intDays} Days");
             var archivedComputers =
-                _uow.ComputerRepository.Get(x => x.ProvisionStatus == EnumProvisionStatus.Status.Archived);
+                ctx.Uow.ComputerRepository.Get(x => x.ProvisionStatus == EnumProvisionStatus.Status.Archived);
             if (archivedComputers.Count == 0) return;
 
             var dateCutOff = DateTime.Now - TimeSpan.FromDays(intDays);
@@ -87,8 +86,8 @@ namespace Toems_ServiceCore.Workflows
             ctx.Log.Debug($"Deleting Audit Logs Older Than {intDays} Days");
 
             var dateCutOff = DateTime.Now - TimeSpan.FromDays(intDays);
-            _uow.AuditLogRepository.DeleteRange(x => x.DateTime < dateCutOff && x.DateTime > _localCutoff);
-            _uow.Save();
+            ctx.Uow.AuditLogRepository.DeleteRange(x => x.DateTime < dateCutOff && x.DateTime > _localCutoff);
+            ctx.Uow.Save();
         }
 
         private void ComputerProcessHistory()
@@ -101,8 +100,8 @@ namespace Toems_ServiceCore.Workflows
             if (intDays <= 0) return;
             ctx.Log.Debug($"Deleting Process History Older Than {intDays} Days");
             var dateCutOff = DateTime.UtcNow - TimeSpan.FromDays(intDays);
-            _uow.ComputerProcessRepository.DeleteRange(x => x.StartTimeUtc < dateCutOff && x.StartTimeUtc > _utcCutoff);
-            _uow.Save();
+            ctx.Uow.ComputerProcessRepository.DeleteRange(x => x.StartTimeUtc < dateCutOff && x.StartTimeUtc > _utcCutoff);
+            ctx.Uow.Save();
         }
 
         private void PolicyHistory()
@@ -115,8 +114,8 @@ namespace Toems_ServiceCore.Workflows
             if (intDays <= 0) return;
             ctx.Log.Debug($"Deleting Policy History Older Than {intDays} Days");
             var dateCutOff = DateTime.UtcNow - TimeSpan.FromDays(intDays);
-            _uow.PolicyHistoryRepository.DeleteRange(x => x.LastRunTime < dateCutOff && x.LastRunTime > _utcCutoff);
-            _uow.Save();
+            ctx.Uow.PolicyHistoryRepository.DeleteRange(x => x.LastRunTime < dateCutOff && x.LastRunTime > _utcCutoff);
+            ctx.Uow.Save();
         }
 
         private void UserLogins()
@@ -129,8 +128,8 @@ namespace Toems_ServiceCore.Workflows
             if (intDays <= 0) return;
             ctx.Log.Debug($"Deleting Policy History Older Than {intDays} Days");
             var dateCutOff = DateTime.UtcNow - TimeSpan.FromDays(intDays);
-            _uow.UserLoginRepository.DeleteRange(x => x.LoginDateTime < dateCutOff && x.LoginDateTime > _utcCutoff);
-            _uow.Save();
+            ctx.Uow.UserLoginRepository.DeleteRange(x => x.LoginDateTime < dateCutOff && x.LoginDateTime > _utcCutoff);
+            ctx.Uow.Save();
         }
 
         private void ImagingLogs()
@@ -143,14 +142,14 @@ namespace Toems_ServiceCore.Workflows
             if (intDays <= 0) return;
             ctx.Log.Debug($"Deleting Imaging Logs Older Than {intDays} Days");
             var dateCutOff = DateTime.Now - TimeSpan.FromDays(intDays);
-            _uow.ComputerLogRepository.DeleteRange(x => x.LogTime < dateCutOff && x.LogTime > _localCutoff && !x.SubType.Equals("ondupload") && !x.SubType.Equals("upload") && !x.SubType.Equals("unregupload")); //don't delete upload logs
-            _uow.Save();
+            ctx.Uow.ComputerLogRepository.DeleteRange(x => x.LogTime < dateCutOff && x.LogTime > _localCutoff && !x.SubType.Equals("ondupload") && !x.SubType.Equals("upload") && !x.SubType.Equals("unregupload")); //don't delete upload logs
+            ctx.Uow.Save();
         }
 
         public void AutoArchivePolicies()
         {
             ctx.Log.Debug("Policy Archive Started");
-            var allPolicies = _uow.PolicyRepository.Get(x => !x.Archived);
+            var allPolicies = ctx.Uow.PolicyRepository.Get(x => !x.Archived);
             foreach (var policy in allPolicies)
             {
                 if (policy.AutoArchiveType == EnumPolicy.AutoArchiveType.AfterXdays)
@@ -180,7 +179,7 @@ namespace Toems_ServiceCore.Workflows
                     }
                     var distinctMembers = memberIds.Distinct().ToList();
                     if (!distinctMembers.Any()) continue;
-                    var successCount = _uow.PolicyHistoryRepository.Get(x => x.PolicyId == policy.Id && x.Result == EnumPolicyHistory.RunResult.Success).ToList().GroupBy(x => x.ComputerId).Count();
+                    var successCount = ctx.Uow.PolicyHistoryRepository.Get(x => x.PolicyId == policy.Id && x.Result == EnumPolicyHistory.RunResult.Success).ToList().GroupBy(x => x.ComputerId).Count();
                     if (successCount == distinctMembers.Count)
                     {
                         ctx.Policy.DeactivatePolicy(policy.Id);

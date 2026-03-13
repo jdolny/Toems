@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -88,11 +87,12 @@ namespace Toems_ServiceCore.EntityServices
             {
                 var status = new DtoServerImageRepStatus();
                 status.Servername = com.DisplayName;
-                var hasImage = new APICall().ClientComServerApi.CheckImageExists(com.Url, "", decryptedKey, imageId);
-                if(hasImage)
-                    status.Status = "Replicated";
-                else
-                    status.Status = "Not Replicated";
+                //todo - fix
+                //var hasImage = new APICall().ClientComServerApi.CheckImageExists(com.Url, "", decryptedKey, imageId);
+                //if(hasImage)
+                 //   status.Status = "Replicated";
+                //else
+                 //   status.Status = "Not Replicated";
 
                 list.Add(status);
             }
@@ -308,10 +308,9 @@ namespace Toems_ServiceCore.EntityServices
 
         public List<EntityImageProfile> SearchProfiles(int imageId)
         {
-            using (var uow = new UnitOfWork())
-            {
-                return uow.ImageProfileRepository.Get(p => p.ImageId == imageId, q => q.OrderBy(p => p.Name));
-            }
+
+            return ctx.Uow.ImageProfileRepository.Get(p => p.ImageId == imageId, q => q.OrderBy(p => p.Name));
+
         }
 
         public List<EntityImage> GetAll(int userId)

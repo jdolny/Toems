@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Management;
 using log4net;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -76,8 +75,9 @@ namespace Toems_ServiceCore.EntityServices
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
-            if (!new APICall().ClientComServerApi.TerminateMulticast(comServer.Url, "", decryptedKey, multicast))
-                  actionResult.Success = false;
+            //todo - fix
+            //if (!new APICall().ClientComServerApi.TerminateMulticast(comServer.Url, "", decryptedKey, multicast))
+              //    actionResult.Success = false;
             
 
             return actionResult;

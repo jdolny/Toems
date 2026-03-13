@@ -170,29 +170,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\Authorization\CertificateAuth.cs" />
-    <Compile Include="Controllers\Authorization\ClientImagingAuth.cs" />
-    <Compile Include="Controllers\Authorization\InterComAuth.cs" />
-    <Compile Include="Controllers\Authorization\ProvisionAuth.cs" />
-    <Compile Include="Controllers\ClientImagingController.cs" />
-    <Compile Include="Controllers\InventoryController.cs" />
-    <Compile Include="Controllers\ImagePrepController.cs" />
-    <Compile Include="Controllers\RemoteAccessController.cs" />
-    <Compile Include="Controllers\SocketController.cs" />
-    <Compile Include="Controllers\ImagingController.cs" />
-    <Compile Include="Controllers\WolController.cs" />
-    <Compile Include="Controllers\StorageController.cs" />
-    <Compile Include="Controllers\ProvisionController.cs" />
-    <Compile Include="Controllers\PolicyController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Hubs\ActionHub.cs" />
-    <Compile Include="Hubs\Authorization\HubCertAuth.cs" />
-    <Compile Include="MessageHandlers\SymmKeyHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="ToecApiStrings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />

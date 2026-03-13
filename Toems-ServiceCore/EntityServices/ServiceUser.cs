@@ -151,7 +151,7 @@ namespace Toems_ServiceCore.EntityServices
 
         public EntityToemsUser GetUserWithPass(int userId)
         {
-            return new UnitOfWork().UserRepository.GetById(userId);
+            return ctx.Uow.UserRepository.GetById(userId);
 
         }
 
@@ -482,22 +482,7 @@ namespace Toems_ServiceCore.EntityServices
 
             return validationResult;
         }
-
-        public List<DtoProcessWithTime> GetUserProcessTimes(DateTime dateCutoff, int limit, string userName)
-        {
-            return new ReportRepository().GetTopProcessTimesForUser(dateCutoff, limit, userName);
-        }
-
-        public List<DtoProcessWithCount> GetUserProcessCounts(DateTime dateCutoff, int limit, string userName)
-        {
-            return new ReportRepository().GetTopProcessCountsForUser(dateCutoff, limit, userName);
-        }
-
-        public List<DtoProcessWithUser> GetAllProcessForUser(DateTime dateCutoff, int limit, string userName)
-        {
-            return new ReportRepository().GetAllProcessForUser(dateCutoff, limit, userName);
-        }
-
+        
         public string GetUserComputerView(int userId)
         {
             var user = GetUser(userId);

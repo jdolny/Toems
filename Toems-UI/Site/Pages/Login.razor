@@ -1,6 +1,6 @@
 ﻿@page "/login"
 @layout Layout.LoginLayout
-@inject LocalAuthStateProvider AuthStateProvider
+
 @inject NavigationManager Navigation
 
 <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
@@ -26,20 +26,21 @@
     
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        /*var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
         if(user.Identity?.IsAuthenticated == true)
         {
             Navigation.NavigateTo("/");
         }
+        */
     }
 
     private LoginModel loginModel = new();
 
     private async Task HandleLogin()
     {
-        var result = await AuthStateProvider.LoginAsync(loginModel.Username, loginModel.Password);
+        //var result = await AuthStateProvider.LoginAsync(loginModel.Username, loginModel.Password);
         Navigation.NavigateTo("/");
     }
 

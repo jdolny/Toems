@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using log4net;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Entity;
 using Toems_DataModel;
@@ -16,16 +15,16 @@ namespace Toems_ServiceCore.Workflows
 
         public bool RunAllServers()
         {
-
-            var uow = new UnitOfWork();
-            var comServers = uow.ClientComServerRepository.Get(x => x.IsTftpServer || x.IsMulticastServer);
+            
+            var comServers = ctx.Uow.ClientComServerRepository.Get(x => x.IsTftpServer || x.IsMulticastServer);
 
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
             var NoErrors = true;
             foreach (var com in comServers)
             {
-                if (!new APICall().ClientComServerApi.CancelAllImagingTasks(com.Url, "", decryptedKey))
+                //todo - fix
+                //if (!new APICall().ClientComServerApi.CancelAllImagingTasks(com.Url, "", decryptedKey))
                     NoErrors = false;
             }
 

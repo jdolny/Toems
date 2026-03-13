@@ -92,9 +92,9 @@
     {
         try
         {
-            var authStateResult = await LocalStorage.GetAsync<AuthState>("authState");
-            var claims = authStateResult.Value.Claims.Select(c => new Claim(c.Type, c.Value));
-            _token = claims.Where(x => x.Type.Equals("AccessToken", StringComparison.InvariantCultureIgnoreCase)).Select(x => x.Value).FirstOrDefault();
+            //var authStateResult = await LocalStorage.GetAsync<AuthState>("authState");
+            //var claims = authStateResult.Value.Claims.Select(c => new Claim(c.Type, c.Value));
+            //_token = claims.Where(x => x.Type.Equals("AccessToken", StringComparison.InvariantCultureIgnoreCase)).Select(x => x.Value).FirstOrDefault();
         }
         catch (Exception ex)
         {

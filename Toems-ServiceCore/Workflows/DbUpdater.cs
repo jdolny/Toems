@@ -9,7 +9,6 @@ namespace Toems_ServiceCore.Workflows
 {
     public class DbUpdater(ServiceContext ctx)
     {
-        private readonly ServiceRawSql _rawSqlServices = new();
         private readonly ILog log = LogManager.GetLogger(typeof(DbUpdater));
         
         public DtoActionResult Update()
@@ -56,7 +55,7 @@ namespace Toems_ServiceCore.Workflows
                 try
                 {
                     var instance = Activator.CreateInstance(type) as IDbScript;
-                    _rawSqlServices.ExecuteQuery(instance.Get());
+                    ctx.RawSql.ExecuteQuery(instance.Get());
                     result.Success = true;
                 }
                 catch (Exception ex)

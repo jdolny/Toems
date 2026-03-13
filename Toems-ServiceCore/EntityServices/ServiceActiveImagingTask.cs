@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Management;
 using log4net;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -94,7 +93,8 @@ namespace Toems_ServiceCore.EntityServices
                 var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
                 var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
-                new APICall().ClientComServerApi.KillUdpReceiver(comServer.Url, "", decryptedKey, receiverPids);              
+                //todo - fix
+                //new APICall().ClientComServerApi.KillUdpReceiver(comServer.Url, "", decryptedKey, receiverPids);              
             }
 
             return actionResult;
@@ -184,7 +184,8 @@ namespace Toems_ServiceCore.EntityServices
                 var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
                 var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
-                new APICall().ClientComServerApi.KillUdpReceiver(comServer.Url, "", decryptedKey, receiverPids);
+                //todo - fix
+                //new APICall().ClientComServerApi.KillUdpReceiver(comServer.Url, "", decryptedKey, receiverPids);
             }
 
             return actionResult;
@@ -274,12 +275,15 @@ namespace Toems_ServiceCore.EntityServices
             return Convert.ToInt32(ctx.Uow.ActiveImagingTaskRepository.Count(x => x.ComputerId < -1));
         }
 
-        public List<TaskWithComputer> ReadAll(int userId)
+        public async Task<List<TaskWithComputer>> ReadAll(int userId)
         {
             //Admins see all tasks
-            return ctx.User.IsAdmin(userId)
-                ? ctx.Uow.ActiveImagingTaskRepository.GetAllTaskWithComputersForAdmin()
+            
+            return ctx.User.IsAdmin(userId) ? ctx.Uow.ActiveImagingTaskRepository.GetAllTaskWithComputersForAdmin()
                 : ctx.Uow.ActiveImagingTaskRepository.GetAllTaskWithComputers(userId);
+
+         
+            
         }
 
     

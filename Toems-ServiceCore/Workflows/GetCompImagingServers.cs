@@ -10,11 +10,10 @@ namespace Toems_ServiceCore.Workflows
     {
         public List<EntityClientComServer> Run(int computerId, bool includePassive=false)
         {
-            var uow = new UnitOfWork();
-            var defaultCluster = uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
+            var defaultCluster = ctx.Uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
 
             var computerGroupMemberships = ctx.Computer.GetAllGroupMemberships(computerId);
-            var computerGroups = uow.ComputerRepository.GetAllComputerGroups(computerId).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
+            var computerGroups = ctx.Uow.ComputerRepository.GetAllComputerGroups(computerId).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
             List<int> imagingServerIds = new List<int>();
 
             if (computerGroups.Count() == 0)
@@ -22,9 +21,9 @@ namespace Toems_ServiceCore.Workflows
                 //use default
                 List<DtoClientComServers> clusterImagingServers;
                 if (includePassive)
-                    clusterImagingServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
+                    clusterImagingServers = ctx.Uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
                 else
-                    clusterImagingServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id).Where(x => x.Role.Equals("Active")).ToList();
+                    clusterImagingServers = ctx.Uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id).Where(x => x.Role.Equals("Active")).ToList();
                 if (clusterImagingServers != null)
                 {
                     if (clusterImagingServers.Count > 0)
@@ -42,9 +41,9 @@ namespace Toems_ServiceCore.Workflows
                         group.ClusterId = defaultCluster.Id;
                     List<DtoClientComServers> clusterImagingServers;
                     if (includePassive)
-                        clusterImagingServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(group.ClusterId);
+                        clusterImagingServers = ctx.Uow.ComServerClusterServerRepository.GetImagingClusterServers(group.ClusterId);
                     else
-                        clusterImagingServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(group.ClusterId).Where(x => x.Role.Equals("Active")).ToList();
+                        clusterImagingServers = ctx.Uow.ComServerClusterServerRepository.GetImagingClusterServers(group.ClusterId).Where(x => x.Role.Equals("Active")).ToList();
                     if (clusterImagingServers != null)
                     {
                         if (clusterImagingServers.Count > 0)
@@ -61,9 +60,9 @@ namespace Toems_ServiceCore.Workflows
                     //use default
                     List<DtoClientComServers> clusterImagingServers;
                     if (includePassive)
-                        clusterImagingServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
+                        clusterImagingServers = ctx.Uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
                     else
-                        clusterImagingServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id).Where(x => x.Role.Equals("Active")).ToList();
+                        clusterImagingServers = ctx.Uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id).Where(x => x.Role.Equals("Active")).ToList();
                     if (clusterImagingServers != null)
                     {
                         if (clusterImagingServers.Count > 0)
@@ -78,7 +77,7 @@ namespace Toems_ServiceCore.Workflows
             var listComServers = new List<EntityClientComServer>();
             foreach (var comServerId in imagingServerIds)
             {
-                var comServer = uow.ClientComServerRepository.GetById(comServerId);
+                var comServer = ctx.Uow.ClientComServerRepository.GetById(comServerId);
                 listComServers.Add(comServer);
             }
 

@@ -1,22 +1,22 @@
 ﻿using Toems_Common.Dto.client;
 using Toems_DataModel;
+using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.Workflows
 {
-    public class GetCompEmServers
+    public class GetCompEmServers(ServiceContext ctx)
     {
         public List<DtoClientComServers> Run(string computerGuid)
         {
-            var uow = new UnitOfWork();
-            var computer = uow.ComputerRepository.GetFirstOrDefault(x => x.Guid.Equals(computerGuid));
+            var computer = ctx.Uow.ComputerRepository.GetFirstOrDefault(x => x.Guid.Equals(computerGuid));
             if (computer == null) return null;
-            var defaultCluster = uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
+            var defaultCluster = ctx.Uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
             if (defaultCluster == null) return null;
 
-            var computerGroups = uow.ComputerRepository.GetAllComputerGroups(computer.Id).OrderBy(x => x.EmPriority).ThenBy(x => x.Name).ToList();
+            var computerGroups = ctx.Uow.ComputerRepository.GetAllComputerGroups(computer.Id).OrderBy(x => x.EmPriority).ThenBy(x => x.Name).ToList();
             if (computerGroups.Count == 0)
             {
-                var emServers = uow.ComServerClusterServerRepository.GetEMClusterServers(defaultCluster.Id);
+                var emServers = ctx.Uow.ComServerClusterServerRepository.GetEMClusterServers(defaultCluster.Id);
                 if (emServers != null)
                 {
                     if (emServers.Count > 0)
@@ -33,7 +33,7 @@ namespace Toems_ServiceCore.Workflows
                     if(group.ClusterId == -1)
                         group.ClusterId = defaultCluster.Id;
 
-                    var emServers = uow.ComServerClusterServerRepository.GetEMClusterServers(group.ClusterId);
+                    var emServers = ctx.Uow.ComServerClusterServerRepository.GetEMClusterServers(group.ClusterId);
                     if(emServers != null)
                     {
                         if (emServers.Count > 0)
@@ -45,7 +45,7 @@ namespace Toems_ServiceCore.Workflows
             }
 
             //no em servers found assigned to any group for this computer, return default cluster
-            var defaultemServers = uow.ComServerClusterServerRepository.GetEMClusterServers(defaultCluster.Id);
+            var defaultemServers = ctx.Uow.ComServerClusterServerRepository.GetEMClusterServers(defaultCluster.Id);
             if (defaultemServers != null)
             {
                 if (defaultemServers.Count > 0)

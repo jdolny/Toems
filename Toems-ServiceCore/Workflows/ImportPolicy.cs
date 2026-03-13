@@ -4,15 +4,13 @@ using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_DataModel;
 using Toems_ServiceCore.EntityServices;
+using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.Workflows
 {
-    public class ImportPolicy(ServicePolicy servicePolicy, ServiceScriptModule serviceScriptModule, ServicePrinterModule servicePrinterModule, 
-        ServiceCommandModule serviceCommandModule, ServiceFileCopyModule serviceFileCopyModule, ServiceSoftwareModule serviceSoftwareModule, 
-        ServiceWuModule serviceWuModule, ServiceMessageModule serviceMessageModule, ServiceWingetModule serviceWingetModule, ServiceExternalDownload serviceExternalDownload)
+    public class ImportPolicy(ServiceContext ctx)
     {
         private DtoPolicyExport _export;
-        private UnitOfWork _uow = new();
         private EntityPolicy _policy = new();
         private bool _policyHasInternalFiles;
         private bool _policyHasExternalFiles;
@@ -33,65 +31,65 @@ namespace Toems_ServiceCore.Workflows
             result = CreateScripts();
             if (!result.Success)
             {
-                servicePolicy.DeletePolicy(_policy.Id);
+                ctx.Policy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() {ErrorMessage = result.ErrorMessage};
             }
 
             result = CreatePrinters();
             if (!result.Success)
             {
-                servicePolicy.DeletePolicy(_policy.Id);
+                ctx.Policy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() {ErrorMessage = result.ErrorMessage};
             }
 
             result = CreateCommands();
             if (!result.Success)
             {
-                servicePolicy.DeletePolicy(_policy.Id);
+                ctx.Policy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() {ErrorMessage = result.ErrorMessage};
             }
 
             result = CreateFileCopy();
             if (!result.Success)
             {
-                servicePolicy.DeletePolicy(_policy.Id);
+                ctx.Policy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() {ErrorMessage = result.ErrorMessage};
             }
 
             result = CreateSoftware();
             if (!result.Success)
             {
-                servicePolicy.DeletePolicy(_policy.Id);
+                ctx.Policy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() {ErrorMessage = result.ErrorMessage};
             }
 
             result = CreateWindowsUpdate();
             if (!result.Success)
             {
-                servicePolicy.DeletePolicy(_policy.Id);
+                ctx.Policy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() {ErrorMessage = result.ErrorMessage};
             }
 
             result = CreateMessages();
             if (!result.Success)
             {
-                servicePolicy.DeletePolicy(_policy.Id);
+                ctx.Policy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() { ErrorMessage = result.ErrorMessage };
             }
 
             result = CreateWingets();
             if (!result.Success)
             {
-                servicePolicy.DeletePolicy(_policy.Id);
+                ctx.Policy.DeletePolicy(_policy.Id);
                 return new DtoImportResult() { ErrorMessage = result.ErrorMessage };
             }
 
-            _uow.Save();
+            ctx.Uow.Save();
 
             if(_export.Instructions.Contains("[skip-policy-create]"))
             {
-                servicePolicy.DeletePolicy(_policy.Id);
-                _uow.Save();
+                ctx.Policy.DeletePolicy(_policy.Id);
+                ctx.Uow.Save();
             }
                 
 
@@ -112,7 +110,7 @@ namespace Toems_ServiceCore.Workflows
                 _export.Guid = Guid.NewGuid().ToString();
             }
 
-            if (_uow.PolicyRepository.Exists(h => h.Guid.Equals(_export.Guid)))
+            if (ctx.Uow.PolicyRepository.Exists(h => h.Guid.Equals(_export.Guid)))
             {
                 return new DtoActionResult() { ErrorMessage = "A Policy With This Guid Already Exists.  " + _export.Guid };
             }
@@ -148,7 +146,7 @@ namespace Toems_ServiceCore.Workflows
             else
                 _policy.ConditionId = -1;
 
-            if (_uow.PolicyRepository.Exists(h => h.Name.Equals(_policy.Name)))
+            if (ctx.Uow.PolicyRepository.Exists(h => h.Name.Equals(_policy.Name)))
             {
                 for (var c = 1; c <= 100; c++)
                 {
@@ -156,7 +154,7 @@ namespace Toems_ServiceCore.Workflows
                         return new DtoActionResult() { ErrorMessage = "Could Not Determine A Policy Name" };
 
                     var newName = _policy.Name + "_" + c;
-                    if (!_uow.PolicyRepository.Exists(h => h.Name == newName))
+                    if (!ctx.Uow.PolicyRepository.Exists(h => h.Name == newName))
                     {
                         _policy.Name = newName;
                         break;
@@ -164,8 +162,8 @@ namespace Toems_ServiceCore.Workflows
                 }
             }
 
-            _uow.PolicyRepository.Insert(_policy);
-            _uow.Save();
+            ctx.Uow.PolicyRepository.Insert(_policy);
+            ctx.Uow.Save();
 
             return new DtoActionResult() {Success = true, Id = _policy.Id};
         }
@@ -179,7 +177,7 @@ namespace Toems_ServiceCore.Workflows
                     scriptModule.Guid = Guid.NewGuid().ToString();
                 }
 
-                if (_uow.ScriptModuleRepository.Exists(h => h.Guid.Equals(scriptModule.Guid)))
+                if (ctx.Uow.ScriptModuleRepository.Exists(h => h.Guid.Equals(scriptModule.Guid)))
                 {
                     return new DtoActionResult() { ErrorMessage = "A Script Module With This Guid Already Exists.  " + scriptModule.Guid };
                 }
@@ -201,7 +199,7 @@ namespace Toems_ServiceCore.Workflows
                 script.WorkingDirectory = scriptModule.WorkingDirectory;
                 script.ImpersonationId = -1;
                 
-                if (_uow.ScriptModuleRepository.Exists(h => h.Name.Equals(script.Name)))
+                if (ctx.Uow.ScriptModuleRepository.Exists(h => h.Name.Equals(script.Name)))
                 {
                     for (var c = 1; c <= 100; c++)
                     {
@@ -209,7 +207,7 @@ namespace Toems_ServiceCore.Workflows
                             return new DtoActionResult() { ErrorMessage = "Could Not Determine A Script Name" };
 
                         var newName = script.Name + "_" + c;
-                        if (!_uow.ScriptModuleRepository.Exists(h => h.Name == newName))
+                        if (!ctx.Uow.ScriptModuleRepository.Exists(h => h.Name == newName))
                         {
                             script.Name = newName;
                             break;
@@ -217,7 +215,7 @@ namespace Toems_ServiceCore.Workflows
                     }
                 }
 
-                var addResult = serviceScriptModule.AddModule(script);
+                var addResult = ctx.ScriptModule.AddModule(script);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -237,7 +235,7 @@ namespace Toems_ServiceCore.Workflows
                 else
                     policyModule.ConditionId = -1;
 
-                _uow.PolicyModulesRepository.Insert(policyModule);
+                ctx.Uow.PolicyModulesRepository.Insert(policyModule);
 
             }
 
@@ -253,7 +251,7 @@ namespace Toems_ServiceCore.Workflows
                     printerModule.Guid = Guid.NewGuid().ToString();
                 }
 
-                if (_uow.PrinterModuleRepository.Exists(h => h.Guid.Equals(printerModule.Guid)))
+                if (ctx.Uow.PrinterModuleRepository.Exists(h => h.Guid.Equals(printerModule.Guid)))
                 {
                     return new DtoActionResult() { ErrorMessage = "A Printer Module With This Guid Already Exists.  " + printerModule.Guid };
                 }
@@ -269,7 +267,7 @@ namespace Toems_ServiceCore.Workflows
                 printer.RestartSpooler = printerModule.RestartSpooler;
                 printer.WaitForEnumeration = printerModule.WaitForEnumeration;
 
-                if (_uow.PrinterModuleRepository.Exists(h => h.Name.Equals(printer.Name)))
+                if (ctx.Uow.PrinterModuleRepository.Exists(h => h.Name.Equals(printer.Name)))
                 {
                     for (var c = 1; c <= 100; c++)
                     {
@@ -277,7 +275,7 @@ namespace Toems_ServiceCore.Workflows
                             return new DtoActionResult() { ErrorMessage = "Could Not Determine A Printer Name" };
 
                         var newName = printer.Name + "_" + c;
-                        if (!_uow.PrinterModuleRepository.Exists(h => h.Name == newName))
+                        if (!ctx.Uow.PrinterModuleRepository.Exists(h => h.Name == newName))
                         {
                             printer.Name = newName;
                             break;
@@ -285,7 +283,7 @@ namespace Toems_ServiceCore.Workflows
                     }
                 }
 
-                var addResult = servicePrinterModule.AddModule(printer);
+                var addResult = ctx.PrinterModule.AddModule(printer);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -305,7 +303,7 @@ namespace Toems_ServiceCore.Workflows
                 else
                     policyModule.ConditionId = -1;
 
-                _uow.PolicyModulesRepository.Insert(policyModule);
+                ctx.Uow.PolicyModulesRepository.Insert(policyModule);
 
             }
 
@@ -321,7 +319,7 @@ namespace Toems_ServiceCore.Workflows
                     messageModule.Guid = Guid.NewGuid().ToString();
                 }
 
-                if (_uow.MessageModuleRepository.Exists(h => h.Guid.Equals(messageModule.Guid)))
+                if (ctx.Uow.MessageModuleRepository.Exists(h => h.Guid.Equals(messageModule.Guid)))
                 {
                     return new DtoActionResult() { ErrorMessage = "A Message Module With This Guid Already Exists.  " + messageModule.Guid };
                 }
@@ -335,7 +333,7 @@ namespace Toems_ServiceCore.Workflows
                 message.Message = messageModule.Message;
                 message.Timeout = messageModule.Timeout;
 
-                if (_uow.MessageModuleRepository.Exists(h => h.Name.Equals(message.Name)))
+                if (ctx.Uow.MessageModuleRepository.Exists(h => h.Name.Equals(message.Name)))
                 {
                     for (var c = 1; c <= 100; c++)
                     {
@@ -343,7 +341,7 @@ namespace Toems_ServiceCore.Workflows
                             return new DtoActionResult() { ErrorMessage = "Could Not Determine A Message Name" };
 
                         var newName = message.Name + "_" + c;
-                        if (!_uow.MessageModuleRepository.Exists(h => h.Name == newName))
+                        if (!ctx.Uow.MessageModuleRepository.Exists(h => h.Name == newName))
                         {
                             message.Name = newName;
                             break;
@@ -351,7 +349,7 @@ namespace Toems_ServiceCore.Workflows
                     }
                 }
 
-                var addResult = serviceMessageModule.AddModule(message);
+                var addResult = ctx.MessageModule.AddModule(message);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -370,7 +368,7 @@ namespace Toems_ServiceCore.Workflows
                     policyModule.ConditionId = conditionId;
                 else
                     policyModule.ConditionId = -1;
-                _uow.PolicyModulesRepository.Insert(policyModule);
+                ctx.Uow.PolicyModulesRepository.Insert(policyModule);
 
             }
 
@@ -386,7 +384,7 @@ namespace Toems_ServiceCore.Workflows
                     commandModule.Guid = Guid.NewGuid().ToString();
                 }
 
-                if (_uow.CommandModuleRepository.Exists(h => h.Guid.Equals(commandModule.Guid)))
+                if (ctx.Uow.CommandModuleRepository.Exists(h => h.Guid.Equals(commandModule.Guid)))
                 {
                     return new DtoActionResult() { ErrorMessage = "A Command Module With This Guid Already Exists.  " + commandModule.Guid };
                 }
@@ -411,7 +409,7 @@ namespace Toems_ServiceCore.Workflows
                 if (commandModule.ExternalFiles.Any())
                     _policyHasExternalFiles = true;
 
-                if (_uow.CommandModuleRepository.Exists(h => h.Name.Equals(command.Name)))
+                if (ctx.Uow.CommandModuleRepository.Exists(h => h.Name.Equals(command.Name)))
                 {
                     for (var c = 1; c <= 100; c++)
                     {
@@ -419,7 +417,7 @@ namespace Toems_ServiceCore.Workflows
                             return new DtoActionResult() { ErrorMessage = "Could Not Determine A Command Name" };
 
                         var newName = command.Name + "_" + c;
-                        if (!_uow.CommandModuleRepository.Exists(h => h.Name == newName))
+                        if (!ctx.Uow.CommandModuleRepository.Exists(h => h.Name == newName))
                         {
                             command.Name = newName;
                             break;
@@ -427,7 +425,7 @@ namespace Toems_ServiceCore.Workflows
                     }
                 }
 
-                var addResult = serviceCommandModule.AddModule(command);
+                var addResult = ctx.CommandModule.AddModule(command);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -447,7 +445,7 @@ namespace Toems_ServiceCore.Workflows
                 else
                     policyModule.ConditionId = -1;
 
-                _uow.PolicyModulesRepository.Insert(policyModule);
+                ctx.Uow.PolicyModulesRepository.Insert(policyModule);
 
             }
 
@@ -463,7 +461,7 @@ namespace Toems_ServiceCore.Workflows
                     fileCopyModule.Guid = Guid.NewGuid().ToString();
                 }
 
-                if (_uow.FileCopyModuleRepository.Exists(h => h.Guid.Equals(fileCopyModule.Guid)))
+                if (ctx.Uow.FileCopyModuleRepository.Exists(h => h.Guid.Equals(fileCopyModule.Guid)))
                 {
                     return new DtoActionResult() { ErrorMessage = "A File Copy Module With This Guid Already Exists. " + fileCopyModule.Guid };
                 }
@@ -485,7 +483,7 @@ namespace Toems_ServiceCore.Workflows
                 if (fileCopyModule.ExternalFiles.Any())
                     _policyHasExternalFiles = true;
 
-                if (_uow.FileCopyModuleRepository.Exists(h => h.Name.Equals(fileCopy.Name)))
+                if (ctx.Uow.FileCopyModuleRepository.Exists(h => h.Name.Equals(fileCopy.Name)))
                 {
                     for (var c = 1; c <= 100; c++)
                     {
@@ -493,7 +491,7 @@ namespace Toems_ServiceCore.Workflows
                             return new DtoActionResult() { ErrorMessage = "Could Not Determine A File Copy Name" };
 
                         var newName = fileCopy.Name + "_" + c;
-                        if (!_uow.FileCopyModuleRepository.Exists(h => h.Name == newName))
+                        if (!ctx.Uow.FileCopyModuleRepository.Exists(h => h.Name == newName))
                         {
                             fileCopy.Name = newName;
                             break;
@@ -501,7 +499,7 @@ namespace Toems_ServiceCore.Workflows
                     }
                 }
 
-                var addResult = serviceFileCopyModule.AddModule(fileCopy);
+                var addResult = ctx.FileCopyModule.AddModule(fileCopy);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -520,7 +518,7 @@ namespace Toems_ServiceCore.Workflows
                     policyModule.ConditionId = conditionId;
                 else
                     policyModule.ConditionId = -1;
-                _uow.PolicyModulesRepository.Insert(policyModule);
+                ctx.Uow.PolicyModulesRepository.Insert(policyModule);
 
             }
 
@@ -536,7 +534,7 @@ namespace Toems_ServiceCore.Workflows
                     softwareModule.Guid = Guid.NewGuid().ToString();
                 }
 
-                if (_uow.SoftwareModuleRepository.Exists(h => h.Guid.Equals(softwareModule.Guid)))
+                if (ctx.Uow.SoftwareModuleRepository.Exists(h => h.Guid.Equals(softwareModule.Guid)))
                 {
                     return new DtoActionResult() { ErrorMessage = "A Software Module With This Guid Already Exists.  " + softwareModule.Guid };
                 }
@@ -561,7 +559,7 @@ namespace Toems_ServiceCore.Workflows
                 if (softwareModule.ExternalFiles.Any())
                     _policyHasExternalFiles = true;
 
-                if (_uow.SoftwareModuleRepository.Exists(h => h.Name.Equals(software.Name)))
+                if (ctx.Uow.SoftwareModuleRepository.Exists(h => h.Name.Equals(software.Name)))
                 {
                     for (var c = 1; c <= 100; c++)
                     {
@@ -569,7 +567,7 @@ namespace Toems_ServiceCore.Workflows
                             return new DtoActionResult() { ErrorMessage = "Could Not Determine A Software Name" };
 
                         var newName = software.Name + "_" + c;
-                        if (!_uow.SoftwareModuleRepository.Exists(h => h.Name == newName))
+                        if (!ctx.Uow.SoftwareModuleRepository.Exists(h => h.Name == newName))
                         {
                             software.Name = newName;
                             break;
@@ -577,7 +575,7 @@ namespace Toems_ServiceCore.Workflows
                     }
                 }
 
-                var addResult = serviceSoftwareModule.AddModule(software);
+                var addResult = ctx.SoftwareModule.AddModule(software);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -596,7 +594,7 @@ namespace Toems_ServiceCore.Workflows
                     policyModule.ConditionId = conditionId;
                 else
                     policyModule.ConditionId = -1;
-                _uow.PolicyModulesRepository.Insert(policyModule);
+                ctx.Uow.PolicyModulesRepository.Insert(policyModule);
 
             }
 
@@ -612,7 +610,7 @@ namespace Toems_ServiceCore.Workflows
                     wuModuleModule.Guid = Guid.NewGuid().ToString();
                 }
 
-                if (_uow.WindowsUpdateModuleRepository.Exists(h => h.Guid.Equals(wuModuleModule.Guid)))
+                if (ctx.Uow.WindowsUpdateModuleRepository.Exists(h => h.Guid.Equals(wuModuleModule.Guid)))
                 {
                     return new DtoActionResult() { ErrorMessage = "A Windows Update Module With This Guid Already Exists.  " + wuModuleModule.Guid };
                 }
@@ -634,7 +632,7 @@ namespace Toems_ServiceCore.Workflows
                 if (wuModuleModule.ExternalFiles.Any())
                     _policyHasExternalFiles = true;
 
-                if (_uow.WindowsUpdateModuleRepository.Exists(h => h.Name.Equals(wu.Name)))
+                if (ctx.Uow.WindowsUpdateModuleRepository.Exists(h => h.Name.Equals(wu.Name)))
                 {
                     for (var c = 1; c <= 100; c++)
                     {
@@ -642,7 +640,7 @@ namespace Toems_ServiceCore.Workflows
                             return new DtoActionResult() { ErrorMessage = "Could Not Determine A Windows Update Name" };
 
                         var newName = wu.Name + "_" + c;
-                        if (!_uow.WindowsUpdateModuleRepository.Exists(h => h.Name == newName))
+                        if (!ctx.Uow.WindowsUpdateModuleRepository.Exists(h => h.Name == newName))
                         {
                             wu.Name = newName;
                             break;
@@ -650,7 +648,7 @@ namespace Toems_ServiceCore.Workflows
                     }
                 }
 
-                var addResult = serviceWuModule.AddModule(wu);
+                var addResult = ctx.WuModule.AddModule(wu);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -669,7 +667,7 @@ namespace Toems_ServiceCore.Workflows
                     policyModule.ConditionId = conditionId;
                 else
                     policyModule.ConditionId = -1;
-                _uow.PolicyModulesRepository.Insert(policyModule);
+                ctx.Uow.PolicyModulesRepository.Insert(policyModule);
 
             }
 
@@ -685,7 +683,7 @@ namespace Toems_ServiceCore.Workflows
                     wingetModule.Guid = Guid.NewGuid().ToString();
                 }
 
-                if (_uow.WingetModuleRepository.Exists(h => h.Guid.Equals(wingetModule.Guid)))
+                if (ctx.Uow.WingetModuleRepository.Exists(h => h.Guid.Equals(wingetModule.Guid)))
                 {
                     return new DtoActionResult() { ErrorMessage = "A Winget Module With This Guid Already Exists.  " + wingetModule.Guid };
                 }
@@ -708,7 +706,7 @@ namespace Toems_ServiceCore.Workflows
 
             
 
-                if (_uow.WingetModuleRepository.Exists(h => h.Name.Equals(winget.Name)))
+                if (ctx.Uow.WingetModuleRepository.Exists(h => h.Name.Equals(winget.Name)))
                 {
                     for (var c = 1; c <= 100; c++)
                     {
@@ -716,7 +714,7 @@ namespace Toems_ServiceCore.Workflows
                             return new DtoActionResult() { ErrorMessage = "Could Not Determine A Winget Name" };
 
                         var newName = winget.Name + "_" + c;
-                        if (!_uow.WingetModuleRepository.Exists(h => h.Name == newName))
+                        if (!ctx.Uow.WingetModuleRepository.Exists(h => h.Name == newName))
                         {
                             winget.Name = newName;
                             break;
@@ -724,7 +722,7 @@ namespace Toems_ServiceCore.Workflows
                     }
                 }
 
-                var addResult = serviceWingetModule.AddModule(winget);
+                var addResult = ctx.WingetModule.AddModule(winget);
                 if (!addResult.Success) return addResult;
 
                 var policyModule = new EntityPolicyModules();
@@ -744,7 +742,7 @@ namespace Toems_ServiceCore.Workflows
                 else
                     policyModule.ConditionId = -1;
 
-                _uow.PolicyModulesRepository.Insert(policyModule);
+                ctx.Uow.PolicyModulesRepository.Insert(policyModule);
 
             }
 
@@ -812,7 +810,7 @@ namespace Toems_ServiceCore.Workflows
             {
                 _policyHasExternalFiles = true;
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                var t = new Thread(() => serviceExternalDownload.BatchDownload(listToDownload));
+                var t = new Thread(() => ctx.ExternalDownload.BatchDownload(listToDownload));
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 t.Start();
                 
@@ -823,7 +821,7 @@ namespace Toems_ServiceCore.Workflows
         {
             if (condition == null) return 0;
 
-            var scriptModule = serviceScriptModule.GetModuleByGuid(condition.Guid);
+            var scriptModule = ctx.ScriptModule.GetModuleByGuid(condition.Guid);
             if(scriptModule == null)
             {
                 var script = new EntityScriptModule();
@@ -843,7 +841,7 @@ namespace Toems_ServiceCore.Workflows
                 script.WorkingDirectory = condition.WorkingDirectory;
                 script.ImpersonationId = -1;
 
-                if (_uow.ScriptModuleRepository.Exists(h => h.Name.Equals(script.Name)))
+                if (ctx.Uow.ScriptModuleRepository.Exists(h => h.Name.Equals(script.Name)))
                 {
                     for (var c = 1; c <= 100; c++)
                     {
@@ -851,7 +849,7 @@ namespace Toems_ServiceCore.Workflows
                             return 0;
 
                         var newName = script.Name + "_" + c;
-                        if (!_uow.ScriptModuleRepository.Exists(h => h.Name == newName))
+                        if (!ctx.Uow.ScriptModuleRepository.Exists(h => h.Name == newName))
                         {
                             script.Name = newName;
                             break;
@@ -859,7 +857,7 @@ namespace Toems_ServiceCore.Workflows
                     }
                 }
 
-                var addResult = serviceScriptModule.AddModule(script);
+                var addResult = ctx.ScriptModule.AddModule(script);
                 if (!addResult.Success) return 0;
                 return script.Id;
             }

@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using log4net;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -17,7 +16,7 @@ namespace Toems_ServiceCore.Workflows
         private string _userToken { get; set; }
         private EntityComputer _computer;
         private EntityImageProfile _imageProfile;
-        private UnitOfWork _uow = new();
+
         private readonly ILog log = LogManager.GetLogger(typeof(TaskBootMenu));
 
         public bool RunAllServers(EntityComputer computer, EntityImageProfile imageProfile)
@@ -44,7 +43,8 @@ namespace Toems_ServiceCore.Workflows
             dtoTaskBootFile.ImageProfile = imageProfile;
             foreach (var com in comServers)
             {
-                if (!new APICall().ClientComServerApi.CreateTaskBootFiles(com.Url, "", decryptedKey, dtoTaskBootFile))
+                //todo - fix
+                //if (!new APICall().ClientComServerApi.CreateTaskBootFiles(com.Url, "", decryptedKey, dtoTaskBootFile))
                     NoErrors = false;
             }
 
@@ -54,7 +54,6 @@ namespace Toems_ServiceCore.Workflows
 
         public bool CreatePxeBootFiles(EntityComputer computer, EntityImageProfile imageProfile)
         {
-            _uow = new UnitOfWork();
             const string newLineChar = "\n";
             _computer = computer;
             _imageProfile = imageProfile;
@@ -83,7 +82,7 @@ namespace Toems_ServiceCore.Workflows
                 listOfMacs.Add(StringManipulationServices.MacToPxeMac(_computer.ImagingMac));
             }
 
-            var computerMacs = _uow.NicInventoryRepository.Get(x => x.ComputerId == computer.Id && x.Type.Equals("Ethernet")).Select(x => x.Mac).ToList();
+            var computerMacs = ctx.Uow.NicInventoryRepository.Get(x => x.ComputerId == computer.Id && x.Type.Equals("Ethernet")).Select(x => x.Mac).ToList();
             foreach (var mac in computerMacs)
             {
                 listOfMacs.Add(StringManipulationServices.MacToPxeMac(mac));

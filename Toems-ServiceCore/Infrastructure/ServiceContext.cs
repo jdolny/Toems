@@ -1,5 +1,6 @@
 ﻿using log4net;
 using Toems_DataModel;
+using Toems_ServiceCore.Data;
 using Toems_ServiceCore.EntityServices;
 using Toems_ServiceCore.NoInjectTemp;
 using Toems_ServiceCore.Workflows;
@@ -11,14 +12,17 @@ public class ServiceContext(
     ILog log,
     UnitOfWork uow,
     IWebHostEnvironment environment,
-    IServiceProvider serviceProvider
+    IServiceProvider serviceProvider,
+    IToemsDbFactory dbFactory
     )
 {
     public ILog Log { get; } = log;
     public IConfiguration Config { get; } = config;
     public IWebHostEnvironment Environment { get; } = environment;
-
+    public IToemsDbFactory DbFactory { get; } = dbFactory;
     public UnitOfWork Uow { get; } = uow;
+    
+    
     
     private ServiceComputer _computer;
     public ServiceComputer Computer => _computer ??= serviceProvider.GetRequiredService<ServiceComputer>();

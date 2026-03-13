@@ -1,5 +1,4 @@
 ﻿using System.Security.Cryptography.X509Certificates;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -11,7 +10,6 @@ namespace Toems_ServiceCore.Workflows
 {
     public class PowerManagement(ServiceContext ctx)
     {
-        private readonly UnitOfWork _uow = new ();
         
         public bool ShutdownComputer(int computerId)
         {
@@ -30,7 +28,7 @@ namespace Toems_ServiceCore.Workflows
         public bool WakeupComputer(int computerId)
         {
             ctx.Log.Debug("Starting Wakeup Task");
-            var computer = _uow.ComputerRepository.GetById(computerId);
+            var computer = ctx.Uow.ComputerRepository.GetById(computerId);
             if (computer == null) return false;
             var computerList = new List<EntityComputer>();
             computerList.Add(computer);
@@ -47,7 +45,7 @@ namespace Toems_ServiceCore.Workflows
             //get a distinct list of computers for each group
             var shutdownMembers = new List<EntityComputer>();
             foreach (var group in groups)
-                shutdownMembers = _uow.GroupRepository.GetGroupMembers(group.Id, "");
+                shutdownMembers = ctx.Uow.GroupRepository.GetGroupMembers(group.Id, "");
             var distinctShutdown = shutdownMembers.GroupBy(x => x.Id).Select(y => y.First());
 
             foreach (var computer in distinctShutdown)
@@ -63,7 +61,7 @@ namespace Toems_ServiceCore.Workflows
             //get a distinct list of computers for each group
             var rebootMembers = new List<EntityComputer>();
             foreach (var group in groups)
-                rebootMembers = _uow.GroupRepository.GetGroupMembers(group.Id, "");
+                rebootMembers = ctx.Uow.GroupRepository.GetGroupMembers(group.Id, "");
             var distinctReboot = rebootMembers.GroupBy(x => x.Id).Select(y => y.First());
 
             foreach (var computer in distinctReboot)
@@ -80,7 +78,7 @@ namespace Toems_ServiceCore.Workflows
             //get a distinct list of computers for each group
             var wakeUpMembers = new List<EntityComputer>();
             foreach (var group in groups)
-                wakeUpMembers = _uow.GroupRepository.GetGroupMembers(group.Id, "");
+                wakeUpMembers = ctx.Uow.GroupRepository.GetGroupMembers(group.Id, "");
             var distinctWakeup = wakeUpMembers.GroupBy(x => x.Id).Select(y => y.First());
             Task.Run(() => Wakeup(distinctWakeup)); // don't wait for result
             //Wakeup(distinctWakeup);
@@ -101,13 +99,13 @@ namespace Toems_ServiceCore.Workflows
                 if (relayTask.Macs.Count == 0)
                     continue;
 
-                var destinationRelay = _uow.WolRelayRepository.GetFirstOrDefault(x => x.Gateway.Equals(relayTask.Gateway));
+                var destinationRelay = ctx.Uow.WolRelayRepository.GetFirstOrDefault(x => x.Gateway.Equals(relayTask.Gateway));
                 if (destinationRelay == null)
                 {
                     ctx.Log.Debug("No WOL Relays Defined For Gateway: " + relayTask.Gateway +
                                  " Looking For Available Computers To Serve As Relay");
                     //find up to 10 computers on that network that have checked in recently
-                    var potentialRelays = _uow.ComputerRepository.GetPotentialWOLRelays(relayTask.Gateway, dateCutoff);
+                    var potentialRelays = ctx.Uow.ComputerRepository.GetPotentialWOLRelays(relayTask.Gateway, dateCutoff);
                     if (potentialRelays == null)
                     {
                         ctx.Log.Debug("No Computers Were Found To Act As A Relay For: " + relayTask.Gateway +
@@ -146,17 +144,19 @@ namespace Toems_ServiceCore.Workflows
                         if (counter == 3) break;
                         if (computer.CertificateId == -1) continue;
                         if (string.IsNullOrEmpty(computer.PushUrl)) continue;
-                        var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
+                        var deviceCertEntity = ctx.Uow.CertificateRepository.GetById(computer.CertificateId);
                         var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ctx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
-                        new APICall().ClientApi.SendWolTask(computer.PushUrl, deviceCert, relayTask);
+                        //todo - fix
+                        //new APICall().ClientApi.SendWolTask(computer.PushUrl, deviceCert, relayTask);
                         
                     }
                 }
                 else
                 {
                     //send relay task to destination relay
-                    var comServer = _uow.ClientComServerRepository.GetById(destinationRelay.ComServerId);
-                    new APICall().ClientComServerApi.WakeupComputers(comServer.Url, "", decryptedKey, relayTask);
+                    var comServer = ctx.Uow.ClientComServerRepository.GetById(destinationRelay.ComServerId);
+                    //todo - fix
+                    //new APICall().ClientComServerApi.WakeupComputers(comServer.Url, "", decryptedKey, relayTask);
                 }
             }
         }
@@ -164,7 +164,7 @@ namespace Toems_ServiceCore.Workflows
         private List<DtoWolTask> GenerateWakeupTask(IEnumerable<EntityComputer> computersToWakeup)
         {
             //get a list of all known gateways
-            var allKnownGateways = _uow.NicInventoryRepository.Get().GroupBy(x => x.Gateways).Select(y => y.First());
+            var allKnownGateways = ctx.Uow.NicInventoryRepository.Get().GroupBy(x => x.Gateways).Select(y => y.First());
             var gateways = new List<string>();
             foreach (var nic in allKnownGateways.Where(x => !string.IsNullOrEmpty(x.Gateways)))
             {
@@ -181,7 +181,7 @@ namespace Toems_ServiceCore.Workflows
                 foreach (var computer in computersToWakeup)
                 {
                     var localComputer = computer;
-                    var computerNics = _uow.NicInventoryRepository.Get(x => x.ComputerId == localComputer.Id);
+                    var computerNics = ctx.Uow.NicInventoryRepository.Get(x => x.ComputerId == localComputer.Id);
 
                     var localGateway = gateway;
                     foreach (var nic in computerNics.Where(x => !string.IsNullOrEmpty(x.Gateways)))
@@ -205,15 +205,15 @@ namespace Toems_ServiceCore.Workflows
 
         private bool Reboot(int computerId, string delay)
         {
-            var computer = _uow.ComputerRepository.GetById(computerId);
+            var computer = ctx.Uow.ComputerRepository.GetById(computerId);
             if (computer == null) return false;
             if (computer.CertificateId == -1) return false;
-            var compPreventShutdownGroups = _uow.ComputerRepository.GetComputerPreventShutdownGroups(computerId);
+            var compPreventShutdownGroups = ctx.Uow.ComputerRepository.GetComputerPreventShutdownGroups(computerId);
             if (compPreventShutdownGroups.Count > 0) return true; //computer is in a prevent shutdown group continue on
-            var socket = _uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            var socket = ctx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
             if (socket != null)
             {
-                var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCertEntity = ctx.Uow.CertificateRepository.GetById(computer.CertificateId);
                 var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ctx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
                 var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
                 var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
@@ -221,22 +221,23 @@ namespace Toems_ServiceCore.Workflows
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Reboot";
                 socketRequest.message = delay;
-                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+                //todo - fix
+                //new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
             }
             return true;
         }
 
         private bool Shutdown(int computerId, string delay)
         {
-            var computer = _uow.ComputerRepository.GetById(computerId);
+            var computer = ctx.Uow.ComputerRepository.GetById(computerId);
             if (computer == null) return false;
             if (computer.CertificateId == -1) return false;
-            var compPreventShutdownGroups = _uow.ComputerRepository.GetComputerPreventShutdownGroups(computerId);
+            var compPreventShutdownGroups = ctx.Uow.ComputerRepository.GetComputerPreventShutdownGroups(computerId);
             if (compPreventShutdownGroups.Count > 0) return true; //computer is in a prevent shutdown group continue on
-            var socket = _uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
+            var socket = ctx.Uow.ActiveSocketRepository.GetFirstOrDefault(x => x.ComputerId == computer.Id);
             if (socket != null)
             {
-                var deviceCertEntity = _uow.CertificateRepository.GetById(computer.CertificateId);
+                var deviceCertEntity = ctx.Uow.CertificateRepository.GetById(computer.CertificateId);
                 var deviceCert = new X509Certificate2(deviceCertEntity.PfxBlob, ctx.Encryption.DecryptText(deviceCertEntity.Password), X509KeyStorageFlags.Exportable);
                 var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
                 var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
@@ -244,7 +245,8 @@ namespace Toems_ServiceCore.Workflows
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Shutdown";
                 socketRequest.message = delay;
-                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+                //todo - fix
+                //new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
             }
             return true;
         }

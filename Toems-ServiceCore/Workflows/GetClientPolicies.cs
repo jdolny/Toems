@@ -12,8 +12,6 @@ namespace Toems_ServiceCore.Workflows
 {
     public class GetClientPolicies(ServiceContext ctx)
     {
-
-        private readonly UnitOfWork _uow = new();
         
 
         public DtoTriggerResponse Execute(DtoPolicyRequest policyRequest, int? computerId=null)
@@ -24,9 +22,9 @@ namespace Toems_ServiceCore.Workflows
 
             EntityComputer computer = null;
             if(computerId != null)
-                computer = _uow.ComputerRepository.GetFirstOrDefault(x => x.Id == computerId);
+                computer = ctx.Uow.ComputerRepository.GetFirstOrDefault(x => x.Id == computerId);
             else if(policyRequest.ClientIdentity.Guid != null)
-                computer = _uow.ComputerRepository.GetFirstOrDefault(x => x.Guid == policyRequest.ClientIdentity.Guid);
+                computer = ctx.Uow.ComputerRepository.GetFirstOrDefault(x => x.Guid == policyRequest.ClientIdentity.Guid);
 
             if (computer == null) return null;
 
@@ -46,7 +44,7 @@ namespace Toems_ServiceCore.Workflows
                 ctx.Computer.UpdateComputer(computer);
             }
 
-            var groupMemberships = _uow.GroupRepository.GetMembershipsForClientPolicy(computer.Id);
+            var groupMemberships = ctx.Uow.GroupRepository.GetMembershipsForClientPolicy(computer.Id);
             if (policyRequest.UserLogins != null)
             {
                 var userLoginsResult = ctx.UserLogins.AddOrUpdate(policyRequest.UserLogins, computer.Id);
@@ -83,7 +81,7 @@ namespace Toems_ServiceCore.Workflows
                 if (p.PolicyComCondition == EnumPolicy.PolicyComCondition.Any)
                     continue;
 
-                var policyComServers = _uow.PolicyRepository.GetPolicyComServerUrls(p.Id);
+                var policyComServers = ctx.Uow.PolicyRepository.GetPolicyComServerUrls(p.Id);
                 if (!policyComServers.Contains(policyRequest.CurrentComServer.ToLower()))
                     toRemoveByComServer.Add(p);
             }

@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Dto.client;
@@ -28,8 +27,8 @@ namespace Toems_ServiceCore.Workflows
 
         public byte [] RunAllServers(DtoIsoGenOptions isoOptions)
         {
-            var uow = new UnitOfWork();
-            var tftpComServers = uow.ClientComServerRepository.Get(x => x.IsTftpServer);
+
+            var tftpComServers = ctx.Uow.ClientComServerRepository.Get(x => x.IsTftpServer);
             EntityClientComServer tftpInfoServer;
             if (tftpComServers.Count == 0)
             {
@@ -53,28 +52,29 @@ namespace Toems_ServiceCore.Workflows
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
-            var result = new APICall().ClientComServerApi.GenerateISO(tftpInfoServer.Url, "", decryptedKey,isoOptions);
+            //todo - fix
+            //var result = new APICall().ClientComServerApi.GenerateISO(tftpInfoServer.Url, "", decryptedKey,isoOptions);
 
-            return result;
+            //return result;
+            return null;
 
         }
 
         public byte[] Create(DtoIsoGenOptions isoOptions)
         {
-            var uow = new UnitOfWork();
             _isoOptions = isoOptions;
             _isoOptions.arguments += $" display_sleep_time={ctx.Setting.GetSettingValue(SettingStrings.LieSleepTime)} ";
             _isoOptions.arguments += $" {ctx.Setting.GetSettingValue(SettingStrings.GlobalImagingArguments)} ";
             var mode = ctx.Setting.GetSettingValue(SettingStrings.PxeBootloader);
             var imageServers = new List<DtoClientComServers>();
-            var defaultCluster = uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
+            var defaultCluster = ctx.Uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
             if(isoOptions.clusterId == -1)
             {
-               imageServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
+               imageServers = ctx.Uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
             }
             else
             {
-                imageServers = uow.ComServerClusterServerRepository.GetImagingClusterServers(isoOptions.clusterId);
+                imageServers = ctx.Uow.ComServerClusterServerRepository.GetImagingClusterServers(isoOptions.clusterId);
             }
 
             if(imageServers == null)

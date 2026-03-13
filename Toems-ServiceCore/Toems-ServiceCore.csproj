@@ -13,16 +13,16 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Toems-ApiCalls\Toems-ApiCalls.csproj" />
-      <ProjectReference Include="..\Toems-Common\Toems-Common.csproj" />
-      <ProjectReference Include="..\Toems-DataModel\Toems-DataModel.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
       <PackageReference Include="log4net" Version="3.2.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.14" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.14" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.14">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
       <PackageReference Include="QrCode.Net" Version="0.4.0" />
       <PackageReference Include="QRCoder" Version="1.7.0" />
       <PackageReference Include="RoboSharp" Version="1.6.2" />
@@ -33,6 +33,10 @@
       <PackageReference Include="TwoFactorAuth.Net" Version="1.4.0" />
       <PackageReference Include="WixToolset.Dtf.WindowsInstaller" Version="6.0.2" />
       <PackageReference Include="YamlDotNet.NetCore" Version="1.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="ManagementAPI\" />
     </ItemGroup>
 
 </Project>

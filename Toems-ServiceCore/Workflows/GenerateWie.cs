@@ -2,7 +2,6 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Dto.client;
@@ -21,7 +20,6 @@ namespace Toems_ServiceCore.Workflows
         private string _basePath;
         private DtoWieConfig _config;
         private EntityWieBuild _wieBuild = new();
-        private UnitOfWork _uow = new();
         private DtoActionResult _result = new();
 
 
@@ -48,8 +46,8 @@ namespace Toems_ServiceCore.Workflows
             if (StartProcess())
             {
                 _wieBuild.Status = "Running";
-                _uow.WieBuildRepository.Insert(_wieBuild);
-                _uow.Save();
+                ctx.Uow.WieBuildRepository.Insert(_wieBuild);
+                ctx.Uow.Save();
                 _result.Success = true;
             }
             return _result;
@@ -153,7 +151,7 @@ namespace Toems_ServiceCore.Workflows
                 }
             }
 
-            var comServer = _uow.ClientComServerRepository.Get().FirstOrDefault();
+            var comServer = ctx.Uow.ClientComServerRepository.Get().FirstOrDefault();
 
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
@@ -166,7 +164,8 @@ namespace Toems_ServiceCore.Workflows
                     Directory.CreateDirectory(destination);
                 }
                 catch { }
-                new APICall().WieBuildApi.GetWinPeDriver(file, destination + "\\" + file.FileName,comServer.Url,"",decryptedKey);
+                //todo - fix
+                //new APICall().WieBuildApi.GetWinPeDriver(file, destination + "\\" + file.FileName,comServer.Url,"",decryptedKey);
 
                 var extension = Path.GetExtension(file.FileName);
                 var name = Path.GetFileNameWithoutExtension(file.FileName);

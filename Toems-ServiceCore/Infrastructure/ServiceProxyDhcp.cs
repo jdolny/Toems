@@ -7,13 +7,12 @@ namespace Toems_ServiceCore.Infrastructure
 {
     public class ServiceProxyDhcp(ServiceContext ctx)
     {
-        private UnitOfWork _uow = new();
         
         public DtoTftpServer GetAllTftpServers()
         {
             var tftpDto = new DtoTftpServer();
             tftpDto.TftpServers = new List<string>();
-            var comServers = _uow.ClientComServerRepository.Get(x => x.IsTftpServer);
+            var comServers = ctx.Uow.ClientComServerRepository.Get(x => x.IsTftpServer);
             foreach (var com in comServers)
             {
                 tftpDto.TftpServers.Add(com.TftpInterfaceIp);
@@ -26,7 +25,7 @@ namespace Toems_ServiceCore.Infrastructure
         {
             var tftpDto = new DtoTftpServer();
             tftpDto.TftpServers = new List<string>();
-            var computer = _uow.ComputerRepository.Get(x => x.ImagingMac.ToUpper().Equals(mac.ToUpper())).FirstOrDefault();
+            var computer = ctx.Uow.ComputerRepository.Get(x => x.ImagingMac.ToUpper().Equals(mac.ToUpper())).FirstOrDefault();
             var comServers = ctx.GetCompTftpServers.Run(computer.Id);
             foreach (var com in comServers)
             {
@@ -40,14 +39,14 @@ namespace Toems_ServiceCore.Infrastructure
         {
             var bootClientReservation = new DtoProxyReservation();
 
-            var computer = _uow.ComputerRepository.Get(x => x.ImagingMac.ToUpper().Equals(mac.ToUpper())).FirstOrDefault();
+            var computer = ctx.Uow.ComputerRepository.Get(x => x.ImagingMac.ToUpper().Equals(mac.ToUpper())).FirstOrDefault();
             if (computer == null)
             {
                 bootClientReservation.BootFile = "NotFound";
                 return bootClientReservation;
             }
             var computerGroupMemberships = ctx.Computer.GetAllGroupMemberships(computer.Id);
-            var computerGroups = _uow.ComputerRepository.GetAllComputerGroups(computer.Id).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
+            var computerGroups = ctx.Uow.ComputerRepository.GetAllComputerGroups(computer.Id).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
 
             if (computerGroups.Count == 0)
             {

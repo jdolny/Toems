@@ -13,24 +13,24 @@ namespace Toems_ServiceCore.EntityServices
     {
         public List<DtoComputerUserLogins> GetUserLogins(string searchString)
         {
-            return new ReportRepository().GetUserLogins(searchString);
+            return ctx.Uow.ReportRepository.GetUserLogins(searchString);
         }
 
         public DataSet GetInventory(List<DtoCustomComputerQuery> queries)
         {
             var sql = ctx.BuildReportSqlQuery.Run(queries);
             if(sql == null) return null;
-            return new RawSqlRepository().ExecuteReader(sql);
+            return ctx.Uow.RawSqlRepository.ExecuteReader(sql);
         }
 
         public DataSet GetSqlQueryReport(DtoApiStringResponse sql)
         {
-            return new RawSqlRepository().ExecuteCustomSqlReportReader(sql.Value);
+            return ctx.Uow.RawSqlRepository.ExecuteCustomSqlReportReader(sql.Value);
         }
         
         public DtoApiStringResponse GetCheckinCounts()
         {
-            var uow = new UnitOfWork();
+
             var currentTime = DateTime.Now;
             var hourMinus1 = currentTime - TimeSpan.FromHours(1);
             var hourMinus2 = currentTime - TimeSpan.FromHours(2);
@@ -47,29 +47,29 @@ namespace Toems_ServiceCore.EntityServices
 
             var sb = new StringBuilder();
 
-            sb.Append(uow.ComputerRepository.Count(x => x.LastCheckinTime >= hourMinus1));
+            sb.Append(ctx.Uow.ComputerRepository.Count(x => x.LastCheckinTime >= hourMinus1));
             sb.Append(",");
-            sb.Append(uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus2) && x.LastCheckinTime <= hourMinus1));
+            sb.Append(ctx.Uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus2) && x.LastCheckinTime <= hourMinus1));
             sb.Append(",");
-            sb.Append(uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus3) && x.LastCheckinTime <= hourMinus2));
+            sb.Append(ctx.Uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus3) && x.LastCheckinTime <= hourMinus2));
             sb.Append(",");
-            sb.Append(uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus4) && x.LastCheckinTime <= hourMinus3));
+            sb.Append(ctx.Uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus4) && x.LastCheckinTime <= hourMinus3));
             sb.Append(",");
-            sb.Append(uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus5) && x.LastCheckinTime <= hourMinus4));
+            sb.Append(ctx.Uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus5) && x.LastCheckinTime <= hourMinus4));
             sb.Append(",");
-            sb.Append(uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus6) && x.LastCheckinTime <= hourMinus5));
+            sb.Append(ctx.Uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus6) && x.LastCheckinTime <= hourMinus5));
             sb.Append(",");
-            sb.Append(uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus7) && x.LastCheckinTime <= hourMinus6));
+            sb.Append(ctx.Uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus7) && x.LastCheckinTime <= hourMinus6));
             sb.Append(",");
-            sb.Append(uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus8) && x.LastCheckinTime <= hourMinus7));
+            sb.Append(ctx.Uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus8) && x.LastCheckinTime <= hourMinus7));
             sb.Append(",");
-            sb.Append(uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus9) && x.LastCheckinTime <= hourMinus8));
+            sb.Append(ctx.Uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus9) && x.LastCheckinTime <= hourMinus8));
             sb.Append(",");
-            sb.Append(uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus10) && x.LastCheckinTime <= hourMinus9));
+            sb.Append(ctx.Uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus10) && x.LastCheckinTime <= hourMinus9));
             sb.Append(",");
-            sb.Append(uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus11) && x.LastCheckinTime <= hourMinus10));
+            sb.Append(ctx.Uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus11) && x.LastCheckinTime <= hourMinus10));
             sb.Append(",");
-            sb.Append(uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus12) && x.LastCheckinTime <= hourMinus11));
+            sb.Append(ctx.Uow.ComputerRepository.Count(x => (x.LastCheckinTime >= hourMinus12) && x.LastCheckinTime <= hourMinus11));
 
             var response = new DtoApiStringResponse();
             response.Value = sb.ToString();
@@ -81,8 +81,8 @@ namespace Toems_ServiceCore.EntityServices
             if (ctx.Setting.GetSettingValue(SettingStrings.SmtpEnabled) != "1")
                 return true;
 
-            var uow = new UnitOfWork();
-            var computers = uow.ComputerRepository.Get(x => x.ProvisionStatus == EnumProvisionStatus.Status.Provisioned);
+
+            var computers = ctx.Uow.ComputerRepository.Get(x => x.ProvisionStatus == EnumProvisionStatus.Status.Provisioned);
             if (computers.Count == 0) return true;
 
             var sb = new StringBuilder();
@@ -91,7 +91,7 @@ namespace Toems_ServiceCore.EntityServices
             foreach (var computer in computers)
             {
                 var localComputer = computer;
-                var hdds = uow.HardDriveInventoryRepository.Get(x => x.ComputerId == localComputer.Id);
+                var hdds = ctx.Uow.HardDriveInventoryRepository.Get(x => x.ComputerId == localComputer.Id);
                 foreach (var hdd in hdds)
                 {
                     if (!hdd.Status.ToLower().Equals("ok"))
@@ -105,7 +105,7 @@ namespace Toems_ServiceCore.EntityServices
             if (!errorsFound) return true;
 
             var emailList = new List<string>();
-            var users = uow.UserRepository.Get();
+            var users = ctx.Uow.UserRepository.Get();
             foreach (var user in users)
             {
                 if (user.Membership.Equals("Administrator"))
@@ -138,7 +138,7 @@ namespace Toems_ServiceCore.EntityServices
             if (ctx.Setting.GetSettingValue(SettingStrings.SmtpEnabled) != "1")
                 return true;
 
-            var uow = new UnitOfWork();
+
 
             var sb = new StringBuilder();
             var errorsFound = false;
@@ -157,7 +157,7 @@ namespace Toems_ServiceCore.EntityServices
             if (!errorsFound) return true;
 
             var emailList = new List<string>();
-            var users = uow.UserRepository.Get();
+            var users = ctx.Uow.UserRepository.Get();
             foreach (var user in users)
             {
                 if (user.Membership.Equals("Administrator"))

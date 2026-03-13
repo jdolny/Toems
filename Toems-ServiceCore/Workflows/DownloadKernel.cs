@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -15,15 +14,15 @@ namespace Toems_ServiceCore.Workflows
         
         public bool RunAllServers(DtoOnlineKernel onlineKernel)
         {
-            var uow = new UnitOfWork();
-            var comServers = uow.ClientComServerRepository.Get(x => x.IsTftpServer);
+            var comServers = ctx.Uow.ClientComServerRepository.Get(x => x.IsTftpServer);
 
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
             var NoErrors = true;
             foreach (var com in comServers)
             {
-                if (!new APICall().ClientComServerApi.DownloadKernel(com.Url, "", decryptedKey, onlineKernel))
+                //todo - fix
+                //if (!new APICall().ClientComServerApi.DownloadKernel(com.Url, "", decryptedKey, onlineKernel))
                     NoErrors = false;
             }
 

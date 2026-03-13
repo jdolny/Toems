@@ -10,16 +10,15 @@ namespace Toems_ServiceCore.Workflows
 
         public List<EntityClientComServer> Run(int computerId)
         {
-            var uow = new UnitOfWork();
-            var defaultCluster = uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
+            var defaultCluster = ctx.Uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
             var computerGroupMemberships = ctx.Computer.GetAllGroupMemberships(computerId);
-            var computerGroups = uow.ComputerRepository.GetAllComputerGroups(computerId).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
+            var computerGroups = ctx.Uow.ComputerRepository.GetAllComputerGroups(computerId).OrderBy(x => x.ImagingPriority).ThenBy(x => x.Name).ToList();
             List<int> tftpServerIds = new List<int>();
 
             if (computerGroups.Count() == 0)
             {
                 //use default
-                var clusterTftpServers = uow.ComServerClusterServerRepository.GetTftpClusterServers(defaultCluster.Id);
+                var clusterTftpServers = ctx.Uow.ComServerClusterServerRepository.GetTftpClusterServers(defaultCluster.Id);
                 if (clusterTftpServers != null)
                 {
                     if (clusterTftpServers.Count > 0)
@@ -35,7 +34,7 @@ namespace Toems_ServiceCore.Workflows
                     //check if assigned cluster has any tftp servers, if not, go to next group
                     if (group.ClusterId == -1)
                         group.ClusterId = defaultCluster.Id;
-                    var clusterTftpServers = uow.ComServerClusterServerRepository.GetTftpClusterServers(group.ClusterId);
+                    var clusterTftpServers = ctx.Uow.ComServerClusterServerRepository.GetTftpClusterServers(group.ClusterId);
                     if (clusterTftpServers != null)
                     {
                         if (clusterTftpServers.Count > 0)
@@ -50,7 +49,7 @@ namespace Toems_ServiceCore.Workflows
                 {
                     //no groups with a tftp server found for this computer, use default cluster
                     //use default
-                    var clusterTftpServers = uow.ComServerClusterServerRepository.GetTftpClusterServers(defaultCluster.Id);
+                    var clusterTftpServers = ctx.Uow.ComServerClusterServerRepository.GetTftpClusterServers(defaultCluster.Id);
                     if (clusterTftpServers != null)
                     {
                         if (clusterTftpServers.Count > 0)
@@ -65,7 +64,7 @@ namespace Toems_ServiceCore.Workflows
             var listComServers = new List<EntityClientComServer>();
             foreach (var comServerId in tftpServerIds)
             {
-                var comServer = uow.ClientComServerRepository.GetById(comServerId);
+                var comServer = ctx.Uow.ClientComServerRepository.GetById(comServerId);
                 listComServers.Add(comServer);
             }
 

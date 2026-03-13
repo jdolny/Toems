@@ -145,12 +145,6 @@
     <Compile Include="AuthorizationAPI.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Toems-Common\Toems-Common.csproj">
-      <Project>{6ead11e1-3464-40a1-b6cd-24d40ad2507a}</Project>
-      <Name>Toems-Common</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

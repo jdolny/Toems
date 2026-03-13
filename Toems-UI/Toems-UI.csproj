@@ -11,16 +11,22 @@
 
   <ItemGroup>
     <PackageReference Include="log4net" Version="3.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.14" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="MudBlazor" Version="8.*" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
     <PackageReference Include="RestSharp" Version="112.1.0" />
+    <PackageReference Include="Scrutor" Version="7.0.0" />
   </ItemGroup>
 
 
   <ItemGroup>
-    <ProjectReference Include="..\Toems-Common\Toems-Common.csproj" />
     <ProjectReference Include="..\Toems-ServiceCore\Toems-ServiceCore.csproj" />
   </ItemGroup>
 
@@ -92,6 +98,7 @@
     <Compile Remove="Services\ApiCalls\WuModuleAPI.cs" />
     <Compile Remove="Services\ApiCalls\IAPICall.cs" />
     <Compile Remove="Services\ApiCalls\ClientAPI.cs" />
+    <Compile Remove="Services\LocalAuthStateProvider.cs" />
   </ItemGroup>
 
 
@@ -1168,5 +1175,11 @@
 
   <ItemGroup>
     <Folder Include="Site\Pages\Images\Profiles\Actions\" />
+    <Folder Include="Site\Pages\Shared\" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Content Remove="Site\Authorize.razor" />
   </ItemGroup>
 </Project>

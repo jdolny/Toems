@@ -519,13 +519,14 @@ namespace Toems_ApiCalls
         
         public async Task<string> GetTokenAsync()
         {
+            return "";
             try
             {
-                var authStateResult = await _protectedLocalStorage.GetAsync<AuthState>("authState");
-                var claims = authStateResult.Value.Claims.Select(c => new Claim(c.Type, c.Value));
-                var token = claims.Where(x => x.Type.Equals("AccessToken", StringComparison.InvariantCultureIgnoreCase)).Select(x => x.Value).FirstOrDefault();
+                //var authStateResult = await _protectedLocalStorage.GetAsync<AuthState>("authState");
+                //var claims = authStateResult.Value.Claims.Select(c => new Claim(c.Type, c.Value));
+                //var token = claims.Where(x => x.Type.Equals("AccessToken", StringComparison.InvariantCultureIgnoreCase)).Select(x => x.Value).FirstOrDefault();
                 
-                return token;
+                //return token;
             }
             catch (Exception ex)
             {

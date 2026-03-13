@@ -21,7 +21,6 @@ namespace Toems_ServiceCore.Workflows
             _task = task;
             _comServers = comServers;
             _random = new Random();
-            _uow = new UnitOfWork();
             
             var comServerId = -1;
             //Find best com server to use

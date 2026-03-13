@@ -197,9 +197,8 @@ namespace Toems_ServiceCore.Workflows
             {
                 rootOu.ParentId = "0";
                 rootOu.Description = "Imported from Active Directory";
-                var uow = new UnitOfWork();
-                uow.GroupRepository.Update(rootOu, rootOu.Id);
-                uow.Save();
+                ctx.Uow.GroupRepository.Update(rootOu, rootOu.Id);
+                ctx.Uow.Save();
             }
         }
 

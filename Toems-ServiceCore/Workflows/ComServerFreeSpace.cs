@@ -1,5 +1,4 @@
-﻿using Toems_ApiCalls;
-using Toems_Common;
+﻿using Toems_Common;
 using Toems_Common.Dto;
 using Toems_DataModel;
 using Toems_ServiceCore.Infrastructure;
@@ -12,8 +11,7 @@ namespace Toems_ServiceCore.Workflows
     {
         public List<DtoFreeSpace> RunAllServers()
         {
-            var uow = new UnitOfWork();
-            var comServers = uow.ClientComServerRepository.Get();
+            var comServers = ctx.Uow.ClientComServerRepository.Get();
            
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
@@ -22,7 +20,8 @@ namespace Toems_ServiceCore.Workflows
             foreach (var com in comServers)
             {
                 var free = new DtoFreeSpace();
-                free = new APICall().ClientComServerApi.GetFreeSpace(com.Url, "", decryptedKey);
+                //todo - fix
+                //free = new APICall().ClientComServerApi.GetFreeSpace(com.Url, "", decryptedKey);
 
                 if (free == null) {
                     ctx.Log.Error("Com server returned null for status. Check your com server URL!");

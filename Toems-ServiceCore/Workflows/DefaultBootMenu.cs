@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -27,16 +26,16 @@ namespace Toems_ServiceCore.Workflows
         {
             _defaultBoot = defaultBootMenu;
 
-
-            var uow = new UnitOfWork();
-            var comServers = uow.ClientComServerRepository.Get(x => x.IsTftpServer);
+            
+            var comServers = ctx.Uow.ClientComServerRepository.Get(x => x.IsTftpServer);
 
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
             var NoErrors = true;
             foreach (var com in comServers)
             {
-                if (!new APICall().ClientComServerApi.CreateDefaultBootMenu(com.Url, "", decryptedKey, defaultBootMenu))
+                //todo - fix
+                //if (!new APICall().ClientComServerApi.CreateDefaultBootMenu(com.Url, "", decryptedKey, defaultBootMenu))
                     NoErrors = false;
             }
 
@@ -65,8 +64,8 @@ namespace Toems_ServiceCore.Workflows
             
             _globalComputerArgs = ctx.Setting.GetSettingValue(SettingStrings.GlobalImagingArguments);
             _globalComputerArgs += $" display_sleep_time={ctx.Setting.GetSettingValue(SettingStrings.LieSleepTime)} ";
-            var defaultCluster = new UnitOfWork().ComServerClusterRepository.Get(x => x.IsDefault).FirstOrDefault();
-            var defaultImagingServers = new UnitOfWork().ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
+            var defaultCluster = ctx.Uow.ComServerClusterRepository.Get(x => x.IsDefault).FirstOrDefault();
+            var defaultImagingServers = ctx.Uow.ComServerClusterServerRepository.GetImagingClusterServers(defaultCluster.Id);
 
             _webPath = "\"";
 
@@ -257,7 +256,7 @@ namespace Toems_ServiceCore.Workflows
 
         private void CreateIpxeMenu(int defaultClusterId)
         {
-            var defaultTftpServers = new UnitOfWork().ComServerClusterServerRepository.GetTftpClusterServers(defaultClusterId);
+            var defaultTftpServers = ctx.Uow.ComServerClusterServerRepository.GetTftpClusterServers(defaultClusterId);
             var iPxePath = _thisComServer.Url;
             if (iPxePath.Contains("https://")) 
             {

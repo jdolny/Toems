@@ -10,7 +10,6 @@ namespace Toems_ServiceCore.Infrastructure
 {
     public class ServiceMsiUpdater(ServiceContext ctx)
     {
-        private readonly UnitOfWork _uow = new();
         private string _comServers;
         private string _thumbprint;
         private string _serverKey;
@@ -133,7 +132,7 @@ namespace Toems_ServiceCore.Infrastructure
 
         private bool GetMsiArgs()
         {
-            var certEntity = _uow.CertificateRepository.GetFirstOrDefault(x => x.Type == EnumCertificate.CertificateType.Authority);
+            var certEntity = ctx.Uow.CertificateRepository.GetFirstOrDefault(x => x.Type == EnumCertificate.CertificateType.Authority);
             if (certEntity == null) return false;
             var pfx = new X509Certificate2(certEntity.PfxBlob, ctx.Encryption.DecryptText(certEntity.Password), X509KeyStorageFlags.Exportable);
             _thumbprint = pfx.Thumbprint;
@@ -141,12 +140,12 @@ namespace Toems_ServiceCore.Infrastructure
             var provisionKeyEncrypted = ctx.Setting.GetSettingValue(SettingStrings.ProvisionKeyEncrypted);
             _serverKey = ctx.Encryption.DecryptText(provisionKeyEncrypted);
 
-            var defaultCluster = _uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
-            var clusterServers = _uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == defaultCluster.Id);
+            var defaultCluster = ctx.Uow.ComServerClusterRepository.GetFirstOrDefault(x => x.IsDefault);
+            var clusterServers = ctx.Uow.ComServerClusterServerRepository.Get(x => x.ComServerClusterId == defaultCluster.Id);
             _comServers = "";
             foreach (var s in clusterServers)
             {
-                var comServer = _uow.ClientComServerRepository.GetById(s.ComServerId);
+                var comServer = ctx.Uow.ClientComServerRepository.GetById(s.ComServerId);
                 _comServers += comServer.Url + ",";
             }
             _comServers = _comServers.Trim(',');

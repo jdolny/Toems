@@ -17,10 +17,7 @@ namespace Toems_ServiceCore.Workflows
         private string _manifestDownloadUrl;
         private EntityWingetManifestDownload _manifestDownload = new();
         private string _basePath;
-
-
-        private UnitOfWork _uow = new();
-
+        
         public void Run(string path = null)
         {
             ctx.Log.Info("Starting Winget Manifest Import Process");
@@ -52,7 +49,7 @@ namespace Toems_ServiceCore.Workflows
         private void ClearTables()
         {
             ctx.Log.Info("Clearing Tables");
-            new ServiceRawSql().ExecuteQuery("truncate winget_installer_manifests;truncate winget_locale_manifests;truncate winget_version_manifests;");
+            ctx.RawSql.ExecuteQuery("truncate winget_installer_manifests;truncate winget_locale_manifests;truncate winget_version_manifests;");
         }
 
         private bool CleanupFiles()
@@ -286,10 +283,10 @@ namespace Toems_ServiceCore.Workflows
                
                 if(counter % 500 == 0 || counter == allFiles.Count())
                 {
-                    _uow.WingetInstallerManifestRepository.InsertRange(listOfInstallers);
-                    _uow.WingetVersionManifestRepository.InsertRange(listOfVersions);
-                    _uow.WingetLocaleManifestRepository.InsertRange(listOfLocales);
-                    _uow.Save();
+                    ctx.Uow.WingetInstallerManifestRepository.InsertRange(listOfInstallers);
+                    ctx.Uow.WingetVersionManifestRepository.InsertRange(listOfVersions);
+                    ctx.Uow.WingetLocaleManifestRepository.InsertRange(listOfLocales);
+                    ctx.Uow.Save();
                     listOfInstallers.Clear();
                     listOfVersions.Clear();
                     listOfLocales.Clear();

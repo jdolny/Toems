@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using log4net;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -18,9 +17,10 @@ namespace Toems_ServiceCore.Workflows
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
-
-            var pid = new APICall().ClientComServerApi.StartUdpSender(comServer.Url, "", decryptedKey, mArgs);
-            return pid;
+            //todo - fix
+            //var pid = new APICall().ClientComServerApi.StartUdpSender(comServer.Url, "", decryptedKey, mArgs);
+            //return pid;
+            return 0;
         }
 
         public int GenerateProcessArguments(DtoMulticastArgs mArgs)

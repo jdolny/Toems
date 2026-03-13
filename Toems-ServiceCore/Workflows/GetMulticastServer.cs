@@ -16,7 +16,6 @@ namespace Toems_ServiceCore.Workflows
         {
             _group = group;
             _random = new Random();
-            _uow = new UnitOfWork();
             
             //Find the best multicast server to use
 

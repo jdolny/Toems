@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Newtonsoft.Json;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_ServiceCore.Infrastructure;
@@ -44,7 +43,9 @@ namespace Toems_ServiceCore.EntityServices
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
-            return new APICall().ClientComServerApi.VerifyRemoteAccessInstalled(comServer.Url, "", decryptedKey);
+            //todo - fix
+            //return new APICall().ClientComServerApi.VerifyRemoteAccessInstalled(comServer.Url, "", decryptedKey);
+            return false;
         }
 
         public DtoActionResult InitializeRemotelyServer(int comServerId)
@@ -71,8 +72,9 @@ namespace Toems_ServiceCore.EntityServices
                     break;
             }
 
-            var response = new APICall().RemoteAccessApi.CreateRemotelyFirstUser(comServer.RemoteAccessUrl, remotelyUser);
-
+            //todo - fix
+            //var response = new APICall().RemoteAccessApi.CreateRemotelyFirstUser(comServer.RemoteAccessUrl, remotelyUser);
+            string response = null;
             if (response == null)
             {
                 return new DtoActionResult { Success = false, ErrorMessage = "Unknown Error While Initializing The Remote Access Server.  Check The Logs." };
@@ -126,10 +128,12 @@ namespace Toems_ServiceCore.EntityServices
                 return "Error: No Remote Access Com Servers Were Found";
             }
             var auth = ctx.Encryption.DecryptText(comServer.RaAuthHeaderEncrypted);
-            var response = new APICall().RemoteAccessApi.RemotelyUpdateWebRtc(comServer.RemoteAccessUrl, deviceId,rtcMode, auth);
-            var result = response.Replace("\"", "");
-            result = result.Replace("\\", "");
-            return result;
+            //todo - fix
+            //var response = new APICall().RemoteAccessApi.RemotelyUpdateWebRtc(comServer.RemoteAccessUrl, deviceId,rtcMode, auth);
+            //var result = response.Replace("\"", "");
+            //result = result.Replace("\\", "");
+            //return result;
+            return null;
         }
 
         public string IsWebRtcEnabled(string deviceId)
@@ -144,10 +148,12 @@ namespace Toems_ServiceCore.EntityServices
                 return "Error: No Remote Access Com Servers Were Found";
             }
             var auth = ctx.Encryption.DecryptText(comServer.RaAuthHeaderEncrypted);
-            var response = new APICall().RemoteAccessApi.RemotelyIsWebRtcEnabled(comServer.RemoteAccessUrl, deviceId, auth);
-            var result = response.Replace("\"", "");
-            result = result.Replace("\\", "");
-            return result;
+            //todo - fix
+            //var response = new APICall().RemoteAccessApi.RemotelyIsWebRtcEnabled(comServer.RemoteAccessUrl, deviceId, auth);
+            //var result = response.Replace("\"", "");
+            //result = result.Replace("\\", "");
+            //return result;
+            return null;
         }
 
         public string IsDeviceOnline(string deviceId)
@@ -162,10 +168,12 @@ namespace Toems_ServiceCore.EntityServices
                 return "Error: No Remote Access Com Servers Were Found";
             }
             var auth = ctx.Encryption.DecryptText(comServer.RaAuthHeaderEncrypted);
-            var response = new APICall().RemoteAccessApi.RemotelyIsDeviceOnline(comServer.RemoteAccessUrl, deviceId, auth);
-            var result = response.Replace("\"", "");
-            result = result.Replace("\\", "");
-            return result;
+            //todo - fix
+            //var response = new APICall().RemoteAccessApi.RemotelyIsDeviceOnline(comServer.RemoteAccessUrl, deviceId, auth);
+            //var result = response.Replace("\"", "");
+            //result = result.Replace("\\", "");
+            //return result;
+            return null;
         }
 
         public string GetRemoteControlUrl(string deviceId)
@@ -181,10 +189,12 @@ namespace Toems_ServiceCore.EntityServices
             }
 
             var auth = ctx.Encryption.DecryptText(comServer.RaAuthHeaderEncrypted);
-            var response = new APICall().RemoteAccessApi.GetRemoteUrl(comServer.RemoteAccessUrl, deviceId, auth);
-            var result = response.Replace("\"", "");
-            result = result.Replace("\\", "");
-            return result;
+            //todo - fix
+            //var response = new APICall().RemoteAccessApi.GetRemoteUrl(comServer.RemoteAccessUrl, deviceId, auth);
+            //var result = response.Replace("\"", "");
+            //result = result.Replace("\\", "");
+            //return result;
+            return null;
 
         }
 
@@ -245,7 +255,9 @@ namespace Toems_ServiceCore.EntityServices
             }
 
             //check connection to remotely api
-            var status = new APICall().RemoteAccessApi.RemotelyStatus(comServer.RemoteAccessUrl);
+            //todo - fix
+            //var status = new APICall().RemoteAccessApi.RemotelyStatus(comServer.RemoteAccessUrl);
+            string status = null;
             if(status == null)
                 return new DtoActionResult() { ErrorMessage = "Could Not Contact Remote Access API" };
             status = status.Replace("\"", "");
@@ -257,7 +269,9 @@ namespace Toems_ServiceCore.EntityServices
 
             //check api connection with auth header, should return false with fake device id
             var auth = ctx.Encryption.DecryptText(comServer.RaAuthHeaderEncrypted);
-            var online = new APICall().RemoteAccessApi.RemotelyIsDeviceOnline(comServer.RemoteAccessUrl, "abc", auth);
+            //todo - fix
+            //var online = new APICall().RemoteAccessApi.RemotelyIsDeviceOnline(comServer.RemoteAccessUrl, "abc", auth);
+            string online = null;
             if(online == null)
                 return new DtoActionResult() { ErrorMessage = "Remote Access API Unauthorized" };
             online = online.Replace("\"", "");

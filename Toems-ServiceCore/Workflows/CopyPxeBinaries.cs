@@ -1,5 +1,4 @@
-﻿using Toems_ApiCalls;
-using Toems_Common;
+﻿using Toems_Common;
 using Toems_Common.Entity;
 using Toems_DataModel;
 using Toems_ServiceCore.EntityServices;
@@ -40,16 +39,16 @@ namespace Toems_ServiceCore.Workflows
 
         public bool RunAllServers()
         {
-         
-            var uow = new UnitOfWork();
-            var comServers = uow.ClientComServerRepository.Get(x => x.IsTftpServer);
+            
+            var comServers = ctx.Uow.ClientComServerRepository.Get(x => x.IsTftpServer);
            
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
             var NoErrors = true;
             foreach (var com in comServers)
             {
-                if (!new APICall().ClientComServerApi.CopyPxeBinaries(com.Url, "", decryptedKey))
+                //todo - fix
+                //if (!new APICall().ClientComServerApi.CopyPxeBinaries(com.Url, "", decryptedKey))
                     NoErrors = false;
             }
 

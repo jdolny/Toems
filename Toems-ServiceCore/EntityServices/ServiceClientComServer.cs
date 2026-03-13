@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -279,7 +278,9 @@ namespace Toems_ServiceCore.EntityServices
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
-            return new APICall().ClientComServerApi.GetReplicationProcesses(comServer.Url, "", decryptedKey);
+            //todo - fix
+            //return new APICall().ClientComServerApi.GetReplicationProcesses(comServer.Url, "", decryptedKey);
+            return null;
         }
 
         public bool KillProcess(int comServerId, int pid)
@@ -288,8 +289,9 @@ namespace Toems_ServiceCore.EntityServices
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
-            return new APICall().ClientComServerApi.KillProcess(comServer.Url, "", decryptedKey,pid);
-
+            //todo - fix
+            //return new APICall().ClientComServerApi.KillProcess(comServer.Url, "", decryptedKey,pid);
+            return false;
         }
 
         public string GetBootFileText(string path, int comServerId)
@@ -297,7 +299,10 @@ namespace Toems_ServiceCore.EntityServices
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
             var comServer = GetServer(comServerId);
-            return new APICall().ClientComServerApi.ReadBootFileText(comServer.Url, "", decryptedKey,path);
+            
+            //todo - fix
+            //return new APICall().ClientComServerApi.ReadBootFileText(comServer.Url, "", decryptedKey,path);
+            return null;
         }
 
         public bool EditBootFileText(DtoCoreScript script)
@@ -305,7 +310,10 @@ namespace Toems_ServiceCore.EntityServices
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
             var comServer = GetServer(script.ComServerId);
-            return new APICall().ClientComServerApi.EditBootFileText(comServer.Url, "", decryptedKey,script);
+            
+            //todo - fix
+            //return new APICall().ClientComServerApi.EditBootFileText(comServer.Url, "", decryptedKey,script);
+            return false;
         }
 
 

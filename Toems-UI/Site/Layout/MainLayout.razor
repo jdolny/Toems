@@ -1,9 +1,12 @@
 ﻿@inherits LayoutComponentBase
-@inject LocalAuthStateProvider AuthStateProvider
+
 @using System.Timers
+@using Microsoft.AspNetCore.Identity
+@using Toems_ServiceCore.Data
+@using Toems_UI.Services
 @inject IJSRuntime JS
 @implements IAsyncDisposable
-<Authorize/>
+
 <MudThemeProvider Theme="@_theme" IsDarkMode="IsDarkMode" />
 <MudPopoverProvider />
 <MudDialogProvider />
@@ -19,7 +22,7 @@
         <MudIconButton Icon="@Icons.Material.Filled.Help" Color="Color.Default" />
         <MudMenu>
             <ActivatorContent>
-                <MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Primary">@_currentUser</MudChip>
+                <MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Primary">@CurrentUser?.Email</MudChip>
             </ActivatorContent>
             <ChildContent>
                 <MudMenuItem Label="Profile" />
@@ -90,6 +93,9 @@
 </div>
 
 @code {
+    [CascadingParameter]
+    public AppUser? CurrentUser { get; set; }
+    
     public string PageTitle { get; set; } = "";
     public List<BreadcrumbItem> Breadcrumbs { get; set; } = new();
 
@@ -123,13 +129,15 @@
     }
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        _currentUser = user.Identity?.Name ?? string.Empty;
-        var expiresAt = await AuthStateProvider.GetTokenExpiration();
-        TokenExpiration = DateTimeOffset.FromUnixTimeSeconds(expiresAt).UtcDateTime;
+        //_currentUser = (await CurrentUser.GetUser())?.Email;
         
+        //var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        //var user = authState.User;
+        //_currentUser = user.Identity?.Name ?? string.Empty;
+        //var expiresAt = await AuthStateProvider.GetTokenExpiration();
+        //TokenExpiration = DateTimeOffset.FromUnixTimeSeconds(expiresAt).UtcDateTime;
 
+        /*
         CountdownTimer = new Timer(1000);
         CountdownTimer.Elapsed += async (_, _) =>
         {
@@ -144,11 +152,12 @@
             }
             catch (JSDisconnectedException)
             {
-                IsCircuitActive = false; 
+                IsCircuitActive = false;
             }
         };
         CountdownTimer.AutoReset = true;
         CountdownTimer.Start();
+        */
     }
     
     protected override void OnInitialized()

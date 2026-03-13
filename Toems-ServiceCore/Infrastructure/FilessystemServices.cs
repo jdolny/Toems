@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography;
 using log4net;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -126,7 +125,9 @@ namespace Toems_ServiceCore.Infrastructure
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
-            return new APICall().ClientComServerApi.GetComServerLogContents(comServer.Url, "", decryptedKey, name, limit);
+            //todo - fix
+            //return new APICall().ClientComServerApi.GetComServerLogContents(comServer.Url, "", decryptedKey, name, limit);
+            return null;
         }
         
         public bool FileExists(string filePath)
@@ -446,7 +447,9 @@ namespace Toems_ServiceCore.Infrastructure
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
-            return new APICall().ClientComServerApi.GetComServerLogs(comServer.Url, "", decryptedKey);
+            //todo - fix
+            //return new APICall().ClientComServerApi.GetComServerLogs(comServer.Url, "", decryptedKey);
+            return null;
         }
 
         public List<string> GetLogs()

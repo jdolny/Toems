@@ -1323,7 +1323,7 @@ namespace Toems_ServiceCore.Infrastructure
                 return "false";
             }
 
-            var profile = new UnitOfWork().ImageProfileRepository.GetImageProfileWithImage(profileId);
+            var profile = ctx.Uow.ImageProfileRepository.GetImageProfileWithImage(profileId);
 
             var basePath = thisComServer.LocalStoragePath;
             var path = basePath + "images" + Path.DirectorySeparatorChar +
@@ -1357,7 +1357,7 @@ namespace Toems_ServiceCore.Infrastructure
                 ctx.Log.Error($"Com Server With Guid {comGuid} Not Found");
                 return "false";
             }
-            var profile = new UnitOfWork().ImageProfileRepository.GetImageProfileWithImage(profileId);
+            var profile = ctx.Uow.ImageProfileRepository.GetImageProfileWithImage(profileId);
 
             var basePath = thisComServer.LocalStoragePath;
             var path = Path.Combine(basePath, "images", profile.Image.Name, $"hd{ hdNumber}");

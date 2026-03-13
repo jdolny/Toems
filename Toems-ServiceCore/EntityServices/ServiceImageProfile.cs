@@ -31,12 +31,11 @@ namespace Toems_ServiceCore.EntityServices
         {
             var imageProfile = ctx.Uow.ImageProfileRepository.GetById(imageProfileId);
             var originalName = imageProfile.Name;
-            using (var uow = new UnitOfWork())
-            {
+
                 for (var c = 1; c <= 100; c++)
                 {
                     var newProfileName = imageProfile.Name + "_" + c;
-                    if (uow.ImageProfileRepository.Exists(h => h.Name == newProfileName))
+                    if (ctx.Uow.ImageProfileRepository.Exists(h => h.Name == newProfileName))
                         continue;
 
                     var clonedProfile = imageProfile;
@@ -67,7 +66,7 @@ namespace Toems_ServiceCore.EntityServices
                     }
                     break;
                 }
-            }
+            
         }
 
         public DtoActionResult Delete(int imageProfileId)

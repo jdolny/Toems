@@ -1,4 +1,4 @@
-﻿@inject LocalAuthStateProvider AuthStateProvider
+﻿
 
     <MudNavMenu Color="Color.Primary" Bordered="true"  Class="mt-2"  >
         
@@ -67,7 +67,7 @@
 @code {
     private async Task HandleLogout()
     {
-        await AuthStateProvider.LogoutAsync();
+        //await AuthStateProvider.LogoutAsync();
     }
     
     

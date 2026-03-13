@@ -140,7 +140,7 @@ namespace Toems_ServiceCore.EntityServices
         {
             var sql = ctx.BuildSqlQuery.Run(queries);
             if(sql == null) return null;
-            return new RawSqlRepository().ExecuteReader(sql);
+            return ctx.Uow.RawSqlRepository.ExecuteReader(sql);
         }
 
 
@@ -454,15 +454,7 @@ namespace Toems_ServiceCore.EntityServices
             return ctx.Uow.GroupCategoryRepository.Get(x => x.GroupId == groupId);
         }
 
-        public List<DtoProcessWithTime> GetGroupProcessTimes(DateTime dateCutoff, int limit, int groupId)
-        {
-            return new ReportRepository().GetTopProcessTimesForGroup(dateCutoff, limit, groupId);
-        }
-
-        public List<DtoProcessWithCount> GetGroupProcessCounts(DateTime dateCutoff, int limit, int groupId)
-        {
-            return new ReportRepository().GetTopProcessCountsForGroup(dateCutoff, limit,groupId);
-        }
+    
 
         public int StartGroupUnicast(int groupId, int userId)
         {

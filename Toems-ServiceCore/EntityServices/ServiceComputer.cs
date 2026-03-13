@@ -1,26 +1,30 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Dto.client;
 using Toems_Common.Entity;
 using Toems_Common.Enum;
 using Toems_DataModel;
+using Toems_ServiceCore.Data;
 using Toems_ServiceCore.Infrastructure;
 using Toems_ServiceCore.Workflows;
 
 namespace Toems_ServiceCore.EntityServices
 {
-    public class ServiceComputer(ServiceContext ctx)
+    public class ServiceComputer(ServiceContext ctx, IToemsDbFactory toemsDbFactory)
     {
         public List<EntityComputer> GetComputers()
         {
             return ctx.Uow.ComputerRepository.Get();
         }
         
-        public List<EntityComputer> SearchComputers(DtoComputerFilter filter, int userId)
+        public async Task<List<EntityComputer>> SearchComputers(DtoComputerFilter filter, int userId)
         {
+            await using var sparcDb = await toemsDbFactory.CreateDbContextAsync();
+            return sparcDb.Computers.ToList();
+            
+            
             if(filter.Categories == null) filter.Categories = new List<string>();
             var categoryFilterIds = filter.Categories
                    .Select(catName => ctx.Uow.CategoryRepository.GetFirstOrDefault(x => x.Name.Equals(catName)))
@@ -260,7 +264,7 @@ namespace Toems_ServiceCore.EntityServices
         {
             var list = new List<EntityClientComServer>();
             var computer = GetComputer(computerId);
-            var result = new GetCompEmServers().Run(computer.Guid);
+            var result = ctx.GetCompEmServers.Run(computer.Guid);
             foreach(var r in result)
             {
                 list.Add(ctx.Uow.ClientComServerRepository.GetById(r.ComServerId));
@@ -372,7 +376,8 @@ namespace Toems_ServiceCore.EntityServices
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Message";
                 socketRequest.message = JsonConvert.SerializeObject(message);
-                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+                //todo - fix
+                //new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
             }
             return true;
         }
@@ -392,7 +397,8 @@ namespace Toems_ServiceCore.EntityServices
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Start_Remote_Control";
-                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+                //todo - fix
+                //new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
             }
             return true;
         }
@@ -412,7 +418,8 @@ namespace Toems_ServiceCore.EntityServices
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "System_Uptime";
-                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+                //todo - fix
+                //new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
             }
             return true;
         }
@@ -438,7 +445,8 @@ namespace Toems_ServiceCore.EntityServices
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Run_Module";
                 socketRequest.message = JsonConvert.SerializeObject(clientPolicy);
-                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+                //todo - fix
+                //new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
             }
             return true;
         }
@@ -459,7 +467,8 @@ namespace Toems_ServiceCore.EntityServices
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Force_Checkin";
-                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+                //todo - fix
+                //new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
             }
             return true;
         }
@@ -479,7 +488,8 @@ namespace Toems_ServiceCore.EntityServices
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Collect_Inventory";
-                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey,socketRequest);
+                //todo - fix
+                //new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey,socketRequest);
             }
 
             return true;
@@ -500,7 +510,8 @@ namespace Toems_ServiceCore.EntityServices
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Current_Users";
-                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+                //todo - fix
+                //new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
             }
             return true;
         }
@@ -520,7 +531,8 @@ namespace Toems_ServiceCore.EntityServices
                 var socketRequest = new DtoSocketRequest();
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Get_Status";
-                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+                //todo - fix
+                //new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
             }
             return true;
 
@@ -542,7 +554,8 @@ namespace Toems_ServiceCore.EntityServices
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "Logs";
                 socketRequest.message = "Service.log";
-                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+                //todo - fix
+                //new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
             }
             return true;
 
@@ -780,21 +793,7 @@ namespace Toems_ServiceCore.EntityServices
             return ctx.Uow.AssetAttachmentRepository.GetComputerAttachments(computerId);
         }
 
-        public List<DtoProcessWithTime> GetComputerProcessTimes(DateTime dateCutoff, int limit, int computerId)
-        {
-            return new ReportRepository().GetTopProcessTimesForComputer(dateCutoff, limit, computerId);
-        }
-
-        public List<DtoProcessWithCount> GetComputerProcessCounts(DateTime dateCutoff, int limit, int computerId)
-        {
-            return new ReportRepository().GetTopProcessCountsForComputer(dateCutoff, limit, computerId);
-        }
-
-        public List<DtoProcessWithUser> GetAllProcessForComputer(DateTime dateCutoff, int limit, int computerId)
-        {
-            return new ReportRepository().GetAllProcessForComputer(dateCutoff, limit, computerId);
-        }
-
+     
         public bool IsComputerActive(int computerId)
         {
             return ctx.Uow.ActiveImagingTaskRepository.Exists(a => a.ComputerId == computerId);
@@ -827,7 +826,7 @@ namespace Toems_ServiceCore.EntityServices
             var counter = 0;
             while (counter < 10)
             {
-                var socketResult = new UnitOfWork().ComputerRepository.GetById(computerId);
+                var socketResult = ctx.Uow.ComputerRepository.GetById(computerId);
                 if (socketResult == null)
                 {
                     counter++;
@@ -878,7 +877,8 @@ namespace Toems_ServiceCore.EntityServices
                 socketRequest.connectionIds.Add(socket.ConnectionId);
                 socketRequest.action = "WinPE_Image";
                 socketRequest.message = JsonConvert.SerializeObject(clientPolicy);
-                new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
+                //todo - fix
+                //new APICall().ClientComServerApi.SendAction(socket.ComServer, "", decryptedKey, socketRequest);
             }
             return "Success";
         }

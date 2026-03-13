@@ -16,7 +16,6 @@ namespace Toems_ServiceCore.Workflows
         private EntityActiveImagingTask _activeTask;
         private ImageProfileWithImage _imageProfile;
         private EntityGroup _group;
-        private UnitOfWork _uow = new();
 
         public void InitSingle(int computerId, string direction, int userId)
         {

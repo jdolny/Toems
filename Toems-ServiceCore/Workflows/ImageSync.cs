@@ -1,5 +1,4 @@
 ﻿using RoboSharp;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
@@ -30,7 +29,6 @@ namespace Toems_ServiceCore.Workflows
 
         private bool ToCom()
         {
-            var uow = new UnitOfWork();
             var imagesToReplicate = new List<EntityImage>();
             ctx.Log.Info("Starting Image Replication To Com Servers");
             if (!ctx.Setting.GetSettingValue(SettingStrings.StorageType).Equals("SMB")) 
@@ -45,7 +43,7 @@ namespace Toems_ServiceCore.Workflows
             }
 
             //find all images that need copied from SMB share to com servers
-            var completedImages = uow.ImageRepository.Get(x => !string.IsNullOrEmpty(x.LastUploadGuid));
+            var completedImages = ctx.Uow.ImageRepository.Get(x => !string.IsNullOrEmpty(x.LastUploadGuid));
             if (completedImages == null)
             {
                 ctx.Log.Info("No Images Found To Replicate");
@@ -106,7 +104,7 @@ namespace Toems_ServiceCore.Workflows
 
             //find com servers that need this image
 
-            var comServers = uow.ClientComServerRepository.Get(x => x.IsImagingServer && x.ReplicateStorage);
+            var comServers = ctx.Uow.ClientComServerRepository.Get(x => x.IsImagingServer && x.ReplicateStorage);
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
             var comImageList = new List<DtoRepImageCom>();
@@ -126,7 +124,7 @@ namespace Toems_ServiceCore.Workflows
                     }
                     else if (image.ReplicationMode == Toems_Common.Enum.EnumImageReplication.ReplicationType.Selective)
                     {
-                        var imageReplicationServers = uow.ImageReplicationServerRepository.Get(x => x.ImageId == image.Id && x.ComServerId == com.Id);
+                        var imageReplicationServers = ctx.Uow.ImageReplicationServerRepository.Get(x => x.ImageId == image.Id && x.ComServerId == com.Id);
                         if (!imageReplicationServers.Any())
                         {
                             ctx.Log.Debug("Image is not set to replicate to this com server, skipping");
@@ -135,14 +133,16 @@ namespace Toems_ServiceCore.Workflows
                     }
                     else if (image.ReplicationMode == Toems_Common.Enum.EnumImageReplication.ReplicationType.GlobalDefault && globalReplicationMode == "Selective")
                     {
-                        var imageReplicationServers = uow.DefaultImageReplicationServerRepository.Get(x => x.ComServerId == com.Id);
+                        var imageReplicationServers = ctx.Uow.DefaultImageReplicationServerRepository.Get(x => x.ComServerId == com.Id);
                         if (!imageReplicationServers.Any())
                         {
                             ctx.Log.Debug("Image is not set to replicate to this com server, skipping");
                             continue;
                         }
                     }
-                    var hasImage = new APICall().ClientComServerApi.CheckImageExists(com.Url, "", decryptedKey, image.Id);
+                    //todo - fix
+                    //var hasImage = new APICall().ClientComServerApi.CheckImageExists(com.Url, "", decryptedKey, image.Id);
+                    bool hasImage = false;
                     if (hasImage)
                     {
                         ctx.Log.Debug("Com server already has this image, skipping.");
@@ -177,7 +177,8 @@ namespace Toems_ServiceCore.Workflows
 
                 var comServer = ctx.ClientComServer.GetServer(comServerId);
                 ctx.Log.Info("Starting Robocopy on " + comServer.DisplayName);
-                new APICall().ClientComServerApi.SyncSmbToCom(comServer.Url, "", decryptedKey, thisComImageList);
+                //todo - fix
+                //new APICall().ClientComServerApi.SyncSmbToCom(comServer.Url, "", decryptedKey, thisComImageList);
                 ctx.Log.Info("Finished Image Replication on " + comServer.DisplayName);
             }
             return true;
@@ -185,7 +186,6 @@ namespace Toems_ServiceCore.Workflows
 
         private bool FromCom()
         {
-            var uow = new UnitOfWork();
             var imagesToReplicate = new List<EntityImage>();
             ctx.Log.Info("Starting Image Replication From Com Servers To SMB Share");
             if (!ctx.Setting.GetSettingValue(SettingStrings.StorageType).Equals("SMB")) return true;
@@ -195,7 +195,7 @@ namespace Toems_ServiceCore.Workflows
                 return true; //Don't need to sync images when direct to smb is used.
             }
             //find all images that need copied from com servers to the SMB share
-            var completedImages = uow.ImageRepository.Get(x => !string.IsNullOrEmpty(x.LastUploadGuid));
+            var completedImages = ctx.Uow.ImageRepository.Get(x => !string.IsNullOrEmpty(x.LastUploadGuid));
             if (completedImages == null)
             {
                 ctx.Log.Info("No Images Found To Replicate");
@@ -268,7 +268,7 @@ namespace Toems_ServiceCore.Workflows
 
             //find com servers with the image to replicate
 
-            var comServers = uow.ClientComServerRepository.Get(x => x.IsImagingServer && x.ReplicateStorage);
+            var comServers = ctx.Uow.ClientComServerRepository.Get(x => x.IsImagingServer && x.ReplicateStorage);
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
 
@@ -278,7 +278,9 @@ namespace Toems_ServiceCore.Workflows
             {
                 foreach (var com in comServers)
                 {
-                    var hasImage = new APICall().ClientComServerApi.CheckImageExists(com.Url, "", decryptedKey, image.Id);
+                    //todo - fix
+                    //var hasImage = new APICall().ClientComServerApi.CheckImageExists(com.Url, "", decryptedKey, image.Id);
+                    bool hasImage = false;
                     if (hasImage)
                     {
                         if (!comImageDict.ContainsKey(image.Id))
@@ -301,7 +303,8 @@ namespace Toems_ServiceCore.Workflows
 
                 var comServer = ctx.ClientComServer.GetServer(comServerId);
                 ctx.Log.Info("Starting Robocopy on " + comServer.DisplayName);
-                new APICall().ClientComServerApi.SyncComToSmb(comServer.Url, "", decryptedKey, thisComImageList);
+                //todo - fix
+                //new APICall().ClientComServerApi.SyncComToSmb(comServer.Url, "", decryptedKey, thisComImageList);
                 ctx.Log.Info("Image Sync to SMB Share Complete");
             }
             return true;

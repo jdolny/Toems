@@ -1,5 +1,4 @@
 ﻿using RoboSharp;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_DataModel;
 using Toems_ServiceCore.EntityServices;
@@ -20,16 +19,16 @@ namespace Toems_ServiceCore.Workflows
                 ctx.Log.Info("A Replication process is already in progress.");
                 return true;
             }
-
-            var uow = new UnitOfWork();
-            var comServers = uow.ClientComServerRepository.Get(x => x.ReplicateStorage);
+            
+            var comServers = ctx.Uow.ClientComServerRepository.Get(x => x.ReplicateStorage);
            
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
             foreach (var com in comServers)
             {
                 ctx.Log.Info("Replicating Storage To Com Server, images will be replicated after this task. " + com.DisplayName);
-                new APICall().ClientComServerApi.SyncStorage(com.Url, "", decryptedKey);
+                //todo - fix
+                //new APICall().ClientComServerApi.SyncStorage(com.Url, "", decryptedKey);
                 ctx.Log.Info("Finished Replicating Storage To Com Server " + com.DisplayName);
             }
 

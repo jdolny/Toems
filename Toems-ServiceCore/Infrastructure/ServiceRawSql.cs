@@ -2,18 +2,12 @@
 
 namespace Toems_ServiceCore.Infrastructure
 {
-    public class ServiceRawSql
+    public class ServiceRawSql(ServiceContext ctx)
     {
-        private readonly RawSqlRepository _rawSqlRepository;
-
-        public ServiceRawSql()
-        {
-            _rawSqlRepository = new RawSqlRepository();
-        }
 
         public int ExecuteQuery(string query)
         {
-            return _rawSqlRepository.Execute(query);
+            return ctx.Uow.RawSqlRepository.Execute(query);
         }
     }
 }

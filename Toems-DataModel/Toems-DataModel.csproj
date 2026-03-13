@@ -112,35 +112,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActiveImagingTaskRepository.cs" />
-    <Compile Include="WingetLocaleRepository.cs" />
-    <Compile Include="AssetGroupRepository.cs" />
-    <Compile Include="CustomAttributeRepository.cs" />
-    <Compile Include="AssetRepository.cs" />
-    <Compile Include="ComputerRepository.cs" />
-    <Compile Include="ComServerClusterServersRepository.cs" />
-    <Compile Include="ImageProfileRepository.cs" />
-    <Compile Include="PolicyHistoryRepository.cs" />
-    <Compile Include="ModuleRepository.cs" />
-    <Compile Include="GroupRepository.cs" />
-    <Compile Include="PolicyRepository.cs" />
-    <Compile Include="GroupPolicyRepository.cs" />
-    <Compile Include="ToemsDbContext.cs" />
-    <Compile Include="AssetAttachmentRepository.cs" />
-    <Compile Include="ToemsUserRepository.cs" />
-    <Compile Include="GenericRepository.cs" />
-    <Compile Include="IGenericRepository.cs" />
-    <Compile Include="IUnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReportRepository.cs" />
-    <Compile Include="RawSqlRepository.cs" />
-    <Compile Include="UnitOfWork.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Toems-Common\Toems-Common.csproj">
-      <Project>{6ead11e1-3464-40a1-b6cd-24d40ad2507a}</Project>
-      <Name>Toems-Common</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

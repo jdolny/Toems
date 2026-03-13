@@ -1,5 +1,4 @@
 ﻿using log4net;
-using Toems_ApiCalls;
 using Toems_Common;
 using Toems_Common.Entity;
 using Toems_DataModel;
@@ -18,16 +17,16 @@ namespace Toems_ServiceCore.Workflows
 
         public bool RunAllServers(EntityComputer computer)
         {
-
-            var uow = new UnitOfWork();
-            var comServers = uow.ClientComServerRepository.Get(x => x.IsTftpServer);
+            
+            var comServers = ctx.Uow.ClientComServerRepository.Get(x => x.IsTftpServer);
 
             var intercomKey = ctx.Setting.GetSettingValue(SettingStrings.IntercomKeyEncrypted);
             var decryptedKey = ctx.Encryption.DecryptText(intercomKey);
             var NoErrors = true;
             foreach (var com in comServers)
             {
-                if (!new APICall().ClientComServerApi.CleanTaskBootFiles(com.Url, "", decryptedKey, computer))
+                //todo - fix
+                //if (!new APICall().ClientComServerApi.CleanTaskBootFiles(com.Url, "", decryptedKey, computer))
                     NoErrors = false;
             }
 
@@ -43,7 +42,7 @@ namespace Toems_ServiceCore.Workflows
             if (!string.IsNullOrEmpty(_computer.ImagingMac))
                 _listOfMacs.Add(StringManipulationServices.MacToPxeMac(_computer.ImagingMac));
 
-            var computerMacs = new UnitOfWork().NicInventoryRepository.Get(x => x.ComputerId == computer.Id && x.Type.Equals("Ethernet")).Select(x => x.Mac).ToList();
+            var computerMacs = ctx.Uow.NicInventoryRepository.Get(x => x.ComputerId == computer.Id && x.Type.Equals("Ethernet")).Select(x => x.Mac).ToList();
             foreach (var mac in computerMacs)
             {
                 _listOfMacs.Add(StringManipulationServices.MacToPxeMac(mac));
