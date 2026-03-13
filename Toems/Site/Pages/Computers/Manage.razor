@@ -116,7 +116,7 @@
     private readonly DtoComputerFilter _computerFilter = new();
     private readonly List<DtoColumnDefinition> UserDefinedColumns = [];
     
-    private IEnumerable<string> _selectedCategories = new HashSet<string> {  };
+    private IReadOnlyCollection<string> _selectedCategories = new HashSet<string> {  };
     private HashSet<EntityComputer> _selectedComputers = []; 
     private string? _selectedCategoryType = "Any Category";
     private string? _computerSelection = "Active";
@@ -194,7 +194,7 @@
         return LoadComputers();
     }
     
-    private Task OnCategoryChanged(IEnumerable<string> selection)
+    private Task OnCategoryChanged(IReadOnlyCollection<string> selection)
     {
         _selectedCategories = selection;
         return LoadComputers();

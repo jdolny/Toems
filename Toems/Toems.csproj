@@ -1,34 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Toems</RootNamespace>
     <AssemblyName>Toems</AssemblyName>
+    <LangVersion>14</LangVersion>
   </PropertyGroup>
 
 
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
     <PackageReference Include="log4net" Version="3.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.14" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.14" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.14" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.14">
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MudBlazor" Version="8.*" />
+    <PackageReference Include="MudBlazor" Version="9.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
     <PackageReference Include="QRCoder" Version="1.7.0" />
-    <PackageReference Include="RestSharp" Version="112.1.0" />
+    <PackageReference Include="RestSharp" Version="114.0.0" />
     <PackageReference Include="RoboSharp" Version="1.6.2" />
     <PackageReference Include="Scrutor" Version="7.0.0" />
-    <PackageReference Include="System.DirectoryServices" Version="9.0.14" />
-    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="9.0.14" />
-    <PackageReference Include="System.Management" Version="9.0.9" />
+    <PackageReference Include="System.DirectoryServices" Version="10.0.5" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="10.0.5" />
+    <PackageReference Include="System.Management" Version="10.0.5" />
     <PackageReference Include="TwoFactorAuth.Net" Version="1.4.0" />
     <PackageReference Include="WixToolset.Dtf.WindowsInstaller" Version="6.0.2" />
     <PackageReference Include="YamlDotNet.NetCore" Version="1.0.0" />

@@ -89,7 +89,7 @@
 @code {
     private IEnumerable<ImageWithDate> Images = new List<ImageWithDate>();
     private IEnumerable<EntityCategory> Categories = new List<EntityCategory>();
-    private IEnumerable<string> _selectedCategories = new HashSet<string> {  };
+    private IReadOnlyCollection<string> _selectedCategories = new HashSet<string> {  };
     private readonly DtoSearchFilterCategories _imageFilter = new();
     private HashSet<ImageWithDate> _selectedImages = []; 
     private string? _selectedCategoryType = "Any Category";
@@ -141,7 +141,7 @@
         return LoadImages();
     }
     
-    private Task OnCategoryChanged(IEnumerable<string> selection)
+    private Task OnCategoryChanged(IReadOnlyCollection<string> selection)
     {
         _selectedCategories = selection;
         return LoadImages();
