@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2050
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toems-UI", "Toems-UI\Toems-UI.csproj", "{9778FA8C-21F3-4D41-ACDE-EB5B9106FFC2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toems-ServiceCore", "Toems-ServiceCore\Toems-ServiceCore.csproj", "{C6881996-DC88-455A-8227-0F9655C4A5CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toems", "Toems\Toems.csproj", "{9778FA8C-21F3-4D41-ACDE-EB5B9106FFC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,14 +21,6 @@ Global
 		{9778FA8C-21F3-4D41-ACDE-EB5B9106FFC2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9778FA8C-21F3-4D41-ACDE-EB5B9106FFC2}.Release|x64.ActiveCfg = Release|Any CPU
 		{9778FA8C-21F3-4D41-ACDE-EB5B9106FFC2}.Release|x64.Build.0 = Release|Any CPU
-		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Debug|x64.Build.0 = Debug|Any CPU
-		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Release|x64.ActiveCfg = Release|Any CPU
-		{C6881996-DC88-455A-8227-0F9655C4A5CD}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

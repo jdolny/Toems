@@ -1,0 +1,92 @@
+﻿@using Toems_ApiCalls
+@using Toems_Common.Entity
+@using Toems_Common.Enum
+@using Toems.Site.Layout
+@layout MainLayout
+@inject APICall Call
+@inject ISnackbar Snackbar
+@inherits BaseComponent
+
+<ActionButtons InsertAtTop="true">
+    <MainButton>
+        <MudButton OnClick="UpdateAttributes">Update Custom Attributes</MudButton>
+    </MainButton>
+    <Content/>
+</ActionButtons>
+
+
+@if(!_definedAttributes.Any())  
+{
+    <MudText Typo="Typo.body2">No custom attributes have been defined.  You can define them at Global Properties.</MudText>
+}
+else
+{
+    <MudPaper Elevation="2" Class="pa-4">
+        <MudGrid>
+
+            @foreach (var customAttribute in _definedAttributes)
+            {
+                <MudItem xs="12" lg="6">
+                
+                    <MudTextField Label="@customAttribute.Name" Variant="Variant.Outlined" T="string" AutoGrow="@(customAttribute.TextMode == EnumCustomAttribute.TextMode.MultiLine)" 
+                                  Lines="@(customAttribute.TextMode == EnumCustomAttribute.TextMode.MultiLine ? 4 : 0)"  
+                                  Value="@_computerAttributes.FirstOrDefault(x => x.CustomAttributeId == customAttribute.Id)?.Value"
+                                  ValueChanged="@(value => UpdateValue(customAttribute.Id,value))"></MudTextField>
+                </MudItem>
+            }
+        </MudGrid>
+    </MudPaper>
+}
+
+@code {
+    [Parameter] public EntityComputer Computer { get; set; } = new();
+    private List<EntityCustomComputerAttribute> _computerAttributes = [];
+    private IEnumerable<EntityCustomAttribute> _definedAttributes = new List<EntityCustomAttribute>();
+
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Computer.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Computer.Name}", new ComputerBreadcrumbs(Computer.Name).CustomAttributes())) return;
+        _definedAttributes = await Call.CustomAttributeApi.GetForBuiltInComputers();
+        await LoadCustomAttributes();
+    }
+
+    private async Task LoadCustomAttributes()
+    {
+        if (!_definedAttributes.Any())
+            return;
+        _computerAttributes = await Call.ComputerApi.GetCustomAttributes(Computer.Id);
+    }
+
+    private async Task UpdateAttributes()
+    {
+        var result = await Call.CustomComputerAttributeApi.Post(_computerAttributes.ToList());
+        if (!result.Success)
+        {
+            Snackbar.Add($"Could not update custom attributes: {result.ErrorMessage}", Severity.Error);
+        }
+        else
+        {
+            Snackbar.Add($"Successfully updated custom attributes", Severity.Success);
+        }
+
+    }
+
+    private void UpdateValue(int customAttributeId, string value)
+    {
+        var attribute = _computerAttributes.FirstOrDefault(x => x.CustomAttributeId == customAttributeId);
+        if (attribute != null)
+        {
+            attribute.Value = value;
+        }
+        else
+        {
+            _computerAttributes.Add(new EntityCustomComputerAttribute
+            {
+                ComputerId = Computer.Id,
+                CustomAttributeId = customAttributeId,
+                Value = value
+            });
+        }
+    }
+}

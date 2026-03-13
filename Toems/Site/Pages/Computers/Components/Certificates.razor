@@ -1,0 +1,50 @@
+﻿@using Toems_ApiCalls
+@using Toems_Common.Entity
+@using Toems.Site.Layout
+@layout MainLayout
+@inject APICall Call
+@inherits BaseComponent
+<ActionButtons InsertAtTop="true">
+    <MainButton/>
+    <Content/>
+</ActionButtons>
+@if(!_certificates.Any())  
+{
+    <MudText Typo="Typo.body2">No certificates have been found.  Ensure an inventory scan has been run on this computer.</MudText>
+}
+else
+{
+    <MudDataGrid ShowMenuIcon="true" Hideable="true" RowsPerPage="@Constants.DefaultPageSize" Dense="true" HorizontalScrollbar="true" FixedFooter="true" FixedHeader="true" Striped="true" T="EntityCertificateInventory" Class="mb-2 full-data-grid" Elevation="5" Items="@_certificates" ColumnResizeMode="ResizeMode.Column" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+        <ToolBarContent>
+            <MudText Typo="Typo.h5" Color="Color.Primary">Computer Certificates</MudText>
+            <MudSpacer/>
+        </ToolBarContent>
+        <PagerContent><MudDataGridPager T="EntityCertificateInventory"/></PagerContent>
+        <Columns>
+            <PropertyColumn Property="x => x.FriendlyName" Title="Friendly Name"/>
+            <PropertyColumn Property="x => x.Subject" Title="Subject"/>
+            <PropertyColumn Property="x => x.Store" Title="Store"/>
+            <PropertyColumn Property="x => x.Issuer" Title="Issuer"/>
+            <PropertyColumn Property="x => x.NotBefore" Title="Not Before"/>
+            <PropertyColumn Property="x => x.NotAfter" Title="Not After"/>
+            <PropertyColumn Property="x => x.Serial" Title="Serial"/>
+            <PropertyColumn Property="x => x.Thumbprint" Title="Thumbprint"/>
+        </Columns>
+    </MudDataGrid>
+}
+
+@code {
+    [Parameter] public EntityComputer Computer { get; set; } = new();
+    private IEnumerable<EntityCertificateInventory> _certificates = new List<EntityCertificateInventory>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Computer.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Computer.Name}",new ComputerBreadcrumbs(Computer.Name).Certificates())) return;
+        await LoadCertificates();
+    }
+
+    private async Task LoadCertificates()
+    {
+        _certificates = await Call.ComputerApi.GetComputerCertificates(Computer.Id,"");
+    }
+}

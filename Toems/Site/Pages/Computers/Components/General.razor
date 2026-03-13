@@ -1,0 +1,145 @@
+﻿@using Toems_Common.Dto
+@using Toems_Common.Entity
+@using Toems.Site.Layout
+@inject Toems_ApiCalls.APICall Call
+@inject ISnackbar Snackbar
+@layout MainLayout
+@inherits BaseComponent
+
+<ActionButtons InsertAtTop="true">
+    <MainButton>
+        <MudButton OnClick="Update">Update Computer</MudButton>
+    </MainButton>
+    <Content>
+        <MudMenuItem Label="Clear Imaging Id" OnClick="ClearImagingId"/>
+    </Content>
+</ActionButtons>
+<MudPaper Elevation="2" Class="pa-4">
+<MudGrid>
+    <MudItem xs="12" lg="6">
+        <MudTextField Class="custom-label" Label="Computer Name" T="string" @bind-Value="@Computer.Name" Typo="Typo.body2" Variant="Variant.Outlined"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" lg="6">
+        <MudTextField Label="Description" T="string" AutoGrow="true" Lines="2" @bind-Value="@Computer.Description" Typo="Typo.body2" Variant="Variant.Outlined"></MudTextField>
+    </MudItem>
+
+
+    <MudItem xs="12" lg="6">
+        <MudTextField T="string" ReadOnly="true" Label="Identifier" Value="@(Computer.Guid ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" lg="6">
+        <MudTextField T="string" ReadOnly="true" Label="Synced From Active Directory" Value="@(Computer.IsAdSync ? Computer.IsAdSync.ToString() : "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+
+
+    <MudItem xs="12" lg="6">
+        <MudTextField Label="Active Directory GUID" T="string" Value="@(Computer.AdGuid ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text" ReadOnly="true"></MudTextField>
+        
+    </MudItem>
+    <MudItem xs="12" lg="6">
+        <MudTextField T="string" ReadOnly="true" Label="Active Directory Disabled" Value="@(Computer.AdDisabled ? Computer.AdDisabled.ToString() : "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+
+
+    <MudItem xs="12" lg="6">
+        <MudTextField T="string" ReadOnly="true" Label="Installation ID" Value="@(Computer.InstallationId ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" lg="6">
+        <MudTextField T="string" ReadOnly="true" Label="Hardware UUID" Value="@(Computer.UUID ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    
+    <MudItem xs="12" lg="6">
+        <MudTextField T="string" ReadOnly="true" Label="Provision Status" Value="@Computer.ProvisionStatus.ToString()" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" lg="6">
+        <MudTextField T="string" ReadOnly="true" Label="Provision Date" Value="@(Computer.ProvisionedTime.ToString("MM/dd/yyyy h:mm:ss tt"))" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    
+    <MudItem xs="12" lg="6">
+        <MudTextField T="string" ReadOnly="true" Label="Last Checkin" Value="@(Computer.LastCheckinTime.ToString("MM/dd/yyyy h:mm:ss tt"))" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" lg="6">
+        <MudTextField T="string" ReadOnly="true" Label="Last Known IP" Value="@(Computer.LastIp ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    
+    <MudItem xs="12" lg="6">
+        <MudTextField T="string" ReadOnly="true" Label="Client Version" Value="@(Computer.ClientVersion ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" lg="6">
+        <MudTextField T="string" ReadOnly="true" Label="Last Inventory Time" Value="@(Computer.LastInventoryTime.ToString("MM/dd/yyyy h:mm:ss tt"))" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+
+
+    <MudItem xs="12" lg="6">
+        <MudTextField T="string" ReadOnly="true" Label="Remote Access ID" Value="@(Computer.RemoteAccessId ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" lg="6">
+        <MudText Typo="Typo.caption">Remote Access WebRTC Status</MudText>
+        <MudToggleGroup T="string" SelectionMode="SelectionMode.SingleSelection" @bind-Value="_webRtc" Color="Color.Primary" CheckMark FixedContent Size="Size.Small" >
+            <MudToggleItem Value="@("1")" Text="Enabled" />
+            <MudToggleItem Value="@("2")" Text="Disabled" />
+        </MudToggleGroup>
+    </MudItem>
+
+
+    <MudItem xs="12" lg="6">
+ <MudTextField T="string" ReadOnly="true" Label="Primary Imaging MAC" Value="@(Computer.ImagingMac ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" lg="6">
+    <MudTextField T="string" ReadOnly="true" Label="Imaging Client ID" Value="@(Computer.ImagingClientId ?? "N/A")" Typo="Typo.body2" Variant="Variant.Text"></MudTextField>
+    </MudItem>
+</MudGrid>
+</MudPaper>
+
+
+
+@code {
+    [Parameter] public required EntityComputer Computer { get; set; }
+    private string _webRtc = "2";
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Computer.Id == 0 || ParametersSet || !SetTitleAndBreadcrumbs($"{Computer.Name}",new ComputerBreadcrumbs(Computer.Name).General())) return;
+        if (!string.IsNullOrEmpty(Computer.RemoteAccessId))
+        {
+            var webRtc = await Call.RemoteAccessApi.IsWebRtcEnabled(Computer.RemoteAccessId);
+            if (webRtc != null)
+            {
+                _webRtc = webRtc.Equals("true") ? "1" : "2";
+            }
+        }
+    }
+    
+    private async Task Update()
+    {
+        if (string.IsNullOrEmpty(Computer.Name))
+        {
+            Snackbar.Add("Computer name cannot be empty.", Severity.Error);
+            return;
+        }
+        if (!string.IsNullOrEmpty(Computer.RemoteAccessId))
+        {
+            var webRtc = new DtoWebRtc
+            {
+                DeviceId = Computer.RemoteAccessId,
+                Mode = _webRtc
+            };
+            await Call.RemoteAccessApi.UpdateWebRtc(webRtc);
+        }
+        
+        var result = await Call.ComputerApi.Put(Computer.Id,Computer);
+        if(result.Success)
+            Snackbar.Add("Computer updated successfully.", Severity.Success);
+        else
+            Snackbar.Add("Failed to update Computer.", Severity.Error);
+    }
+
+    private async Task ClearImagingId()
+    {
+        var result = await Call.ComputerApi.ClearImagingId(Computer.Id);
+        if(result.Success)
+            Snackbar.Add("Successfully cleared imaging id.", Severity.Success);
+        else
+            Snackbar.Add("Failed to clear imaging id.", Severity.Error);
+    }
+
+}
