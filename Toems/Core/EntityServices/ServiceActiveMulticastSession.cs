@@ -191,10 +191,10 @@ namespace Toems_ServiceCore.EntityServices
                 var user in
                     ctx.User.GetAll().Where(x => !string.IsNullOrEmpty(x.Email)))
             {
-                var rights = ctx.User.GetUserRights(user.Id).Select(right => right.Right).ToList();
+                var rights = ctx.User.GetUserRights(user.UserId).Select(right => right.Right).ToList();
                 if (rights.Any(right => right == AuthorizationStrings.EmailImagingTaskCompleted))
                 {
-                    if (session.UserId == user.Id)
+                    if (session.UserId == user.UserId)
                     {
                         await ctx.Mail.SendMailAsync(session.Name + " Multicast Task Has Completed.",user.Email, "Multicast Completed");
                     }

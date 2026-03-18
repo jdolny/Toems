@@ -115,7 +115,7 @@ namespace Toems_ServiceCore.EntityServices
                 }
                 else
                 {
-                    var rights = ctx.User.GetUserRights(user.Id).Select(right => right.Right).ToList();
+                    var rights = ctx.User.GetUserRights(user.UserId).Select(right => right.Right).ToList();
                     if (rights.Any(right => right == AuthorizationStrings.EmailSmart))
                     {
                         if (!string.IsNullOrEmpty(user.Email))
@@ -167,7 +167,7 @@ namespace Toems_ServiceCore.EntityServices
                 }
                 else
                 {
-                    var rights = ctx.User.GetUserRights(user.Id).Select(right => right.Right).ToList();
+                    var rights = ctx.User.GetUserRights(user.UserId).Select(right => right.Right).ToList();
                     if (rights.Any(right => right == AuthorizationStrings.EmailLowDiskSpace))
                     {
                         if (!string.IsNullOrEmpty(user.Email))

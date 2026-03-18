@@ -9,7 +9,7 @@ namespace Toems_ServiceCore.Infrastructure
         {
             var user =ctx.User.GetUser(userId);
             var _currentUserRights = ctx.User.GetEffectiveUserRights(userId).Select(right => right.Right).ToList();
-            if (ctx.User.IsAdmin(user.Id)) return true;
+            if (ctx.User.IsAdmin(user.UserId)) return true;
             return _currentUserRights.Any(right => right == requiredRight);
         }
     }

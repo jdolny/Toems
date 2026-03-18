@@ -4,6 +4,7 @@
 @using Toems_Common.Dto
 @using Toems_Common.Entity
 @using Toems_ServiceCore.Data
+@using Toems_ServiceCore.EntityServices
 @using Toems_ServiceCore.Infrastructure
 @using Toems_UI.Services.ControllerService
 @using Toems.Site.Pages.Computers.Actions
@@ -11,6 +12,7 @@
 @inject Toems_ApiCalls.APICall Call
 @inject NavigationManager Navigation
 @inject ComputerService ComputerService
+@inject ServiceComputer ServiceComputer
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 @inherits BasePage
@@ -171,7 +173,7 @@
                 break;
         }
         //Computers = await Call.ComputerApi.SearchComputers(_computerFilter);
-        Computers = await ComputerService.SearchComputers(_computerFilter);
+        Computers = await ServiceComputer.SearchComputers(_computerFilter,1);
         _isLoading = false;
     }
     

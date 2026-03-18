@@ -15,7 +15,7 @@ namespace Toems_DataModel
 
          public List<EntityComputer> SearchAllComputers(DtoComputerFilter filter, int userId, List<int> categoryIds)
         {
-            var user = _context.Users.FirstOrDefault(x => x.Id == userId);
+            var user = _context.Users.FirstOrDefault(x => x.UserId == userId);
             var sortMode = user?.ComputerSortMode == "Default"
                 ? _context.Settings.FirstOrDefault(x => x.Name == SettingStrings.ComputerSortMode)?.Value?.ToString() ?? "Last Checkin"
                 : user?.ComputerSortMode ?? "Last Checkin";
@@ -436,7 +436,7 @@ namespace Toems_DataModel
       //no longer used since Blazor UI
         public List<EntityComputer> SearchActiveComputers(DtoSearchFilterCategories filter, int userId)
         {
-            var user = _context.Users.FirstOrDefault(x => x.Id == userId);
+            var user = _context.Users.FirstOrDefault(x => x.UserId == userId);
             var sortMode = user?.ComputerSortMode == "Default"
                 ? _context.Settings.FirstOrDefault(x => x.Name == SettingStrings.ComputerSortMode)?.Value?.ToString() ?? "Last Checkin"
                 : user?.ComputerSortMode ?? "Last Checkin";

@@ -308,10 +308,10 @@ namespace Toems_ServiceCore.EntityServices
                 var user in
                     ctx.User.GetAll().Where(x => !string.IsNullOrEmpty(x.Email)))
             {
-                var rights = ctx.User.GetUserRights(user.Id).Select(right => right.Right).ToList();
+                var rights = ctx.User.GetUserRights(user.UserId).Select(right => right.Right).ToList();
                 if (rights.Any(right => right == AuthorizationStrings.EmailImagingTaskCompleted))
                 {
-                    if (task.UserId == user.Id)
+                    if (task.UserId == user.UserId)
                     {
                         await ctx.Mail.SendMailAsync(computer.Name + " Image Task Has Completed.",user.Email, "Task Completed");
                     }
@@ -328,10 +328,10 @@ namespace Toems_ServiceCore.EntityServices
                 var user in
                     ctx.User.GetAll().Where(x => !string.IsNullOrEmpty(x.Email)))
             {
-                var rights = ctx.User.GetUserRights(user.Id).Select(right => right.Right).ToList();
+                var rights = ctx.User.GetUserRights(user.UserId).Select(right => right.Right).ToList();
                 if (rights.Any(right => right == AuthorizationStrings.EmailImagingTaskFailed))
                 {
-                    if (task.UserId == user.Id)
+                    if (task.UserId == user.UserId)
                     {
                         if (computer == null)
                         {

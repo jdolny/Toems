@@ -35,13 +35,7 @@ namespace Toems_ServiceCore.EntityServices
                 if (s == null)
                     continue;
 
-                var computerProcess = new EntityComputerProcess();
-                computerProcess.ComputerId = computerId;
-                computerProcess.ProcessId = s.Id;
-                computerProcess.StartTimeUtc = Convert.ToDateTime(localApp.StartDateTime, CultureInfo.InvariantCulture);
-                computerProcess.CloseTimeUtc = Convert.ToDateTime(localApp.EndDateTime, CultureInfo.InvariantCulture);
-                computerProcess.Username = localApp.UserName;
-                ctx.Uow.ComputerProcessRepository.Insert(computerProcess);
+             
             }
             ctx.Uow.Save();
 

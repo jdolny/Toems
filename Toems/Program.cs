@@ -57,9 +57,10 @@ builder.Services.Scan(scan => scan
 builder.Services.AddControllers();
 
 builder.Services.AddDbContextFactory<ToemsDbContext>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("ToemsConnection"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("ToemsConnection"))));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("ToemsConnection")));
+        //.EnableSensitiveDataLogging()
+        //.LogTo(Console.WriteLine));
+
 
 builder.Services
     .AddIdentity<AppUser, IdentityRole>(options =>

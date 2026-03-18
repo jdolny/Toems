@@ -4,6 +4,7 @@ using Toems_Common;
 using Toems_Common.Dto;
 using Toems_Common.Entity;
 using Toems_DataModel;
+using Toems_ServiceCore.Data;
 using Toems_ServiceCore.Infrastructure;
 using TwoFactorAuthNet;
 
@@ -11,7 +12,7 @@ namespace Toems_ServiceCore.EntityServices
 {
     public class ServiceUser(ServiceContext ctx)
     {
-        public DtoActionResult AddUser(EntityToemsUser user)
+        public DtoActionResult AddUser(AppUser user)
         {
             user.ImagingToken = Guid.NewGuid().ToString("N").ToUpper() + Guid.NewGuid().ToString("N").ToUpper();
             var validationResult = ValidateUser(user, true);
@@ -21,7 +22,7 @@ namespace Toems_ServiceCore.EntityServices
                 ctx.Uow.UserRepository.Insert(user);
                 ctx.Uow.Save();
                 actionResult.Success = true;
-                actionResult.Id = user.Id;
+                actionResult.Id = user.UserId;
             }
             else
             {
@@ -44,7 +45,7 @@ namespace Toems_ServiceCore.EntityServices
             ctx.Uow.Save();
             var actionResult = new DtoActionResult();
             actionResult.Success = true;
-            actionResult.Id = u.Id;
+            actionResult.Id = u.UserId;
             return actionResult;
         }
 
@@ -53,29 +54,19 @@ namespace Toems_ServiceCore.EntityServices
             return Convert.ToInt32(ctx.Uow.UserRepository.Count(u => u.Membership == "Administrator"));
         }
 
-        public EntityToemsUser GetUser(int userId)
+        public AppUser GetUser(int userId)
         {
-            var user = ctx.Uow.UserRepository.GetById(userId);
-            if(user == null) return null;
-            user.Password = string.Empty;
-            user.Salt = string.Empty;
-            user.MfaSecret = string.Empty;
-            return user;
+            return ctx.Uow.UserRepository.GetById(userId);
         }
 
-        public EntityToemsUser GetUser(string userName)
+        public AppUser GetUser(string userName)
         {
-            var user = ctx.Uow.UserRepository.GetFirstOrDefault(u => u.Name == userName);
-            if (user == null) return null;
-            user.Password = string.Empty;
-            user.Salt = string.Empty;
-            user.MfaSecret = string.Empty;
-            return user;
+            return ctx.Uow.UserRepository.GetFirstOrDefault(u => u.UserName == userName);
         }
 
-        public EntityToemsUser GetUserForLogin(string userName)
+        public AppUser GetUserForLogin(string userName)
         {
-            var user = ctx.Uow.UserRepository.GetFirstOrDefault(u => u.Name == userName);
+            var user = ctx.Uow.UserRepository.GetFirstOrDefault(u => u.UserName == userName);
             if (user == null) return null;
             return user;
         }
@@ -118,16 +109,9 @@ namespace Toems_ServiceCore.EntityServices
             }
         }
 
-        public EntityToemsUser GetUserFromToken(string imagingToken)
+        public AppUser GetUserFromToken(string imagingToken)
         {
-            var user = ctx.Uow.UserRepository.Get(x => x.ImagingToken.Equals(imagingToken)).FirstOrDefault();
-            if (user == null)
-                return null;
-            user.Password = string.Empty;
-            user.Salt = string.Empty;
-            user.MfaSecret = string.Empty;
-
-            return user;
+            return ctx.Uow.UserRepository.Get(x => x.ImagingToken.Equals(imagingToken)).FirstOrDefault();
         }
       
 
@@ -137,18 +121,15 @@ namespace Toems_ServiceCore.EntityServices
             var user = ctx.Uow.UserRepository.GetById(userId);
             if (user != null)
             {
-               
-                user.Password = string.Empty;
-                user.Salt = string.Empty;
                 result.Success = true;
-                result.Id = user.Id;
+                result.Id = user.UserId;
                 result.ObjectJson = JsonConvert.SerializeObject(user);
             }
 
             return result;
         }
 
-        public EntityToemsUser GetUserWithPass(int userId)
+        public AppUser GetUserWithPass(int userId)
         {
             return ctx.Uow.UserRepository.GetById(userId);
 
@@ -297,16 +278,9 @@ namespace Toems_ServiceCore.EntityServices
             }
             return usersGroups;
         }
-        public List<EntityToemsUser> GetAll()
+        public List<AppUser> GetAll()
         {
-            var users = ctx.Uow.UserRepository.Get();
-            foreach(var user in users)
-            {
-                user.Password = string.Empty;
-                user.Salt = string.Empty;
-                user.MfaSecret = string.Empty;
-            }
-            return users;
+            return ctx.Uow.UserRepository.Get();
         }
 
         public bool RemoveUserLegacyGroup(int userId)
@@ -319,16 +293,10 @@ namespace Toems_ServiceCore.EntityServices
             return true;
         }
 
-        public List<EntityToemsUser> SearchUsers(DtoSearchFilter filter)
+        public List<AppUser> SearchUsers(DtoSearchFilter filter)
         {
-            var users = ctx.Uow.UserRepository.Search(filter.SearchText);
-            foreach (var user in users)
-            {
-                user.Password = string.Empty;
-                user.Salt = string.Empty;
-                user.MfaSecret = string.Empty;
-            }
-            return users;
+            return ctx.Uow.UserRepository.Search(filter.SearchText);
+
         }
 
         public async Task SendLockOutEmail(int userId)
@@ -339,73 +307,27 @@ namespace Toems_ServiceCore.EntityServices
             var lockedUser = GetUser(userId);
             foreach (var user in SearchUsers(new DtoSearchFilter()).Where(x => !string.IsNullOrEmpty(x.Email)))
             {
-                if (user.Membership != "Administrator" && user.Id != userId) continue;
-                await ctx.Mail.SendMailAsync(lockedUser.Name + " Has Been Locked For 15 Minutes Because Of Too Many Failed Login Attempts", user.Email, "User Locked");
+                if (user.Membership != "Administrator" && user.UserId != userId) continue;
+                await ctx.Mail.SendMailAsync(lockedUser.UserName + " Has Been Locked For 15 Minutes Because Of Too Many Failed Login Attempts", user.Email, "User Locked");
 
             }
         }
 
       
-        public bool ResetUserMfaData(int userId)
-        {
-            var u = GetUserWithPass(userId);
-            if (u == null) return false;
-            u.MfaSecret = null;
-            ctx.Uow.UserRepository.Update(u, u.Id);
-            ctx.Uow.Save();
-            return true;
-        }
 
-        public bool CheckMfaSetupComplete(int userId)
-        {
-            var u = GetUserWithPass(userId);
-            if (u == null) return false;
-            if(!string.IsNullOrEmpty(u.MfaSecret))
-                return true;
-            if (ctx.Setting.GetSettingValue(SettingStrings.EnableMfa) == "1" && string.IsNullOrEmpty(u.MfaSecret)
-                 && (u.EnableWebMfa || ctx.Setting.GetSettingValue(SettingStrings.ForceMfa) == "1"))
-                return false;
 
-            return true;
-        }
 
-        public bool VerifyMfaSecret(int userId, string code)
-        {
-            var u = GetUserWithPass(userId);
-            if (u == null) return false;
-            var result = new TwoFactorAuth().VerifyCode(ctx.Encryption.DecryptText(u.MfaTempSecret), code);
-            if (result)
-            {
-                u.MfaSecret = u.MfaTempSecret;
-                u.MfaTempSecret = null;
-                ctx.Uow.UserRepository.Update(u, u.Id);
-                ctx.Uow.Save();
-                return true;
-            }
 
-            return false;
-        }
 
-        public string GenerateTempMfaSecret(int userId)
-        {
-            var u = GetUserWithPass(userId);
-            var mfa = new TwoFactorAuth("Theopenem", 6, 30, Algorithm.SHA1, new ToemsQrProvider());
-            
-            var secret = mfa.CreateSecret(160);
-            u.MfaTempSecret = ctx.Encryption.EncryptText(secret);
-            ctx.Uow.UserRepository.Update(u, u.Id);
-            ctx.Uow.Save();
-            return mfa.GetQrCodeImageAsDataUri(u.Name, secret);
-        }
 
         public string TotalCount()
         {
             return ctx.Uow.UserRepository.Count();
         }
 
-        public DtoActionResult UpdateUser(EntityToemsUser user)
+        public DtoActionResult UpdateUser(AppUser user)
         {
-            var u = GetUserWithPass(user.Id);
+            var u = GetUserWithPass(user.UserId);
             if (u == null) return new DtoActionResult { ErrorMessage = "User Not Found", Id = 0 };
             if (GetAdminCount() == 1 && user.Membership != "Administrator" && u.Membership.Equals("Administrator"))
                 return new DtoActionResult() {ErrorMessage = "There Must Be At Least 1 Administrator"};
@@ -413,22 +335,15 @@ namespace Toems_ServiceCore.EntityServices
             var actionResult = new DtoActionResult();
             if (validationResult.Success)
             {
-                if(string.IsNullOrEmpty(user.Password) && string.IsNullOrEmpty(user.Salt))
-                {
-                    user.Salt = u.Salt;
-                    user.Password = u.Password;
-                }
-                else
-                {
+
                     //password has been updated, update the imaging token
                     user.ImagingToken = Guid.NewGuid().ToString("N").ToUpper() + Guid.NewGuid().ToString("N").ToUpper();
-                }
-                if (string.IsNullOrEmpty(user.MfaSecret))
-                    user.MfaSecret = u.MfaSecret;
+                
+
                 ctx.Uow.UserRepository.Update(user, user.Id);
                 ctx.Uow.Save();
                 actionResult.Success = true;
-                actionResult.Id = user.Id;
+                actionResult.Id = user.UserId;
             }
             else
             {
@@ -438,11 +353,11 @@ namespace Toems_ServiceCore.EntityServices
             return actionResult;
         }
 
-        private DtoValidationResult ValidateUser(EntityToemsUser user, bool isNewUser)
+        private DtoValidationResult ValidateUser(AppUser user, bool isNewUser)
         {
             var validationResult = new DtoValidationResult { Success = true };
 
-            if (string.IsNullOrEmpty(user.Name) || !user.Name.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '-' || c == '.'))
+            if (string.IsNullOrEmpty(user.UserName) || !user.UserName.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '-' || c == '.'))
             {
                 validationResult.Success = false;
                 validationResult.ErrorMessage = "User Name Is Not Valid";
@@ -451,14 +366,7 @@ namespace Toems_ServiceCore.EntityServices
 
             if (isNewUser)
             {
-                if (string.IsNullOrEmpty(user.Password))
-                {
-                    validationResult.Success = false;
-                    validationResult.ErrorMessage = "Password Is Not Valid";
-                    return validationResult;
-                }
-
-                if (ctx.Uow.UserRepository.Exists(h => h.Name == user.Name))
+                if (ctx.Uow.UserRepository.Exists(h => h.UserName == user.UserName))
                 {
                     validationResult.Success = false;
                     validationResult.ErrorMessage = "A User With This Name Already Exists";
@@ -468,9 +376,9 @@ namespace Toems_ServiceCore.EntityServices
             else
             {
                 var originalUser = ctx.Uow.UserRepository.GetById(user.Id);
-                if (originalUser.Name != user.Name)
+                if (originalUser.UserName != user.UserName)
                 {
-                    if (ctx.Uow.UserRepository.Exists(h => h.Name == user.Name))
+                    if (ctx.Uow.UserRepository.Exists(h => h.UserName == user.UserName))
                     {
                         validationResult.Success = false;
                         validationResult.ErrorMessage = "A User With This Name Already Exists";

@@ -97,7 +97,7 @@ namespace Toems_ServiceCore.Workflows
                 ondAuditLog.ObjectId = _imageProfile.ImageId;
                 var ondUser = serviceUser.GetUser(_userId);
                 if (ondUser != null)
-                    ondAuditLog.UserName = ondUser.Name;
+                    ondAuditLog.UserName = ondUser.UserName;
                 ondAuditLog.ObjectName = _imageProfile.Image.Name;
                 ondAuditLog.UserId = _userId;
                 ondAuditLog.ObjectType = "Image";
@@ -155,7 +155,7 @@ namespace Toems_ServiceCore.Workflows
             auditLog.ObjectId = _group.Id;
             var user = serviceUser.GetUser(_userId);
             if (user != null)
-                auditLog.UserName = user.Name;
+                auditLog.UserName = user.UserName;
             auditLog.ObjectName = _group.Name;
             auditLog.UserId = _userId;
             auditLog.ObjectType = "Group";

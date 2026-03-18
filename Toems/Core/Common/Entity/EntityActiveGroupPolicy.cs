@@ -8,13 +8,13 @@ namespace Toems_Common.Entity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Column("active_group_policy_id", Order = 1)]
+        [Column("active_group_policy_id")]
         public int Id { get; set; }
 
-        [Column("group_id", Order = 2)]
+        [Column("group_id")]
         public int GroupId { get; set; }
 
-        [Column("json_string", Order = 3)]
-        public string PolicyJson { get; set; }
+        [Column("json_string")]
+        public string? PolicyJson { get; set; }
     }
 }

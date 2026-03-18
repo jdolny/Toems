@@ -55,7 +55,6 @@ namespace Toems_DataModel
         IGenericRepository<EntitySchedule> ScheduleRepository { get; }
         IGenericRepository<EntityWolRelay> WolRelayRepository { get; }
         IGenericRepository<EntityProcessInventory> ProcessInventoryRepository { get; }
-        IGenericRepository<EntityComputerProcess> ComputerProcessRepository { get; }
         IGenericRepository<EntityAntivirusInventory> AntivirusRepository { get; }
         IGenericRepository<EntityFirewallInventory> FirewallRepository { get; }
         IGenericRepository<EntityBitlockerInventory> BitlockerRepository { get; }

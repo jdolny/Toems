@@ -1,5 +1,6 @@
 ﻿using Toems_Common.Dto;
 using Toems_Common.Entity;
+using Toems_ServiceCore.Data;
 using Toems_ServiceCore.Infrastructure;
 
 namespace Toems_ServiceCore.EntityServices
@@ -66,7 +67,7 @@ namespace Toems_ServiceCore.EntityServices
             return true;
         }
 
-        public List<EntityToemsUser> GetGroupMembers(int userGroupId, DtoSearchFilter filter)
+        public List<AppUser> GetGroupMembers(int userGroupId, DtoSearchFilter filter)
         {
             return ctx.Uow.UserRepository.GetGroupMembers(userGroupId);
         }

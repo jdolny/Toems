@@ -21,9 +21,6 @@ namespace Toems_ServiceCore.EntityServices
         
         public async Task<List<EntityComputer>> SearchComputers(DtoComputerFilter filter, int userId)
         {
-            await using var sparcDb = await toemsDbFactory.CreateDbContextAsync();
-            return sparcDb.Computers.ToList();
-            
             
             if(filter.Categories == null) filter.Categories = new List<string>();
             var categoryFilterIds = filter.Categories
@@ -755,7 +752,7 @@ namespace Toems_ServiceCore.EntityServices
             var entityComment = new EntityComment();
             entityComment.CommentText = comment.Comment;
             entityComment.CommentTime = DateTime.Now;
-            entityComment.Username = user.Name;
+            entityComment.Username = user.UserName;
             ctx.Uow.CommentRepository.Insert(entityComment);
             ctx.Uow.Save();
 

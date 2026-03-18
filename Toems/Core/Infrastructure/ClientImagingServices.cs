@@ -171,7 +171,7 @@ namespace Toems_ServiceCore.Infrastructure
             if (user != null)
             {
                 response.IsAuthorized = true;
-                response.Id = user.Id;
+                response.Id = user.UserId;
                 response.UserType = "user";
                 return response;
             }
@@ -1187,7 +1187,7 @@ namespace Toems_ServiceCore.Infrastructure
                 auditLog.ObjectId = activeTask.ComputerId;
                 var user = ctx.User.GetUser(activeTask.UserId);
                 if (user != null)
-                    auditLog.UserName = user.Name;
+                    auditLog.UserName = user.UserName;
                 auditLog.ObjectName = computer != null ? computer.Name : mac;
                 auditLog.UserId = activeTask.UserId;
                 auditLog.ObjectType = "Computer";

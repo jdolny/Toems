@@ -18,7 +18,6 @@ public class ToemsDbContext : IdentityDbContext<AppUser>
         public DbSet<EntityToemsUserGroup> UserGroups { get; set; }      
         public DbSet<EntityUserLockout> UserLockouts { get; set; }
         public DbSet<EntityUserRight> UserRight { get; set; }
-        public DbSet<EntityToemsUser> Users { get; set; }
         public DbSet<EntityGroup> Groups { get; set; }
         public DbSet<EntityGroupPolicy> GroupPolicies { get; set; }
         public DbSet<EntityUploadedFile> UploadedFiles { get; set; }
@@ -57,7 +56,6 @@ public class ToemsDbContext : IdentityDbContext<AppUser>
         public DbSet<EntitySchedule> Schedules { get; set; }
         public DbSet<EntityWolRelay> WolRelays { get; set; }
         public DbSet<EntityProcessInventory> ProcessInventory { get; set; }
-        public DbSet<EntityComputerProcess> ComputerProcesses { get; set; }
         public DbSet<EntityAntivirusInventory> Antivirus { get; set; }
         public DbSet<EntityBitlockerInventory> Bitlocker { get; set; }
         public DbSet<EntityFirewallInventory> Firewall { get; set; }
@@ -142,12 +140,9 @@ public class ToemsDbContextFactory : IDesignTimeDbContextFactory<ToemsDbContext>
     {
         var optionsBuilder = new DbContextOptionsBuilder<ToemsDbContext>();
 
-        var connectionString =
-            "server=localhost;port=3306;database=theopenem;Uid=root;Pwd=BoA5EuZZgESe;Allow User Variables=True; SslMode=none;";
+        var connectionString = "server=localhost;port=5432;database=theopenem;Uid=postgres;Pwd=password;";
 
-        optionsBuilder.UseMySql(
-            connectionString,
-            ServerVersion.AutoDetect(connectionString));
+        optionsBuilder.UseNpgsql(connectionString);
         
         return new ToemsDbContext(optionsBuilder.Options);
     }

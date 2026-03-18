@@ -75,7 +75,7 @@ namespace Toems_Common.Entity
 
         [Column("simple_upload_schema")] public bool SimpleUploadSchema { get; set; }
 
-        [Column("model_match")] public string ModelMatch { get; set; }
+        [Column("model_match")] public string? ModelMatch { get; set; }
 
         [Column("model_match_type")] public string ModelMatchType { get; set; }
 

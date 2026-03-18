@@ -18,7 +18,6 @@ namespace Toems_ServiceCore.Workflows
             AutoArchivePolicies();
             AutoDeleteComputers();
             AutoDeleteAuditLogs();
-            ComputerProcessHistory();
             PolicyHistory();
             UserLogins();
             ImagingLogs();
@@ -90,19 +89,7 @@ namespace Toems_ServiceCore.Workflows
             ctx.Uow.Save();
         }
 
-        private void ComputerProcessHistory()
-        {
-            ctx.Log.Debug("Computer Process History Delete Started");
-            var deleteDays = ctx.Setting.GetSettingValue(SettingStrings.ComputerProcessAutoDelete);
-            int intDays;
-            if (!int.TryParse(deleteDays, out intDays))
-                return;
-            if (intDays <= 0) return;
-            ctx.Log.Debug($"Deleting Process History Older Than {intDays} Days");
-            var dateCutOff = DateTime.UtcNow - TimeSpan.FromDays(intDays);
-            ctx.Uow.ComputerProcessRepository.DeleteRange(x => x.StartTimeUtc < dateCutOff && x.StartTimeUtc > _utcCutoff);
-            ctx.Uow.Save();
-        }
+     
 
         private void PolicyHistory()
         {

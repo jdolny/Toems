@@ -13,7 +13,8 @@ namespace Toems_UI.Controllers
       [HttpPost]
       public async Task <IEnumerable<EntityComputer>> SearchComputers(DtoComputerFilter filter)
       {
-          return await computerService.SearchComputers(filter,CurrentUser.UserIdInt);
+          return null;
+          // return await computerService.SearchComputers(filter,CurrentUser.UserIdInt);
       }
     }
 }

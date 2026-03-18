@@ -68,7 +68,6 @@ namespace Toems_DataModel
         private IGenericRepository<EntitySchedule> _scheduleRepository;
         private IGenericRepository<EntityWolRelay> _wolRelayRepository;
         private IGenericRepository<EntityProcessInventory> _processInventoryRepository;
-        private IGenericRepository<EntityComputerProcess> _computerProcessRepository;
         private IGenericRepository<EntityAntivirusInventory> _antivirusRepository;
         private IGenericRepository<EntityFirewallInventory> _firewallRepository;
         private IGenericRepository<EntityBitlockerInventory> _bitlockerInventory;
@@ -699,17 +698,7 @@ namespace Toems_DataModel
                 return _processInventoryRepository ?? (_processInventoryRepository = new GenericRepository<EntityProcessInventory>(_context));
             }
         }
-
-        public IGenericRepository<EntityComputerProcess> ComputerProcessRepository
-        {
-            get
-            {
-                return _computerProcessRepository ?? (_computerProcessRepository = new GenericRepository<EntityComputerProcess>(_context));
-            }
-
-
-        }
-
+        
         public IGenericRepository<EntityWolRelay> WolRelayRepository
         {
             get

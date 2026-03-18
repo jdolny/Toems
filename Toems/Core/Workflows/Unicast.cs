@@ -104,7 +104,7 @@ namespace Toems_ServiceCore.Workflows
             auditLog.ObjectId = _computer.Id;
             var user = serviceUser.GetUser(_userId);
             if (user != null)
-                auditLog.UserName = user.Name;
+                auditLog.UserName = user.UserName;
             auditLog.ObjectName = _computer.Name;
             auditLog.UserId = _userId;
             auditLog.ObjectType = "Computer";

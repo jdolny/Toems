@@ -7,30 +7,30 @@ using Toems_ServiceCore.Data;
 
 namespace Toems_DataModel
 {
-    public class ToemsUserRepository(ToemsDbContext context) : GenericRepository<EntityToemsUser>(context)
+    public class ToemsUserRepository(ToemsDbContext context) : GenericRepository<AppUser>(context)
     {
         public string GetUserName(int id)
         {
-            return (from s in context.Users where s.Id == id select s.Name).FirstOrDefault();
+            return (from s in context.Users where s.UserId == id select s.UserName).FirstOrDefault();
         }
 
-        public List<EntityToemsUser> Search(string searchString)
+        public List<AppUser> Search(string searchString)
         {
             return (from s in context.Users
-                where s.Name.Contains(searchString)
-                orderby s.Name
+                where s.UserName.Contains(searchString)
+                orderby s.UserName
                 select new
                 {
                     id = s.Id,
-                    name = s.Name,
+                    name = s.UserName,
                     membership = s.Membership,
 
                     email = s.Email,
 
-                }).AsEnumerable().Select(x => new EntityToemsUser
+                }).AsEnumerable().Select(x => new AppUser()
                 {
                     Id = x.id,
-                    Name = x.name,
+                    UserName = x.name,
                     Membership = x.membership,
 
                     Email = x.email,
@@ -124,12 +124,12 @@ namespace Toems_DataModel
             return list;
         }
 
-        public List<EntityToemsUser> GetGroupMembers(int userGroupId)
+        public List<AppUser> GetGroupMembers(int userGroupId)
         {
             return (from h in context.Users
-                    join g in context.UserGroupMemberships on h.Id equals g.ToemsUserId
+                    join g in context.UserGroupMemberships on h.UserId equals g.ToemsUserId
                     where (g.UserGroupId == userGroupId)
-                    orderby h.Name
+                    orderby h.UserName
                     select h).ToList();
         }
     }
