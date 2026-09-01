@@ -800,7 +800,7 @@ namespace Toems_ServiceCore.EntityServices
             var jsonWithHash = JsonConvert.SerializeObject(clientPolicy);
             var activeClientPolicy = new EntityActiveClientPolicy();
             activeClientPolicy.PolicyId = policy.Id;
-            activeClientPolicy.PolicyJson = jsonWithHash;
+            activeClientPolicy.JsonString = jsonWithHash;
             ctx.ActiveClientPolicy.InsertOrUpdate(activeClientPolicy);
 
             //Verify hash one last time
@@ -809,7 +809,7 @@ namespace Toems_ServiceCore.EntityServices
             //verify deserialization
             try
             {
-                var deserializedClientPolicy = JsonConvert.DeserializeObject<DtoClientPolicy>(finalActivePolicy.PolicyJson);
+                var deserializedClientPolicy = JsonConvert.DeserializeObject<DtoClientPolicy>(finalActivePolicy.JsonString);
                 if (deserializedClientPolicy.Hash != newHash)
                 {
                     ctx.ActiveClientPolicy.Delete(finalActivePolicy.Id);

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Toems_Common.Entity
 {
@@ -7,7 +8,6 @@ namespace Toems_Common.Entity
     public class EntityActiveClientPolicy
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("active_client_policy_id")]
         public int Id { get; set; }
 
@@ -15,6 +15,6 @@ namespace Toems_Common.Entity
         public int PolicyId { get; set; }
 
         [Column("json_string")]
-        public string? PolicyJson { get; set; }
+        public string JsonString { get; set; } = null!;
     }
 }

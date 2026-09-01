@@ -33,7 +33,7 @@ namespace Toems_ServiceCore.Workflows
                     continue;
                 }
 
-                var deserializedPolicy = JsonConvert.DeserializeObject<DtoClientPolicy>(policyJson.PolicyJson);
+                var deserializedPolicy = JsonConvert.DeserializeObject<DtoClientPolicy>(policyJson.JsonString);
                 deserializedPolicy.Order = groupPolicy.PolicyOrder;
                 list.Add(deserializedPolicy);
             }
